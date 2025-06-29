@@ -40,7 +40,7 @@
         <!-- Cabecera -->
         <header class="text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900">Recetario Delicioso</h1>
-            <p class="text-gray-600 mt-2">40 recetas para inspirar tu cocina.</p>
+            <p class="text-gray-600 mt-2">44 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
         </header>
         
@@ -71,7 +71,7 @@
 
         <!-- Cuadrícula de Recetas (PRE-RENDERIZADA) -->
         <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-            <!-- Las 40 tarjetas se insertan directamente aquí en el HTML -->
+            <!-- Las 44 tarjetas se insertan directamente aquí en el HTML -->
         </div>
     </div>
 
@@ -81,18 +81,15 @@
     </div>
     
     <script type="module">
-        // Importaciones de Firebase (FIX: movidas al nivel superior del script)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Se ejecuta cuando todo el HTML ha sido cargado
         document.addEventListener("DOMContentLoaded", () => {
             
             const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO_PROJECT" };
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'recetario-delicioso-final';
 
-            // Inicialización de Firebase
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             const auth = getAuth(app);
@@ -113,6 +110,7 @@
             };
             
             const allRecipes = [
+                // Aperitivos
                 { id: "patatas-bravas", name: "Patatas Bravas", category: "Aperitivo", time: "30 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1599921867822-6b3a0f0a5fee?q=80&w=800", ingredients: ["1kg de patatas", "Aceite de oliva", "Salsa brava", "Alioli"], steps: ["Pela y corta las patatas en cubos irregulares.", "Fríelas en abundante aceite hasta que estén doradas y tiernas.", "Sírvelas calientes con salsa brava y alioli por encima."] },
                 { id: "gambas-al-ajillo", name: "Gambas al Ajillo", category: "Aperitivo", time: "10 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1639537339294-35e2193b134a?q=80&w=800", ingredients: ["250g de gambas peladas", "4 dientes de ajo", "1 guindilla", "Aceite de oliva virgen extra", "Sal", "Perejil"], steps: ["Lamina los ajos y sofríelos con la guindilla en una cazuela de barro.", "Cuando los ajos empiecen a dorarse, añade las gambas y una pizca de sal.", "Saltea un par de minutos hasta que las gambas estén hechas.", "Espolvorea perejil picado y sirve inmediatamente."] },
                 { id: "gildas", name: "Gildas", category: "Aperitivo", time: "5 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Gildas", ingredients: ["Anchoas en salazón", "Aceitunas verdes sin hueso", "Guindillas en vinagre (piparras)"], steps: ["Ensarta en un palillo una aceituna, una guindilla doblada por la mitad y una anchoa."] },
@@ -123,6 +121,8 @@
                 { id: "pan-con-tomate", name: "Pan con Tomate y Jamón", category: "Aperitivo", time: "5 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1588167040822-913045b74092?q=80&w=800", ingredients: ["Rebanadas de pan de payés", "Tomates maduros de rama", "Ajo (opcional)", "Aceite de oliva virgen extra", "Jamón serrano"], steps: ["Tuesta las rebanadas de pan.", "Si te gusta, frota un diente de ajo en el pan tostado.", "Parte un tomate por la mitad y frótalo sobre el pan hasta que quede bien impregnado.", "Añade un chorro de aceite de oliva y coloca una loncha de jamón encima."] },
                 { id: "croquetas-de-jamon", name: "Croquetas de Jamón", category: "Aperitivo", time: "40 min + reposo", difficulty: "Medio", image: "https://images.unsplash.com/photo-1619861183287-353f2a8a1599?q=80&w=800", ingredients: ["100g de jamón serrano", "1 litro de leche", "100g de mantequilla", "100g de harina", "Nuez moscada", "Sal", "Huevo para rebozar", "Pan rallado"], steps: ["Pica el jamón muy fino. Sofríelo un poco en la mantequilla.", "Añade la harina y tuéstala para hacer un roux.", "Vierte la leche poco a poco sin dejar de remover para hacer la bechamel.", "Añade sal y nuez moscada. Cocina hasta que espese.", "Deja enfriar la masa en la nevera (mínimo 4 horas).", "Forma las croquetas, pásalas por huevo y pan rallado, y fríelas en aceite caliente."] },
                 { id: "queso-manchego-membrillo", name: "Queso Manchego con Membrillo", category: "Aperitivo", time: "5 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Queso", ingredients: ["Queso Manchego curado", "Dulce de membrillo"], steps: ["Corta el queso en cuñas o triángulos.", "Corta el membrillo en lonchas finas.", "Sirve una loncha de membrillo sobre cada trozo de queso."] },
+                { id: "zamburinas-plancha", name: "Zamburiñas a la Plancha", category: "Aperitivo", time: "10 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Zamburiñas", ingredients: ["12 zamburiñas", "2 dientes de ajo", "Perejil fresco", "Aceite de oliva virgen extra", "Sal"], steps: ["Limpia bien las zamburiñas.", "Pica finamente el ajo y el perejil y mézclalo con un buen chorro de aceite.", "Calienta una plancha o sartén a fuego fuerte.", "Cocina las zamburiñas 1-2 minutos por cada lado.", "Sírvelas inmediatamente con el aliño de ajo y perejil por encima."] },
+                // Primeros
                 { id: "gazpacho-andaluz", name: "Gazpacho Andaluz", category: "Primero", time: "15 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1625944228743-9281a173a113?q=80&w=800", ingredients: ["1 kg de tomates maduros", "1 pimiento verde", "1 pepino", "1 diente de ajo", "50g de pan", "Aceite de oliva virgen extra", "Vinagre de Jerez", "Sal"], steps: ["Lava y trocea las verduras.", "Pon todo en la batidora con el pan, aceite, vinagre y sal.", "Bate hasta que quede una crema fina.", "Enfría en la nevera antes de servir."] },
                 { id: "lentejas-estofadas", name: "Lentejas Estofadas", category: "Primero", time: "50 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1625944132003-24153a812b1b?q=80&w=800", ingredients: ["400g de lentejas pardinas", "1 chorizo", "1 patata", "1 zanahoria", "1 cebolla", "1 hoja de laurel", "Pimentón dulce"], steps: ["Sofríe la cebolla y zanahoria picadas.", "Añade el chorizo y la patata en trozos. Rehoga.", "Incorpora las lentejas, el laurel y el pimentón.", "Cubre con agua, añade sal y cuece a fuego lento 40-50 minutos."] },
                 { id: "sopa-de-ajo", name: "Sopa de Ajo", category: "Primero", time: "25 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Sopa+Ajo", ingredients: ["Pan duro", "6 dientes de ajo", "Jamón serrano", "Pimentón dulce", "Caldo de pollo", "2 huevos", "Aceite"], steps: ["Corta el pan en rebanadas finas.", "Dora los ajos laminados y el jamón.", "Retira del fuego, añade el pimentón. Remueve.", "Añade el pan y el caldo. Cuece 15 min.", "Casca los huevos en la sopa y remueve para que se cuajen."] },
@@ -133,6 +133,8 @@
                 { id: "marmitako", name: "Marmitako", category: "Primero", time: "60 min", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Marmitako", ingredients: ["500g de bonito del norte", "4 patatas", "1 cebolla", "2 pimientos choriceros", "1 pimiento verde", "Caldo de pescado"], steps: ["Hidrata los pimientos choriceros y saca la pulpa.", "Sofríe la cebolla y pimiento verde.", "Añade las patatas cascadas y la pulpa del choricero. Rehoga.", "Cubre con caldo y cuece hasta que la patata esté tierna.", "Añade el bonito en dados y cuece 2 minutos. Deja reposar."] },
                 { id: "crema-de-calabacin", name: "Crema de Calabacín", category: "Primero", time: "30 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1505586549231-c352c5f21533?q=80&w=800", ingredients: ["2 calabacines", "1 patata", "1 cebolla", "Nata líquida (opcional)", "Caldo de verduras", "Quesitos"], steps: ["Pocha la cebolla en una olla.", "Añade el calabacín y la patata en trozos. Rehoga.", "Cubre con caldo y cuece 20 minutos.", "Tritura todo con la batidora. Añade los quesitos y un chorrito de nata para más cremosidad.", "Sirve caliente."] },
                 { id: "arroz-caldoso-con-bogavante", name: "Arroz con Bogavante", category: "Primero", time: "50 min", difficulty: "Difícil", image: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=800", ingredients: ["1 bogavante", "300g arroz bomba", "1 cebolla", "2 dientes de ajo", "Tomate triturado", "Fumet de pescado"], steps: ["Sofríe el bogavante troceado y reserva.", "En el mismo aceite, haz un sofrito con la cebolla, ajo y tomate.", "Añade el arroz y nacara.", "Vierte el fumet caliente y cuece 15 minutos.", "Incorpora los trozos de bogavante y cuece 3 minutos más."] },
+                { id: "porrusalda", name: "Porrusalda", category: "Primero", time: "35 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Porrusalda", ingredients: ["4 puerros grandes", "2 patatas", "1 zanahoria", "Caldo de verduras o agua", "Aceite de oliva virgen extra", "Sal"], steps: ["Limpia los puerros y córtalos en rodajas (solo la parte blanca y verde clara).", "Pela y chasca las patatas y la zanahoria.", "En una olla, pocha el puerro con aceite de oliva.", "Añade la patata y la zanahoria y rehoga unos minutos.", "Cubre con caldo, sazona y cuece a fuego medio hasta que las verduras estén tiernas (unos 20 minutos)."] },
+                // Segundos
                 { id: "paella-valenciana", name: "Paella Valenciana", category: "Segundo", time: "60 min", difficulty: "Difícil", image: "https://images.unsplash.com/photo-1579871494474-a4b56a7d1ae9?q=80&w=800", ingredients: ["300g arroz bomba", "400g pollo", "300g conejo", "Judía verde", "Garrofón", "Azafrán"], steps: ["Sofríe las carnes.", "Añade las verduras y el tomate.", "Incorpora el agua y, cuando hierva, el azafrán y el arroz.", "Cocina hasta que el arroz esté en su punto."] },
                 { id: "rabo-de-toro", name: "Rabo de Toro Estofado", category: "Segundo", time: "4 horas", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Rabo+de+Toro", ingredients: ["1.5kg de rabo de toro", "2 cebollas", "2 zanahorias", "1 puerro", "Vino tinto", "Caldo de carne"], steps: ["Salpimenta y enharina el rabo. Dóralo en una olla rápida.", "Sofríe las verduras picadas en el mismo aceite.", "Incorpora el rabo, el vino y el caldo.", "Cierra la olla y cuece durante 2 horas desde que suba la válvula.", "Deja reposar y sirve con puré de patatas."] },
                 { id: "merluza-salsa-verde", name: "Merluza en Salsa Verde", category: "Segundo", time: "25 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1628203102432-159c3a35f795?q=80&w=800", ingredients: ["4 lomos de merluza", "Almejas", "Guisantes", "Ajo", "Perejil", "Vino blanco", "Fumet de pescado"], steps: ["Dora los ajos en una cazuela.", "Coloca los lomos de merluza con la piel hacia arriba.", "Añade el vino, las almejas, los guisantes y el perejil picado.", "Vierte el fumet y cocina 10-15 minutos moviendo la cazuela en vaivén para ligar la salsa."] },
@@ -143,6 +145,8 @@
                 { id: "albondigas-en-salsa", name: "Albóndigas en Salsa Española", category: "Segundo", time: "50 min", difficulty: "Medio", image: "https://images.unsplash.com/photo-1598514982249-916212e62444?q=80&w=800", ingredients: ["500g carne picada", "Huevo", "Pan rallado", "Ajo", "Perejil", "Harina", "Para la salsa: cebolla, zanahoria, vino tinto, caldo"], steps: ["Mezcla la carne con huevo, pan, ajo y perejil. Forma las albóndigas.", "Pásalas por harina y fríelas. Reserva.", "En el mismo aceite, pocha las verduras para la salsa.", "Añade el vino y el caldo. Tritura la salsa.", "Incorpora las albóndigas y cuece 20 minutos."] },
                 { id: "cordero-asado", name: "Cordero Asado", category: "Segundo", time: "2 horas", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Cordero", ingredients: ["1 paletilla de cordero lechal", "Agua", "Sal", "Manteca de cerdo"], steps: ["Precalienta el horno a 180°C.", "Coloca la paletilla con la piel hacia abajo en una fuente.", "Añade un poco de agua y sal. Asa durante 1 hora.", "Dale la vuelta, unta con manteca y asa 45 minutos más hasta que esté dorada."] },
                 { id: "calamares-en-su-tinta", name: "Calamares en su Tinta", category: "Segundo", time: "60 min", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Calamares", ingredients: ["1kg calamares", "2 cebollas", "Tinta de calamar", "Vino blanco", "Fumet de pescado"], steps: ["Limpia los calamares, reserva las tintas y los tentáculos.", "Pica los tentáculos y sofríelos con cebolla para el relleno.", "Rellena los calamares y ciérralos con un palillo.", "Sofríe los calamares rellenos. En la misma cazuela, pocha la otra cebolla, añade el vino y la tinta diluida.", "Cubre con fumet y cuece a fuego lento 40 minutos."] },
+                { id: "zarzuela-pescado", name: "Zarzuela de Pescado", category: "Segundo", time: "50 min", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Zarzuela", ingredients: ["400g de rape", "250g de calamares", "8 langostinos", "8 mejillones", "1 cebolla", "2 dientes de ajo", "Tomate triturado", "Vino blanco", "Fumet de pescado", "Almendras tostadas para picada"], steps: ["Sofríe los langostinos y el rape y reserva.", "En el mismo aceite, pocha la cebolla y el ajo.", "Añade los calamares y el tomate. Cocina 10 minutos.", "Vierte el vino blanco y deja reducir. Añade el fumet.", "Incorpora el pescado, los langostinos y los mejillones (abiertos al vapor).", "Añade una picada de ajo, perejil y almendras y cuece todo junto 5 minutos."] },
+                // Postres
                 { id: "crema-catalana", name: "Crema Catalana", category: "Postre", time: "25 min + reposo", difficulty: "Medio", image: "https://images.unsplash.com/photo-1621244249146-2169820786a3?q=80&w=800", ingredients: ["1L de leche", "8 yemas de huevo", "200g azúcar", "40g maicena", "Piel de limón y naranja", "Canela"], steps: ["Infusiona la leche con los cítricos y la canela.", "Mezcla yemas, azúcar y maicena.", "Cuela la leche y mézclala con las yemas.", "Cocina a fuego lento hasta que espese. Enfría.", "Quema azúcar en la superficie antes de servir."] },
                 { id: "tarta-de-santiago", name: "Tarta de Santiago", category: "Postre", time: "45 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Tarta+Santiago", ingredients: ["250g almendra molida", "250g azúcar", "5 huevos", "Ralladura de limón", "Azúcar glas para decorar"], steps: ["Mezcla la almendra y el azúcar.", "Añade los huevos de uno en uno, batiendo bien.", "Incorpora la ralladura de limón.", "Vierte en un molde engrasado y hornea a 170°C durante 30-35 minutos.", "Deja enfriar y decora con la Cruz de Santiago hecha con azúcar glas."] },
                 { id: "arroz-con-leche", name: "Arroz con Leche", category: "Postre", time: "50 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1599043513901-3c5b52f6b3a2?q=80&w=800", ingredients: ["1L de leche entera", "100g de arroz", "120g de azúcar", "Piel de limón", "Canela en rama"], steps: ["Pon a cocer el arroz con la leche, la piel de limón y la canela.", "Cocina a fuego muy lento durante 45 minutos, removiendo a menudo.", "Añade el azúcar y cuece 5 minutos más.", "Retira la canela y el limón. Sirve frío o templado con canela en polvo."] },
@@ -153,9 +157,9 @@
                 { id: "tarta-de-queso-la-vina", name: "Tarta de Queso 'La Viña'", category: "Postre", time: "60 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1567613768463-b9254d39994f?q=80&w=800", ingredients: ["1kg de queso crema", "500ml de nata (35% M.G.)", "7 huevos", "400g de azúcar", "1 cucharada de harina"], steps: ["Bate el queso crema con el azúcar.", "Añade los huevos uno a uno.", "Incorpora la nata y la harina. Mezcla bien.", "Vierte en un molde forrado con papel de horno arrugado.", "Hornea a 210°C durante 40-50 minutos. El centro debe quedar tembloroso.", "Deja enfriar por completo antes de desmoldar."] },
                 { id: "panellets", name: "Panellets", category: "Postre", time: "40 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Panellets", ingredients: ["250g almendra molida", "200g azúcar", "1 clara de huevo", "Ralladura de limón", "Piñones para decorar"], steps: ["Mezcla la almendra, el azúcar y la ralladura de limón.", "Añade la clara de huevo y amasa hasta obtener un mazapán.", "Forma bolitas, rebózalas en piñones.", "Píntalas con yema de huevo y hornea a 180°C durante 10-15 minutos."] },
                 { id: "tocino-de-cielo", name: "Tocino de Cielo", category: "Postre", time: "50 min", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Tocino+Cielo", ingredients: ["10 yemas de huevo", "250g azúcar", "150ml agua", "Caramelo líquido"], steps: ["Haz un almíbar con el agua y el azúcar.", "Bate las yemas en un bol.", "Vierte el almíbar templado sobre las yemas en un hilo fino, sin dejar de batir.", "Cubre el fondo de un molde con caramelo.", "Vierte la mezcla y cocina al baño maría en el horno a 160°C durante 30 minutos."] },
+                { id: "piononos", name: "Piononos de Santa Fe", category: "Postre", time: "40 min", difficulty: "Difícil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Piononos", ingredients: ["Para el bizcocho: 2 huevos, 60g azúcar, 60g harina", "Para el almíbar: 100g azúcar, 100ml agua, chorrito de ron", "Para la crema: 2 yemas, 50g azúcar, 250ml leche", "Canela en rama", "Azúcar para quemar"], steps: ["Hornea una plancha fina de bizcocho y enróllala en caliente.", "Prepara un almíbar y empapa el bizcocho.", "Haz una crema pastelera con las yemas, azúcar y leche. Rellena el bizcocho y enróllalo de nuevo.", "Corta en porciones, corona con más crema y quema azúcar por encima."] }
             ];
             
-            // --- INICIALIZACIÓN ---
             function initializeUI() {
                 let recipeHTML = '';
                 allRecipes.forEach(recipe => {
@@ -194,10 +198,8 @@
                 });
             }
             
-            // Ejecuta la función para construir la interfaz
             initializeUI();
 
-            // Conectar a Firebase en segundo plano
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid;
@@ -210,139 +212,8 @@
                 }
             });
 
-            // --- LÓGICA DE DATOS ---
             async function loadUserFavorites() {
                 if (!userId) return;
                 const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
                 const userDoc = await getDoc(userDocRef);
-                userFavorites = userDoc.exists() ? (userDoc.data().favorites || []) : [];
-            }
-
-            async function toggleFavorite(recipeId) {
-                if (!userId) {
-                    alert("Necesitas estar conectado para guardar favoritos.");
-                    return;
-                }
-                const isFavorite = userFavorites.includes(recipeId);
-                userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
-                
-                updateFavoriteIcons();
-                applyFilters();
-
-                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                await setDoc(userDocRef, { favorites: userFavorites });
-            }
-
-            // --- LÓGICA DE RENDERIZADO (AHORA SOLO MUESTRA/OCULTA) ---
-            function updateFavoriteIcons() {
-                document.querySelectorAll('.recipe-card').forEach(card => {
-                    const heartIcon = card.querySelector('.favorite-btn svg');
-                    if (userFavorites.includes(card.dataset.id)) {
-                        heartIcon.classList.add('text-red-500', 'fill-current');
-                        heartIcon.classList.remove('text-gray-600');
-                    } else {
-                        heartIcon.classList.remove('text-red-500', 'fill-current');
-                        heartIcon.classList.add('text-gray-600');
-                    }
-                });
-            }
-
-            function applyFilters() {
-                const searchTerm = dom.search.value.toLowerCase();
-                let visibleCount = 0;
-
-                document.querySelectorAll('.recipe-card').forEach(card => {
-                    const id = card.dataset.id;
-                    const category = card.dataset.category;
-                    const searchData = card.dataset.search;
-
-                    const isFavorite = userFavorites.includes(id);
-                    
-                    const categoryMatch = currentCategory === 'all' || category === currentCategory;
-                    const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
-                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
-                    
-                    if (categoryMatch && searchMatch && favoriteMatch) {
-                        card.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        card.classList.add('hidden');
-                    }
-                });
-
-                dom.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-            }
-            
-            function showRecipeDetail(recipe) {
-                dom.modalContent.innerHTML = `
-                    <div class="p-6 md:p-8">
-                        <div class="flex justify-between items-start">
-                            <h2 class="text-3xl font-bold text-amber-900 mb-4">${recipe.name}</h2>
-                            <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                        <img src="${recipe.image}" alt="[Imagen de ${recipe.name}]" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
-                        <div id="recipe-content-normal">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 pb-2">Ingredientes</h4>
-                                    <ul class="list-disc list-inside space-y-2 text-gray-700">${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}</ul>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 pb-2">Pasos</h4>
-                                    <ol class="list-decimal list-inside space-y-3 text-gray-700">${recipe.steps.map(step => `<li>${step}</li>`).join('')}</ol>
-                                </div>
-                            </div>
-                             <div class="text-center mt-8"><button id="cookingModeBtn" class="bg-amber-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-900 transition shadow-lg">Activar Modo Cocina</button></div>
-                        </div>
-                        <div id="recipe-content-cooking" class="hidden">
-                            <h4 class="text-2xl font-semibold mb-6 text-center">Modo Cocina</h4>
-                            <div class="text-2xl md:text-3xl space-y-8 text-center">${recipe.steps.map((step, index) => `<div class="p-4 rounded-lg bg-amber-50"><p class="font-bold text-amber-800 mb-2">Paso ${index + 1}</p><p>${step}</p></div>`).join('')}</div>
-                            <div class="text-center mt-8"><button id="exitCookingModeBtn" class="bg-gray-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-700 transition shadow-lg">Salir del Modo Cocina</button></div>
-                        </div>
-                    </div>`;
-                dom.modal.style.display = 'flex';
-                setTimeout(() => dom.modalContent.classList.add('scale-100'), 10);
-                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-                document.getElementById('cookingModeBtn').addEventListener('click', () => {
-                    document.getElementById('recipe-content-normal').classList.add('hidden'); document.getElementById('recipe-content-cooking').classList.remove('hidden'); });
-                document.getElementById('exitCookingModeBtn').addEventListener('click', () => {
-                    document.getElementById('recipe-content-normal').classList.remove('hidden'); document.getElementById('recipe-content-cooking').classList.add('hidden'); });
-            }
-            
-            function closeModal() {
-                dom.modalContent.classList.remove('scale-100');
-                setTimeout(() => { dom.modal.style.display = 'none'; dom.modalContent.innerHTML = ''; }, 300);
-            }
-
-            // --- EVENT LISTENERS ---
-            dom.search.addEventListener('input', applyFilters);
-
-            dom.filterAllBtn.addEventListener('click', () => {
-                currentFilter = 'all';
-                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
-                applyFilters();
-            });
-            dom.filterFavBtn.addEventListener('click', () => {
-                currentFilter = 'favorites';
-                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
-                applyFilters();
-            });
-            
-            dom.categoryFilters.addEventListener('click', (e) => {
-                if (e.target.matches('.category-btn')) {
-                    currentCategory = e.target.dataset.category;
-                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    applyFilters();
-                }
-            });
-            
-            dom.modal.addEventListener('click', (event) => { if (event.target === dom.modal) closeModal(); });
-            
-            dom.filterAllBtn.classList.add('active');
-        });
-    </script>
-</body>
-</html>
+                userFavorites = userDoc.exists() ? (userD
