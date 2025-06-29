@@ -263,7 +263,7 @@
 
                     card.innerHTML = `
                         <div class="relative">
-                            <img src="${recipe.image}" alt="[Imagen de ${recipe.name}]" class="w-full h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                            <img src="${recipe.image}" alt="[Imagen de ${recipe.name}]" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
                              <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.category}</div>
                             <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${isFavorite ? 'text-red-500 fill-current' : 'text-gray-600'}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
@@ -291,7 +291,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                     </div>
-                    <img src="${recipe.image}" alt="[Imagen de ${recipe.name}]" class="w-full h-64 object-cover rounded-lg mb-6" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                    <img src="${recipe.image}" alt="[Imagen de ${recipe.name}]" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
                     
                     <div id="recipe-content-normal">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -343,4 +343,16 @@
         dom.categoryFilters.addEventListener('click', (e) => {
             if (e.target.matches('.category-btn')) {
                 currentCategory = e.target.dataset.category;
-                document.querySelectorAll('.categ
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                displayRecipes();
+            }
+        });
+        
+        dom.modal.addEventListener('click', (event) => { if (event.target === dom.modal) closeModal(); });
+        
+        dom.filterAllBtn.classList.add('active');
+
+    </script>
+</body>
+</html>
