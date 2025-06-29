@@ -85,31 +85,9 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        function runRecipeApp() {
-            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO_PROJECT" };
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'recetario-delicioso-final';
-
-            const app = initializeApp(firebaseConfig);
-            const db = getFirestore(app);
-            const auth = getAuth(app);
-
-            let userFavorites = [], userId = null;
-            let currentFilter = 'all', currentCategory = 'all';
-
-            const dom = {
-                grid: document.getElementById('recipeGrid'),
-                search: document.getElementById('searchInput'),
-                filterAllBtn: document.getElementById('filterAll'),
-                filterFavBtn: document.getElementById('filterFavorites'),
-                categoryFilters: document.getElementById('categoryFilters'),
-                noResults: document.getElementById('no-results'),
-                modal: document.getElementById('recipeModal'),
-                modalContent: document.getElementById('modalContent'),
-                userInfo: document.getElementById('user-info')
-            };
-            
-            const allRecipes = [
-                // 20 Aperitivos
+        // Mover la lista de recetas fuera de la función principal
+        const allRecipes = [
+            // 20 Aperitivos
                 { id: "patatas-bravas", name: "Patatas Bravas", category: "Aperitivo", time: "30 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1599921867822-6b3a0f0a5fee?q=80&w=800", ingredients: ["1kg de patatas", "Aceite de oliva", "Salsa brava", "Alioli"], steps: ["Pela y corta las patatas en cubos irregulares.", "Fríelas en abundante aceite hasta que estén doradas y tiernas.", "Sírvelas calientes con salsa brava y alioli por encima."] },
                 { id: "gambas-al-ajillo", name: "Gambas al Ajillo", category: "Aperitivo", time: "10 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1639537339294-35e2193b134a?q=80&w=800", ingredients: ["250g de gambas peladas", "4 dientes de ajo", "1 guindilla", "Aceite de oliva virgen extra", "Sal", "Perejil"], steps: ["Lamina los ajos y sofríelos con la guindilla en una cazuela de barro.", "Cuando los ajos empiecen a dorarse, añade las gambas y una pizca de sal.", "Saltea un par de minutos hasta que las gambas estén hechas.", "Espolvorea perejil picado y sirve inmediatamente."] },
                 { id: "gildas", name: "Gildas", category: "Aperitivo", time: "5 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Gildas", ingredients: ["Anchoas en salazón", "Aceitunas verdes sin hueso", "Guindillas en vinagre (piparras)"], steps: ["Ensarta en un palillo una aceituna, una guindilla doblada por la mitad y una anchoa."] },
@@ -133,11 +111,4 @@
                 // 20 Primeros
                 { id: "gazpacho-andaluz", name: "Gazpacho Andaluz", category: "Primero", time: "15 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1625944228743-9281a173a113?q=80&w=800", ingredients: ["1 kg de tomates maduros", "1 pimiento verde", "1 pepino", "1 diente de ajo", "50g de pan", "Aceite de oliva virgen extra", "Vinagre de Jerez", "Sal"], steps: ["Lava y trocea las verduras.", "Pon todo en la batidora con el pan, aceite, vinagre y sal.", "Bate hasta que quede una crema fina.", "Enfría en la nevera antes de servir."] },
                 { id: "lentejas-estofadas", name: "Lentejas Estofadas", category: "Primero", time: "50 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1625944132003-24153a812b1b?q=80&w=800", ingredients: ["400g de lentejas pardinas", "1 chorizo", "1 patata", "1 zanahoria", "1 cebolla", "1 hoja de laurel", "Pimentón dulce"], steps: ["Sofríe la cebolla y zanahoria picadas.", "Añade el chorizo y la patata en trozos. Rehoga.", "Incorpora las lentejas, el laurel y el pimentón.", "Cubre con agua, añade sal y cuece a fuego lento 40-50 minutos."] },
-                { id: "sopa-de-ajo", name: "Sopa de Ajo (Castellana)", category: "Primero", time: "25 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Sopa+de+Ajo", ingredients: ["Pan duro", "6 dientes de ajo", "Jamón serrano", "Pimentón dulce", "Caldo de pollo", "2 huevos", "Aceite"], steps: ["Corta el pan en rebanadas finas.", "Dora los ajos laminados y el jamón.", "Retira del fuego, añade el pimentón. Remueve.", "Añade el pan y el caldo. Cuece 15 min.", "Casca los huevos en la sopa y remueve para que se cuajen."] },
-                { id: "ensaladilla-rusa", name: "Ensaladilla Rusa", category: "Primero", time: "40 min + reposo", difficulty: "Medio", image: "https://images.unsplash.com/photo-1604329227594-3d9697ac7249?q=80&w=800", ingredients: ["500g patatas", "2 zanahorias", "2 huevos", "1 lata de atún", "Guisantes", "Aceitunas", "Mayonesa"], steps: ["Cuece las patatas, zanahorias y huevos.", "Pela y pica todo en dados pequeños.", "Mezcla la patata, zanahoria, huevo, atún, guisantes y aceitunas.", "Añade mayonesa y mezcla con cuidado.", "Deja enfriar en la nevera al menos 2 horas."] },
-                { id: "salmorejo-cordobes", name: "Salmorejo Cordobés", category: "Primero", time: "15 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1598514982249-916212e62444?q=80&w=800", ingredients: ["1kg de tomates pera", "200g de pan de telera", "1 diente de ajo", "Aceite de oliva", "Sal", "Jamón serrano", "Huevo duro"], steps: ["Tritura los tomates y cuélalos.", "Añade el pan, el ajo y la sal. Tritura.", "Emulsiona añadiendo el aceite en un hilo fino.", "Sirve frío con jamón y huevo duro picado."] },
-                { id: "fabada-asturiana", name: "Fabada Asturiana", category: "Primero", time: "3 horas", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Fabada", ingredients: ["500g fabes", "2 morcillas asturianas", "2 chorizos asturianos", "200g panceta", "Azafrán"], steps: ["Deja las fabes en remojo la noche anterior.", "Pon las fabes y el compango en una olla, cubre con agua fría y lleva a ebullición.", "Desespuma y baja el fuego. Cuece lentamente 2-3 horas.", "'Asusta' las fabes con agua fría un par de veces.", "Añade el azafrán al final y deja reposar."] },
-                { id: "pisto-manchego", name: "Pisto Manchego", category: "Primero", time: "45 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1571991285272-46a2a078e515?q=80&w=800", ingredients: ["1 cebolla", "2 pimientos verdes", "1 pimiento rojo", "1 calabacín", "800g tomate triturado", "Aceite", "Sal"], steps: ["Pica todas las verduras en dados.", "Pocha la cebolla y los pimientos.", "Añade el calabacín y cocina 15 minutos.", "Vierte el tomate y cocina a fuego lento 25 minutos."] },
-                { id: "marmitako", name: "Marmitako", category: "Primero", time: "60 min", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Marmitako", ingredients: ["500g de bonito del norte", "4 patatas", "1 cebolla", "2 pimientos choriceros", "1 pimiento verde", "Caldo de pescado"], steps: ["Hidrata los pimientos choriceros y saca la pulpa.", "Sofríe la cebolla y pimiento verde.", "Añade las patatas cascadas y la pulpa del choricero. Rehoga.", "Cubre con caldo y cuece hasta que la patata esté tierna.", "Añade el bonito en dados y cuece 2 minutos. Deja reposar."] },
-                { id: "crema-de-calabacin", name: "Crema de Calabacín", category: "Primero", time: "30 min", difficulty: "Fácil", image: "https://images.unsplash.com/photo-1505586549231-c352c5f21533?q=80&w=800", ingredients: ["2 calabacines", "1 patata", "1 cebolla", "Nata líquida (opcional)", "Caldo de verduras", "Quesitos"], steps: ["Pocha la cebolla en una olla.", "Añade el calabacín y la patata en trozos. Rehoga.", "Cubre con caldo y cuece 20 minutos.", "Tritura todo con la batidora. Añade los quesitos y un chorrito de nata para más cremosidad.", "Sirve caliente."] },
-                { id: "arroz-caldoso-con-bogavante", name: "Arroz con Bogavante", category: "Primero", time: "50 min", difficulty: "Difícil", image: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=800", ingredients: ["1 bogavante", "300g arroz bomba", "1 cebolla",
+                { id: "sopa-de-ajo", name: "Sopa de Ajo (Castellana)", category: "Primero", time: "25 min", difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Sopa+de+Ajo", ingredients: ["Pan duro", "6 dientes de ajo", "Jamón serrano", "Pimentón dulce", "Caldo de pollo", "2 huevos", "Aceite"], steps: ["Corta el pan en rebanadas finas.", "Dora los ajos laminados y el jamón.", "Retira del fuego, añade el pimentón. Remueve
