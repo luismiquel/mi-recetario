@@ -73,10 +73,10 @@
             </div>
         </div>
 
-        <!-- Indicador de Carga -->
+        <!-- Indicador de Carga (ahora se oculta casi al instante) -->
         <div id="loader" class="text-center py-12">
             <svg class="animate-spin h-8 w-8 text-amber-700 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-            <p class="mt-2 text-gray-600">Cargando recetas...</p>
+            <p class="mt-2 text-gray-600">Iniciando aplicación...</p>
         </div>
         
         <div id="no-results" class="hidden text-center py-12">
@@ -171,26 +171,34 @@
             { id: "tocino-de-cielo", name: "Tocino de Cielo", category: "Postre", time: "50 min", difficulty: "Medio", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Tocino+Cielo", ingredients: ["10 yemas de huevo", "250g azúcar", "150ml agua", "Caramelo líquido"], steps: ["Haz un almíbar con el agua y el azúcar.", "Bate las yemas en un bol.", "Vierte el almíbar templado sobre las yemas en un hilo fino, sin dejar de batir.", "Cubre el fondo de un molde con caramelo.", "Vierte la mezcla y cocina al baño maría en el horno a 160°C durante 30 minutos."] },
         ];
 
-        // --- LÓGICA DE AUTENTICACIÓN ---
+        // --- OPTIMIZACIÓN DE ARRANQUE ---
+        // 1. Cargar recetas locales inmediatamente
+        allRecipes = initialRecipes;
+        displayRecipes();
+        dom.loader.style.display = 'none';
+
+        // 2. Conectar a Firebase en segundo plano
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 userId = user.uid;
+                dom.userInfo.textContent = `Sincronizando...`;
+                await loadUserData(); // Carga favoritos
+                displayRecipes(); // Vuelve a dibujar para mostrar corazones
                 dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
-                await loadUserData();
-                await fetchRecipes();
+                populateInitialDataIfNeeded(); // Sincroniza con la BD si es necesario
             } else {
                 signInAnonymously(auth).catch((error) => console.error("Error login anónimo:", error));
             }
         });
 
-        // --- LÓGICA DE DATOS ---
-        async function populateInitialData() {
+        // --- LÓGICA DE DATOS (RENOMBRADA PARA CLARIDAD) ---
+        async function populateInitialDataIfNeeded() {
             const recipesRef = collection(db, `artifacts/${appId}/public/data/recipes`);
             const q = query(recipesRef);
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.docs.length < initialRecipes.length) {
-                console.log("Base de datos incompleta. Sincronizando 40 recetas...");
+                console.log("Base de datos incompleta. Sincronizando 40 recetas en segundo plano...");
                 const batch = writeBatch(db);
                 initialRecipes.forEach(recipe => {
                     const docRef = doc(recipesRef, recipe.id);
@@ -200,18 +208,7 @@
                 console.log("Recetas sincronizadas.");
             }
         }
-
-        async function fetchRecipes() {
-            dom.loader.style.display = 'block';
-            dom.grid.innerHTML = '';
-            await populateInitialData();
-            const recipesCol = collection(db, `artifacts/${appId}/public/data/recipes`);
-            const recipeSnapshot = await getDocs(recipesCol);
-            allRecipes = recipeSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-            displayRecipes();
-            dom.loader.style.display = 'none';
-        }
-
+        
         async function loadUserData() {
             if (!userId) return;
             const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
@@ -220,12 +217,19 @@
         }
 
         async function toggleFavorite(recipeId) {
-            if (!userId) return;
+            if (!userId) {
+                alert("Necesitas estar conectado para guardar favoritos.");
+                return;
+            }
             const isFavorite = userFavorites.includes(recipeId);
             userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
+            
+            // Actualiza la UI inmediatamente para una respuesta rápida
+            displayRecipes(); 
+
+            // Guarda en Firebase en segundo plano
             const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
             await setDoc(userDocRef, { favorites: userFavorites });
-            displayRecipes();
         }
 
         // --- LÓGICA DE RENDERIZADO ---
@@ -259,7 +263,7 @@
                     const isFavorite = userFavorites.includes(recipe.id);
                     const card = document.createElement('div');
                     card.className = 'recipe-card bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer recipe-card-enter';
-                    card.style.animationDelay = `${index * 40}ms`;
+                    card.style.animationDelay = `${index * 30}ms`;
 
                     card.innerHTML = `
                         <div class="relative">
@@ -317,42 +321,4 @@
             document.getElementById('closeModalBtn').addEventListener('click', closeModal);
             document.getElementById('cookingModeBtn').addEventListener('click', () => {
                 document.getElementById('recipe-content-normal').classList.add('hidden'); document.getElementById('recipe-content-cooking').classList.remove('hidden'); });
-            document.getElementById('exitCookingModeBtn').addEventListener('click', () => {
-                document.getElementById('recipe-content-normal').classList.remove('hidden'); document.getElementById('recipe-content-cooking').classList.add('hidden'); });
-        }
-        
-        function closeModal() {
-            dom.modalContent.classList.remove('scale-100');
-            setTimeout(() => { dom.modal.style.display = 'none'; dom.modalContent.innerHTML = ''; }, 300);
-        }
-
-        // --- EVENT LISTENERS ---
-        dom.search.addEventListener('input', displayRecipes);
-
-        dom.filterAllBtn.addEventListener('click', () => {
-            currentFilter = 'all';
-            dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
-            displayRecipes();
-        });
-        dom.filterFavBtn.addEventListener('click', () => {
-            currentFilter = 'favorites';
-            dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
-            displayRecipes();
-        });
-        
-        dom.categoryFilters.addEventListener('click', (e) => {
-            if (e.target.matches('.category-btn')) {
-                currentCategory = e.target.dataset.category;
-                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                displayRecipes();
-            }
-        });
-        
-        dom.modal.addEventListener('click', (event) => { if (event.target === dom.modal) closeModal(); });
-        
-        dom.filterAllBtn.classList.add('active');
-
-    </script>
-</body>
-</html>
+            document.getElementById('exitCookingModeBtn
