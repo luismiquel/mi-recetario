@@ -426,6 +426,7 @@
                              <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
                                 <button id="cookingModeBtn" class="bg-amber-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-900 transition shadow-lg">Activar Modo Cocina</button>
                                 <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                                <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
                             </div>
                         </div>
                         <div id="recipe-content-cooking" class="hidden">
@@ -442,6 +443,23 @@
                 document.getElementById('exitCookingModeBtn').addEventListener('click', () => {
                     document.getElementById('recipe-content-normal').classList.remove('hidden'); document.getElementById('recipe-content-cooking').classList.add('hidden'); });
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
+                
+                const shareBtn = document.getElementById('shareRecipeBtn');
+                if (navigator.share) {
+                    shareBtn.addEventListener('click', async () => {
+                        try {
+                            await navigator.share({
+                                title: recipe.name,
+                                text: `¡Mira esta receta de ${recipe.name}!`,
+                                url: window.location.href,
+                            });
+                        } catch (err) {
+                            console.error('Error al compartir:', err);
+                        }
+                    });
+                } else {
+                    shareBtn.style.display = 'none';
+                }
             }
             
             function closeModal() {
