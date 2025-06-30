@@ -71,6 +71,49 @@
         .category-btn, .filter-btn {
             transition: all 0.2s ease-in-out;
         }
+        /* Estilos de Impresión */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #recipeModal, #recipeModal * {
+                visibility: visible;
+            }
+            #recipeModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background: none;
+            }
+            #modalContent {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+                max-h: none;
+                overflow-y: visible;
+                background-color: white !important;
+                color: black !important;
+            }
+            #closeModalBtn, .modal-buttons-container {
+                display: none !important;
+            }
+            .dark #modalContent, .dark #modalContent * {
+                background-color: white !important;
+                color: black !important;
+            }
+            h2, h4 {
+                color: black !important;
+            }
+            ul, ol {
+                color: #333 !important;
+            }
+            img {
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+            }
+        }
     </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -380,7 +423,10 @@
                                     <ol class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300">${recipe.steps.map(step => `<li>${step}</li>`).join('')}</ol>
                                 </div>
                             </div>
-                             <div class="text-center mt-8"><button id="cookingModeBtn" class="bg-amber-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-900 transition shadow-lg">Activar Modo Cocina</button></div>
+                             <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
+                                <button id="cookingModeBtn" class="bg-amber-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-900 transition shadow-lg">Activar Modo Cocina</button>
+                                <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                            </div>
                         </div>
                         <div id="recipe-content-cooking" class="hidden">
                             <h4 class="text-2xl font-semibold mb-6 text-center">Modo Cocina</h4>
@@ -395,6 +441,7 @@
                     document.getElementById('recipe-content-normal').classList.add('hidden'); document.getElementById('recipe-content-cooking').classList.remove('hidden'); });
                 document.getElementById('exitCookingModeBtn').addEventListener('click', () => {
                     document.getElementById('recipe-content-normal').classList.remove('hidden'); document.getElementById('recipe-content-cooking').classList.add('hidden'); });
+                document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
             }
             
             function closeModal() {
