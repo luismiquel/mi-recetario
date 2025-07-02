@@ -91,7 +91,7 @@
             #recipeModal, #recipeModal * { visibility: visible; }
             #recipeModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
             #modalContent { box-shadow: none; border: none; max-width: 100%; max-h: none; overflow-y: visible; background-color: white !important; color: black !important; }
-            #closeModalBtn, .modal-buttons-container, #add-to-cart-btn, #shareRecipeBtn, #printRecipeBtn, #cookingModeBtn, .timer-btn { display: none !important; }
+            #closeModalBtn, .modal-buttons-container, #add-to-cart-btn, #shareRecipeBtn, #printRecipeBtn, #cookingModeBtn, .timer-btn, #notes-section, #gemini-features { display: none !important; }
             .dark #modalContent, .dark #modalContent * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
@@ -131,11 +131,7 @@
                 </div>
             </div>
             <div id="categoryFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4">
-                <button data-category="all" class="category-btn active px-3 py-1.5 rounded-full text-sm">Todos</button>
-                <button data-category="Aperitivo" class="category-btn px-3 py-1.5 rounded-full text-sm">Aperitivos</button>
-                <button data-category="Primero" class="category-btn px-3 py-1.5 rounded-full text-sm">Primeros</button>
-                <button data-category="Segundo" class="category-btn px-3 py-1.5 rounded-full text-sm">Segundos</button>
-                <button data-category="Postre" class="category-btn px-3 py-1.5 rounded-full text-sm">Postres</button>
+                <!-- Botones de categoría -->
             </div>
         </div>
 
@@ -197,8 +193,8 @@
             const db = getFirestore(app);
             const auth = getAuth(app);
 
-            let userFavorites = [], userId = null;
-            let shoppingList = [];
+            let userFavorites = [], userNotes = {}, shoppingList = [];
+            let userId = null;
             let activeTimers = [];
             let currentFilter = 'all', currentCategory = 'all';
 
@@ -225,7 +221,7 @@
             };
             
             const allRecipes = [
-                // 20 Aperitivos
+                // 80 recetas
                 { id: "patatas-bravas", name: "Patatas Bravas", category: "Aperitivo", time: "30 min", servings: 4, difficulty: "Fácil", image: "https://images.unsplash.com/photo-1599921867822-6b3a0f0a5fee?q=80&w=800", ingredients: [{amount: 1, unit: 'kg', name: 'de patatas'}, {amount: null, unit: '', name: 'Aceite de oliva'}, {amount: null, unit: '', name: 'Salsa brava'}, {amount: null, unit: '', name: 'Alioli'}], steps: [{text: "Pela y corta las patatas en cubos irregulares."}, {text: "Fríelas en abundante aceite hasta que estén doradas y tiernas.", duration: 15}, {text: "Sírvelas calientes con salsa brava y alioli por encima."}] },
                 { id: "gambas-al-ajillo", name: "Gambas al Ajillo", category: "Aperitivo", time: "10 min", servings: 4, difficulty: "Fácil", image: "https://images.unsplash.com/photo-1639537339294-35e2193b134a?q=80&w=800", ingredients: [{amount: 250, unit: 'g', name: 'de gambas peladas'}, {amount: 4, unit: '', name: 'dientes de ajo'}, {amount: 1, unit: '', name: 'guindilla'}, {amount: null, unit: '', name: 'Aceite de oliva virgen extra'}, {amount: null, unit: '', name: 'Sal'}, {amount: null, unit: '', name: 'Perejil'}], steps: [{text: "Lamina los ajos y sofríelos con la guindilla en una cazuela de barro."}, {text: "Cuando los ajos empiecen a dorarse, añade las gambas y una pizca de sal."}, {text: "Saltea un par de minutos hasta que las gambas estén hechas.", duration: 2}, {text: "Espolvorea perejil picado y sirve inmediatamente."}] },
                 { id: "gildas", name: "Gildas", category: "Aperitivo", time: "5 min", servings: 12, difficulty: "Fácil", image: "https://placehold.co/800x600/a38b72/4a2e0a?text=Gildas", ingredients: [{amount: 12, unit: '', name: 'anchoas en salazón'}, {amount: 12, unit: '', name: 'aceitunas verdes sin hueso'}, {amount: 12, unit: '', name: 'guindillas en vinagre (piparras)'}], steps: [{text: "Ensarta en un palillo una aceituna, una guindilla doblada por la mitad y una anchoa."}] },
@@ -354,8 +350,8 @@
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid;
-                    dom.userInfo.textContent = `Sincronizando favoritos...`;
-                    await loadUserFavorites();
+                    dom.userInfo.textContent = `Sincronizando...`;
+                    await loadUserData();
                     updateFavoriteIcons();
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
                 } else {
@@ -363,26 +359,33 @@
                 }
             });
 
-            async function loadUserFavorites() {
+            async function loadUserData() {
                 if (!userId) return;
                 const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
                 const userDoc = await getDoc(userDocRef);
-                userFavorites = userDoc.exists() ? (userDoc.data().favorites || []) : [];
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    userFavorites = data.favorites || [];
+                    shoppingList = data.shoppingList || [];
+                    userNotes = data.notes || {};
+                }
+            }
+
+            async function saveData(data) {
+                if (!userId) return;
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                await setDoc(userDocRef, data, { merge: true });
             }
 
             async function toggleFavorite(recipeId) {
-                if (!userId) {
-                    alert("Necesitas estar conectado para guardar favoritos.");
-                    return;
-                }
+                if (!userId) return;
                 const isFavorite = userFavorites.includes(recipeId);
                 userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
                 
                 updateFavoriteIcons();
                 applyFilters();
 
-                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                await setDoc(userDocRef, { favorites: userFavorites });
+                await saveData({ favorites: userFavorites });
             }
 
             function updateFavoriteIcons() {
@@ -457,11 +460,6 @@
                                 <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
                             </div>
                         </div>
-                        <div id="recipe-content-cooking" class="hidden">
-                            <h4 class="text-2xl font-semibold mb-6 text-center">Modo Cocina</h4>
-                            <div class="text-2xl md:text-3xl space-y-8 text-center">${recipe.steps.map((step, index) => `<div class="p-4 rounded-lg bg-amber-50 dark:bg-stone-900"><p class="font-bold text-amber-800 dark:text-amber-500 mb-2">Paso ${index + 1}</p><p>${step.text}</p></div>`).join('')}</div>
-                            <div class="text-center mt-8"><button id="exitCookingModeBtn" class="bg-gray-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-700 transition shadow-lg">Salir del Modo Cocina</button></div>
-                        </div>
                     </div>`;
                 
                 const servingsInput = document.getElementById('servings-input');
@@ -506,10 +504,6 @@
                 dom.modal.style.display = 'flex';
                 setTimeout(() => dom.modalContent.classList.add('scale-100'), 10);
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-                document.getElementById('cookingModeBtn').addEventListener('click', () => {
-                    document.getElementById('recipe-content-normal').classList.add('hidden'); document.getElementById('recipe-content-cooking').classList.remove('hidden'); });
-                document.getElementById('exitCookingModeBtn').addEventListener('click', () => {
-                    document.getElementById('recipe-content-normal').classList.remove('hidden'); document.getElementById('recipe-content-cooking').classList.add('hidden'); });
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
                 
                 const shareBtn = document.getElementById('shareRecipeBtn');
@@ -528,6 +522,11 @@
                 } else {
                     shareBtn.style.display = 'none';
                 }
+
+                document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+                    addToShoppingList(recipe);
+                    alert(`${recipe.name} añadida a la lista de la compra.`);
+                });
             }
             
             function closeModal() {
