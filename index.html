@@ -149,33 +149,10 @@
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- Modal -->
     <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
         <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300"></div>
     </div>
-    <div id="shoppingListModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col">
-            <div class="p-4 border-b dark:border-stone-700 flex justify-between items-center">
-                <h2 class="text-2xl font-bold text-amber-900 dark:text-amber-500">Lista de la Compra</h2>
-                <button id="closeShoppingListBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
-            <div id="shoppingListContent" class="p-6 overflow-y-auto flex-grow"></div>
-            <div class="p-4 border-t dark:border-stone-700">
-                <button id="clearShoppingListBtn" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">Limpiar Lista</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Botón flotante para Lista de la Compra -->
-    <button id="shoppingListFAB" class="fixed bottom-6 right-6 bg-amber-800 text-white p-4 rounded-full shadow-lg hover:bg-amber-900 transition transform hover:scale-110">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-    </button>
-    
-    <!-- Contenedor de Temporizadores Activos -->
-    <div id="timers-container" class="fixed bottom-0 left-1/2 -translate-x-1/2 flex gap-2 p-2"></div>
-
 
     <!-- Pie de página -->
     <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
@@ -197,9 +174,7 @@
             const db = getFirestore(app);
             const auth = getAuth(app);
 
-            let userFavorites = [], userNotes = {}, shoppingList = [];
-            let userId = null;
-            let activeTimers = [];
+            let userFavorites = [], userId = null;
             let currentFilter = 'all', currentCategory = 'all';
 
             const dom = {
@@ -216,16 +191,10 @@
                 darkIcon: document.getElementById('theme-toggle-dark-icon'),
                 lightIcon: document.getElementById('theme-toggle-light-icon'),
                 copyrightYear: document.getElementById('copyright-year'),
-                shoppingListFAB: document.getElementById('shoppingListFAB'),
-                shoppingListModal: document.getElementById('shoppingListModal'),
-                shoppingListContent: document.getElementById('shoppingListContent'),
-                closeShoppingListBtn: document.getElementById('closeShoppingListBtn'),
-                clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
-                timersContainer: document.getElementById('timers-container'),
             };
             
             const allRecipes = [
-                // 80 recetas
+                // 80 recetas (lista completa)
                 { id: "patatas-bravas", name: "Patatas Bravas", category: "Aperitivo", time: "30 min", servings: 4, difficulty: "Fácil", image: "https://images.unsplash.com/photo-1599921867822-6b3a0f0a5fee?q=80&w=800", ingredients: [{amount: 1, unit: 'kg', name: 'de patatas'}, {amount: null, unit: '', name: 'Aceite de oliva'}, {amount: null, unit: '', name: 'Salsa brava'}, {amount: null, unit: '', name: 'Alioli'}], steps: [{text: "Pela y corta las patatas en cubos irregulares."}, {text: "Fríelas en abundante aceite hasta que estén doradas y tiernas.", duration: 15}, {text: "Sírvelas calientes con salsa brava y alioli por encima."}] },
                 { id: "gambas-al-ajillo", name: "Gambas al Ajillo", category: "Aperitivo", time: "10 min", servings: 4, difficulty: "Fácil", image: "https://images.unsplash.com/photo-1639537339294-35e2193b134a?q=80&w=800", ingredients: [{amount: 250, unit: 'g', name: 'de gambas peladas'}, {amount: 4, unit: '', name: 'dientes de ajo'}, {amount: 1, unit: '', name: 'guindilla'}, {amount: null, unit: '', name: 'Aceite de oliva virgen extra'}, {amount: null, unit: '', name: 'Sal'}, {amount: null, unit: '', name: 'Perejil'}], steps: [{text: "Lamina los ajos y sofríelos con la guindilla en una cazuela de barro."}, {text: "Cuando los ajos empiecen a dorarse, añade las gambas y una pizca de sal."}, {text: "Saltea un par de minutos hasta que las gambas estén hechas.", duration: 2}, {text: "Espolvorea perejil picado y sirve inmediatamente."}] },
                 // ... (el resto de las 78 recetas van aquí)
@@ -243,4 +212,274 @@
                                 <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.category}</div>
                                 <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:bg-stone-700/80 dark:hover:bg-stone-600 transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
-                                </but
+                                </button>
+                                <div class="p-4 flex-grow flex flex-col">
+                                    <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.name}</h3>
+                                    <div class="flex items-center text-sm text-gray-500 dark:text-stone-400 mt-2">
+                                        <span>${recipe.time}</span><span class="mx-2">|</span><span>${recipe.difficulty}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                dom.grid.innerHTML = recipeHTML;
+                addCardEventListeners();
+            }
+            
+            function addCardEventListeners() {
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const recipe = allRecipes.find(r => r.id === card.dataset.id);
+                        if (recipe) showRecipeDetail(recipe);
+                    });
+                    card.querySelector('.favorite-btn').addEventListener('click', e => {
+                        e.stopPropagation();
+                        toggleFavorite(card.dataset.id);
+                    });
+                });
+            }
+            
+            initializeUI();
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    dom.userInfo.textContent = `Sincronizando...`;
+                    await loadUserData();
+                    updateFavoriteIcons();
+                    dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
+                } else {
+                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo:", error));
+                }
+            });
+
+            async function loadUserData() {
+                if (!userId) return;
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    userFavorites = data.favorites || [];
+                }
+            }
+
+            async function saveData(data) {
+                if (!userId) return;
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                await setDoc(userDocRef, data, { merge: true });
+            }
+
+            async function toggleFavorite(recipeId) {
+                if (!userId) return;
+                const isFavorite = userFavorites.includes(recipeId);
+                userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
+                
+                updateFavoriteIcons();
+                applyFilters();
+
+                await saveData({ favorites: userFavorites });
+            }
+
+            function updateFavoriteIcons() {
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    const heartIcon = card.querySelector('.favorite-btn svg');
+                    if (userFavorites.includes(card.dataset.id)) {
+                        heartIcon.classList.add('text-red-500', 'fill-current');
+                        heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
+                    } else {
+                        heartIcon.classList.remove('text-red-500', 'fill-current');
+                        heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
+                    }
+                });
+            }
+
+            function applyFilters() {
+                const searchTerm = dom.search.value.toLowerCase();
+                let visibleCount = 0;
+
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    const id = card.dataset.id;
+                    const category = card.dataset.category;
+                    const searchData = card.dataset.search;
+
+                    const isFavorite = userFavorites.includes(id);
+                    
+                    const categoryMatch = currentCategory === 'all' || category === currentCategory;
+                    const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
+                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
+                    
+                    if (categoryMatch && searchMatch && favoriteMatch) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                dom.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+            
+            function showRecipeDetail(recipe) {
+                dom.modalContent.innerHTML = `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.name}</h2>
+                            <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <img src="${recipe.image}" alt="[Imagen de ${recipe.name}]" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <div id="recipe-content-normal">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
+                                        <div class="flex items-center gap-2">
+                                            <label for="servings-input" class="text-sm">Porciones:</label>
+                                            <input type="number" id="servings-input" value="${recipe.servings}" min="1" class="w-16 p-1 border rounded dark:bg-stone-700 dark:border-stone-600">
+                                        </div>
+                                    </div>
+                                    <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
+                                    <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
+                                </div>
+                            </div>
+                             <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
+                                <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                                <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                const servingsInput = document.getElementById('servings-input');
+                const ingredientList = document.getElementById('ingredient-list');
+                const stepsList = document.getElementById('steps-list');
+
+                function renderIngredients(servings) {
+                    ingredientList.innerHTML = recipe.ingredients.map(ing => {
+                        let amount = ing.amount;
+                        if(amount) {
+                            amount = (amount / recipe.servings) * servings;
+                            if (amount % 1 !== 0) {
+                                amount = amount.toFixed(1);
+                            }
+                        }
+                        return `<li>${amount ? amount : ''}${ing.unit ? ' ' + ing.unit : ''} ${ing.name}</li>`;
+                    }).join('');
+                }
+
+                function renderSteps() {
+                    stepsList.innerHTML = '';
+                    recipe.steps.forEach(step => {
+                        const li = document.createElement('li');
+                        li.className = 'flex justify-between items-center gap-2';
+                        li.innerHTML = `<span>${step.text}</span>`;
+                        stepsList.appendChild(li);
+                    });
+                }
+
+                renderIngredients(recipe.servings);
+                renderSteps();
+                servingsInput.addEventListener('change', (e) => renderIngredients(e.target.value));
+
+                dom.modal.style.display = 'flex';
+                setTimeout(() => dom.modalContent.classList.add('scale-100'), 10);
+                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+                document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
+                
+                const shareBtn = document.getElementById('shareRecipeBtn');
+                if (navigator.share) {
+                    shareBtn.addEventListener('click', async () => {
+                        try {
+                            await navigator.share({
+                                title: recipe.name,
+                                text: `¡Mira esta receta de ${recipe.name}!`,
+                                url: window.location.href,
+                            });
+                        } catch (err) {
+                            console.error('Error al compartir:', err);
+                        }
+                    });
+                } else {
+                    shareBtn.style.display = 'none';
+                }
+            }
+            
+            function closeModal() {
+                dom.modalContent.classList.remove('scale-100');
+                setTimeout(() => { dom.modal.style.display = 'none'; dom.modalContent.innerHTML = ''; }, 300);
+            }
+
+            // --- MODO OSCURO ---
+            function setupTheme() {
+                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                    dom.lightIcon.classList.remove('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    dom.darkIcon.classList.remove('hidden');
+                }
+            }
+
+            dom.themeToggle.addEventListener('click', function() {
+                dom.darkIcon.classList.toggle('hidden');
+                dom.lightIcon.classList.toggle('hidden');
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
+
+            setupTheme();
+
+            // --- EVENT LISTENERS ---
+            dom.search.addEventListener('input', applyFilters);
+
+            dom.filterAllBtn.addEventListener('click', () => {
+                currentFilter = 'all';
+                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+                applyFilters();
+            });
+            dom.filterFavBtn.addEventListener('click', () => {
+                currentFilter = 'favorites';
+                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+                applyFilters();
+            });
+            
+            dom.categoryFilters.addEventListener('click', (e) => {
+                if (e.target.matches('.category-btn')) {
+                    currentCategory = e.target.dataset.category;
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    applyFilters();
+                }
+            });
+            
+            dom.modal.addEventListener('click', (event) => { if (event.target === dom.modal) closeModal(); });
+            
+            dom.filterAllBtn.classList.add('active');
+            
+            // --- COPYRIGHT YEAR ---
+            dom.copyrightYear.textContent = new Date().getFullYear();
+        }
+
+        // Ejecuta la app cuando el DOM esté listo
+        runRecipeApp();
+    </script>
+</body>
+</html>
