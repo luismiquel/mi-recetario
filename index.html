@@ -339,6 +339,7 @@
                 if (userDoc.exists()) {
                     const data = userDoc.data();
                     userFavorites = data.favorites || [];
+                    userNotes = data.notes || {};
                 }
             }
 
