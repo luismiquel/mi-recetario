@@ -88,7 +88,7 @@
             #recipeModal, #recipeModal * { visibility: visible; }
             #recipeModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
             #modalContent { box-shadow: none; border: none; max-width: 100%; max-h: none; overflow-y: visible; background-color: white !important; color: black !important; }
-            #closeModalBtn, .modal-buttons-container { display: none !important; }
+            #closeModalBtn, .modal-buttons-container, #cooking-mode-view { display: none !important; }
             .dark #modalContent, .dark #modalContent * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
@@ -142,7 +142,7 @@
 
         <!-- Cuadrícula de Recetas -->
         <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-            <!-- Recetas se insertan aquí directamente desde el HTML -->
+            <!-- Las recetas se insertan aquí -->
         </div>
     </div>
 
@@ -150,6 +150,23 @@
     <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
         <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300"></div>
     </div>
+    
+    <!-- Vista de Cocina Guiada -->
+    <div id="cooking-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-50 hidden flex-col">
+        <div id="cooking-step-content" class="flex-grow flex flex-col justify-center items-center p-8 text-center">
+            <p id="step-counter" class="text-lg text-amber-600 dark:text-amber-400 font-semibold mb-4"></p>
+            <p id="step-text" class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100"></p>
+        </div>
+        <div id="cooking-controls" class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
+            <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Anterior</button>
+            <button id="repeat-step-btn" class="p-4 rounded-lg bg-amber-500 text-white font-bold col-span-1">Repetir</button>
+            <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Siguiente</button>
+        </div>
+        <button id="exit-cooking-btn" class="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full">
+            <svg class="w-6 h-6 text-slate-600 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+
 
     <!-- Pie de página -->
     <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
@@ -191,7 +208,7 @@
             };
             
             const allRecipes = [
-                // 80 recetas
+                // 80 recetas (lista completa con imágenes)
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
                 { categoria: "Aperitivo", titulo: "Garbanzos crujientes al horno", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Garbanzos", ingredientes: ["200 g garbanzos cocidos", "1 cda. AOVE", "1/2 cdita pimentón ahumado", "1/4 cdita comino", "Sal"], pasos: ["Mezcla garbanzos con aceite y especias.", "Hornea 35 min a 180 °C.", "Enfría y sirve."] },
                 { categoria: "Aperitivo", titulo: "Hummus clásico con crudités", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Hummus", ingredientes: ["400 g garbanzos cocidos", "2 cdas. tahini", "1 diente de ajo", "Zumo de 1 limón", "Aceite de oliva", "Palitos de zanahoria y apio"], pasos: ["Tritura los garbanzos con tahini, ajo, limón y aceite.", "Sirve con los crudités de verdura."] },
@@ -415,6 +432,7 @@
                              <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
                                 <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
                                 <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
+                                <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Iniciar Cocina Guiada</button>
                             </div>
                         </div>
                     </div>`;
@@ -446,6 +464,8 @@
                 } else {
                     shareBtn.style.display = 'none';
                 }
+                
+                document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
             }
             
             function closeModal() {
@@ -517,6 +537,68 @@
             
             // --- COPYRIGHT YEAR ---
             dom.copyrightYear.textContent = new Date().getFullYear();
+
+            // --- ASISTENTE DE VOZ ---
+            const cookingModeView = document.getElementById('cooking-mode-view');
+            const stepCounter = document.getElementById('step-counter');
+            const stepText = document.getElementById('step-text');
+            const prevStepBtn = document.getElementById('prev-step-btn');
+            const repeatStepBtn = document.getElementById('repeat-step-btn');
+            const nextStepBtn = document.getElementById('next-step-btn');
+            const exitCookingBtn = document.getElementById('exit-cooking-btn');
+
+            let currentStep = 0;
+            let currentRecipeSteps = [];
+
+            function speak(text) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                speechSynthesis.speak(utterance);
+            }
+
+            function updateCookingStep() {
+                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
+                stepText.textContent = currentRecipeSteps[currentStep];
+                speak(currentRecipeSteps[currentStep]);
+            }
+
+            function startCookingMode(recipe) {
+                currentRecipeSteps = recipe.pasos;
+                currentStep = 0;
+                cookingModeView.classList.remove('hidden');
+                cookingModeView.classList.add('flex');
+                updateCookingStep();
+            }
+
+            function exitCookingMode() {
+                speechSynthesis.cancel();
+                cookingModeView.classList.add('hidden');
+                cookingModeView.classList.remove('flex');
+            }
+
+            prevStepBtn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateCookingStep();
+                }
+            });
+
+            nextStepBtn.addEventListener('click', () => {
+                if (currentStep < currentRecipeSteps.length - 1) {
+                    currentStep++;
+                    updateCookingStep();
+                } else {
+                    speak("Has llegado al final de la receta. ¡Buen provecho!");
+                    exitCookingMode();
+                }
+            });
+
+            repeatStepBtn.addEventListener('click', () => {
+                speak(currentRecipeSteps[currentStep]);
+            });
+
+            exitCookingBtn.addEventListener('click', exitCookingMode);
         }
 
         // Ejecuta la app cuando el DOM esté listo
