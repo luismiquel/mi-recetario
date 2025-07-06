@@ -3,17 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Recetario Gourmet</title>
+    <title>Recetario Delicioso</title>
 
+    <!-- Metadatos para PWA -->
     <meta name="theme-color" content="#78350f"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Mi Recetario Gourmet"> 
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=RG">
-    <meta name="mobile-web-app-capable" content="yes"> 
+    <meta name="apple-mobile-web-app-title" content="Recetario">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
     
-    <link rel="manifest" href="data:application/manifest+json,{"name":"Mi Recetario Gourmet","short_name":"RecetarioG","start_url":".","display":"standalone","background_color":"#f8f7f5","theme_color":"#78350f","description":"Tu app de recetas de cocina gourmet.","icons":[{"src":"https://placehold.co/192x192/78350f/ffffff?text=RG","sizes":"192x192","type":"image/png"},{"src":"https://placehold.co/512x512/78350f/ffffff?text=RG","sizes":"512x512","type":"image/png"}]}">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,{
+        &quot;name&quot;: &quot;Recetario Delicioso&quot;,
+        &quot;short_name&quot;: &quot;Recetario&quot;,
+        &quot;start_url&quot;: &quot;.&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;#f8f7f5&quot;,
+        &quot;theme_color&quot;: &quot;#78350f&quot;,
+        &quot;description&quot;: &quot;Tu app de recetas de cocina española.&quot;,
+        &quot;icons&quot;: [{
+            &quot;src&quot;: &quot;https://placehold.co/192x192/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;192x192&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }, {
+            &quot;src&quot;: &quot;https://placehold.co/512x512/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;512x512&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }]
+    }">
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -21,10 +40,12 @@
         }
     </script>
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
 
+    <!-- Estilos personalizados -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -67,30 +88,11 @@
             #recipeModal, #recipeModal * { visibility: visible; }
             #recipeModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
             #modalContent { box-shadow: none; border: none; max-width: 100%; max-h: none; overflow-y: visible; background-color: white !important; color: black !important; }
-            #closeModalBtn, .modal-buttons-container, #cooking-mode-view, #pantry-mode-view { display: none !important; } /* Ocultar despensa en impresión */
+            #closeModalBtn, .modal-buttons-container, #cooking-mode-view { display: none !important; }
             .dark #modalContent, .dark #modalContent * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
             img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        }
-        /* Estilos para el modo despensa */
-        .pantry-tag {
-            @apply inline-flex items-center px-2 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-medium mr-2 mb-2 dark:bg-stone-700 dark:text-amber-200;
-        }
-        .pantry-tag .remove-tag {
-            @apply ml-1 -mr-0.5 h-4 w-4 text-amber-500 dark:text-amber-300 cursor-pointer hover:text-amber-700 dark:hover:text-amber-100;
-        }
-        .pantry-missing-ingredient {
-            @apply text-red-500 line-through;
-        }
-        .pantry-has-ingredient {
-            @apply text-green-600;
-        }
-        .pantry-match-badge {
-            @apply absolute top-2 right-2 bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-full;
-        }
-        .pantry-match-missing-badge {
-            @apply absolute top-2 right-2 bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full;
         }
     </style>
 </head>
@@ -98,11 +100,13 @@
 
     <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        <!-- Cabecera -->
         <header class="relative text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Mi Recetario Gourmet</h1>
-            <p class="text-gray-600 dark:text-stone-400 mt-2">Recetas selectas para tu paladar.</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
+            <p class="text-gray-600 dark:text-stone-400 mt-2">80 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
             
+            <!-- Interruptor Modo Oscuro -->
             <div class="absolute top-0 right-0">
                 <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
                     <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
@@ -111,6 +115,7 @@
             </div>
         </header>
         
+        <!-- Controles -->
         <div class="sticky top-4 bg-f8f7f5/90 dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm">
             <div class="flex flex-col sm:flex-row gap-4 mb-4 px-4">
                 <div class="relative flex-grow">
@@ -120,7 +125,6 @@
                 <div class="flex items-center justify-center shrink-0 gap-2 bg-amber-100 dark:bg-stone-800 p-1 rounded-full">
                     <button id="filterAll" class="filter-btn px-4 py-2 rounded-full text-sm font-medium">Todas</button>
                     <button id="filterFavorites" class="filter-btn px-4 py-2 rounded-full text-sm font-medium">Favoritas</button>
-                    <button id="filterPantry" class="filter-btn px-4 py-2 rounded-full text-sm font-medium">Mi Despensa</button>
                 </div>
             </div>
             <div id="categoryFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4">
@@ -136,143 +140,62 @@
             <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
         </div>
 
+        <!-- Cuadrícula de Recetas -->
         <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-            </div>
+            <!-- Las recetas se insertan aquí -->
+        </div>
     </div>
 
+    <!-- Modal -->
     <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
         <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300"></div>
     </div>
     
+    <!-- Vista de Cocina Guiada -->
     <div id="cooking-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-50 hidden flex-col">
         <div id="cooking-step-content" class="flex-grow flex flex-col justify-center items-center p-8 text-center">
             <p id="step-counter" class="text-lg text-amber-600 dark:text-amber-400 font-semibold mb-4"></p>
             <p id="step-text" class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100"></p>
         </div>
-        <div class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
+        <div id="cooking-controls" class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
             <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Anterior</button>
             <button id="repeat-step-btn" class="p-4 rounded-lg bg-amber-500 text-white font-bold col-span-1">Repetir</button>
             <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Siguiente</button>
         </div>
         <button id="exit-cooking-btn" class="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full">
-            <svg class="w-6 h-6 text-slate-600 dark:text-slate-200" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <svg class="w-6 h-6 text-slate-600 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     </div>
 
-    <div id="pantry-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-40 hidden flex-col p-4 sm:p-8">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-bold text-amber-800 dark:text-amber-400">Mi Despensa</h2>
-            <button id="exit-pantry-btn" class="p-2 bg-slate-100 dark:bg-stone-700 rounded-full">
-                <svg class="w-6 h-6 text-slate-600 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
 
-        <div class="mb-6">
-            <label for="pantryInput" class="block text-sm font-medium text-gray-700 dark:text-stone-300 mb-2">Ingredientes en tu despensa (separados por comas):</label>
-            <div class="flex space-x-2">
-                <input type="text" id="pantryInput" class="flex-grow p-3 border border-gray-300 dark:border-stone-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-stone-800" placeholder="Ej: pollo, tomate, arroz">
-                <button id="addPantryIngredientBtn" class="bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-700 transition">Añadir</button>
-            </div>
-            <div id="pantryTags" class="mt-4 flex flex-wrap gap-2">
-                </div>
-            <button id="clearPantryBtn" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition">Limpiar Despensa</button>
-        </div>
-
-        <h3 class="text-2xl font-bold text-amber-800 dark:text-amber-400 mb-4">Recetas sugeridas:</h3>
-        <p class="text-gray-600 dark:text-stone-400 mb-4 text-sm">Mostrando recetas con 100% de coincidencia o solo 1-2 ingredientes faltantes.</p>
-        
-        <div id="pantryRecipeResults" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-y-auto flex-grow pb-8">
-            </div>
-        <div id="noPantryResults" class="hidden text-center text-xl text-zinc-500 dark:text-zinc-400 mt-12">
-            No se encontraron recetas con los ingredientes de tu despensa.
-        </div>
-    </div>
-
-
+    <!-- Pie de página -->
     <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
         <p class="text-sm text-gray-500 dark:text-stone-400">
             &copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.
         </p>
     </footer>
     
-    <script>
-        // Inicialización de Firebase con compatibilidad, si está disponible
-        let auth = null;
-        let db = null;
-        let appId = 'recetario-gourmet-local'; // ID local por si Firebase no se carga
-        
-        // Verifica si Firebase ha sido cargado globalmente por los scripts en el <head>
-        if (typeof firebase !== 'undefined' && typeof firebase.initializeApp === 'function') {
-            console.log("Firebase SDKs detectados. Intentando inicializar Firebase REAL.");
-            try {
-                // *** TU CONFIGURACIÓN REAL DE FIREBASE AQUÍ ***
-                // PEGA AQUÍ LOS VALORES REALES DE TU CONSOLA DE FIREBASE
-                const firebaseConfig = {
-                    apiKey: "AIzaSyBl_mcw-cNm5VM20zupu-EdWbjkcchWUek", // Tus valores EXACTOS
-                    authDomain: "rapid-scion-455418-d4.firebaseapp.com",
-                    projectId: "rapid-scion-455418-d4",
-                    storageBucket: "rapid-scion-455418-d4.firebasestorage.app",
-                    messagingSenderId: "118256801071",
-                    appId: "1:118256801071:web:c99aed5544d5e62305bdda",
-                    measurementId: "G-VTRBE6TWML" 
-                };
-                
-                const app = firebase.initializeApp(firebaseConfig);
-                auth = firebase.auth(); // Asignación directa
-                db = firebase.firestore(); // Asignación directa
-                appId = firebaseConfig.appId; // Usar el appId real de la configuración
-                console.log("Firebase REAL inicializado con éxito.");
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-            } catch (error) {
-                console.error("Error al inicializar Firebase REAL:", error);
-                console.warn("Se usarán funcionalidades locales (sin guardado persistente).");
-                setupLocalFirebaseSimulations(); // Si falla, usar las simulaciones
-            }
-        } else {
-            console.warn("Firebase SDKs no detectados o no disponibles. Se usarán funcionalidades locales (sin guardado persistente).");
-            setupLocalFirebaseSimulations(); // Usar las simulaciones si Firebase no está disponible
-        }
-
-        // Función para configurar simulaciones locales de Firebase
-        function setupLocalFirebaseSimulations() {
-            // Asegura que las referencias globales estén disponibles, incluso si son simuladas
-            if (typeof firebase === 'undefined') {
-                 window.firebase = {};
-            }
-            if (typeof firebase.auth === 'undefined') {
-                firebase.auth = () => ({
-                    signInAnonymously: async () => ({ user: { uid: "localUser" } }),
-                    onAuthStateChanged: (callback) => { callback({ uid: "localUser" }); }
-                });
-            }
-            if (typeof firebase.firestore === 'undefined') {
-                firebase.firestore = () => ({
-                    collection: () => ({ doc: () => ({ get: async () => ({ exists: () => false, data: () => ({}) }), set: async () => {} }) })
-                });
-            }
-
-            // Asigna las instancias simuladas a las variables globales de este script
-            auth = firebase.auth();
-            db = firebase.firestore();
-            
-            console.log("Funcionalidades de Firebase simuladas (sin persistencia).");
-        }
-        
-        // El resto de tu código JavaScript
         function runRecipeApp() {
-            let userFavorites = []; // Estado de favoritos (no persistente por ahora)
-            let userId = "localUser"; // ID de usuario local si Firebase está deshabilitado
-            let currentFilter = 'all'; // 'all', 'favorites', 'pantry'
-            let currentCategory = 'all'; // 'all' or specific category
-            let pantryIngredients = []; // Nuevo array para los ingredientes de la despensa (no persistente)
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO_PROJECT" };
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'recetario-delicioso-final';
 
-            // DOM elements
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+
+            let userFavorites = [], userId = null;
+            let currentFilter = 'all', currentCategory = 'all';
+
             const dom = {
                 grid: document.getElementById('recipeGrid'),
                 search: document.getElementById('searchInput'),
                 filterAllBtn: document.getElementById('filterAll'),
                 filterFavBtn: document.getElementById('filterFavorites'),
-                filterPantryBtn: document.getElementById('filterPantry'), 
                 categoryFilters: document.getElementById('categoryFilters'),
                 noResults: document.getElementById('no-results'),
                 modal: document.getElementById('recipeModal'),
@@ -282,76 +205,404 @@
                 darkIcon: document.getElementById('theme-toggle-dark-icon'),
                 lightIcon: document.getElementById('theme-toggle-light-icon'),
                 copyrightYear: document.getElementById('copyright-year'),
-                
-                // Elementos del modo despensa
-                pantryModeView: document.getElementById('pantry-mode-view'),
-                exitPantryBtn: document.getElementById('exit-pantry-btn'),
-                pantryInput: document.getElementById('pantryInput'),
-                addPantryIngredientBtn: document.getElementById('addPantryIngredientBtn'),
-                pantryTags: document.getElementById('pantryTags'),
-                clearPantryBtn: document.getElementById('clearPantryBtn'),
-                pantryRecipeResults: document.getElementById('pantryRecipeResults'),
-                noPantryResults: document.getElementById('noPantryResults')
             };
             
             const allRecipes = [
-                // --- 50 Recetas NUEVAS y diferentes (Completas) ---
-                { categoria: "Aperitivo", titulo: "Hummus de Lentejas Rojas", imagen: "https://images.unsplash.com/photo-1512404097-0f8d0a8b9e6f?q=80&w=400", ingredientes: ["Lentejas rojas", "Tahini", "Zumo de limón", "Comino", "Ajo", "Aceite de oliva"], pasos: ["Cocer lentejas. Triturar con tahini, limón, comino y ajo.", "Aliñar con aceite. Servir con pan de pita."] },
-                { categoria: "Aperitivo", titulo: "Mini Tostas de Crema de Aguacate y Salmón Ahumado", imagen: "https://images.unsplash.com/photo-1589136191763-7c8a1e3e7f6e?q=80&w=400", ingredientes: ["Pan de centeno", "Aguacate", "Salmón ahumado", "Eneldo", "Limón"], pasos: ["Macha aguacate y extiende sobre el pan.", "Coloca salmón y decora con eneldo y zumo de limón."] },
-                { categoria: "Aperitivo", titulo: "Rollitos de Calabacín con Queso Fresco y Menta", imagen: "https://images.unsplash.com/photo-1547592180-85f17399052d?q=80&w=400", ingredientes: ["Calabacín", "Queso fresco", "Menta fresca", "Pimienta negra", "Aceite de oliva"], pasos: ["Corta el calabacín en láminas finas y ásalas.", "Rellena con queso fresco y menta. Enrolla y aliña."] },
-                { categoria: "Aperitivo", titulo: "Pinchos de Pollo Satay con Salsa de Cacahuete", imagen: "https://images.unsplash.com/photo-1628203102432-159c3a35f795?q=80&w=400", ingredientes: ["Pechuga de pollo", "Salsa de cacahuete", "Leche de coco", "Curry en polvo"], pasos: ["Corta el pollo en cubos y marina en salsa de cacahuete. Ensarta y asa.", "Sirve con extra de salsa de cacahuete."] },
-                { categoria: "Aperitivo", titulo: "Croquetas de Bacalao y Espinacas", imagen: "https://images.unsplash.com/photo-1627954153093-9d1f3b3d1b7a?q=80&w=400", ingredientes: ["Bacalao desalado", "Espinacas", "Harina", "Leche", "Huevo", "Pan rallado", "Aceite para freír"], pasos: ["Prepara bechamel con bacalao y espinacas. Enfría. Empana y fríe las croquetas."] },
-                { categoria: "Aperitivo", titulo: "Vasitos de Gazpacho de Sandía", imagen: "https://images.unsplash.com/photo-1625944228743-9281a173a113?q=80&w=400", ingredientes: ["Sandía", "Tomate", "Pimiento verde", "Cebolla", "Aceite de oliva", "Menta"], pasos: ["Tritura la sandía con tomate, pimiento, cebolla y menta.", "Aliña y sirve muy frío en vasitos."] },
-                { categoria: "Aperitivo", titulo: "Patatas al Horno con Romero y Pimentón", imagen: "https://images.unsplash.com/photo-1588581176384-a4d5a8b73301?q=80&w=400", ingredientes: ["Patatas", "Romero fresco", "Pimentón dulce", "Aceite de oliva", "Sal"], pasos: ["Corta patatas en gajos. Mezcla con aceite, romero, pimentón y sal.", "Hornea hasta que estén crujientes."] },
-                { categoria: "Aperitivo", titulo: "Brochetas de Dátiles con Bacon y Queso Azul", imagen: "https://images.unsplash.com/photo-1639537339294-35e2193b134a?q=80&w=400", ingredientes: ["Dátiles sin hueso", "Bacon", "Queso azul"], pasos: ["Rellena los dátiles con queso azul. Envuelve en bacon y sujeta con un palillo.", "Hornea hasta que el bacon esté crujiente."] },
-                { categoria: "Aperitivo", titulo: "Tostas de Sobrasada con Queso Mahón", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tostas+Sobrasada", ingredientes: ["Pan rústico", "Sobrasada", "Queso Mahón (semi-curado)"], pasos: ["Tuesta rebanadas de pan. Unta con sobrasada.", "Coloca encima una loncha de queso Mahón y gratina ligeramente."] },
-                { categoria: "Aperitivo", titulo: "Tartar de Tomate y Aguacate con Tostadas", imagen: "https://images.unsplash.com/photo-1604329227594-3d9697ac7249?q=80&w=400", ingredientes: ["Tomate", "Aguacate", "Cebolla morada", "Zumo de lima", "Aceite de oliva", "Tostadas"], pasos: ["Pica tomate, aguacate y cebolla en dados pequeños. Mezcla y aliña.", "Sirve con tostadas."] },
-                { categoria: "Aperitivo", titulo: "Bocaditos de Tortilla de Patatas con Pimiento", imagen: "https://images.unsplash.com/photo-1588581176384-a4d5a8b73301?q=80&w=400", ingredientes: ["Tortilla de patatas (casera o comprada)", "Pimiento del Piquillo", "Palillos"], pasos: ["Corta la tortilla en pequeños cuadrados. Coloca un trozo de pimiento del piquillo encima.", "Sujeta con un palillo."] },
-                { categoria: "Aperitivo", titulo: "Mejillones al Vapor con Salsa de Tomate Picante", imagen: "https://images.unsplash.com/photo-1598514982249-916212e62444?q=80&w=400", ingredientes: ["Mejillones frescos", "Tomate triturado", "Cebolla", "Ajo", "Guindilla", "Vino blanco"], pasos: ["Sofríe cebolla, ajo y guindilla. Añade tomate y cocina salsa. Cuece mejillones al vapor con vino. Sirve mejillones con salsa."] },
-                { categoria: "Aperitivo", titulo: "Ensaladilla Rusa con Langostinos", imagen: "https://images.unsplash.com/photo-1604329227594-3d9697ac7249?q=80&w=400", ingredientes: ["Patatas", "Zanahoria", "Guisantes", "Huevo cocido", "Langostinos cocidos", "Mayonesa"], pasos: ["Cocer y picar patatas, zanahoria y huevo. Mezclar con guisantes y langostinos.", "Aliñar con mayonesa."] },
-                { categoria: "Aperitivo", titulo: "Rollitos de Primavera Frescos (sin freír)", imagen: "https://images.unsplash.com/photo-1568285743494-b258e7b3e1d1?q=80&w=400", ingredientes: ["Papel de arroz", "Lechuga", "Zanahoria", "Pepino", "Menta", "Pollo cocido (opcional)", "Salsa de cacahuete para mojar"], pasos: ["Remojar papel de arroz. Rellenar con verduras y pollo. Enrollar. Servir con salsa."] },
-                { categoria: "Aperitivo", titulo: "Mini Brochetas de Pollo y Cherry con Pesto", imagen: "https://images.unsplash.com/photo-1579871494474-a4b56a7d1ae9?q=80&w=400", ingredientes: ["Pechuga de pollo", "Tomates cherry", "Pesto", "Palillos"], pasos: ["Corta el pollo en cubos y ásalo. Ensarta pollo y tomate.", "Rocía con pesto al servir."] },
-                { categoria: "Aperitivo", titulo: "Paté de Atún Casero con Tostadas", imagen: "https://images.unsplash.com/photo-1619861183287-353f2a8a1599?q=80&w=400", ingredientes: ["Atún en lata", "Mayonesa", "Queso crema", "Pepinillos encurtidos", "Cebolleta", "Tostadas"], pasos: ["Mezcla atún, mayonesa, queso crema, pepinillos y cebolleta picados.", "Sirve sobre tostadas."] },
-                { categoria: "Aperitivo", titulo: "Olivas Esferificadas (Falsas)", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Olivas+Esferificadas", ingredientes: ["Zumo de oliva (aceite licuado)", "Agar-agar", "Pipeta", "Baño de alginato de sodio"], pasos: ["Calienta zumo de oliva con agar-agar. Forma esferas con pipeta en baño de alginato. Enjuaga y sirve."] },
-                { categoria: "Aperitivo", titulo: "Mini Arepas con Queso y Aguacate", imagen: "https://images.unsplash.com/photo-1621244249146-2169820786a3?q=80&w=400", ingredientes: ["Harina de maíz precocida", "Agua", "Sal", "Queso fresco", "Aguacate"], pasos: ["Prepara masa de arepas. Forma y cocina. Abre y rellena con queso y aguacate."] },
-                { categoria: "Aperitivo", titulo: "Edamame Salteado con Sésamo y Soja", imagen: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=400", ingredientes: ["Edamame congelado", "Salsa de soja", "Aceite de sésamo", "Semillas de sésamo", "Ajo picado"], pasos: ["Hierve edamame. Saltea ajo, edamame, soja y aceite de sésamo.", "Espolvorea semillas de sésamo."] },
-                { categoria: "Aperitivo", titulo: "Croquetones de Jamón Ibérico", imagen: "https://images.unsplash.com/photo-1619861183287-353f2a8a1599?q=80&w=400", ingredientes: ["Jamón ibérico", "Harina", "Mantequilla", "Leche", "Huevo", "Pan rallado", "Aceite para freír"], pasos: ["Prepara bechamel con jamón. Enfría. Forma croquetones grandes, empanar y fríe."] },
+                // 80 recetas (lista completa con imágenes)
+                { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
+                { categoria: "Aperitivo", titulo: "Garbanzos crujientes al horno", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Garbanzos", ingredientes: ["200 g garbanzos cocidos", "1 cda. AOVE", "1/2 cdita pimentón ahumado", "1/4 cdita comino", "Sal"], pasos: ["Mezcla garbanzos con aceite y especias.", "Hornea 35 min a 180 °C.", "Enfría y sirve."] },
+                { categoria: "Aperitivo", titulo: "Hummus clásico con crudités", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Hummus", ingredientes: ["400 g garbanzos cocidos", "2 cdas. tahini", "1 diente de ajo", "Zumo de 1 limón", "Aceite de oliva", "Palitos de zanahoria y apio"], pasos: ["Tritura los garbanzos con tahini, ajo, limón y aceite.", "Sirve con los crudités de verdura."] },
+                { categoria: "Aperitivo", titulo: "Guacamole rápido", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Guacamole", ingredientes: ["2 aguacates maduros", "1/2 cebolla morada", "1 tomate pequeño", "Zumo de 1 lima", "Sal", "Nachos de maíz integral"], pasos: ["Tritura el aguacate con la cebolla, tomate y lima.", "Sirve con nachos o verduras."] },
+                { categoria: "Aperitivo", titulo: "Rollitos de jamón y espárragos", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Rollitos", ingredientes: ["5 lonchas de jamón serrano", "5 espárragos verdes cocidos", "Aceite de oliva"], pasos: ["Enrolla cada espárrago con jamón.", "Rocía con un poco de aceite y sirve frío."] },
+                { categoria: "Aperitivo", titulo: "Chips de kale al horno", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Chips+Kale", ingredientes: ["Hojas de kale", "1 cda. aceite de oliva", "Sal marina"], pasos: ["Lava y seca bien las hojas.", "Rocía con aceite y sal.", "Hornea 15 min a 150 °C."] },
+                { categoria: "Aperitivo", titulo: "Dip de yogur y pepino", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Dip+Yogur", ingredientes: ["1 yogur natural", "1/2 pepino rallado", "1 diente de ajo", "Hierbabuena", "Sal y pimienta"], pasos: ["Mezcla todos los ingredientes.", "Sirve frío con pan pita o verduras."] },
+                { categoria: "Aperitivo", titulo: "Tomates cherry rellenos de queso", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tomates+Rellenos", ingredientes: ["Tomates cherry", "Queso crema light", "Cebollino picado"], pasos: ["Corta la tapa a los tomates.", "Rellena con queso y decora con cebollino."] },
+                { categoria: "Aperitivo", titulo: "Tostadas integrales con aguacate", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tostadas", ingredientes: ["2 rebanadas de pan integral", "1 aguacate", "Zumo de limón", "Pimienta y sal"], pasos: ["Tritura el aguacate y mezcla con limón y sal.", "Unta sobre las tostadas y añade pimienta."] },
+                { categoria: "Aperitivo", titulo: "Mini tortillas de espinaca", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Mini+Tortillas", ingredientes: ["2 huevos", "Un puñado de espinacas frescas", "1 cda. queso rallado light", "Sal"], pasos: ["Bate los huevos, añade espinaca y queso.", "Cocina en sartén pequeña o molde al horno."] },
+                { categoria: "Aperitivo", titulo: "Palitos de zanahoria al horno", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Palitos+Zanahoria", ingredientes: ["2 zanahorias grandes", "1 cda. aceite de oliva", "Pimienta", "Pimentón dulce"], pasos: ["Corta zanahorias en tiras.", "Condimenta con aceite y especias.", "Hornea 25 min a 180 °C."] },
+                { categoria: "Aperitivo", titulo: "Edamame con sal y limón", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Edamame", ingredientes: ["200 g edamame congelado", "Sal marina", "Zumo de limón"], pasos: ["Hierve el edamame 5 minutos.", "Escurre, rocía con limón y añade sal."] },
+                { categoria: "Aperitivo", titulo: "Tostas de hummus y tomate seco", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tostas+Hummus", ingredientes: ["2 tostadas integrales", "2 cdas. hummus", "Tomate seco en tiras"], pasos: ["Unta el hummus sobre las tostadas.", "Decora con tomate seco."] },
+                { categoria: "Aperitivo", titulo: "Aceitunas marinadas caseras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Aceitunas", ingredientes: ["Aceitunas verdes", "Aceite de oliva", "Ajo picado", "Orégano"], pasos: ["Mezcla todos los ingredientes.", "Deja reposar 1 hora antes de servir."] },
+                { categoria: "Aperitivo", titulo: "Gazpacho ligero", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gazpacho", ingredientes: ["3 tomates maduros", "1/2 pepino", "1/4 pimiento verde", "Ajo, sal, aceite y vinagre"], pasos: ["Tritura todos los ingredientes.", "Sirve muy frío."] },
+                { categoria: "Aperitivo", titulo: "Canapés de salmón y aguacate", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Canapés", ingredientes: ["Rebanadas de pan integral", "Salmón ahumado", "Aguacate en láminas"], pasos: ["Coloca el aguacate sobre el pan.", "Añade el salmón encima."] },
+                { categoria: "Aperitivo", titulo: "Crema fría de calabacín", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabacín", ingredientes: ["1 calabacín cocido", "1 yogur natural", "Hierbabuena", "Sal y pimienta"], pasos: ["Tritura todos los ingredientes.", "Sirve frío decorado con hojas de hierbabuena."] },
+                { categoria: "Aperitivo", titulo: "Bastones de apio con crema de cacahuete", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Apio+y+Crema", ingredientes: ["Bastones de apio", "2 cdas. crema de cacahuete natural"], pasos: ["Rellena las ranuras del apio con la crema.", "Sirve como snack fresco."] },
+                { categoria: "Aperitivo", titulo: "Chips de manzana con canela", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Chips+Manzana", ingredientes: ["1 manzana", "Canela molida"], pasos: ["Corta la manzana en rodajas finas.", "Espolvorea canela.", "Hornea 1 hora a 100 °C."] },
+                { categoria: "Aperitivo", titulo: "Tzatziki ligero", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tzatziki", ingredientes: ["1 yogur griego desnatado", "Pepino rallado", "Ajo picado", "Zumo de limón", "Menta fresca"], pasos: ["Mezcla todos los ingredientes.", "Sirve frío con pan pita o crudités."] },
+                // 20 Primeros
+                { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Quinoa", ingredientes: ["1 taza de quinoa cocida", "Pimiento rojo y verde", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Mezcla la quinoa con las verduras picadas.", "Aliña con aceite y limón."] },
+                { categoria: "Primero", titulo: "Sopa de lentejas rojas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Lentejas", ingredientes: ["1 taza lentejas rojas", "1 zanahoria", "1 cebolla", "1 diente de ajo", "1 cdita comino", "Sal y pimienta"], pasos: ["Sofríe ajo, cebolla y zanahoria picados.", "Agrega lentejas y agua, cocina 20 min.", "Tritura si deseas una textura cremosa."] },
+                { categoria: "Primero", titulo: "Crema de calabaza", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabaza", ingredientes: ["500 g calabaza", "1 puerro", "1 patata", "Aceite de oliva", "Sal y nuez moscada"], pasos: ["Cocina calabaza, patata y puerro en agua.", "Tritura con aceite y nuez moscada."] },
+                { categoria: "Primero", titulo: "Ensalada de garbanzos mediterránea", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Garbanzos", ingredientes: ["400 g garbanzos cocidos", "Pepino", "Tomate", "Cebolla morada", "Aceitunas negras", "Limón y aceite"], pasos: ["Mezcla todos los ingredientes picados.", "Aliña con limón y aceite."] },
+                { categoria: "Primero", titulo: "Gazpacho andaluz", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gazpacho", ingredientes: ["5 tomates maduros", "1 pepino", "1/2 pimiento", "1 diente de ajo", "Aceite, vinagre y sal"], pasos: ["Tritura todos los ingredientes.", "Sirve muy frío."] },
+                { categoria: "Primero", titulo: "Tabulé de bulgur y menta", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tabulé", ingredientes: ["1 taza de bulgur cocido", "1 tomate", "1/2 pepino", "1/2 cebolla", "Zumo de limón", "Menta fresca", "Aceite de oliva", "Sal"], pasos: ["Pica las verduras finamente.", "Mezcla con el bulgur, menta, limón y aceite.", "Refrigera antes de servir."] },
+                { categoria: "Primero", titulo: "Crema de zanahoria y jengibre", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Zanahoria", ingredientes: ["4 zanahorias", "1 patata", "1 trozo de jengibre fresco", "1 cda. aceite de oliva", "Sal y pimienta"], pasos: ["Hierve zanahorias, patata y jengibre hasta que estén tiernos.", "Tritura con un poco del agua de cocción y aliña."] },
+                { categoria: "Primero", titulo: "Ensalada de lentejas con vinagreta de mostaza", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Lentejas", ingredientes: ["1 taza lentejas cocidas", "Pimiento rojo", "Zanahoria", "Cebolla", "1 cda. mostaza", "Aceite y vinagre"], pasos: ["Corta finas las verduras y mezcla con lentejas.", "Aliña con una vinagreta de mostaza, aceite y vinagre."] },
+                { categoria: "Primero", titulo: "Sopa miso con tofu y algas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Miso", ingredientes: ["750 ml agua", "1 cda. pasta miso", "Tofu en cubos", "Alga wakame", "Cebolleta"], pasos: ["Disuelve el miso en agua caliente.", "Añade tofu, alga y cebolleta picada.", "Calienta sin hervir y sirve."] },
+                { categoria: "Primero", titulo: "Crema de espinacas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Espinacas", ingredientes: ["200 g espinacas frescas", "1 patata", "1 cda. aceite de oliva", "Sal", "Leche vegetal (opcional)"], pasos: ["Hierve patata y espinacas.", "Tritura con el aceite y un poco de leche si deseas textura más cremosa."] },
+                { categoria: "Primero", titulo: "Ensalada de arroz integral y aguacate", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Arroz", ingredientes: ["1 taza de arroz integral cocido", "1 aguacate", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Corta y mezcla todos los ingredientes.", "Aliña al gusto."] },
+                { categoria: "Primero", titulo: "Tabulé de bulgur", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tabulé+Bulgur", ingredientes: ["1 taza bulgur cocido", "Pepino", "Tomate", "Cebolla", "Perejil fresco", "Zumo de limón", "Aceite de oliva"], pasos: ["Pica las verduras finas y mezcla con el bulgur.", "Aliña con limón, aceite y perejil."] },
+                { categoria: "Primero", titulo: "Crema de brócoli", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Brócoli", ingredientes: ["1 brócoli", "1 patata", "1 puerro", "Agua", "Sal", "Aceite de oliva"], pasos: ["Cocina las verduras hasta que estén tiernas.", "Tritura con un poco de agua y aceite."] },
+                { categoria: "Primero", titulo: "Ensalada templada de espinacas y champiñones", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Templada", ingredientes: ["Espinacas frescas", "Champiñones", "1 diente de ajo", "Aceite de oliva", "Vinagre balsámico"], pasos: ["Saltea champiñones con ajo.", "Añade sobre las espinacas y aliña con vinagre."] },
+                { categoria: "Primero", titulo: "Sopa de verduras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Verduras", ingredientes: ["Zanahoria", "Puerro", "Apio", "Calabacín", "Agua", "Sal y pimienta"], pasos: ["Corta todas las verduras y cuece hasta tiernas.", "Sirve caliente."] },
+                { categoria: "Primero", titulo: "Puré de coliflor", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Puré+Coliflor", ingredientes: ["1 coliflor", "1 cda. aceite de oliva", "Sal", "Nuez moscada"], pasos: ["Hierve la coliflor hasta que esté tierna.", "Tritura con aceite, sal y nuez moscada."] },
+                { categoria: "Primero", titulo: "Salmorejo cordobés light", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salmorejo+Light", ingredientes: ["500 g tomates maduros", "1/2 diente de ajo", "1 rebanada de pan integral", "Aceite de oliva", "Vinagre", "Sal"], pasos: ["Tritura todos los ingredientes.", "Sirve frío con huevo duro picado (opcional)."] },
+                { categoria: "Primero", titulo: "Ensalada de lentejas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Lentejas", ingredientes: ["200 g lentejas cocidas", "Pimiento rojo", "Cebolla", "Zanahoria", "Aceite", "Vinagre", "Sal"], pasos: ["Pica las verduras y mezcla con las lentejas.", "Aliña al gusto."] },
+                { categoria: "Primero", titulo: "Sopa de miso con tofu", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Miso", ingredientes: ["2 cdas. pasta de miso", "500 ml agua", "Tofu firme", "Cebollino", "Alga wakame"], pasos: ["Disuelve el miso en agua caliente.", "Agrega tofu en cubos, alga y cebollino.", "Calienta sin hervir."] },
+                // 20 Segundos
+                { categoria: "Segundo", titulo: "Pollo al horno con limón y hierbas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+al+Horno", ingredientes: ["2 pechugas de pollo", "1 limón", "Tomillo", "Romero", "Aceite de oliva", "Sal y pimienta"], pasos: ["Marina el pollo con zumo de limón, hierbas, aceite, sal y pimienta.", "Hornea 25 minutos a 200°C."] },
+                { categoria: "Segundo", titulo: "Salmón a la plancha con espárragos", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salmón", ingredientes: ["2 lomos de salmón", "1 manojo de espárragos verdes", "Aceite de oliva", "Sal en escamas", "Pimienta"], pasos: ["Cocina el salmón y los espárragos a la plancha con un poco de aceite.", "Sazona con sal y pimienta al servir."] },
+                { categoria: "Segundo", titulo: "Wok de ternera y brócoli", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Wok+Ternera", ingredientes: ["200 g ternera en tiras", "1 brócoli", "Salsa de soja baja en sodio", "Jengibre rallado", "Aceite de sésamo"], pasos: ["Saltea la ternera en un wok.", "Añade el brócoli y cocina hasta que esté tierno.", "Adereza con soja, jengibre y aceite de sésamo."] },
+                { categoria: "Segundo", titulo: "Pavo a la plancha con puré de manzana", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pavo+con+Manzana", ingredientes: ["2 filetes de pavo", "2 manzanas", "Canela", "Sal"], pasos: ["Cocina el pavo a la plancha.", "Asa las manzanas y tritúralas con canela para hacer el puré.", "Sirve el pavo con el puré."] },
+                { categoria: "Segundo", titulo: "Merluza en salsa verde", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Merluza+Salsa+Verde", ingredientes: ["2 lomos de merluza", "1 diente de ajo", "Perejil fresco", "1/2 vaso de vino blanco", "Caldo de pescado", "Guisantes"], pasos: ["Sofríe el ajo y perejil.", "Añade la merluza, vino y caldo.", "Cocina 10 minutos y agrega los guisantes."] },
+                { categoria: "Segundo", titulo: "Berenjenas rellenas de carne picada", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Berenjenas+Rellenas", ingredientes: ["2 berenjenas", "200 g carne picada de pavo", "Cebolla", "Tomate triturado", "Queso rallado light"], pasos: ["Asa las berenjenas y vacía la pulpa.", "Sofríe la carne con cebolla y tomate, mezcla con la pulpa.", "Rellena, espolvorea queso y gratina."] },
+                { categoria: "Segundo", titulo: "Tofu salteado con verduras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tofu+Salteado", ingredientes: ["200 g tofu firme", "Pimiento", "Calabacín", "Cebolla", "Salsa de soja"], pasos: ["Corta el tofu y las verduras.", "Saltea todo en un wok con un poco de salsa de soja."] },
+                { categoria: "Segundo", titulo: "Pechuga de pollo a la naranja", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+a+la+Naranja", ingredientes: ["2 pechugas de pollo", "Zumo de 2 naranjas", "1 cdita maicena", "Sal y pimienta"], pasos: ["Dora el pollo en una sartén.", "Mezcla el zumo con la maicena, vierte sobre el pollo y cocina hasta que espese."] },
+                { categoria: "Segundo", titulo: "Atún a la plancha con ensalada de tomate", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Atún+a+la+Plancha", ingredientes: ["2 filetes de atún fresco", "Tomates cherry", "Rúcula", "Vinagre balsámico"], pasos: ["Cocina el atún a la plancha, vuelta y vuelta.", "Sirve con una ensalada de tomates y rúcula, aliñada con balsámico."] },
+                { categoria: "Segundo", titulo: "Solomillo de cerdo con salsa de champiñones", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Solomillo", ingredientes: ["1 solomillo de cerdo", "200 g champiñones", "1/2 cebolla", "Nata líquida light", "Sal y pimienta"], pasos: ["Sella el solomillo y reserva.", "Sofríe la cebolla y los champiñones, añade la nata y tritura.", "Sirve el solomillo con la salsa."] },
+                { categoria: "Segundo", titulo: "Lasaña de verduras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Lasaña+Verduras", ingredientes: ["Láminas de lasaña integral", "Calabacín", "Berenjena", "Pimiento", "Tomate triturado", "Queso rallado"], pasos: ["Saltea las verduras picadas con el tomate.", "Monta la lasaña alternando capas de pasta y verduras.", "Cubre con queso y hornea."] },
+                { categoria: "Segundo", titulo: "Bacalao con tomate", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bacalao+con+Tomate", ingredientes: ["2 lomos de bacalao desalado", "1 cebolla", "400 g tomate triturado", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, añade el tomate y cocina 15 min.", "Incorpora el bacalao y cocina 10 min más."] },
+                { categoria: "Segundo", titulo: "Curry de garbanzos y espinacas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Curry+Garbanzos", ingredientes: ["400 g garbanzos cocidos", "200 g espinacas", "1 cebolla", "Leche de coco", "Curry en polvo"], pasos: ["Sofríe la cebolla, añade el curry y la leche de coco.", "Incorpora los garbanzos y las espinacas, y cocina 10 min."] },
+                { categoria: "Segundo", titulo: "Sepia a la plancha con ajo y perejil", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sepia+a+la+Plancha", ingredientes: ["1 sepia grande", "2 dientes de ajo", "Perejil fresco", "Aceite de oliva", "Limón"], pasos: ["Limpia y corta la sepia.", "Cocina a la plancha con aceite.", "Sirve con un majado de ajo, perejil y un chorrito de limón."] },
+                { categoria: "Segundo", titulo: "Hamburguesas de pavo caseras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Hamburguesas", ingredientes: ["300 g carne picada de pavo", "1/2 cebolla", "Ajo en polvo", "Perejil", "Pan integral de hamburguesa"], pasos: ["Mezcla la carne con la cebolla, ajo y perejil.", "Forma las hamburguesas y cocina a la plancha.", "Sirve en pan integral con ensalada."] },
+                { categoria: "Segundo", titulo: "Dorada a la sal", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Dorada+a+la+Sal", ingredientes: ["1 dorada", "1 kg de sal gorda para hornear"], pasos: ["Cubre la dorada con una capa gruesa de sal.", "Hornea 25 min a 200°C.", "Rompe la costra de sal y sirve los lomos limpios."] },
+                { categoria: "Segundo", titulo: "Muslos de pollo al ajillo", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+al+Ajillo", ingredientes: ["4 muslos de pollo", "6 dientes de ajo", "1/2 vaso de vino blanco", "Aceite de oliva", "Sal y pimienta"], pasos: ["Dora los ajos y el pollo en una sartén.", "Añade el vino y deja reducir.", "Cocina a fuego lento 20 minutos."] },
+                { categoria: "Segundo", titulo: "Calabacines rellenos de quinoa", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Calabacines+Rellenos", ingredientes: ["2 calabacines", "1 taza de quinoa cocida", "Verduras variadas", "Tomate frito", "Queso rallado"], pasos: ["Vacía los calabacines y hornea.", "Saltea la pulpa con verduras y quinoa.", "Rellena, cubre con queso y gratina."] },
+                { categoria: "Segundo", titulo: "Pinchos morunos de pollo", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pinchos+Morunos", ingredientes: ["Pechuga de pollo en cubos", "Especias para pinchos morunos", "Aceite de oliva"], pasos: ["Marina el pollo con las especias y el aceite.", "Ensarta en brochetas y cocina a la plancha."] },
+                { categoria: "Segundo", titulo: "Salteado de gambas y champiñones", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salteado+Gambas", ingredientes: ["200 g gambas peladas", "250 g champiñones", "Ajo", "Guindilla", "Aceite de oliva"], pasos: ["Saltea el ajo y la guindilla.", "Añade los champiñones y luego las gambas.", "Cocina hasta que estén hechas."] },
+                // 20 Postres
+                { categoria: "Postre", titulo: "Brochetas de fruta fresca", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Fruta", ingredientes: ["Fresas", "Kiwi", "Melón", "Uvas"], pasos: ["Corta la fruta en trozos.", "Ensarta en palillos de brocheta."] },
+                { categoria: "Postre", titulo: "Yogur natural con miel y nueces", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Miel", ingredientes: ["1 yogur natural", "1 cdita de miel", "Un puñado de nueces"], pasos: ["Sirve el yogur en un bol.", "Añade la miel y las nueces por encima."] },
+                { categoria: "Postre", titulo: "Manzana asada con canela", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Manzana+Asada", ingredientes: ["1 manzana", "Canela en polvo"], pasos: ["Quita el corazón de la manzana.", "Espolvorea canela y hornea 30 min a 180°C."] },
+                { categoria: "Postre", titulo: "Macedonia de frutas de temporada", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Macedonia", ingredientes: ["Naranja", "Plátano", "Manzana", "Kiwi", "Zumo de naranja"], pasos: ["Pela y corta la fruta en dados.", "Mezcla con el zumo de naranja."] },
+                { categoria: "Postre", titulo: "Plátano a la plancha con chocolate negro", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Plátano+Plancha", ingredientes: ["1 plátano", "1 onza de chocolate negro (>85%)"], pasos: ["Corta el plátano por la mitad a lo largo.", "Cocina a la plancha.", "Derrite el chocolate y sírvelo por encima."] },
+                { categoria: "Postre", titulo: "Mousse de aguacate y cacao", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Mousse+Aguacate", ingredientes: ["1 aguacate maduro", "2 cdas. cacao puro en polvo", "1 cda. sirope de agave"], pasos: ["Tritura todos los ingredientes hasta obtener una crema suave.", "Refrigera antes de servir."] },
+                { categoria: "Postre", titulo: "Carpaccio de piña con menta", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Carpaccio+Piña", ingredientes: ["1 rodaja de piña natural", "Hojas de menta fresca"], pasos: ["Corta la piña en láminas muy finas.", "Decora con hojas de menta."] },
+                { categoria: "Postre", titulo: "Helado de plátano congelado", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Helado+Plátano", ingredientes: ["2 plátanos maduros congelados"], pasos: ["Tritura los plátanos congelados hasta obtener una textura cremosa.", "Sirve inmediatamente."] },
+                { categoria: "Postre", titulo: "Peras al vino tinto sin azúcar", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Peras+al+Vino", ingredientes: ["2 peras", "1 vaso de vino tinto", "Canela en rama"], pasos: ["Pela las peras y cuécelas en el vino con la canela.", "Cocina a fuego lento hasta que estén tiernas."] },
+                { categoria: "Postre", titulo: "Trufas de aguacate y cacao", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Trufas", ingredientes: ["1/2 aguacate", "2 cdas. cacao puro", "1 cda. miel", "Coco rallado"], pasos: ["Mezcla aguacate, cacao y miel.", "Forma bolitas y rebózalas en coco rallado."] },
+                { categoria: "Postre", titulo: "Compota de manzana casera", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Compota", ingredientes: ["3 manzanas", "Canela", "Agua"], pasos: ["Pela y trocea las manzanas.", "Cuece con un poco de agua y canela hasta que estén blandas.", "Tritura al gusto."] },
+                { categoria: "Postre", titulo: "Fresas con yogur", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fresas+con+Yogur", ingredientes: ["1 taza de fresas", "1 yogur natural"], pasos: ["Corta las fresas y mézclalas con el yogur."] },
+                { categoria: "Postre", titulo: "Naranja preparada con canela", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Naranja", ingredientes: ["1 naranja", "Canela en polvo"], pasos: ["Pela la naranja y córtala en rodajas.", "Espolvorea canela por encima."] },
+                { categoria: "Postre", titulo: "Bombones de dátiles y almendras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bombones", ingredientes: ["4 dátiles", "8 almendras crudas"], pasos: ["Deshuesa los dátiles.", "Rellena cada dátil con dos almendras."] },
+                { categoria: "Postre", titulo: "Pudding de chía y fruta", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pudding+Chía", ingredientes: ["2 cdas. semillas de chía", "1/2 taza de leche vegetal", "Fruta fresca al gusto"], pasos: ["Mezcla la chía con la leche y deja reposar 2 horas.", "Sirve con fruta fresca por encima."] },
+                { categoria: "Postre", titulo: "Melocotón a la plancha", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Melocotón+Plancha", ingredientes: ["1 melocotón", "Una pizca de canela"], pasos: ["Corta el melocotón por la mitad y retira el hueso.", "Cocina a la plancha por ambos lados.", "Espolvorea con canela."] },
+                { categoria: "Postre", titulo: "Sorbete de limón casero", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sorbete+Limón", ingredientes: ["Zumo de 2 limones", "2 claras de huevo", "Edulcorante al gusto"], pasos: ["Monta las claras a punto de nieve.", "Mezcla con el zumo de limón y edulcorante.", "Congela durante 3 horas."] },
+                { categoria: "Postre", titulo: "Bol de açaí con frutas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bol+Açaí", ingredientes: ["100 g pulpa de açaí congelada", "1/2 plátano", "Frutos rojos para decorar"], pasos: ["Tritura el açaí con el plátano.", "Sirve en un bol y decora con frutos rojos."] },
+                { categoria: "Postre", titulo: "Galletas de avena y plátano", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Galletas+Avena", ingredientes: ["1 plátano maduro", "1/2 taza de copos de avena"], pasos: ["Tritura el plátano y mézclalo con la avena.", "Forma galletas y hornea 15 min a 180°C."] },
+                { categoria: "Postre", titulo: "Yogur con compota de frutos rojos", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Frutos+Rojos", ingredientes: ["1 yogur natural", "1/2 taza de frutos rojos congelados"], pasos: ["Calienta los frutos rojos en un cazo hasta que se deshagan.", "Sirve la compota sobre el yogur."] }
+            ];
+            
+            function initializeUI() {
+                let recipeHTML = '';
+                allRecipes.forEach(recipe => {
+                    const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+                    recipeHTML += `
+                        <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
+                            <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
+                                <img src="${recipe.imagen}" alt="[Imagen de ${recipe.titulo}]" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                                <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
+                                <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:bg-stone-700/80 dark:hover:bg-stone-600 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                                </button>
+                                <div class="p-4 flex-grow flex flex-col">
+                                    <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+                dom.grid.innerHTML = recipeHTML;
+                addCardEventListeners();
+            }
+            
+            function addCardEventListeners() {
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
+                        if (recipe) showRecipeDetail(recipe);
+                    });
+                    card.querySelector('.favorite-btn').addEventListener('click', e => {
+                        e.stopPropagation();
+                        toggleFavorite(card.dataset.id);
+                    });
+                });
+            }
+            
+            initializeUI();
 
-                // --- 20 Primeros ---
-                { categoria: "Primero", titulo: "Crema de Puerro y Patata (Vichyssoise)", imagen: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=400", ingredientes: ["Puerros", "Patatas", "Caldo de pollo o verduras", "Nata líquida (opcional)", "Mantequilla", "Sal"], pasos: ["Sofríe puerros en mantequilla. Añade patata y caldo. Cocina hasta tiernas. Tritura y, si quieres, añade nata."] },
-                { categoria: "Primero", titulo: "Ensalada Templada de Gulas, Gambas y Champiñones", imagen: "https://images.unsplash.com/photo-1604329227594-3d9697ac7249?q=80&w=400", ingredientes: ["Gulas", "Gambas peladas", "Champiñones", "Ajo", "Guindilla", "Aceite de oliva"], pasos: ["Saltea ajo y guindilla. Añade champiñones y gambas. Incorpora gulas y cocina unos minutos. Sirve templado."] },
-                { categoria: "Primero", titulo: "Sopa de Cebolla Caramelizada Gratinada", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Cebolla+Gratinada", ingredientes: ["Cebollas", "Mantequilla", "Caldo de carne", "Vino blanco", "Pan del día anterior", "Queso Gruyère"], pasos: ["Carameliza cebollas. Desglasa con vino, añade caldo. Cocina. Sirve con pan y queso gratinado."] },
-                { categoria: "Primero", titulo: "Arroz Caldoso con Bogavante", imagen: "https://images.unsplash.com/photo-1579871494474-a4b56a7d1ae9?q=80&w=400", ingredientes: ["Arroz bomba", "Bogavante", "Caldo de pescado", "Tomate", "Ñora", "Ajo", "Aceite de oliva"], pasos: ["Sofríe ajo, tomate y ñora. Añade arroz y bogavante. Vierte caldo y cocina hasta que el arroz esté meloso."] },
-                { categoria: "Primero", titulo: "Crema Fría de Tomate Asado y Albahaca", imagen: "https://images.unsplash.com/photo-1625944228743-9281a173a113?q=80&w=400", ingredientes: ["Tomates maduros", "Ajo", "Albahaca fresca", "Aceite de oliva", "Vinagre de Jerez", "Sal"], pasos: ["Asa los tomates y ajos. Tritura con albahaca, aceite, vinagre y sal.", "Sirve muy fría."] },
-                { categoria: "Primero", titulo: "Ensalada de Quinoa Negra, Boniato y Espinacas", imagen: "https://images.unsplash.com/photo-1616480587208-a1e4a3c6c9e0?q=80&w=400", ingredientes: ["Quinoa negra", "Boniato", "Espinacas frescas", "Cebolla roja", "Aderezo de tahini y limón"], pasos: ["Asa el boniato. Cocina la quinoa. Mezcla todo con espinacas y cebolla.", "Aliña con aderezo."] },
-                { categoria: "Primero", titulo: "Sopa de Pescado y Marisco Estilo Marinera", imagen: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=400", ingredientes: ["Pescado para caldo", "Marisco variado", "Cebolla", "Puerro", "Tomate", "Arroz (opcional)", "Picatostes"], pasos: ["Prepara un fumet. Sofríe verduras, añade marisco. Vierte el caldo y, si quieres, un poco de arroz. Cocina y sirve con picatostes."] },
-                { categoria: "Primero", titulo: "Rollitos de Pasta Fresca Rellenos de Ricotta y Espinacas", imagen: "https://images.unsplash.com/photo-1568285743494-b258e7b3e1d1?q=80&w=400", ingredientes: ["Láminas de pasta fresca", "Ricotta", "Espinacas", "Queso parmesano", "Salsa de tomate casera"], pasos: ["Mezcla ricotta, espinacas y parmesano. Rellena las láminas de pasta. Hornea con salsa de tomate."] },
-                { categoria: "Primero", titulo: "Crema de Brócoli y Queso Cheddar", imagen: "https://images.unsplash.com/photo-1571991285272-46a2a078e515?q=80&w=400", ingredientes: ["Brócoli", "Caldo de verduras", "Cebolla", "Queso cheddar", "Nata (opcional)"], pasos: ["Pocha cebolla, añade brócoli y caldo. Cocina. Tritura y añade queso cheddar (y nata)."] },
-                { categoria: "Primero", titulo: "Ensalada de Patata Templada con Panceta Crujiente", imagen: "https://images.unsplash.com/photo-1604329227594-3d9697ac7249?q=80&w=400", ingredientes: ["Patatas", "Panceta ahumada", "Cebolleta", "Mostaza antigua", "Vinagre de manzana", "Perejil"], pasos: ["Cuece patatas. Fríe panceta. Mezcla patatas con panceta, cebolleta y aderezo de mostaza y vinagre."] },
-                { categoria: "Primero", titulo: "Consomé de Ave con Huevo Hilado", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Consomé+Huevo", ingredientes: ["Caldo de ave", "Clara de huevo", "Jerez (opcional)", "Sal"], pasos: ["Hierve el caldo y clarifica con clara de huevo. Retira impurezas. Calienta y, si quieres, añade huevo hilado."] },
-                { categoria: "Primero", titulo: "Timbal de Arroz Basmati con Verduras Salteadas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Timbal+Arroz", ingredientes: ["Arroz basmati", "Pimiento", "Calabacín", "Zanahoria", "Soja", "Aceite de sésamo"], pasos: ["Cocer arroz basmati. Saltear verduras. Montar timbal alternando arroz y verduras. Aliñar."] },
-                { categoria: "Primero", titulo: "Crema de Guisantes con Virutas de Jamón", imagen: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=400", ingredientes: ["Guisantes congelados", "Caldo de pollo", "Cebolla", "Jamón serrano (virutas)"], pasos: ["Sofríe cebolla, añade guisantes y caldo. Cocina. Tritura y sirve con virutas de jamón."] },
-                { categoria: "Primero", titulo: "Sopa de Lentejas al Curry con Nata de Coco", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Lentejas+Coco", ingredientes: ["Lentejas pardinas", "Leche de coco", "Curry en polvo", "Cebolla", "Ajo", "Jengibre"], pasos: ["Sofríe cebolla, ajo, jengibre y curry. Añade lentejas y agua. Cocina. Vierte leche de coco al final."] },
-                { categoria: "Primero", titulo: "Ensalada de Col y Manzana con Aderezo Cremoso", imagen: "https://images.unsplash.com/photo-1616480587208-a1e4a3c6c9e0?q=80&w=400", ingredientes: ["Col blanca", "Manzana verde", "Zanahoria", "Mayonesa", "Yogur", "Mostaza", "Vinagre"], pasos: ["Ralla col y zanahoria. Pica manzana. Mezcla mayonesa, yogur, mostaza y vinagre. Aliña."] },
-                { categoria: "Primero", titulo: "Rollos de Pepino Rellenos de Atún y Queso Crema", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Rollos+Pepino+Atún", ingredientes: ["Pepino", "Atún en lata", "Queso crema", "Eneldo", "Limón"], pasos: ["Corta pepino en tiras finas. Mezcla atún, queso crema y eneldo. Rellena y enrolla. Sirve con zumo de limón."] },
-                { categoria: "Primero", titulo: "Sopa de Tomate con Albahaca y Croutones", imagen: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=400", ingredientes: ["Tomates maduros", "Cebolla", "Ajo", "Albahaca fresca", "Caldo de verduras", "Pan para croutones"], pasos: ["Sofríe cebolla y ajo. Añade tomates y albahaca, caldo. Cocina y tritura. Sirve con croutones."] },
-                { categoria: "Primero", titulo: "Ensalada de Cuscús con Frutos Secos y Menta", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Cuscús", ingredientes: ["Cuscús", "Pasas", "Piñones", "Menta fresca", "Pepino", "Tomate", "Zumo de limón", "Aceite de oliva"], pasos: ["Prepara cuscús. Mezcla con pasas, piñones, menta, pepino y tomate. Aliña con limón y aceite."] },
-                { categoria: "Primero", titulo: "Crema de Zanahoria Asada y Comino", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Zanahoria+Asada", ingredientes: ["Zanahorias", "Cebolla", "Ajo", "Comino", "Caldo de verduras", "Yogur natural (para servir)"], pasos: ["Asa zanahorias, cebolla y ajo. Cocina con comino y caldo. Tritura. Sirve con un poco de yogur."] },
-                { categoria: "Primero", titulo: "Sopa Fría de Espárragos Blancos con Crujiente de Jamón", imagen: "https://images.unsplash.com/photo-1598514983318-7293e6875953?q=80&w=400", ingredientes: ["Espárragos blancos (lata)", "Caldo de ave", "Nata líquida", "Jamón serrano (lonchas)", "Picatostes"], pasos: ["Tritura espárragos con caldo y nata. Enfría. Fríe jamón hasta crujiente. Sirve sopa fría con jamón y picatostes."] },
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    dom.userInfo.textContent = `Sincronizando...`;
+                    await loadUserData();
+                    updateFavoriteIcons();
+                    dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
+                } else {
+                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo:", error));
+                }
+            });
 
-                // --- 20 Segundos ---
-                { categoria: "Segundo", titulo: "Pollo al Chilindrón", imagen: "https://images.unsplash.com/photo-1606013022559-12f865ae487c?q=80&w=400", ingredientes: ["Pollo troceado", "Pimiento rojo y verde", "Cebolla", "Tomate triturado", "Jamón serrano", "Vino blanco", "Aceite de oliva"], pasos: ["Dora el pollo. Sofríe verduras y jamón. Añade tomate y vino. Incorpora pollo y cocina a fuego lento."] },
-                { categoria: "Segundo", titulo: "Salmón al Horno con Costra de Hierbas y Limón", imagen: "https://images.unsplash.com/photo-1628203102432-159c3a35f795?q=80&w=400", ingredientes: ["Lomos de salmón", "Pan rallado", "Perejil", "Eneldo", "Ralladura de limón", "Aceite de oliva"], pasos: ["Mezcla pan rallado con hierbas y ralladura. Cubre el salmón. Hornea hasta que esté hecho y crujiente."] },
-                { categoria: "Segundo", titulo: "Ternera Strogonoff con Arroz Basmati", imagen: "https://images.unsplash.com/photo-1568285743494-b258e7b3e1d1?q=80&w=400", ingredientes: ["Ternera en tiras", "Cebolla", "Champiñones", "Mostaza de Dijon", "Nata líquida", "Arroz basmati"], pasos: ["Dora la ternera. Sofríe cebolla y champiñones. Añade mostaza, nata y ternera. Cocina. Sirve con arroz basmati."] },
-                { categoria: "Segundo", titulo: "Pechuga de Pavo a la Naranja con Cuscús", imagen: "https://images.unsplash.com/photo-1588164096052-a5e2f7b8f9a0?q=80&w=400", ingredientes: ["Pechuga de pavo", "Zumo de naranja", "Cebolla", "Pimiento", "Cuscús"], pasos: ["Dora la pechuga. Sofríe cebolla y pimiento. Añade zumo de naranja y pavo. Cocina. Sirve con cuscús."] },
-                { categoria: "Segundo", titulo: "Merluza al Vapor con Salsa de Tomate y Alcaparras", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Merluza+Vapor", ingredientes: ["Lomos de merluza", "Tomate triturado", "Cebolla", "Ajo", "Alcaparras", "Vino blanco"], pasos: ["Sofríe cebolla y ajo, añade tomate y alcaparras. Cocina. Haz la merluza al vapor. Sirve con la salsa."] },
-                { categoria: "Segundo", titulo: "Albóndigas de Pollo con Salsa de Almendras", imagen: "https://images.unsplash.com/photo-1607532338161-b4f0b2f1e6b3?q=80&w=400", ingredientes: ["Carne picada de pollo", "Almendras molidas", "Cebolla", "Ajo", "Caldo de pollo", "Pan rallado", "Huevo"], pasos: ["Forma albóndigas con pollo, pan y huevo. Fríe. Sofríe cebolla y ajo. Añade almendras y caldo. Cocina las albóndigas en la salsa."] },
-                { categoria: "Segundo", titulo: "Garbanzos Estofados con Chorizo y Panceta", imagen: "https://images.unsplash.com/photo-1625944132003-24153a812b1b?q=80&w=400", ingredientes: ["Garbanzos cocidos", "Chorizo", "Panceta", "Cebolla", "Pimentón", "Caldo de carne"], pasos: ["Sofríe chorizo y panceta. Añade cebolla y pimentón. Incorpora garbanzos y caldo. Cocina a fuego lento."] },
-                { categoria: "Segundo", titulo: "Libritos de Lomo Rellenos de Jamón y Queso", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Libritos+Lomo", ingredientes: ["Filetes de lomo de cerdo", "Jamón cocido", "Queso", "Huevo", "Pan rallado", "Aceite para freír"], pasos: ["Rellena los filetes con jamón y queso. Empana y fríe hasta dorar."] },
-                { categoria: "Segundo", titulo: "Calamares a la Plancha con Salsa Romesco", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Calamares+Romesco", ingredientes: ["Calamares limpios", "Salsa Romesco (casera o comprada)", "Aceite de oliva"], pasos: ["Cocina los calamares a la plancha. Sirve con salsa Romesco."] },
-                { categoria: "Segundo", titulo: "Arroz con Costra (Estilo Elche)", imagen: "https://images.unsplash.com/photo-1579871494474-a4b56a7d1ae9?q=80&w=400", ingredientes: ["Arroz", "Pollo", "Conejo", "Butifarra", "Morcilla", "Tomate triturado", "Garbanzos", "Huevos", "Caldo de carne"], pasos: ["Sofríe carnes y tomate. Añade arroz, garbanzos y caldo. Cocina. Vierte huevos batidos por encima y gratina."] },
-                { categoria: "Segundo", titulo: "Conejo al Ajillo con Hierbas Aromáticas", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Conejo+Ajillo", ingredientes: ["Conejo troceado", "Ajo", "Romero", "Tomillo", "Vino blanco", "Aceite de oliva"], pasos: ["Dora el conejo. Añade ajo y hierbas. Vierte vino y cocina a fuego lento hasta que esté tierno."] },
-                { categoria: "Segundo", titulo: "Pescado al Horno con Verduras al Vapor", imagen: "https://images.unsplash.com/photo-1628203102432-159c3a35f795?q=80&w=400", ingredientes: ["Pescado blanco (entero o lomos)", "Brócoli", "Zanahorias", "Calabacín", "Limón", "Aceite de oliva"], pasos: ["Hornea el pescado con limón. Cocina las verduras al vapor. Sirve el pescado con las verduras."] },
-                { categoria: "Segundo", titulo: "Estofado de Ternera con Patatas y Guisantes", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Estofado+Ternera", ingredientes: ["Ternera para estofar", "Patatas", "Guisantes", "Cebolla", "Zanahoria", "Caldo de carne", "Vino tinto"], pasos: ["Dora la ternera. Sofríe cebolla y zanahoria. Añade ternera, vino y caldo. Cocina a fuego lento. Incorpora patatas y guisantes al final."] },
-                { categoria: "Segundo", titulo: "Cazuela de Pulpo y Patatas a la Gallega", imagen: "https://images.unsplash.com/photo-1672322437950-e800&w=400", ingredientes: ["Pulpo cocido", "Patatas", "Pimentón dulce y picante", "Aceite de oliva", "Sal gorda"], pasos: ["Cuece las patatas. Corta el pulpo. Mezcla pulpo y patatas en cazuela. Aliña con pimentón, aceite y sal gorda."] },
-                { categoria: "Segundo", titulo: "Pizza Casera de Masa Fina con Ingredientes Frescos", imagen: "https://images.unsplash.com/photo-1568285743494-b25
+            async function loadUserData() {
+                if (!userId) return;
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    userFavorites = data.favorites || [];
+                }
+            }
+
+            async function saveData(data) {
+                if (!userId) return;
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                await setDoc(userDocRef, data, { merge: true });
+            }
+
+            async function toggleFavorite(recipeId) {
+                if (!userId) return;
+                const isFavorite = userFavorites.includes(recipeId);
+                userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
+                
+                updateFavoriteIcons();
+                applyFilters();
+
+                await saveData({ favorites: userFavorites });
+            }
+
+            function updateFavoriteIcons() {
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    const heartIcon = card.querySelector('.favorite-btn svg');
+                    if (userFavorites.includes(card.dataset.id)) {
+                        heartIcon.classList.add('text-red-500', 'fill-current');
+                        heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
+                    } else {
+                        heartIcon.classList.remove('text-red-500', 'fill-current');
+                        heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
+                    }
+                });
+            }
+
+            function applyFilters() {
+                const searchTerm = dom.search.value.toLowerCase();
+                let visibleCount = 0;
+
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    const id = card.dataset.id;
+                    const category = card.dataset.category;
+                    const searchData = card.dataset.search;
+
+                    const isFavorite = userFavorites.includes(id);
+                    
+                    const categoryMatch = currentCategory === 'all' || category === currentCategory;
+                    const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
+                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
+                    
+                    if (categoryMatch && searchMatch && favoriteMatch) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                dom.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+            
+            function showRecipeDetail(recipe) {
+                dom.modalContent.innerHTML = `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
+                            <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <img src="${recipe.imagen}" alt="[Imagen de ${recipe.titulo}]" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <div id="recipe-content-normal">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
+                                    <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
+                                    <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
+                                </div>
+                            </div>
+                             <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
+                                <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                                <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
+                                <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Iniciar Cocina Guiada</button>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                const ingredientList = document.getElementById('ingredient-list');
+                const stepsList = document.getElementById('steps-list');
+
+                ingredientList.innerHTML = recipe.ingredientes.map(ing => `<li>${ing}</li>`).join('');
+                stepsList.innerHTML = recipe.pasos.map(step => `<li>${step}</li>`).join('');
+
+                dom.modal.style.display = 'flex';
+                setTimeout(() => dom.modalContent.classList.add('scale-100'), 10);
+                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+                document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
+                
+                const shareBtn = document.getElementById('shareRecipeBtn');
+                if (navigator.share) {
+                    shareBtn.addEventListener('click', async () => {
+                        try {
+                            await navigator.share({
+                                title: recipe.titulo,
+                                text: `¡Mira esta receta de ${recipe.titulo}!`,
+                                url: window.location.href,
+                            });
+                        } catch (err) {
+                            console.error('Error al compartir:', err);
+                        }
+                    });
+                } else {
+                    shareBtn.style.display = 'none';
+                }
+                
+                document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
+            }
+            
+            function closeModal() {
+                dom.modalContent.classList.remove('scale-100');
+                setTimeout(() => { dom.modal.style.display = 'none'; dom.modalContent.innerHTML = ''; }, 300);
+            }
+
+            // --- MODO OSCURO ---
+            function setupTheme() {
+                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                    dom.lightIcon.classList.remove('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    dom.darkIcon.classList.remove('hidden');
+                }
+            }
+
+            dom.themeToggle.addEventListener('click', function() {
+                dom.darkIcon.classList.toggle('hidden');
+                dom.lightIcon.classList.toggle('hidden');
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
+
+            setupTheme();
+
+            // --- EVENT LISTENERS ---
+            dom.search.addEventListener('input', applyFilters);
+
+            dom.filterAllBtn.addEventListener('click', () => {
+                currentFilter = 'all';
+                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+                applyFilters();
+            });
+            dom.filterFavBtn.addEventListener('click', () => {
+                currentFilter = 'favorites';
+                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+                applyFilters();
+            });
+            
+            dom.categoryFilters.addEventListener('click', (e) => {
+                if (e.target.matches('.category-btn')) {
+                    currentCategory = e.target.dataset.category;
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    applyFilters();
+                }
+            });
+            
+            dom.modal.addEventListener('click', (event) => { if (event.target === dom.modal) closeModal(); });
+            
+            dom.filterAllBtn.classList.add('active');
+            
+            // --- COPYRIGHT YEAR ---
+            dom.copyrightYear.textContent = new Date().getFullYear();
+
+            // --- ASISTENTE DE VOZ ---
+            const cookingModeView = document.getElementById('cooking-mode-view');
+            const stepCounter = document.getElementById('step-counter');
+            const stepText = document.getElementById('step-text');
+            const prevStepBtn = document.getElementById('prev-step-btn');
+            const repeatStepBtn = document.getElementById('repeat-step-btn');
+            const nextStepBtn = document.getElementById('next-step-btn');
+            const exitCookingBtn = document.getElementById('exit-cooking-btn');
+
+            let currentStep = 0;
+            let currentRecipeSteps = [];
+
+            function speak(text) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                speechSynthesis.speak(utterance);
+            }
+
+            function updateCookingStep() {
+                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
+                stepText.textContent = currentRecipeSteps[currentStep];
+                speak(currentRecipeSteps[currentStep]);
+            }
+
+            function startCookingMode(recipe) {
+                currentRecipeSteps = recipe.pasos;
+                currentStep = 0;
+                cookingModeView.classList.remove('hidden');
+                cookingModeView.classList.add('flex');
+                updateCookingStep();
+            }
+
+            function exitCookingMode() {
+                speechSynthesis.cancel();
+                cookingModeView.classList.add('hidden');
+                cookingModeView.classList.remove('flex');
+            }
+
+            prevStepBtn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateCookingStep();
+                }
+            });
+
+            nextStepBtn.addEventListener('click', () => {
+                if (currentStep < currentRecipeSteps.length - 1) {
+                    currentStep++;
+                    updateCookingStep();
+                } else {
+                    speak("Has llegado al final de la receta. ¡Buen provecho!");
+                    exitCookingMode();
+                }
+            });
+
+            repeatStepBtn.addEventListener('click', () => {
+                speak(currentRecipeSteps[currentStep]);
+            });
+
+            exitCookingBtn.addEventListener('click', exitCookingMode);
+        }
+
+        // Ejecuta la app cuando el DOM esté listo
+        runRecipeApp();
+    </script>
+</body>
+</html>
