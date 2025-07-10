@@ -2,81 +2,80 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Recetario Delicioso</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Mi Recetario Completo</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    section { margin-bottom: 3rem; }
+    .recipe { border: 1px solid #ddd; padding: 1rem; margin: .5rem 0; border-radius: 8px; }
+    .recipe img { width: 100%; max-width: 400px; border-radius: 4px; }
+    .ingredients, .steps { margin: .5rem 0; padding-left: 1.2rem; }
+    .step { cursor: pointer; margin: .3rem 0; }
+    .step:hover { text-decoration: underline; }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body>
 
-<div id="app" class="max-w-4xl mx-auto p-4">
-  <h1 class="text-4xl font-bold text-center mb-4">Recetario Delicioso</h1>
-  <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-</div>
+  <h1>Mi Recetario Completo – 80 recetas</h1>
 
-<script>
-// 🧹 Eliminar duplicados por título (ignore case)
-const eliminarDuplicados = recetas => {
-  const vistos = new Set();
-  return recetas.filter(r => {
-    const key = r.titulo.trim().toLowerCase();
-    if (vistos.has(key)) return false;
-    vistos.add(key);
-    return true;
-  });
-};
+  <section id="Aperitivo">
+    <h2>Aperitivos</h2>
+  </section>
 
-// 📦 Definición completa de allRecipes (20 x 4 = 80 recetas)
-let allRecipes = [
-  // → *Aperitivos* (20)
-  { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", imagen: "https://source.unsplash.com/800x600/?olive,skewer", ingredientes: ["Aceitunas verdes y negras","Pimiento rojo","Albahaca","Aceite de oliva","Pimienta"], pasos: ["Ensarta aceitunas, pimiento y albahaca.", "Aliña con aceite y pimienta.", "Sirve frío."] },
-  // ... (las otras 19 aquí),
-  // → *Primeros* (20)
-  { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", imagen: "https://source.unsplash.com/800x600/?quinoa,salad", ingredientes: ["Quinoa","Pimiento","Tomate cherry","Cebolla morada","Aceite","Limón"], pasos: ["Mezcla quinoa con verduras picadas.", "Aliña y sirve."] },
-  // ... (las otras 19),
-  // → *Segundos* (20)
-  { categoria: "Segundo", titulo: "Pollo al horno con limón y hierbas", imagen: "https://source.unsplash.com/800x600/?roasted,chicken", ingredientes: ["Pechugas de pollo","Limón","Tomillo","Romero","Aceite","Sal"], pasos: ["Marina pollo con limón y hierbas.", "Hornea 25 min a 200 °C."] },
-  // ... (las otras 19),
-  // → *Postres* (20)
-  { categoria: "Postre", titulo: "Brochetas de fruta fresca", imagen: "https://source.unsplash.com/800x600/?fruit,skewers", ingredientes: ["Fresas","Kiwi","Melón","Uvas"], pasos: ["Corta fruta, ensarta y sirve."] },
-  // ... (las otras 19)
-];
+  <section id="Primero">
+    <h2>Primeros</h2>
+  </section>
 
-// 🔄 Elimina duplicados
-allRecipes = eliminarDuplicados(allRecipes);
+  <section id="Segundo">
+    <h2>Segundos</h2>
+  </section>
 
-// 🖼 Función para dibujar tarjetas
-const drawCards = () => {
-  const grid = document.getElementById('recipeGrid');
-  grid.innerHTML = '';
-  allRecipes.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'bg-white rounded shadow overflow-hidden cursor-pointer hover:shadow-lg';
-    div.innerHTML = `
-      <img src="${r.imagen}" alt="${r.titulo}" class="w-full h-40 object-cover">
-      <div class="p-4">
-        <h2 class="font-bold text-lg">${r.titulo}</h2>
-        <p class="text-sm text-gray-600">${r.categoria}</p>
-      </div>`;
-    div.addEventListener('click', () => mostrarDetalle(r));
-    grid.appendChild(div);
-  });
-};
+  <section id="Postre">
+    <h2>Postres</h2>
+  </section>
 
-// 🗣 Mostrar y narrar receta
-const mostrarDetalle = r => {
-  alert(`👉 ${r.titulo}\n\nIngredientes:\n• ${r.ingredientes.join('\n• ')}\n\nPasos:\n${r.pasos.map((p,i)=>\`${i+1}. ${p}\`).join('\n')}`);
-  r.pasos.forEach(p => hablar(p));
-};
+  <script>
+    const recetas = /* aquí pegas el array `allRecipes` que definimos con 80 objetos */;
+    
+    const speak = text => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'es-ES';
+      window.speechSynthesis.speak(u);
+    };
 
-// 🎙 Texto a voz
-const hablar = texto => {
-  const u = new SpeechSynthesisUtterance(texto);
-  u.lang = 'es-ES';
-  speechSynthesis.speak(u);
-};
+    function render() {
+      const contenedores = {
+        "Aperitivo": document.getElementById('Aperitivo'),
+        "Primero": document.getElementById('Primero'),
+        "Segundo": document.getElementById('Segundo'),
+        "Postre": document.getElementById('Postre')
+      };
 
-// Inicialización
-drawCards();
-</script>
+      recetas.forEach(r => {
+        const sec = contenedores[r.categoria];
+        if (!sec) return;
+
+        const div = document.createElement('div');
+        div.className = 'recipe';
+        div.innerHTML = `
+          <h3>${r.titulo}</h3>
+          <img src="${r.imagen}" alt="${r.titulo}" loading="lazy">
+          <h4>Ingredientes:</h4><ul class="ingredients">${r.ingredientes.map(i => `<li>${i}</li>`).join('')}</ul>
+          <h4>Pasos:</h4><ol class="steps">${r.pasos.map((p, idx) => `<li class="step" data-text="${p}">Paso ${idx+1}: ${p}</li>`).join('')}</ol>
+        `;
+
+        div.querySelectorAll('.step').forEach(el => {
+          el.addEventListener('click', e => {
+            const text = el.getAttribute('data-text');
+            speak(text);
+          });
+        });
+
+        sec.appendChild(div);
+      });
+    }
+
+    render();
+  </script>
 </body>
 </html>
