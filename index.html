@@ -97,7 +97,7 @@
 
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
-            <p class="text-gray-600 dark:text-stone-400 mt-2">80 recetas para inspirar tu cocina.</p>
+            <p class="text-gray-600 dark:text-stone-400 mt-2">100 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
             
             <div class="absolute top-0 right-0">
@@ -195,7 +195,7 @@
             };
             
             const allRecipes = [
-                // 20 Aperitivos
+                // 25 Aperitivos
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
                 { categoria: "Aperitivo", titulo: "Garbanzos crujientes al horno", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Garbanzos+Crujientes", ingredientes: ["200 g garbanzos cocidos", "1 cda. AOVE", "1/2 cdita pimentón ahumado", "1/4 cdita comino", "Sal"], pasos: ["Mezcla garbanzos con aceite y especias.", "Hornea 35 min a 180 °C.", "Enfría y sirve."] },
                 { categoria: "Aperitivo", titulo: "Hummus clásico con crudités", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Hummus+Crudites", ingredientes: ["400 g garbanzos cocidos", "2 cdas. tahini", "1 diente de ajo", "Zumo de 1 limón", "Aceite de oliva", "Palitos de zanahoria y apio"], pasos: ["Tritura los garbanzos con tahini, ajo, limón y aceite.", "Sirve con los crudités de verdura."] },
@@ -216,8 +216,13 @@
                 { categoria: "Aperitivo", titulo: "Bastones de pepino con hummus", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pepino+Hummus", ingredientes: ["1 pepino", "Hummus casero o comprado"], pasos: ["Corta el pepino en bastones.", "Sirve con el hummus para mojar."] },
                 { categoria: "Aperitivo", titulo: "Chips de batata al horno", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Chips+Batata+Horno", ingredientes: ["1 batata grande", "1 cda. aceite de oliva", "Pimentón dulce", "Sal"], pasos: ["Corta la batata en rodajas finas.", "Mézclala con aceite, pimentón y sal.", "Hornea a 180°C hasta que estén crujientes."] },
                 { categoria: "Aperitivo", titulo: "Brochetas Caprese mini", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Caprese", ingredientes: ["Tomates cherry", "Bolas de mozzarella mini", "Hojas de albahaca fresca", "Aceite de oliva virgen extra", "Vinagre balsámico"], pasos: ["Ensarta un tomate, una bola de mozzarella y una hoja de albahaca en cada palillo.", "Aliña con aceite de oliva y vinagre balsámico al gusto."] },
+                { categoria: "Aperitivo", titulo: "Paté de berenjena (Baba Ghanoush)", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pate+Berenjena", ingredientes: ["1 berenjena grande", "2 cdas. tahini", "Zumo de 1/2 limón", "1 diente de ajo", "Aceite de oliva", "Comino molido", "Sal y perejil picado"], pasos: ["Asa la berenjena hasta que esté tierna y retira la pulpa.", "Tritura la pulpa con tahini, limón, ajo, aceite, comino y sal hasta obtener una crema suave.", "Sirve decorado con perejil."] },
+                { categoria: "Aperitivo", titulo: "Rollitos de calabacín y queso", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Rollitos+Calabacin", ingredientes: ["1 calabacín", "100 g queso fresco batido", "Hojas de menta", "Sal y pimienta"], pasos: ["Corta el calabacín en láminas finas y pásalas por la plancha.", "Mezcla el queso fresco con la menta picada, sal y pimienta.", "Rellena cada lámina de calabacín con la mezcla de queso y enrolla."] },
+                { categoria: "Aperitivo", titulo: "Pincho de tortilla de patatas", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pincho+Tortilla", ingredientes: ["2 huevos", "1 patata pequeña", "1/4 cebolla", "Aceite de oliva", "Sal"], pasos: ["Pela y corta la patata y la cebolla en trozos pequeños, sofríe en aceite.", "Bate los huevos, añade la patata y cebolla escurridas y sal.", "Cuaja la tortilla en una sartén pequeña por ambos lados.", "Corta en pinchos."] },
+                { categoria: "Aperitivo", titulo: "Vasitos de gazpacho con langostinos", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Gazpacho", ingredientes: ["2 tomates maduros", "1/4 pepino", "1/4 pimiento verde", "1/4 diente de ajo", "Aceite de oliva", "Vinagre", "Sal", "8 langostinos cocidos"], pasos: ["Prepara el gazpacho triturando los ingredientes y colándolo.", "Sirve el gazpacho frío en vasitos pequeños y decora con un langostino en cada uno."] },
+                { categoria: "Aperitivo", titulo: "Brochetas de pollo satay mini", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Pollo+Satay", ingredientes: ["150 g pechuga de pollo", "1 cda. salsa de cacahuete", "1/2 cdita. curry en polvo", "Palillos de brocheta"], pasos: ["Corta el pollo en dados y marina con la salsa de cacahuete y curry.", "Ensarta el pollo en mini brochetas y cocina a la plancha hasta que estén doradas."] },
 
-                // 20 Primeros
+                // 25 Primeros
                 { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Quinoa", ingredientes: ["1 taza de quinoa cocida", "Pimiento rojo y verde", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Mezcla la quinoa con las verduras picadas.", "Aliña con aceite y limón."] },
                 { categoria: "Primero", titulo: "Sopa de lentejas rojas", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Lentejas+Rojas", ingredientes: ["1 taza lentejas rojas", "1 zanahoria", "1 cebolla", "1 diente de ajo", "1 cdita comino", "Sal y pimienta"], pasos: ["Sofríe ajo, cebolla y zanahoria picados.", "Agrega lentejas y agua, cocina 20 min.", "Tritura si deseas una textura cremosa."] },
                 { categoria: "Primero", titulo: "Crema de calabaza", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabaza", ingredientes: ["500 g calabaza", "1 puerro", "1 patata", "Aceite de oliva", "Sal y nuez moscada"], pasos: ["Cocina calabaza, patata y puerro en agua.", "Tritura con aceite y nuez moscada."] },
@@ -238,8 +243,13 @@
                 { categoria: "Primero", titulo: "Sopa de verduras casera", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Verduras+Casera", ingredientes: ["1 zanahoria", "1 puerro", "1 patata", "Un puñado de judías verdes", "Caldo de verduras", "Sal y pimienta"], pasos: ["Corta todas las verduras en trozos pequeños.", "Hierve en el caldo hasta que estén tiernas.", "Ajusta de sal y pimienta."] },
                 { categoria: "Primero", titulo: "Crema de guisantes con menta", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Guisantes+Menta", ingredientes: ["300 g guisantes (frescos o congelados)", "1 cebolleta", "Menta fresca", "Caldo de verduras", "Aceite de oliva"], pasos: ["Sofríe la cebolleta, añade los guisantes y el caldo.", "Cocina unos minutos y tritura con unas hojas de menta."] },
                 { categoria: "Primero", titulo: "Ensalada de remolacha y queso de cabra", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Remolacha+Queso", ingredientes: ["2 remolachas cocidas", "100 g queso de cabra", "Nueces", "Rúcula", "Vinagreta de miel y mostaza"], pasos: ["Corta la remolacha en cubos y el queso en medallones.", "Combina con rúcula y nueces.", "Aliña con una vinagreta de miel y mostaza."] },
-                
-                // 20 Segundos
+                { categoria: "Primero", titulo: "Crema de espárragos verdes", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Esparragos", ingredientes: ["500 g espárragos verdes", "1 patata", "1 cebolla", "Caldo de verduras", "Nata líquida ligera (opcional)", "Sal y pimienta"], pasos: ["Sofríe la cebolla, añade los espárragos troceados y la patata.", "Cubre con caldo y cuece hasta que estén tiernos.", "Tritura y pasa por un colador para una crema fina. Añade nata si quieres una textura más cremosa."] },
+                { categoria: "Primero", titulo: "Sopa de ajo castellana", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Ajo+Castellana", ingredientes: ["4 dientes de ajo", "4 rebanadas de pan duro", "1 cdita. pimentón dulce", "Caldo de pollo o verduras", "Aceite de oliva", "Huevo (opcional)"], pasos: ["Lamina los ajos y sofríelos en aceite. Añade el pan troceado y el pimentón.", "Cubre con caldo y cuece unos 10-15 minutos.", "Sirve caliente, opcionalmente con un huevo escalfado."] },
+                { categoria: "Primero", titulo: "Ensalada de cuscús con pasas y piñones", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Cuscús", ingredientes: ["1 taza de cuscús", "1.5 tazas de agua o caldo", "1/4 taza de pasas", "2 cdas. piñones tostados", "Pepino y tomate picado", "Aceite de oliva", "Zumo de limón", "Menta fresca"], pasos: ["Hidrata el cuscús con el agua caliente.", "Mezcla con pasas, piñones, pepino, tomate, aceite, limón y menta picada.", "Deja reposar antes de servir."] },
+                { categoria: "Primero", titulo: "Crema de calabacín y manzana", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabacin+Manzana", ingredientes: ["2 calabacines", "1 manzana verde", "1/2 cebolla", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, añade el calabacín y la manzana troceados.", "Cubre con caldo y cuece hasta que estén tiernos.", "Tritura hasta obtener una crema suave."] },
+                { categoria: "Primero", titulo: "Salpicón de marisco ligero", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salpicon+Marisco", ingredientes: ["100 g gambas cocidas y peladas", "100 g pulpo cocido", "1/2 cebolla morada", "1/2 pimiento rojo", "Perejil fresco", "Aceite de oliva", "Vinagre de vino", "Sal"], pasos: ["Corta el marisco y las verduras en trozos pequeños.", "Mezcla todo en un bol.", "Aliña con aceite, vinagre y sal. Sirve frío."] },
+
+                // 25 Segundos
                 { categoria: "Segundo", titulo: "Pollo al horno con limón y hierbas", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Horno+Limon", ingredientes: ["2 pechugas de pollo", "1 limón", "Tomillo", "Romero", "Aceite de oliva", "Sal y pimienta"], pasos: ["Marina el pollo con zumo de limón, hierbas, aceite, sal y pimienta.", "Hornea 25 minutos a 200°C."] },
                 { categoria: "Segundo", titulo: "Salmón a la plancha con espárragos", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salmon+Plancha+Esparragos", ingredientes: ["2 lomos de salmón", "1 manojo de espárragos verdes", "Aceite de oliva", "Sal en escamas", "Pimienta"], pasos: ["Cocina el salmón y los espárragos a la plancha con un poco de aceite.", "Sazona con sal y pimienta al servir."] },
                 { categoria: "Segundo", titulo: "Wok de ternera y brócoli", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Wok+Ternera+Brocoli", ingredientes: ["200 g ternera en tiras", "1 brócoli", "Salsa de soja baja en sodio", "Jengibre rallado", "Aceite de sésamo"], pasos: ["Saltea la ternera en un wok.", "Añade el brócoli y cocina hasta que esté tierno.", "Adereza con soja, jengibre y aceite de sésamo."] },
@@ -260,8 +270,13 @@
                 { categoria: "Segundo", titulo: "Calabacines rellenos de arroz y verduras", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Calabacines+Rellenos+Arroz", ingredientes: ["2 calabacines grandes", "1 taza de arroz cocido", "Champiñones", "Tomate triturado", "Queso light rallado"], pasos: ["Corta los calabacines por la mitad y vacía.", "Saltea la pulpa con champiñones, tomate y arroz.", "Rellena los calabacines, cubre con queso y hornea."] },
                 { categoria: "Segundo", titulo: "Pinchos de gambas y piña a la plancha", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pinchos+Gambas+Piña", ingredientes: ["200 g gambas peladas", "Piña natural en trozos", "Aceite de oliva", "Pimentón dulce", "Limón"], pasos: ["Ensarta gambas y piña en brochetas.", "Cocina a la plancha con un poco de aceite.", "Espolvorea pimentón y rocía con limón antes de servir."] },
                 { categoria: "Segundo", titulo: "Huevos revueltos con espárragos y setas", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Huevos+Revueltos+Esparragos", ingredientes: ["3 huevos", "1 manojo de espárragos trigueros", "100 g setas variadas", "Aceite de oliva", "Sal y pimienta"], pasos: ["Saltea los espárragos y las setas en una sartén.", "Añade los huevos batidos y remueve hasta que cuajen al gusto.", "Salpimenta y sirve."] },
+                { categoria: "Segundo", titulo: "Albóndigas de pollo en salsa de tomate", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Albondigas+Pollo", ingredientes: ["300 g carne picada de pollo", "1/2 cebolla", "Pan rallado", "1 huevo", "400 g tomate triturado", "Aceite de oliva", "Sal y orégano"], pasos: ["Mezcla el pollo picado con cebolla rallada, pan rallado, huevo y sal.", "Forma albóndigas y dóralas en una sartén.", "Añade el tomate triturado y orégano, cocina a fuego lento 20 minutos."] },
+                { categoria: "Segundo", titulo: "Pescado al horno con patatas panaderas", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pescado+Horno+Patatas", ingredientes: ["2 filetes de pescado blanco (merluza, bacalao)", "2 patatas medianas", "1 cebolla", "Aceite de oliva", "Sal y perejil"], pasos: ["Corta las patatas y cebolla en rodajas finas.", "Colócalas en una bandeja de horno con aceite y sal.", "Hornea 20 minutos a 180°C. Añade el pescado y hornea 15 minutos más. Sirve con perejil."] },
+                { categoria: "Segundo", titulo: "Champiñones rellenos de verduras", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Champinones+Rellenos", ingredientes: ["8 champiñones grandes", "1/2 pimiento", "1/2 cebolla", "Pulpa de champiñones", "Queso light rallado"], pasos: ["Limpia los champiñones y pica los tallos y las verduras.", "Sofríe las verduras con la pulpa de los champiñones.", "Rellena los sombreros, espolvorea queso y gratina."] },
+                { categoria: "Segundo", titulo: "Brochetas de verduras a la parrilla", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Verduras", ingredientes: ["Calabacín", "Berenjena", "Pimiento", "Cebolla", "Tomates cherry", "Aceite de oliva", "Hierbas provenzales", "Palillos de brocheta"], pasos: ["Corta las verduras en trozos, ensártalas en los palillos.", "Aliña con aceite y hierbas.", "Cocina en parrilla o sartén hasta que estén tiernas y doradas."] },
+                { categoria: "Segundo", titulo: "Pollo estilo oriental con arroz basmati", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Oriental", ingredientes: ["200 g pechuga de pollo", "1/2 pimiento rojo", "1/2 cebolla", "Salsa de soja", "Jengibre", "Arroz basmati cocido"], pasos: ["Corta el pollo y las verduras en tiras.", "Saltea en un wok con jengibre y salsa de soja.", "Sirve con arroz basmati."] },
 
-                // 20 Postres
+                // 25 Postres
                 { categoria: "Postre", titulo: "Brochetas de fruta fresca", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Fruta", ingredientes: ["Fresas", "Kiwi", "Melón", "Uvas"], pasos: ["Corta la fruta en trozos.", "Ensarta en palillos de brocheta."] },
                 { categoria: "Postre", titulo: "Yogur natural con miel y nueces", raciones: 1, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Miel+Nueces", ingredientes: ["1 yogur natural", "1 cdita de miel", "Un puñado de nueces"], pasos: ["Sirve el yogur en un bol.", "Añade la miel y las nueces por encima."] },
                 { categoria: "Postre", titulo: "Manzana asada con canela", raciones: 1, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Manzana+Asada+Canela", ingredientes: ["1 manzana", "Canela en polvo"], pasos: ["Quita el corazón de la manzana.", "Espolvorea canela y hornea 30 min a 180°C."] },
@@ -281,7 +296,12 @@
                 { categoria: "Postre", titulo: "Sorbete de fresa natural", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sorbete+Fresa+Natural", ingredientes: ["250 g fresas congeladas", "Zumo de 1/2 limón", "1 cda. miel o sirope de agave"], pasos: ["Tritura las fresas con el zumo de limón y la miel hasta obtener una textura de sorbete.", "Sirve inmediatamente."] },
                 { categoria: "Postre", titulo: "Bol de açaí con granola", raciones: 1, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bol+Acai+Granola", ingredientes: ["100 g pulpa de açaí congelada", "1/2 plátano maduro", "30 ml leche vegetal", "Granola y frutas frescas para decorar"], pasos: ["Tritura la pulpa de açaí con el plátano y la leche vegetal hasta que esté cremoso.", "Vierte en un bol y decora con granola y frutas frescas."] },
                 { categoria: "Postre", titulo: "Galletas de avena y plátano", raciones: 3, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Galletas+Avena+Platano", ingredientes: ["1 plátano maduro", "1/2 taza de copos de avena", "Chispas de chocolate negro (opcional)"], pasos: ["Tritura el plátano y mézclalo con la avena (y chispas).", "Forma galletas en una bandeja de horno.", "Hornea 15 min a 180°C."] },
-                { categoria: "Postre", titulo: "Yogur con compota de manzana y frutos secos", raciones: 1, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Compota+Frutos+Secos", ingredientes: ["1 yogur natural", "2 cdas. compota de manzana casera", "Frutos secos picados (almendras, nueces)"], pasos: ["Sirve el yogur en un vaso.", "Añade la compota de manzana por encima.", "Decora con frutos secos picados."] }
+                { categoria: "Postre", titulo: "Yogur con compota de manzana y frutos secos", raciones: 1, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Compota+Frutos+Secos", ingredientes: ["1 yogur natural", "2 cdas. compota de manzana casera", "Frutos secos picados (almendras, nueces)"], pasos: ["Sirve el yogur en un vaso.", "Añade la compota de manzana por encima.", "Decora con frutos secos picados."] },
+                { categoria: "Postre", titulo: "Flan de huevo casero light", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Flan+Huevo+Light", ingredientes: ["3 huevos", "500 ml leche desnatada", "Edulcorante al gusto", "Esencia de vainilla"], pasos: ["Prepara el caramelo con edulcorante y agua.", "Bate los huevos con la leche y la vainilla.", "Vierte la mezcla en moldes caramelizados y cocina al baño maría en el horno hasta que cuaje."] },
+                { categoria: "Postre", titulo: "Gelatina de frutas variadas", raciones: 4, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gelatina+Frutas", ingredientes: ["1 sobre de gelatina sin azúcar (sabor a elegir)", "Frutas frescas picadas (fresas, kiwi, melocotón)", "Agua"], pasos: ["Disuelve la gelatina en agua caliente y luego añade agua fría.", "Incorpora las frutas picadas en los moldes.", "Refrigera hasta que cuaje."] },
+                { categoria: "Postre", titulo: "Bizcocho de limón sin azúcar", raciones: 6, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bizcocho+Limon+Sin+Azucar", ingredientes: ["3 huevos", "150 g harina integral", "Zumo y ralladura de 1 limón", "Edulcorante al gusto", "1 sobre de levadura", "50 ml aceite de oliva suave"], pasos: ["Bate los huevos con el edulcorante y ralladura.", "Incorpora el zumo, aceite, harina y levadura.", "Vierte en un molde y hornea 30 min a 180°C."] },
+                { categoria: "Postre", titulo: "Vasitos de yogur con granola y frutas", raciones: 2, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Yogur+Granola", ingredientes: ["2 yogures naturales", "Granola casera o sin azúcar", "Frutos rojos o plátano en rodajas"], pasos: ["En vasitos, alterna capas de yogur, granola y fruta.", "Sirve inmediatamente."] },
+                { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
             ];
             
             function initializeUI() {
@@ -403,10 +423,10 @@
             let currentServings = 0; // Variable para almacenar el número de raciones actual
 
             function parseIngredient(ingredient) {
-                const regex = /(\d+(?:\.\d+)?)\s*(g|ml|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|ramas|cdas|cdita|litro|kg|ml|unidad|unidades|pieza|piezas|ramita|ramas|bolas|un|una|medias|onzas|ramas|trozos|ramos|pizca|pellizco|dientes|cucharaditas)?\s*(.*)/i;
+                const regex = /(\d+(?:[.,]\d+)?)\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|ramas|cdas|cdita|litro|kg|ml|unidad|unidades|pieza|piezas|ramita|ramas|bolas|un|una|medias|onzas|ramas|trozos|ramos|pizca|pellizco|dientes)?\s*(.*)/i;
                 const match = ingredient.match(regex);
                 if (match) {
-                    const value = parseFloat(match[1]);
+                    const value = parseFloat(match[1].replace(',', '.')); // Soporte para coma decimal
                     const unit = match[2] ? match[2].toLowerCase() : '';
                     const name = match[3].trim();
                     return { value, unit, name, original: ingredient };
@@ -417,26 +437,28 @@
             function formatIngredient(parsedIng, factor) {
                 if (parsedIng.value > 0) {
                     let newValue = parsedIng.value * factor;
-                    // Redondear para evitar decimales muy largos en cantidades comunes
-                    if (newValue % 1 !== 0) { // Si tiene decimales
-                        newValue = Math.round(newValue * 10) / 10; // Redondear a un decimal
-                        if (newValue % 1 === 0) newValue = Math.round(newValue); // Si termina en .0, quitarlo
-                    } else {
-                        newValue = Math.round(newValue); // Redondear enteros
-                    }
-
-                    // Ajustar unidades comunes si se bajan mucho las raciones
                     let unit = parsedIng.unit;
-                    if (unit === 'g' && newValue < 100 && newValue > 0) {
-                        unit = 'gramos'; // Para mayor claridad
-                    } else if (unit === 'ml' && newValue < 100 && newValue > 0) {
-                        unit = 'ml'; // Para mayor claridad
-                    } else if (unit === 'kg' && newValue < 1) {
+                    
+                    // Ajustes de unidades para mayor claridad y precisión
+                    if (unit === 'kg' && newValue < 1) {
                          newValue *= 1000;
                          unit = 'g';
                     } else if (unit === 'litro' && newValue < 1) {
                         newValue *= 1000;
                         unit = 'ml';
+                    } else if (unit === 'g' && newValue > 1000) {
+                        newValue /= 1000;
+                        unit = 'kg';
+                    } else if (unit === 'ml' && newValue > 1000) {
+                        newValue /= 1000;
+                        unit = 'litro';
+                    }
+
+                    // Redondear para evitar decimales muy largos en cantidades comunes
+                    if (newValue % 1 !== 0) { // Si tiene decimales
+                        newValue = Math.round(newValue * 100) / 100; // Redondear a dos decimales
+                    } else {
+                        newValue = Math.round(newValue); // Redondear enteros
                     }
                     
                     return `${newValue} ${unit} ${parsedIng.name}`.trim();
