@@ -118,15 +118,15 @@
         }
 
         /* Modal y vista de cocina guiada */
+        /* Controlamos la visibilidad y transición del modal */
         #recipeModal {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
-            display: flex; /* Aseguramos que siempre esté flex para la transición */
-            visibility: hidden; /* Controlamos la visibilidad con JS para la transición */
+            pointer-events: none; /* No permite clics cuando está oculto */
         }
-        #recipeModal.active {
+        #recipeModal.is-active {
             opacity: 1;
-            visibility: visible;
+            pointer-events: auto; /* Permite clics cuando está activo */
         }
 
         #modalContent {
@@ -134,7 +134,7 @@
             transform: scale(0.9);
             transition: transform 0.3s ease-in-out;
         }
-        #recipeModal.active #modalContent {
+        #recipeModal.is-active #modalContent {
             transform: scale(1);
         }
 
@@ -369,8 +369,9 @@
                 { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
             ];
             
-            // Esta función ahora se encargará de renderizar las tarjetas.
-            // Los event listeners se manejarán por delegación en dom.grid.
+            // Función para renderizar las tarjetas de receta.
+            // Los event listeners para el clic de la tarjeta y el botón de favoritos
+            // se manejan por delegación en dom.grid.
             function renderRecipes(recipesToRender) {
                 let recipeHTML = '';
                 recipesToRender.forEach(recipe => {
@@ -391,19 +392,22 @@
                         </div>`;
                 });
                 dom.grid.innerHTML = recipeHTML;
-                // updateFavoriteIcons() se llamará en el onAuthStateChanged y applyFilters
-                // ya no es necesario aquí directamente.
+                updateFavoriteIcons(); // Asegura que los iconos de favoritos estén correctos al renderizar.
             }
             
             // Un solo event listener en el contenedor padre (delegación de eventos)
             dom.grid.addEventListener('click', (event) => {
+                // event.target es el elemento exacto donde se hizo clic
+                // .closest() busca el ancestro más cercano que coincida con el selector
                 const card = event.target.closest('.recipe-card');
-                if (!card) return; // No es una tarjeta de receta
+                if (!card) return; // Si el clic no fue dentro de una tarjeta, salimos
 
-                if (event.target.closest('.favorite-btn')) { // Es el botón de favoritos
-                    event.stopPropagation(); // Evita que el clic se propague a la tarjeta
+                if (event.target.closest('.favorite-btn')) { 
+                    // Si el clic fue en el botón de favoritos (o en su SVG hijo, etc.)
+                    event.stopPropagation(); // Detiene la propagación del evento para que no active el listener de la tarjeta
                     toggleFavorite(card.dataset.id);
-                } else { // Es la tarjeta de receta
+                } else { 
+                    // Si el clic fue en la tarjeta, pero no en el botón de favoritos
                     const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
                     if (recipe) showRecipeDetail(recipe);
                 }
@@ -457,16 +461,18 @@
                 const isFavorite = userFavorites.includes(recipeId);
                 userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
                 
-                updateFavoriteIcons();
+                updateFavoriteIcons(); // Vuelve a dibujar los corazones correctos
                 applyFilters(); // Re-aplica filtros para actualizar la vista de favoritos si está activa
 
                 await saveData({ favorites: userFavorites });
             }
 
             function updateFavoriteIcons() {
+                // Esta función ahora solo necesita actualizar el estado visual de los corazones
+                // ya que los event listeners se manejan por delegación.
                 document.querySelectorAll('.recipe-card').forEach(card => {
                     const heartIcon = card.querySelector('.favorite-btn svg');
-                    if (heartIcon) { // Asegúrate de que el icono exista
+                    if (heartIcon) { 
                         if (userFavorites.includes(card.dataset.id)) {
                             heartIcon.classList.add('text-red-500', 'fill-current');
                             heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
@@ -480,7 +486,6 @@
 
             function applyFilters() {
                 const searchTerm = dom.search.value.toLowerCase();
-                let visibleCount = 0;
                 const filteredRecipes = allRecipes.filter(recipe => {
                     const id = recipe.titulo; 
                     const category = recipe.categoria;
@@ -494,8 +499,7 @@
                     
                     return categoryMatch && searchMatch && favoriteMatch;
                 });
-                renderRecipes(filteredRecipes); // Renderiza solo las recetas filtradas
-                updateFavoriteIcons(); // Asegura que los iconos de favoritos se actualicen después del render
+                renderRecipes(filteredRecipes); 
                 dom.noResults.style.display = filteredRecipes.length === 0 ? 'block' : 'none';
             }
 
@@ -503,14 +507,12 @@
             let currentServings = 0; 
 
             function parseIngredient(ingredient) {
-                // Mejora la regex para ser más flexible con espacios y comas.
-                // Prioriza la detección de números flotantes o fracciones.
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 const match = ingredient.match(regex);
                 
                 if (match) {
                     let value = 0;
-                    if (match[1]) {
+                    if (match[1]) { // Si hay un número o fracción
                         if (match[1].includes('/')) { 
                             const parts = match[1].split('/');
                             value = parseFloat(parts[0]) / parseFloat(parts[1]);
@@ -519,24 +521,19 @@
                         }
                     } else if (match[2] && (match[2].toLowerCase() === 'medio' || match[2].toLowerCase() === 'media')) {
                         value = 0.5;
+                    } else if (match[2] && (match[2].toLowerCase() === 'un' || match[2].toLowerCase() === 'una')) {
+                        value = 1; // "un limón" -> 1 unidad
                     }
                     
-                    // Si se capturó un cuantificador no numérico (un, una, medio, etc.), se agrega a la unidad o nombre
-                    let unitPart = match[2] ? match[2].toLowerCase() : '';
                     let unit = match[3] ? match[3].toLowerCase() : '';
                     let name = match[4] ? match[4].trim() : '';
 
-                    // Si unitPart es "un" o "una" y no hay una unidad formal, moverlo al nombre si corresponde
-                    if ((unitPart === 'un' || unitPart === 'una') && !unit) {
-                        name = (unitPart + ' ' + name).trim();
-                        unitPart = '';
+                    // Si se detectó una palabra de cantidad (un, una, medio, etc.) como match[2]
+                    // y no se capturó una unidad formal (match[3]), el match[2] es parte del nombre
+                    if (match[2] && !match[3] && !['un', 'una', 'medio', 'media'].includes(match[2].toLowerCase())) {
+                        name = (match[2] + ' ' + name).trim();
                     }
 
-                    // Si hay unidad pero unitPart es gran/pequeña, lo dejamos en el nombre
-                    if (unitPart && !['un', 'una', 'medio', 'media'].includes(unitPart)) {
-                        name = (unitPart + ' ' + name).trim();
-                        unitPart = '';
-                    }
 
                     return { value, unit, name, original: ingredient };
                 }
@@ -556,63 +553,66 @@
                     else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
                     
                     // Redondear para evitar decimales muy largos.
-                    // Si el nuevo valor es un entero o un número con un solo decimal (ej. 1.5, 2.0), mantenerlo.
-                    // Si tiene más de un decimal significativo, redondear a 1 decimal.
-                    if (Math.abs(newValue % 1) < 0.0001) { // Es un entero
+                    if (Math.abs(newValue % 1) < 0.0001) { 
                         newValue = Math.round(newValue);
-                    } else if (Math.abs((newValue * 10) % 1) < 0.0001) { // Es un decimal con una cifra
+                    } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
                         newValue = Math.round(newValue * 10) / 10;
-                    } else { // Más de un decimal
-                        newValue = Math.round(newValue * 10) / 10; // Redondea a 1 decimal
+                    } else { 
+                        newValue = Math.round(newValue * 10) / 10; 
                     }
                     
                     // Lógica para singularizar o pluralizar automáticamente la parte del nombre
-                    // y evitar duplicidades de unidad en el nombre (ej. "1 patata patata")
                     let formattedName = name;
-                    const commonPlurals = {
+                    const commonForms = {
                         "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
                         "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
                         "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
                         "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
                         "filete": "filetes", "manojo": "manojos", "lata": "latas",
                         "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                        "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas"
+                        "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                        "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos"
                     };
 
-                    const commonSingulars = Object.entries(commonPlurals).reduce((acc, [s, p]) => {
-                        acc[p] = s;
-                        return acc;
-                    }, {});
-
-                    // Normalizar el nombre para la singularización/pluralización
-                    let baseName = name.split(' ')[0].toLowerCase(); // Toma la primera palabra
+                    let nameWords = name.split(' ');
+                    let firstWord = nameWords[0].toLowerCase();
+                    let restOfName = nameWords.slice(1).join(' ');
 
                     if (newValue === 1) {
-                        if (commonSingulars[baseName]) {
-                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), commonSingulars[baseName]);
-                        } else if (baseName.endsWith('s') && baseName.length > 3) { // Si termina en 's' y no es una unidad como 'pasas'
-                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), baseName.slice(0, -1));
+                        if (commonForms[firstWord]) { // Si la primera palabra es pluralizable
+                            formattedName = commonForms[firstWord.slice(0, -1)] || firstWord.slice(0, -1);
+                        } else if (firstWord.endsWith('s') && !['pasas', 'nueces', 'espinacas'].includes(firstWord)) {
+                            // Intentar singularizar si termina en 's' y no es una excepción
+                            formattedName = firstWord.slice(0, -1);
                         }
                     } else { // newValue > 1
-                        if (commonPlurals[baseName]) {
-                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), commonPlurals[baseName]);
-                        } else if (!baseName.endsWith('s')) {
-                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), baseName + 's');
+                        if (commonForms[firstWord] && commonForms[firstWord] !== firstWord) {
+                            formattedName = commonForms[firstWord];
+                        } else if (!firstWord.endsWith('s') && !['pasas', 'nueces', 'espinacas'].includes(firstWord)) {
+                            formattedName = firstWord + 's';
                         }
                     }
+                    // Recomponer el nombre. Si no hubo cambio, se mantiene el original.
+                    formattedName = (formattedName + ' ' + restOfName).trim();
 
                     // Eliminar la unidad del nombre si ya está en la parte de la unidad
+                    // Esto evita cosas como "200 g gramos de pollo"
                     const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
                     formattedName = formattedName.replace(unitInNameRegex, '').trim();
 
-                    // Caso especial: si la unidad es "unidad" y el valor es 1, a veces es mejor omitir "unidad"
-                    if ((unit === 'unidad' || unit === 'unidades') && newValue === 1) {
-                         return `${newValue} ${formattedName}`.trim();
-                    }
-                    if (unit === 'un' || unit === 'una') { // "un limón" -> "1 limón"
-                        return `${newValue} ${formattedName}`.trim();
+                    // Ajuste final para eliminar unidades duplicadas del nombre
+                    if (formattedName.toLowerCase().startsWith(unit) && formattedName.toLowerCase().length > unit.length) {
+                        formattedName = formattedName.substring(unit.length).trim();
                     }
 
+
+                    // Casos especiales para legibilidad
+                    if (unit === 'unidades' || unit === 'unidad') {
+                         return `${newValue} ${formattedName}`.trim();
+                    }
+                    if (unit === 'cdita' || unit === 'cda') {
+                        return `${newValue} ${unit}. ${formattedName}`.trim();
+                    }
 
                     return `${newValue} ${unit} ${formattedName}`.trim();
                 }
@@ -666,7 +666,12 @@
 
                 updateIngredientsDisplay(currentServings);
 
-                dom.modal.classList.add('active'); // Añade la clase 'active' para mostrar y animar
+                // Muestra el modal con transición
+                dom.modal.classList.remove('hidden'); // Quita hidden para que display sea flex
+                dom.modal.style.visibility = 'visible'; // Hace que sea visible para las transiciones
+                setTimeout(() => { // Pequeño retraso para que las transiciones CSS se apliquen
+                    dom.modal.classList.add('is-active'); 
+                }, 10); 
                 
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
@@ -714,13 +719,13 @@
             }
             
             function closeModal() {
-                dom.modal.classList.remove('active'); 
-                dom.modalContent.innerHTML = ''; // Limpia el contenido inmediatamente
-                // Retardo solo para ocultar el modal después de la transición de opacidad
+                dom.modal.classList.remove('is-active'); 
+                // Espera a que termine la transición de opacidad antes de ocultar completamente
                 setTimeout(() => { 
-                    dom.modal.style.display = 'none'; 
+                    dom.modal.classList.add('hidden'); // Vuelve a añadir hidden para display: none
                     dom.modal.style.visibility = 'hidden'; // Asegura que no sea interactuable
-                }, 300);
+                    dom.modalContent.innerHTML = ''; // Limpia el contenido solo después de que esté oculto
+                }, 300); // Coincide con la duración de la transición en CSS
                 currentRecipeDetail = null; 
                 currentServings = 0; 
             }
