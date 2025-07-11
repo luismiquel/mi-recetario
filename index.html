@@ -118,25 +118,21 @@
         }
 
         /* Modal y vista de cocina guiada */
-        #modalContent {
-            border-radius: 1.5rem; /* Bordes más redondeados */
-            animation: fadeInScale 0.3s ease-out forwards;
+        #recipeModal {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        #recipeModal.hidden {
-            animation: fadeOut 0.3s ease-out forwards;
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
+        #recipeModal.active {
+            opacity: 1;
         }
 
-        /* Ajustes de botones en el modal */
-        .modal-buttons-container button {
-            transition: all 0.3s ease;
+        #modalContent {
+            border-radius: 1.5rem; /* Bordes más redondeados */
+            transform: scale(0.9);
+            transition: transform 0.3s ease-in-out;
+        }
+        #recipeModal.active #modalContent {
+            transform: scale(1);
         }
 
         @media print {
@@ -167,7 +163,7 @@
             
             <div class="absolute top-0 right-0">
                 <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
-                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8 0 1010.586 10.586z"></path></svg>
                     <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 101.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM13.536 16.364a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg>
                 </button>
             </div>
@@ -202,7 +198,7 @@
     </div>
 
     <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
-        <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300"></div>
+        <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"></div>
     </div>
     
     <div id="cooking-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-50 hidden flex-col">
@@ -369,9 +365,11 @@
                 { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
             ];
             
-            function initializeUI() {
+            // Esta función ahora se encargará de renderizar las tarjetas y adjuntar los event listeners.
+            // Se llamará cada vez que se necesite actualizar la cuadrícula (al inicio, al filtrar, al buscar).
+            function renderRecipes(recipesToRender) {
                 let recipeHTML = '';
-                allRecipes.forEach(recipe => {
+                recipesToRender.forEach(recipe => {
                     const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
                     recipeHTML += `
                         <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
@@ -389,11 +387,17 @@
                         </div>`;
                 });
                 dom.grid.innerHTML = recipeHTML;
-                addCardEventListeners();
+                addCardEventListeners(); // Vuelve a adjuntar los listeners después de renderizar
             }
             
             function addCardEventListeners() {
                 document.querySelectorAll('.recipe-card').forEach(card => {
+                    // Primero, eliminamos los listeners existentes para evitar duplicados
+                    // Esto es crucial si la cuadrícula se renderiza múltiples veces
+                    const oldCard = card.cloneNode(true);
+                    card.parentNode.replaceChild(oldCard, card);
+                    card = oldCard; // Usamos el nuevo nodo para adjuntar listeners
+
                     card.addEventListener('click', () => {
                         const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
                         if (recipe) showRecipeDetail(recipe);
@@ -405,7 +409,8 @@
                 });
             }
             
-            initializeUI();
+            // Inicializa la UI con todas las recetas al cargar la página
+            renderRecipes(allRecipes); 
 
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
@@ -421,27 +426,39 @@
 
             async function loadUserData() {
                 if (!userId) return;
-                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                const userDoc = await getDoc(userDocRef);
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    userFavorites = data.favorites || [];
+                try {
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        userFavorites = data.favorites || [];
+                    }
+                } catch (error) {
+                    console.error("Error cargando datos de usuario:", error);
                 }
             }
 
             async function saveData(data) {
                 if (!userId) return;
-                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                await setDoc(userDocRef, data, { merge: true });
+                try {
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                    await setDoc(userDocRef, data, { merge: true });
+                } catch (error) {
+                    console.error("Error guardando datos de usuario:", error);
+                }
             }
 
             async function toggleFavorite(recipeId) {
-                if (!userId) return;
+                if (!userId) {
+                    alert('Debes iniciar sesión para guardar favoritos. Se está intentando iniciar sesión anónimamente...');
+                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
+                    return;
+                }
                 const isFavorite = userFavorites.includes(recipeId);
                 userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
                 
                 updateFavoriteIcons();
-                applyFilters();
+                applyFilters(); // Re-aplica filtros para actualizar la vista de favoritos si está activa
 
                 await saveData({ favorites: userFavorites });
             }
@@ -462,11 +479,10 @@
             function applyFilters() {
                 const searchTerm = dom.search.value.toLowerCase();
                 let visibleCount = 0;
-
-                document.querySelectorAll('.recipe-card').forEach(card => {
-                    const id = card.dataset.id;
-                    const category = card.dataset.category;
-                    const searchData = card.dataset.search;
+                const filteredRecipes = allRecipes.filter(recipe => {
+                    const id = recipe.titulo; // Usar el título como ID para la lógica de favoritos
+                    const category = recipe.categoria;
+                    const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
 
                     const isFavorite = userFavorites.includes(id);
                     
@@ -474,27 +490,37 @@
                     const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
                     const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
                     
-                    if (categoryMatch && searchMatch && favoriteMatch) {
-                        card.classList.remove('hidden');
-                        visibleCount++;
-                    } else {
-                        card.classList.add('hidden');
-                    }
+                    return categoryMatch && searchMatch && favoriteMatch;
                 });
-
-                dom.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+                renderRecipes(filteredRecipes); // Renderiza solo las recetas filtradas
+                dom.noResults.style.display = filteredRecipes.length === 0 ? 'block' : 'none';
             }
 
             let currentRecipeDetail = null; // Variable para almacenar la receta actual en el modal
             let currentServings = 0; // Variable para almacenar el número de raciones actual
 
             function parseIngredient(ingredient) {
-                const regex = /(\d+(?:[.,]\d+)?)\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|unidades|latas|ramas|cdas|cdita|litro|kg|ml|unidad|unidades|pieza|piezas|ramita|ramas|bolas|un|una|medias|onzas|ramas|trozos|ramos|pizca|pellizco|dientes|gramos|cucharaditas)?\s*(.*)/i;
+                // Modificado para capturar números decimales y unidades más específicas.
+                // También maneja casos como "1/2" taza o "medio"
+                const regex = /(\d+(?:[.,]\d+)?|\d+\/\d+|un\s|una\s|medio\s|media\s)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas)?\s*(.*)/i;
                 const match = ingredient.match(regex);
+                
                 if (match) {
-                    const value = parseFloat(match[1].replace(',', '.')); // Soporte para coma decimal
+                    let value = 0;
+                    if (match[1]) {
+                        if (match[1].includes('/')) { // Para fracciones como "1/2"
+                            const parts = match[1].split('/');
+                            value = parseFloat(parts[0]) / parseFloat(parts[1]);
+                        } else if (match[1].toLowerCase() === 'medio' || match[1].toLowerCase() === 'media') {
+                            value = 0.5;
+                        } else {
+                            value = parseFloat(match[1].replace(',', '.'));
+                        }
+                    }
+                    
                     const unit = match[2] ? match[2].toLowerCase() : '';
-                    const name = match[3].trim();
+                    const name = match[3] ? match[3].trim() : '';
+
                     return { value, unit, name, original: ingredient };
                 }
                 return { value: 0, unit: '', name: ingredient, original: ingredient };
@@ -504,7 +530,8 @@
                 if (parsedIng.value > 0) {
                     let newValue = parsedIng.value * factor;
                     let unit = parsedIng.unit;
-                    
+                    let name = parsedIng.name;
+
                     // Ajustes de unidades para mayor claridad y precisión
                     if (unit === 'kg' && newValue < 1) {
                          newValue *= 1000;
@@ -512,35 +539,42 @@
                     } else if (unit === 'litro' && newValue < 1) {
                         newValue *= 1000;
                         unit = 'ml';
-                    } else if (unit === 'g' && newValue >= 1000) { // Si es más de 1kg, cambia a kg
+                    } else if (unit === 'g' && newValue >= 1000) { 
                         newValue /= 1000;
                         unit = 'kg';
-                    } else if (unit === 'ml' && newValue >= 1000) { // Si es más de 1L, cambia a litro
+                    } else if (unit === 'ml' && newValue >= 1000) { 
                         newValue /= 1000;
                         unit = 'litro';
                     }
 
-                    // Redondear para evitar decimales muy largos en cantidades comunes
-                    if (newValue % 1 !== 0) { // Si tiene decimales
-                        newValue = Math.round(newValue * 100) / 100; // Redondear a dos decimales
+                    // Redondear para evitar decimales muy largos. Ajustado a 1 decimal para la mayoría.
+                    if (newValue % 1 !== 0) { 
+                        newValue = Math.round(newValue * 10) / 10; 
                     } else {
-                        newValue = Math.round(newValue); // Redondear enteros
+                        newValue = Math.round(newValue); 
                     }
                     
-                    // Si la unidad es 'un' o 'una', y el valor es 1, no la repetimos
-                    if ((unit === 'un' || unit === 'una') && newValue === 1) {
-                        return `${newValue} ${parsedIng.name}`.trim();
+                    // Lógica para singularizar o pluralizar automáticamente la parte del nombre
+                    // y evitar duplicidades de unidad en el nombre (ej. "1 patata patata")
+                    let formattedName = name;
+                    if (newValue === 1) {
+                        // Intentar singularizar si el nombre termina en 's' y no es una unidad por sí misma
+                        if (name.endsWith('s') && !['gramos', 'mililitros', 'raciones', 'unidades', 'piezas', 'hojas', 'dientes', 'bolas', 'ramas', 'ramitas', 'cucharadas', 'cucharaditas'].includes(name.toLowerCase())) {
+                            formattedName = name.slice(0, -1);
+                        }
+                    } else {
+                         // Intentar pluralizar si el nombre no termina en 's' y el valor es > 1
+                         if (!name.endsWith('s') && !['gramo', 'mililitro', 'racion', 'unidad', 'pieza', 'hoja', 'diente', 'bola', 'rama', 'ramita', 'cucharada', 'cucharadita'].includes(name.toLowerCase())) {
+                            formattedName = name + 's';
+                        }
                     }
-                    if ((unit === 'unidades' || unit === 'piezas' || unit === 'dientes') && newValue === 1) {
-                        return `${newValue} ${parsedIng.name.endsWith('s') ? parsedIng.name.slice(0, -1) : parsedIng.name}`.trim(); // Singularizar
-                    }
-                    if (parsedIng.name.toLowerCase().includes(unit) && newValue === 1) { // Evitar "1 patata patata"
-                        return `${newValue} ${parsedIng.name}`.trim();
-                    }
+                    // Eliminar la unidad del nombre si ya está en la parte de la unidad
+                    const unitInName = new RegExp(`\\b${unit}(es)?\\b`, 'i');
+                    formattedName = formattedName.replace(unitInName, '').trim();
 
-                    return `${newValue} ${unit} ${parsedIng.name}`.trim();
+                    return `${newValue} ${unit} ${formattedName}`.trim();
                 }
-                return parsedIng.original; // Si no hay número, devuelve el ingrediente original
+                return parsedIng.original; 
             }
 
             function updateIngredientsDisplay(servings) {
@@ -560,8 +594,8 @@
             }
             
             function showRecipeDetail(recipe) {
-                currentRecipeDetail = recipe; // Guarda la receta actual
-                currentServings = recipe.raciones; // Inicializa las raciones al valor original
+                currentRecipeDetail = recipe; 
+                currentServings = recipe.raciones; 
 
                 dom.modalContent.innerHTML = `
                     <div class="p-6 md:p-8">
@@ -604,12 +638,10 @@
                 const stepsList = document.getElementById('steps-list');
                 stepsList.innerHTML = recipe.pasos.map(step => `<li>${step}</li>`).join('');
 
-                // Inicializar y actualizar ingredientes para las raciones originales
                 updateIngredientsDisplay(currentServings);
 
-                dom.modal.style.display = 'flex';
-                // La animación se activa con la clase `transform scale-95` y `scale-100` al remover/añadir
-                dom.modalContent.classList.add('scale-100'); 
+                dom.modal.classList.add('active'); // Añade la clase 'active' para mostrar y animar
+                
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
                 
@@ -632,7 +664,6 @@
                 
                 document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
 
-                // Event listeners para el ajustador de raciones
                 const servingsInput = document.getElementById('servings-input');
                 document.getElementById('decrease-servings').addEventListener('click', () => {
                     let newServings = parseInt(servingsInput.value) - 1;
@@ -657,14 +688,14 @@
             }
             
             function closeModal() {
-                dom.modalContent.classList.remove('scale-100');
+                dom.modal.classList.remove('active'); // Quita la clase 'active' para animar el cierre
                 // Usa un pequeño retardo para que la animación de salida se vea
                 setTimeout(() => { 
                     dom.modal.style.display = 'none'; 
                     dom.modalContent.innerHTML = ''; 
                 }, 300);
-                currentRecipeDetail = null; // Limpia la receta actual al cerrar el modal
-                currentServings = 0; // Reinicia las raciones
+                currentRecipeDetail = null; 
+                currentServings = 0; 
             }
 
             // --- MODO OSCURO ---
@@ -672,11 +703,11 @@
                 if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
                     dom.lightIcon.classList.remove('hidden');
-                    dom.darkIcon.classList.add('hidden'); // Asegúrate de ocultar el icono claro
+                    dom.darkIcon.classList.add('hidden'); 
                 } else {
                     document.documentElement.classList.remove('dark');
                     dom.darkIcon.classList.remove('hidden');
-                    dom.lightIcon.classList.add('hidden'); // Asegúrate de ocultar el icono oscuro
+                    dom.lightIcon.classList.add('hidden'); 
                 }
             }
 
@@ -728,8 +759,7 @@
             });
             
             dom.modal.addEventListener('click', (event) => { 
-                // Asegura que solo se cierre si se hace clic fuera del contenido del modal
-                if (event.target === dom.modal) {
+                if (event.target === dom.modal) { // Solo cierra si el clic es directamente en el fondo oscuro del modal
                     closeModal(); 
                 }
             });
@@ -752,12 +782,11 @@
             let currentRecipeSteps = [];
 
             function speak(text) {
-                // Cancelar cualquier voz actual antes de iniciar una nueva
                 speechSynthesis.cancel(); 
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES'; // Asegura el idioma español
-                utterance.rate = 0.9; // Velocidad ligeramente más lenta para mejor comprensión
-                utterance.pitch = 1; // Tono normal
+                utterance.lang = 'es-ES'; 
+                utterance.rate = 0.9; 
+                utterance.pitch = 1; 
                 speechSynthesis.speak(utterance);
             }
 
@@ -770,11 +799,10 @@
             function startCookingMode(recipe) {
                 currentRecipeSteps = recipe.pasos;
                 currentStep = 0;
-                closeModal(); // Cierra el modal de detalle antes de abrir la vista de cocina
+                closeModal(); 
                 cookingModeView.classList.remove('hidden');
                 cookingModeView.classList.add('flex');
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
-                // Pequeño retardo antes de leer el primer paso para que el usuario se prepare
                 setTimeout(updateCookingStep, 1500); 
             }
 
