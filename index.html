@@ -121,9 +121,12 @@
         #recipeModal {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
+            display: flex; /* Aseguramos que siempre esté flex para la transición */
+            visibility: hidden; /* Controlamos la visibilidad con JS para la transición */
         }
         #recipeModal.active {
             opacity: 1;
+            visibility: visible;
         }
 
         #modalContent {
@@ -163,7 +166,7 @@
             
             <div class="absolute top-0 right-0">
                 <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
-                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 101.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM13.536 16.364a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg>
                 </button>
             </div>
@@ -255,6 +258,7 @@
                 copyrightYear: document.getElementById('copyright-year'),
             };
             
+            // Recetas con tiempo de preparación actualizado y con 25 por categoría
             const allRecipes = [
                 // 25 Aperitivos
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
@@ -365,8 +369,8 @@
                 { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
             ];
             
-            // Esta función ahora se encargará de renderizar las tarjetas y adjuntar los event listeners.
-            // Se llamará cada vez que se necesite actualizar la cuadrícula (al inicio, al filtrar, al buscar).
+            // Esta función ahora se encargará de renderizar las tarjetas.
+            // Los event listeners se manejarán por delegación en dom.grid.
             function renderRecipes(recipesToRender) {
                 let recipeHTML = '';
                 recipesToRender.forEach(recipe => {
@@ -376,7 +380,7 @@
                             <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
                                 <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
                                 <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
-                                <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:bg-stone-700/80 dark:hover:bg-stone-600 transition">
+                                <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
                                 </button>
                                 <div class="p-4 flex-grow flex flex-col">
@@ -387,27 +391,23 @@
                         </div>`;
                 });
                 dom.grid.innerHTML = recipeHTML;
-                addCardEventListeners(); // Vuelve a adjuntar los listeners después de renderizar
+                // updateFavoriteIcons() se llamará en el onAuthStateChanged y applyFilters
+                // ya no es necesario aquí directamente.
             }
             
-            function addCardEventListeners() {
-                document.querySelectorAll('.recipe-card').forEach(card => {
-                    // Primero, eliminamos los listeners existentes para evitar duplicados
-                    // Esto es crucial si la cuadrícula se renderiza múltiples veces
-                    const oldCard = card.cloneNode(true);
-                    card.parentNode.replaceChild(oldCard, card);
-                    card = oldCard; // Usamos el nuevo nodo para adjuntar listeners
+            // Un solo event listener en el contenedor padre (delegación de eventos)
+            dom.grid.addEventListener('click', (event) => {
+                const card = event.target.closest('.recipe-card');
+                if (!card) return; // No es una tarjeta de receta
 
-                    card.addEventListener('click', () => {
-                        const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
-                        if (recipe) showRecipeDetail(recipe);
-                    });
-                    card.querySelector('.favorite-btn').addEventListener('click', e => {
-                        e.stopPropagation();
-                        toggleFavorite(card.dataset.id);
-                    });
-                });
-            }
+                if (event.target.closest('.favorite-btn')) { // Es el botón de favoritos
+                    event.stopPropagation(); // Evita que el clic se propague a la tarjeta
+                    toggleFavorite(card.dataset.id);
+                } else { // Es la tarjeta de receta
+                    const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
+                    if (recipe) showRecipeDetail(recipe);
+                }
+            });
             
             // Inicializa la UI con todas las recetas al cargar la página
             renderRecipes(allRecipes); 
@@ -417,7 +417,7 @@
                     userId = user.uid;
                     dom.userInfo.textContent = `Sincronizando...`;
                     await loadUserData();
-                    updateFavoriteIcons();
+                    updateFavoriteIcons(); // Actualiza los iconos después de cargar favoritos
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
                 } else {
                     signInAnonymously(auth).catch((error) => console.error("Error login anónimo:", error));
@@ -466,12 +466,14 @@
             function updateFavoriteIcons() {
                 document.querySelectorAll('.recipe-card').forEach(card => {
                     const heartIcon = card.querySelector('.favorite-btn svg');
-                    if (userFavorites.includes(card.dataset.id)) {
-                        heartIcon.classList.add('text-red-500', 'fill-current');
-                        heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
-                    } else {
-                        heartIcon.classList.remove('text-red-500', 'fill-current');
-                        heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
+                    if (heartIcon) { // Asegúrate de que el icono exista
+                        if (userFavorites.includes(card.dataset.id)) {
+                            heartIcon.classList.add('text-red-500', 'fill-current');
+                            heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
+                        } else {
+                            heartIcon.classList.remove('text-red-500', 'fill-current');
+                            heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
+                        }
                     }
                 });
             }
@@ -480,7 +482,7 @@
                 const searchTerm = dom.search.value.toLowerCase();
                 let visibleCount = 0;
                 const filteredRecipes = allRecipes.filter(recipe => {
-                    const id = recipe.titulo; // Usar el título como ID para la lógica de favoritos
+                    const id = recipe.titulo; 
                     const category = recipe.categoria;
                     const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
 
@@ -493,33 +495,48 @@
                     return categoryMatch && searchMatch && favoriteMatch;
                 });
                 renderRecipes(filteredRecipes); // Renderiza solo las recetas filtradas
+                updateFavoriteIcons(); // Asegura que los iconos de favoritos se actualicen después del render
                 dom.noResults.style.display = filteredRecipes.length === 0 ? 'block' : 'none';
             }
 
-            let currentRecipeDetail = null; // Variable para almacenar la receta actual en el modal
-            let currentServings = 0; // Variable para almacenar el número de raciones actual
+            let currentRecipeDetail = null; 
+            let currentServings = 0; 
 
             function parseIngredient(ingredient) {
-                // Modificado para capturar números decimales y unidades más específicas.
-                // También maneja casos como "1/2" taza o "medio"
-                const regex = /(\d+(?:[.,]\d+)?|\d+\/\d+|un\s|una\s|medio\s|media\s)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas)?\s*(.*)/i;
+                // Mejora la regex para ser más flexible con espacios y comas.
+                // Prioriza la detección de números flotantes o fracciones.
+                const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 const match = ingredient.match(regex);
                 
                 if (match) {
                     let value = 0;
                     if (match[1]) {
-                        if (match[1].includes('/')) { // Para fracciones como "1/2"
+                        if (match[1].includes('/')) { 
                             const parts = match[1].split('/');
                             value = parseFloat(parts[0]) / parseFloat(parts[1]);
-                        } else if (match[1].toLowerCase() === 'medio' || match[1].toLowerCase() === 'media') {
-                            value = 0.5;
                         } else {
                             value = parseFloat(match[1].replace(',', '.'));
                         }
+                    } else if (match[2] && (match[2].toLowerCase() === 'medio' || match[2].toLowerCase() === 'media')) {
+                        value = 0.5;
                     }
                     
-                    const unit = match[2] ? match[2].toLowerCase() : '';
-                    const name = match[3] ? match[3].trim() : '';
+                    // Si se capturó un cuantificador no numérico (un, una, medio, etc.), se agrega a la unidad o nombre
+                    let unitPart = match[2] ? match[2].toLowerCase() : '';
+                    let unit = match[3] ? match[3].toLowerCase() : '';
+                    let name = match[4] ? match[4].trim() : '';
+
+                    // Si unitPart es "un" o "una" y no hay una unidad formal, moverlo al nombre si corresponde
+                    if ((unitPart === 'un' || unitPart === 'una') && !unit) {
+                        name = (unitPart + ' ' + name).trim();
+                        unitPart = '';
+                    }
+
+                    // Si hay unidad pero unitPart es gran/pequeña, lo dejamos en el nombre
+                    if (unitPart && !['un', 'una', 'medio', 'media'].includes(unitPart)) {
+                        name = (unitPart + ' ' + name).trim();
+                        unitPart = '';
+                    }
 
                     return { value, unit, name, original: ingredient };
                 }
@@ -533,66 +550,75 @@
                     let name = parsedIng.name;
 
                     // Ajustes de unidades para mayor claridad y precisión
-                    if (unit === 'kg' && newValue < 1) {
-                         newValue *= 1000;
-                         unit = 'g';
-                    } else if (unit === 'litro' && newValue < 1) {
-                        newValue *= 1000;
-                        unit = 'ml';
-                    } else if (unit === 'g' && newValue >= 1000) { 
-                        newValue /= 1000;
-                        unit = 'kg';
-                    } else if (unit === 'ml' && newValue >= 1000) { 
-                        newValue /= 1000;
-                        unit = 'litro';
-                    }
-
-                    // Redondear para evitar decimales muy largos. Ajustado a 1 decimal para la mayoría.
-                    if (newValue % 1 !== 0) { 
-                        newValue = Math.round(newValue * 10) / 10; 
-                    } else {
-                        newValue = Math.round(newValue); 
+                    if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
+                    else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
+                    else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
+                    else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
+                    
+                    // Redondear para evitar decimales muy largos.
+                    // Si el nuevo valor es un entero o un número con un solo decimal (ej. 1.5, 2.0), mantenerlo.
+                    // Si tiene más de un decimal significativo, redondear a 1 decimal.
+                    if (Math.abs(newValue % 1) < 0.0001) { // Es un entero
+                        newValue = Math.round(newValue);
+                    } else if (Math.abs((newValue * 10) % 1) < 0.0001) { // Es un decimal con una cifra
+                        newValue = Math.round(newValue * 10) / 10;
+                    } else { // Más de un decimal
+                        newValue = Math.round(newValue * 10) / 10; // Redondea a 1 decimal
                     }
                     
                     // Lógica para singularizar o pluralizar automáticamente la parte del nombre
                     // y evitar duplicidades de unidad en el nombre (ej. "1 patata patata")
                     let formattedName = name;
+                    const commonPlurals = {
+                        "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                        "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                        "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                        "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                        "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                        "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                        "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas"
+                    };
+
+                    const commonSingulars = Object.entries(commonPlurals).reduce((acc, [s, p]) => {
+                        acc[p] = s;
+                        return acc;
+                    }, {});
+
+                    // Normalizar el nombre para la singularización/pluralización
+                    let baseName = name.split(' ')[0].toLowerCase(); // Toma la primera palabra
+
                     if (newValue === 1) {
-                        // Intentar singularizar si el nombre termina en 's' y no es una unidad por sí misma
-                        if (name.endsWith('s') && !['gramos', 'mililitros', 'raciones', 'unidades', 'piezas', 'hojas', 'dientes', 'bolas', 'ramas', 'ramitas', 'cucharadas', 'cucharaditas'].includes(name.toLowerCase())) {
-                            formattedName = name.slice(0, -1);
+                        if (commonSingulars[baseName]) {
+                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), commonSingulars[baseName]);
+                        } else if (baseName.endsWith('s') && baseName.length > 3) { // Si termina en 's' y no es una unidad como 'pasas'
+                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), baseName.slice(0, -1));
                         }
-                    } else {
-                         // Intentar pluralizar si el nombre no termina en 's' y el valor es > 1
-                         if (!name.endsWith('s') && !['gramo', 'mililitro', 'racion', 'unidad', 'pieza', 'hoja', 'diente', 'bola', 'rama', 'ramita', 'cucharada', 'cucharadita'].includes(name.toLowerCase())) {
-                            formattedName = name + 's';
+                    } else { // newValue > 1
+                        if (commonPlurals[baseName]) {
+                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), commonPlurals[baseName]);
+                        } else if (!baseName.endsWith('s')) {
+                            formattedName = formattedName.replace(new RegExp(`\\b${baseName}\\b`, 'i'), baseName + 's');
                         }
                     }
+
                     // Eliminar la unidad del nombre si ya está en la parte de la unidad
-                    const unitInName = new RegExp(`\\b${unit}(es)?\\b`, 'i');
-                    formattedName = formattedName.replace(unitInName, '').trim();
+                    const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
+                    formattedName = formattedName.replace(unitInNameRegex, '').trim();
+
+                    // Caso especial: si la unidad es "unidad" y el valor es 1, a veces es mejor omitir "unidad"
+                    if ((unit === 'unidad' || unit === 'unidades') && newValue === 1) {
+                         return `${newValue} ${formattedName}`.trim();
+                    }
+                    if (unit === 'un' || unit === 'una') { // "un limón" -> "1 limón"
+                        return `${newValue} ${formattedName}`.trim();
+                    }
+
 
                     return `${newValue} ${unit} ${formattedName}`.trim();
                 }
                 return parsedIng.original; 
             }
 
-            function updateIngredientsDisplay(servings) {
-                if (!currentRecipeDetail) return;
-
-                const ingredientList = document.getElementById('ingredient-list');
-                ingredientList.innerHTML = '';
-                const factor = servings / currentRecipeDetail.raciones;
-
-                currentRecipeDetail.ingredientes.forEach(originalIng => {
-                    const parsed = parseIngredient(originalIng);
-                    const formatted = formatIngredient(parsed, factor);
-                    const li = document.createElement('li');
-                    li.textContent = formatted;
-                    ingredientList.appendChild(li);
-                });
-            }
-            
             function showRecipeDetail(recipe) {
                 currentRecipeDetail = recipe; 
                 currentServings = recipe.raciones; 
@@ -688,11 +714,12 @@
             }
             
             function closeModal() {
-                dom.modal.classList.remove('active'); // Quita la clase 'active' para animar el cierre
-                // Usa un pequeño retardo para que la animación de salida se vea
+                dom.modal.classList.remove('active'); 
+                dom.modalContent.innerHTML = ''; // Limpia el contenido inmediatamente
+                // Retardo solo para ocultar el modal después de la transición de opacidad
                 setTimeout(() => { 
                     dom.modal.style.display = 'none'; 
-                    dom.modalContent.innerHTML = ''; 
+                    dom.modal.style.visibility = 'hidden'; // Asegura que no sea interactuable
                 }, 300);
                 currentRecipeDetail = null; 
                 currentServings = 0; 
@@ -735,7 +762,7 @@
 
             setupTheme();
 
-            // --- EVENT LISTENERS ---
+            // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
             dom.search.addEventListener('input', applyFilters);
 
             dom.filterAllBtn.addEventListener('click', () => {
@@ -758,12 +785,14 @@
                 }
             });
             
+            // Listener para cerrar el modal al hacer clic fuera
             dom.modal.addEventListener('click', (event) => { 
-                if (event.target === dom.modal) { // Solo cierra si el clic es directamente en el fondo oscuro del modal
+                if (event.target === dom.modal) { 
                     closeModal(); 
                 }
             });
             
+            // Asegura que el filtro "Todas" esté activo al cargar
             dom.filterAllBtn.classList.add('active');
             
             // --- COPYRIGHT YEAR ---
