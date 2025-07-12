@@ -115,58 +115,62 @@
         }
 
         /* ESTILOS DEL MODAL */
-        #recipeModal {
+        #recipeModal, #shoppingListModal { /* Aplicamos a ambos modales */
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
-        #recipeModal.modal-visible {
+        #recipeModal.modal-visible, #shoppingListModal.modal-visible {
             visibility: visible;
             opacity: 1;
         }
 
-        #modalContent {
+        #modalContent, #shoppingListModal > div { /* Aplicamos a los contenidos de ambos modales */
             background-color: white;
             border-radius: 1.5rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 42rem;
+            max-width: 42rem; /* para recipeModal, 42rem es max-w-2xl */
             max-height: 90vh;
             overflow-y: auto;
             
             transform: scale(0.95);
             transition: transform 0.3s ease-in-out;
         }
-        #recipeModal.modal-visible #modalContent {
+        #recipeModal.modal-visible #modalContent, #shoppingListModal.modal-visible > div {
             transform: scale(1);
         }
+        #shoppingListModal > div { /* Ajuste específico para el ancho del modal de la lista */
+            max-width: 36rem; /* max-w-xl */
+        }
 
-        .dark #modalContent {
+
+        .dark #modalContent, .dark #shoppingListModal > div {
             background-color: #292524;
         }
         /* FIN ESTILOS DEL MODAL */
 
         /* ESTILOS DEL SKELETON LOADER */
         .skeleton-card {
-            background-color: #e0e0e0; /* Color gris claro para el esqueleto */
+            background-color: #e0e0e0; 
             border-radius: 1.25rem;
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            animation: pulse-bg 1.5s infinite; /* Animación de "latido" */
+            animation: pulse-bg 1.5s infinite; 
         }
         .dark .skeleton-card {
-            background-color: #3b3735; /* Gris oscuro para modo oscuro */
+            background-color: #3b3735;
         }
 
         .skeleton-image {
-            height: 10rem; /* h-40 */
-            background-color: #cccccc; /* Gris más oscuro para el área de imagen */
+            height: 10rem; 
+            background-color: #cccccc; 
         }
         .dark .skeleton-image {
             background-color: #2a2826;
         }
 
         .skeleton-text {
-            height: 0.875rem; /* Altura de línea de texto simulada */
+            height: 0.875rem; 
             background-color: #cccccc;
             border-radius: 0.25rem;
             margin-bottom: 0.5rem;
@@ -177,7 +181,7 @@
         .skeleton-text.long { width: 90%; }
         .skeleton-text.medium { width: 70%; }
         .skeleton-text.short { width: 40%; }
-        .skeleton-text.small { height: 0.75rem; } /* text-sm */
+        .skeleton-text.small { height: 0.75rem; } 
 
 
         @keyframes pulse-bg {
@@ -189,15 +193,35 @@
 
         @media print {
             body * { visibility: hidden; }
-            #recipeModal, #recipeModal * { visibility: visible; }
-            #recipeModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
-            #modalContent { box-shadow: none; border: none; max-width: 100%; max-h: none; overflow-y: visible; background-color: white !important; color: black !important; }
-            #closeModalBtn, .modal-buttons-container, #cooking-mode-view, #portion-adjuster { display: none !important; }
-            .dark #modalContent, .dark #modalContent * { background-color: white !important; color: black !important; }
+            #recipeModal, #recipeModal * { display: none !important; } /* Ocultar modal de receta al imprimir */
+            #shoppingListModal, #shoppingListModal * { visibility: visible; }
+            #shoppingListModal { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                height: auto; 
+                background: none; 
+                display: block !important; /* Forzar display block para impresión */
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            #shoppingListModal > div { 
+                box-shadow: none; 
+                border: none; 
+                max-width: 100%; 
+                max-height: none; 
+                overflow-y: visible; 
+                background-color: white !important; 
+                color: black !important; 
+                transform: scale(1) !important; /* Asegurar escala normal */
+            }
+            #closeShoppingListModalBtn, .modal-buttons-container { display: none !important; } /* Ocultar botones del modal al imprimir */
+            .dark #shoppingListModal > div, .dark #shoppingListModal * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
             img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #ingredient-list li, #steps-list li {
+            #ingredient-list li, #steps-list li, #finalShoppingList li { /* Asegurar legibilidad */
                 color: #333 !important;
             }
         }
@@ -270,7 +294,7 @@
             <div class="flex justify-between items-start mb-4">
                 <h2 class="text-3xl font-bold text-amber-900 dark:text-amber-500">Tu Lista de Compra</h2>
                 <button id="closeShoppingListModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <ul id="finalShoppingList" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300 mb-6">
@@ -687,53 +711,67 @@
                 const storedList = localStorage.getItem('shoppingList');
                 shoppingList = storedList ? JSON.parse(storedList) : [];
                 updateShoppingListCount();
+                console.log("Lista de compra cargada:", shoppingList);
             }
 
             // Guardar la lista en localStorage
             function saveShoppingList() {
                 localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
                 updateShoppingListCount();
+                console.log("Lista de compra guardada:", shoppingList);
             }
 
             // Actualizar el contador de la lista de la compra en el botón
             function updateShoppingListCount() {
-                const totalItems = shoppingList.reduce((sum, item) => sum + (item.cantidad > 0 ? 1 : 0), 0);
+                const totalItems = shoppingList.reduce((sum, item) => sum + (item.value > 0 ? 1 : 0), 0); // Contamos solo items con cantidad > 0
                 dom.shoppingListCount.textContent = totalItems;
             }
 
             // Función para añadir ingredientes a la lista de la compra
             function addToShoppingList(recipe, servings) {
                 const factor = servings / recipe.raciones;
-                const ingredientsToAdd = [];
+                const ingredientsToProcess = [];
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    // Solo añadir si tiene una cantidad o es un ingrediente que se cuantifica
-                    if (parsed.value > 0 || (parsed.value === 0 && parsed.name && !['sal', 'pimienta', 'aceite de oliva', 'agua'].includes(parsed.name.toLowerCase()))) {
-                        ingredientsToAdd.push({
-                            name: parsed.name.toLowerCase(), // Normalizar a minúsculas para consolidar
+                    // Solo procesar si tiene un nombre base para consolidar
+                    if (parsed.baseName) { 
+                         ingredientsToProcess.push({
+                            name: parsed.baseName, // Usar el nombre base para consolidar
                             unit: parsed.unit,
                             value: parsed.value,
-                            original: originalIng // Guardar el string original para referencia
+                            originalFormatted: formatIngredient(parsed, factor) // Formato original ya escalado para mostrar
+                        });
+                    } else {
+                        // Para ingredientes sin cantidad numérica ni baseName (ej. "Sal"), añadir como están
+                        ingredientsToProcess.push({
+                            name: originalIng.toLowerCase(), // Usar el original como nombre para no mezclarlo
+                            unit: '',
+                            value: 0, // Indicar que no tiene cantidad
+                            originalFormatted: originalIng
                         });
                     }
                 });
 
-                // Consolidar la lista
-                ingredientsToAdd.forEach(ing => {
+                ingredientsToProcess.forEach(ing => {
+                    // Buscar si el ingrediente ya existe en la lista (por baseName y unidad)
                     const existingItemIndex = shoppingList.findIndex(item => 
                         item.name === ing.name && item.unit === ing.unit
                     );
 
                     if (existingItemIndex !== -1) {
-                        shoppingList[existingItemIndex].value += ing.value * factor;
+                        // Si el ingrediente tiene una cantidad numérica, la sumamos
+                        if (ing.value > 0) {
+                            shoppingList[existingItemIndex].value += ing.value; 
+                        }
+                        // Si no tiene cantidad (ej. "sal"), no hacemos nada, ya estará en la lista si se añadió una vez.
                     } else {
-                        // Si no existe, añadir la versión escalada
+                        // Si no existe, añadir el ingrediente (ya con su valor escalado desde ingredientsToProcess)
                         shoppingList.push({
                             name: ing.name,
                             unit: ing.unit,
-                            value: ing.value * factor,
-                            original: ing.original // Mantener el original por si acaso
+                            value: ing.value,
+                            originalFormatted: ing.originalFormatted // Guardamos la versión formateada para mostrar
                         });
                     }
                 });
@@ -741,21 +779,32 @@
                 saveShoppingList(); // Guardar después de añadir
                 alert(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos a la lista de compra!`);
                 closeModal(); // Cerrar el modal después de añadir
+                showShoppingListModal(); // ¡Abre el modal de la lista de compra para ver los resultados!
             }
 
             // Función para mostrar el modal de la lista de la compra
             function showShoppingListModal() {
-                dom.finalShoppingList.innerHTML = '';
+                dom.finalShoppingList.innerHTML = ''; // Limpiamos la lista actual
                 if (shoppingList.length === 0) {
                     dom.finalShoppingList.innerHTML = '<li class="text-gray-500 dark:text-stone-400">Tu lista de compra está vacía.</li>';
                 } else {
+                    // Filtrar elementos con cantidad > 0 o que no tenían cantidad original (para mostrar "Sal")
+                    const itemsToDisplay = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.unit === ''));
+
                     // Ordenar la lista alfabéticamente por nombre
-                    const sortedList = [...shoppingList].sort((a, b) => a.name.localeCompare(b.name));
+                    const sortedList = [...itemsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
+                    
                     sortedList.forEach(item => {
                         const li = document.createElement('li');
-                        // Usar formatIngredient para mostrar las cantidades consolidadas
-                        const tempParsed = { value: item.value, unit: item.unit, name: item.name, original: item.original };
-                        li.textContent = formatIngredient(tempParsed, 1); // Factor 1 porque ya está consolidado
+                        // Para mostrar el ingrediente, si tenía una cantidad, lo formateamos.
+                        // Si no tenía cantidad (value === 0), mostramos su originalFormatted que ya contiene el string completo.
+                        if (item.value > 0 || item.unit !== '') {
+                            // Crear un objeto parsedIng temporal para formatIngredient
+                            const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
+                            li.textContent = formatIngredient(tempParsed, 1); // Factor 1 porque ya está consolidado
+                        } else {
+                            li.textContent = item.originalFormatted; // Para "Sal", "Pimienta"
+                        }
                         dom.finalShoppingList.appendChild(li);
                     });
                 }
@@ -780,166 +829,124 @@
 
             // --- Lógica de parseo y formateo de ingredientes ---
             function parseIngredient(ingredient) {
+                // Modificado para capturar el `baseName` de forma más robusta y general.
+                // Cuantificadores como "puñado" o "chorrito" ahora se manejan mejor.
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
-                const match = ingredient.match(regex);
+                let match = ingredient.match(regex);
                 
-                if (match) {
-                    let value = 0;
-                    if (match[1]) { 
-                        if (match[1].includes('/')) { 
-                            const parts = match[1].split('/');
-                            value = parseFloat(parts[0]) / parseFloat(parts[1]);
-                        } else {
-                            value = parseFloat(match[1].replace(',', '.'));
-                        }
-                    } else if (match[2]) {
-                        const quantWord = match[2].toLowerCase();
-                        if (quantWord === 'medio' || quantWord === 'media') {
-                            value = 0.5;
-                        } else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) {
-                            value = 1; 
-                        }
-                    } else if (match[4]) { 
-                        value = 1; // Asume 1 unidad para que pueda ser escalado.
-                    }
-                    
-                    let unit = match[3] ? match[3].toLowerCase() : '';
-                    let name = match[4] ? match[4].trim() : '';
+                let value = 0;
+                let unit = '';
+                let name = ingredient.trim(); // Por defecto, el nombre es todo el ingrediente original
+                let baseName = ''; // Inicializar baseName
 
+                if (match) {
+                    if (match[1]) { // Cantidad numérica o fracción
+                        value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
+                    } else if (match[2]) { // Cuantificador de palabra
+                        const quantWord = match[2].toLowerCase();
+                        if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
+                        else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
+                    }
+
+                    unit = match[3] ? match[3].toLowerCase() : '';
+                    name = match[4] ? match[4].trim() : '';
+
+                    // Si el cuantificador de palabra (match[2]) no fue una unidad formal (match[3]),
+                    // pero era algo como "un", "una", "medio", o "puñado", incorpóralo al nombre.
                     if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
                         name = (match[2] + ' ' + name).trim();
-                        unit = '';
+                        unit = ''; 
                     }
-
-                    // Intentar extraer un nombre base más limpio
-                    let baseName = name.toLowerCase();
-                    // Eliminar adjetivos comunes o descripciones de baseName para consolidación
-                    baseName = baseName.replace(/\s(cocidos|troceados|picados|frescos|maduros|secos|verdes|negros|serrano|light|integral|desnatada|congelados|natural|grandes|pequeñas|medianas|variadas|caseras|desalada|firmes|molida|rallado|casero|suave|blanco|tinto|sin azúcar|maduro|fresca|peladas|limpia|ligera|triturado|ahumado|de temporada|medjool|crudas|puro|en polvo|en rama|en tiras|para rebozar|para hornear|sin piel|trigueros|variadas|basmati|deshagan|desnatada|opcional|picados|sola|grandes|pequeñas|medianas|variadas|frescos|congelados|maduros|secos|verde|negra|serrano|light|integral|desnatada|cocida|natural|gran|pequeña|mediana|variada|casera|desalado|firme|molido|rallado|casero|suave|blanco|tinto|sin azúcar|maduro|fresco|pelada|limpia|ligera|triturado|ahumado|de temporada|medjool|cruda|puro|en polvo|en rama|en tiras|para rebozar|para hornear|sin piel|triguero|variada|basmati|deshaga|desnatada|opcional|picado|solas|grandes|pequeñas|medianas|variadas|frescos|congelados|maduros|secos|verde|negra|serrano|light|integral|desnatada|cocida|natural|gran|pequeña|mediana|variada|casera|desalado|firme|molido|rallado|casero|suave|blanco|tinto|sin azúcar|maduro|fresco|pelada|limpia|ligera|triturado|ahumado|de temporada|medjool|cruda|puro|en polvo|en rama|en tiras|para rebozar|para hornear|sin piel|triguero|variada|basmati|deshaga|desnatada|opcional|picado)/gi, '').trim();
-
-                    // Ajustes para nombres base específicos para consolidación
-                    if (baseName.includes('aceitunas')) baseName = 'aceituna';
-                    if (baseName.includes('pimiento')) baseName = 'pimiento';
-                    if (baseName.includes('yogur')) baseName = 'yogur';
-                    if (baseName.includes('tomate')) baseName = 'tomate';
-                    if (baseName.includes('garbanzo')) baseName = 'garbanzo';
-                    if (baseName.includes('espinaca')) baseName = 'espinaca';
-                    if (baseName.includes('calabaza')) baseName = 'calabaza';
-                    if (baseName.includes('lenteja')) baseName = 'lenteja';
-                    if (baseName.includes('champiñón')) baseName = 'champiñón';
-                    if (baseName.includes('pollo')) baseName = 'pollo';
-                    if (baseName.includes('salmón')) baseName = 'salmón';
-                    if (baseName.includes('ternera')) baseName = 'ternera';
-                    if (baseName.includes('pavo')) baseName = 'pavo';
-                    if (baseName.includes('merluza')) baseName = 'merluza';
-                    if (baseName.includes('bacalao')) baseName = 'bacalao';
-                    if (baseName.includes('sepia')) baseName = 'sepia';
-                    if (baseName.includes('gambas')) baseName = 'gamba';
-                    if (baseName.includes('huevo')) baseName = 'huevo';
-                    if (baseName.includes('manzana')) baseName = 'manzana';
-                    if (baseName.includes('plátano')) baseName = 'plátano';
-                    if (baseName.includes('aguacate')) baseName = 'aguacate';
-                    if (baseName.includes('piña')) baseName = 'piña';
-                    if (baseName.includes('fresa')) baseName = 'fresa';
-                    if (baseName.includes('naranja')) baseName = 'naranja';
-                    if (baseName.includes('dátil')) baseName = 'dátil';
-                    if (baseName.includes('almendra')) baseName = 'almendra';
-                    if (baseName.includes('brócoli')) baseName = 'brócoli';
-                    if (baseName.includes('calabacín')) baseName = 'calabacín';
-                    if (baseName.includes('zanahoria')) baseName = 'zanahoria';
-                    if (baseName.includes('cebolleta')) baseName = 'cebolleta';
-                    if (baseName.includes('arándano')) baseName = 'arándano'; // Ejemplo, no presente
-                    if (baseName.includes('kiwi')) baseName = 'kiwi';
-                    if (baseName.includes('melón')) baseName = 'melón';
-                    if (baseName.includes('uva')) baseName = 'uva';
-                    if (baseName.includes('harina')) baseName = 'harina';
-                    if (baseName.includes('leche')) baseName = 'leche';
-                    if (baseName.includes('queso')) baseName = 'queso';
-                    if (baseName.includes('pan')) baseName = 'pan';
-                    if (baseName.includes('mostaza')) baseName = 'mostaza';
-                    if (baseName.includes('miel')) baseName = 'miel';
-                    if (baseName.includes('aceite')) baseName = 'aceite'; // Aceite de oliva
-                    if (baseName.includes('sal')) baseName = 'sal';
-                    if (baseName.includes('pimienta')) baseName = 'pimienta';
-                    if (baseName.includes('azúcar')) baseName = 'azúcar';
-                    if (baseName.includes('canela')) baseName = 'canela';
-                    if (baseName.includes('sirope')) baseName = 'sirope';
-                    if (baseName.includes('coco')) baseName = 'coco';
-                    if (baseName.includes('menta')) baseName = 'menta';
-                    if (baseName.includes('perejil')) baseName = 'perejil';
-                    if (baseName.includes('cilantro')) baseName = 'cilantro';
-                    if (baseName.includes('orégano')) baseName = 'orégano';
-                    if (baseName.includes('tomillo')) baseName = 'tomillo';
-                    if (baseName.includes('romero')) baseName = 'romero';
-                    if (baseName.includes('comino')) baseName = 'comino';
-                    if (baseName.includes('curry')) baseName = 'curry';
-                    if (baseName.includes('jengibre')) baseName = 'jengibre';
-                    if (baseName.includes('vinagre')) baseName = 'vinagre';
-                    if (baseName.includes('pasta')) baseName = 'pasta';
-                    if (baseName.includes('arroz')) baseName = 'arroz';
-                    if (baseName.includes('maíz')) baseName = 'maíz';
-                    if (baseName.includes('bulgur')) baseName = 'bulgur';
-                    if (baseName.includes('cuscús')) baseName = 'cuscús';
-                    if (baseName.includes('leche')) baseName = 'leche'; // leche vegetal, leche desnatada
-                    if (baseName.includes('nata')) baseName = 'nata';
-                    if (baseName.includes('chía')) baseName = 'chía';
-                    if (baseName.includes('granola')) baseName = 'granola';
-                    if (baseName.includes('açaí')) baseName = 'açaí';
-                    if (baseName.includes('remolacha')) baseName = 'remolacha';
-                    if (baseName.includes('judías verdes')) baseName = 'judía verde';
-                    if (baseName.includes('tomates cherry')) baseName = 'tomate cherry'; // para que no se mezcle con "tomate"
-                    if (baseName.includes('setas')) baseName = 'seta';
-                    if (baseName.includes('pulpo')) baseName = 'pulpo';
-                    if (baseName.includes('cobertura')) baseName = 'cobertura'; // para chocolate
-                    if (baseName.includes('harina')) baseName = 'harina';
-                    if (baseName.includes('levadura')) baseName = 'levadura';
-                    if (baseName.includes('limón')) baseName = 'limón'; // zumo de limón, limón
-                    if (baseName.includes('galleta')) baseName = 'galleta'; // base de galleta
-                    if (baseName.includes('edulcorante')) baseName = 'edulcorante';
-                    if (baseName.includes('cocoa')) baseName = 'cacao'; // Para cacao puro
-                    if (baseName.includes('sirope')) baseName = 'sirope';
-                    if (baseName.includes('nueces')) baseName = 'nuez'; // De nueces -> nuez
-
-                    // Intentar singularizar si no es un caso especial
-                    if (baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas'].includes(baseName)) {
-                         baseName = baseName.slice(0, -1);
-                    }
-                    if (baseName === "gramos") baseName = "gramo";
-                    if (baseName === "mililitros") baseName = "mililitro";
-                    if (baseName === "litros") baseName = "litro";
-                    if (baseName === "kilogramos") baseName = "kilogramo";
-                    if (baseName === "cucharadas") baseName = "cucharada";
-                    if (baseName === "cucharaditas") baseName = "cucharadita";
-                    if (baseName === "unidades") baseName = "unidad";
-                    if (baseName === "trozos") baseName = "trozo";
-                    if (baseName === "vasos") baseName = "vaso";
-                    if (baseName === "tazas") baseName = "taza";
-                    if (baseName === "rebanadas") baseName = "rebanada";
-                    if (baseName === "lonchas") baseName = "loncha"; // lonchas -> loncha
-                    if (baseName === "lomos") baseName = "lomo";
-                    if (baseName === "filetes") baseName = "filete";
-                    if (baseName === "manojos") baseName = "manojo";
-                    if (baseName === "piezas") baseName = "pieza";
-                    if (baseName === "ramas") baseName = "rama";
-                    if (baseName === "ramitas") baseName = "ramita";
-                    if (baseName === "bolas") baseName = "bola";
-                    if (baseName === "dientes") baseName = "diente";
-                    if (baseName === "hojas") baseName = "hoja";
-                    if (baseName === "latas") baseName = "lata";
-                    if (baseName === "brochetas") baseName = "brocheta"; // brochetas -> brocheta
-                    if (baseName === "espárragos") baseName = "espárrago"; // espárragos -> espárrago
-
-                    baseName = baseName.replace(/s\b/, ''); // Último intento de singularizar si termina en 's' y no ha sido capturado
-                    
-                    return { value, unit, name, baseName, original: ingredient }; // Devolvemos baseName
                 }
-                return { value: 0, unit: '', name: ingredient, baseName: '', original: ingredient };
+                
+                // Lógica mejorada para extraer el baseName, enfocándose en sustantivos clave.
+                // Intentamos mantener los nombres compuestos como "jamón serrano" o "tomates cherry"
+                let tempNameForBase = name.toLowerCase();
+                const specificCompounds = {
+                    "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry",
+                    "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
+                    "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro",
+                    "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
+                    "pan integral": "pan integral", "carne picada": "carne picada",
+                    "alga wakame": "alga wakame", "pan de telera": "pan de telera",
+                    "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde",
+                    "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
+                    "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde",
+                    "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
+                    "queso rallado": "queso rallado", "zumo de limón": "zumo de limón",
+                    "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
+                    "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla",
+                    "harina integral": "harina integral", "copos de avena": "copos de avena",
+                    "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo",
+                    "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
+                    "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja",
+                    "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
+                    "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada",
+                    "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
+                    "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal",
+                    "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
+                    "huevo duro": "huevo duro", "jamón serrano": "jamón serrano",
+                    "queso de cabra": "queso de cabra", "tomates cherry": "tomate cherry", // Asegurar singular
+                    "espinacas frescas": "espinaca fresca", "setas variadas": "seta variada",
+                    "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado"
+                };
+
+                let foundCompound = false;
+                for (const compound in specificCompounds) {
+                    if (tempNameForBase.includes(compound)) {
+                        baseName = specificCompounds[compound];
+                        foundCompound = true;
+                        break;
+                    }
+                }
+
+                if (!foundCompound) {
+                    // Si no es un compuesto específico, intenta encontrar la primera palabra clave
+                    const commonNouns = {
+                        "aceituna": "aceituna", "pimiento": "pimiento", "albahaca": "albahaca", "aguacate": "aguacate",
+                        "cebolla": "cebolla", "tomate": "tomate", "lima": "lima", "nacho": "nacho",
+                        "jamón": "jamón", "espárrago": "espárrago", "kale": "kale", "yogur": "yogur",
+                        "pepino": "pepino", "ajo": "ajo", "hierbabuena": "hierbabuena", "queso": "queso",
+                        "cebollino": "cebollino", "pan": "pan", "tortilla": "tortilla", "patata": "patata",
+                        "zanahoria": "zanahoria", "edamame": "edamame", "hummus": "hummus", "orégano": "orégano",
+                        "remolacha": "remolacha", "cilantro": "cilantro", "apio": "apio", "batata": "batata",
+                        "mozzarella": "mozzarella", "berenjena": "berenjena", "tahini": "tahini", "comino": "comino",
+                        "menta": "menta", "pulpo": "pulpo", "gambas": "gamba", "cuscús": "cuscús",
+                        "quinoa": "quinoa", "lenteja": "lenteja", "brócoli": "brócoli", "champiñón": "champiñón",
+                        "atún": "atún", "rúcula": "rúcula", "solomillo": "solomillo", "tofu": "tofu",
+                        "bacalao": "bacalao", "sepia": "sepia", "pollo": "pollo", "pavo": "pavo",
+                        "dorada": "dorada", "huevo": "huevo", "açaí": "açaí", "chía": "chía",
+                        "avena": "avena", "piña": "piña", "fresa": "fresa", "naranja": "naranja",
+                        "uva": "uva", "melón": "melón", "kiwi": "kiwi", "dátil": "dátil",
+                        "almendra": "almendra", "cacao": "cacao", "canela": "canela", "sirope": "sirope",
+                        "coco": "coco", "gelatina": "gelatina", "bizcocho": "bizcocho", "harina": "harina",
+                        "levadura": "levadura", "leche": "leche", "masa": "masa", "azúcar": "azúcar",
+                        "pimienta": "pimienta", "sal": "sal", "aceite": "aceite", "vinagre": "vinagre",
+                        "caldo": "caldo", "pasta": "pasta", "arroz": "arroz", "maíz": "maíz",
+                        "guisantes": "guisante", "nueces": "nuez", "granola": "granola", "limón": "limón"
+                    };
+                    const words = tempNameForBase.split(' ');
+                    for (const word of words) {
+                        const singularWord = commonForms[word] || word; // Si es plural y está en commonForms (ej. "patatas")
+                        if (commonNouns[singularWord]) {
+                            baseName = commonNouns[singularWord];
+                            break;
+                        }
+                    }
+                    if (!baseName && words.length > 0) { // Si no se encuentra un sustantivo común, usa la primera palabra
+                        baseName = words[0];
+                    }
+                }
+                
+                return { value, unit, name, baseName: baseName.trim(), original: ingredient };
             }
 
             function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente no tiene una cantidad numérica original significativa (value === 0),
-                // simplemente devuelve el original para no intentar multiplicarlo ni formatearlo,
-                // a menos que sea un "cuantificador" como "un" o "puñado".
-                if (parsedIng.value === 0 && !['un', 'una', 'medio', 'media', 'puñado', 'chorrito'].includes(parsedIng.unit)) {
+                // Si el ingrediente NO tenía una cantidad numérica original (value === 0)
+                // y NO es un cuantificador como "un" o "medio",
+                // se asume que es un ingrediente que se añade "al gusto" o "sin cantidad específica"
+                // y se devuelve el string original sin modificar.
+                if (parsedIng.value === 0 && !['un', 'una', 'medio', 'media', 'puñado', 'chorrito'].includes(parsedIng.unit)) { 
                     return parsedIng.original; 
                 }
                 
@@ -955,17 +962,18 @@
                 else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
                 
                 // Redondear para evitar decimales muy largos.
-                if (Math.abs(newValue % 1) < 0.0001) { 
+                if (Math.abs(newValue % 1) < 0.0001) { // Es un entero o muy cercano
                     newValue = Math.round(newValue);
-                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
+                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { // Es un decimal con una cifra
                     newValue = Math.round(newValue * 10) / 10;
-                } else { 
-                    newValue = Math.round(newValue * 100) / 100; // Redondea a 2 decimales para mayor precisión
+                } else { // Más de un decimal, redondear a dos
+                    newValue = Math.round(newValue * 100) / 100;
                 }
                 
                 let formattedName = name;
-                // Definir las formas comunes de plurales/singulares
-                const commonForms = {
+                // Diccionario de formas comunes de plurales/singulares.
+                // Clave: singular, Valor: plural. Para buscar el plural de una palabra base.
+                const commonFormsMap = {
                     "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
                     "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
                     "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
@@ -976,27 +984,36 @@
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                     "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
                     "loncha": "lonchas",
-                    "aceituna": "aceitunas" // Agregado para "aceituna"
+                    "aceituna": "aceitunas", "nueces": "nuez", "pasas": "pasa", "espinacas": "espinaca",
+                    "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
+                    "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                    "fruto rojo": "frutos rojos", "zumo": "zumos", "rebanada": "rebanadas" // Añadidos para mejor pluralización
                 };
 
-                // Intentar pluralizar/singularizar el `baseName` y usarlo para reemplazar en el `name` completo
-                let targetNounForm = baseName;
+                // Normalizar baseName para buscar en el diccionario
+                let normalizedBaseName = baseName.toLowerCase();
+                
+                // Intentar pluralizar/singularizar usando el `baseName`
+                let targetNounForm = normalizedBaseName;
+
                 if (newValue === 1) {
-                    targetNounForm = Object.keys(commonForms).find(key => commonForms[key] === baseName) || baseName;
-                    if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas'].includes(baseName)) {
-                         targetNounForm = baseName.slice(0, -1);
+                    // Si el valor es 1, buscamos la forma singular en el mapa (si la clave es plural)
+                    targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === normalizedBaseName) || normalizedBaseName;
+                    if (targetNounForm === normalizedBaseName && normalizedBaseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas'].includes(normalizedBaseName)) {
+                         targetNounForm = normalizedBaseName.slice(0, -1);
                     }
                 } else { // newValue > 1
-                    targetNounForm = commonForms[baseName] || baseName;
-                    if (targetNounForm === baseName && !baseName.endsWith('s')) {
-                        targetNounForm = baseName + 's';
+                    // Si el valor es > 1, buscamos la forma plural en el mapa
+                    targetNounForm = commonFormsMap[normalizedBaseName] || normalizedBaseName;
+                    if (targetNounForm === normalizedBaseName && !normalizedBaseName.endsWith('s')) {
+                        targetNounForm = normalizedBaseName + 's';
                     }
                 }
                 
                 // Reemplazar la forma original del nombre con la forma plural/singular deseada
-                // Usamos una regex para reemplazar solo la palabra relevante y no el nombre completo
-                formattedName = formattedName.replace(new RegExp(`\\b${baseName.replace('s$','')}(s)?\\b`, 'i'), targetNounForm);
-
+                // Usamos una regex para reemplazar solo la palabra base dentro del nombre completo
+                formattedName = formattedName.replace(new RegExp(`\\b${normalizedBaseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
+                
                 formattedName = formattedName.trim();
 
                 // Eliminar la unidad del nombre si ya está en la parte de la unidad (ej. "gramos de gramos")
@@ -1008,12 +1025,12 @@
                     return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
                 }).join(' ').trim();
 
-                // Casos especiales para cómo se muestra el resultado final
+                // Formato final de la cadena de ingrediente
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${newValue} ${unit}. ${formattedName}`.trim();
                 }
-                // Si la cantidad es 1 y la unidad es un cuantificador o está vacía,
-                // solo devuelve el nombre formateado sin el "1".
+                // Si la cantidad es 1 y la unidad es un "cuantificador" o está vacía (como "un", "puñado", etc.),
+                // solo mostramos el nombre formateado sin el "1".
                 if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
                     return formattedName; // Ej: "Aceite de oliva", "Puñado de nueces"
                 }
@@ -1242,7 +1259,21 @@
             dom.viewShoppingListBtn.addEventListener('click', showShoppingListModal);
             dom.closeShoppingListModalBtn.addEventListener('click', closeShoppingListModal);
             dom.clearShoppingListBtn.addEventListener('click', clearShoppingList);
-            dom.printShoppingListBtn.addEventListener('click', () => window.print()); // Puedes adaptar esto para imprimir solo el modal
+            // Mejora para imprimir solo el contenido del modal de lista de compra
+            dom.printShoppingListBtn.addEventListener('click', () => {
+                const printContent = dom.shoppingListModal.querySelector('.bg-white.dark\\:bg-stone-800');
+                if (printContent) {
+                    const originalBody = document.body.innerHTML;
+                    document.body.innerHTML = printContent.outerHTML;
+                    window.print();
+                    document.body.innerHTML = originalBody;
+                    // Restaurar los listeners después de restaurar el HTML del body
+                    runRecipeApp(); 
+                } else {
+                    window.print(); // Si no se encuentra el contenido específico, imprime toda la ventana.
+                }
+            });
+
 
             // Asegura que los filtros "Todas" y "Cualquiera" estén activos al cargar
             dom.filterAllBtn.classList.add('active');
