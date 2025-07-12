@@ -414,13 +414,22 @@
     
     <script type="module">
         // ====================================================================
+        // IMPORTACIONES DE FIREBASE (TEMPORALMENTE DESHABILITADAS PARA DEPURACIÓN)
+        // ====================================================================
+        // Si las recetas aparecen con este código, reactivaremos Firebase paso a paso.
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        // import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        // import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
+
+        // ====================================================================
         // VARIABLES GLOBALES (declaradas al principio del script para máxima accesibilidad)
         // ====================================================================
         let dom = {}; // Objeto para almacenar referencias a elementos DOM
         
         // Variables de estado de la aplicación
-        let userFavorites = [];
-        let userId = null;
+        let userFavorites = []; // Vacío o gestionado por stubs si Firebase no está activo
+        let userId = "guest_user_local"; // ID de usuario por defecto si Firebase no está activo
         let currentFilter = 'all'; // 'all' o 'favorites'
         let currentCategory = 'all'; // 'all' o una categoría específica
         let currentTimeFilter = 'all'; // 'all', 'short', 'medium', 'long'
@@ -438,7 +447,7 @@
         let currentRecipeSteps = [];
         let speaking = false; 
         let recognitionActive = false; 
-        let recognition = null; 
+        let recognition = null; // Objeto SpeechRecognition
 
         // ====================================================================
         // DEFINICIÓN DE RECETAS (CONSTANTE GLOBAL)
@@ -520,6 +529,7 @@
             dom.grid.innerHTML = recipeHTML; 
             dom.noResults.style.display = 'none'; 
 
+            // Pequeño retraso para que el skeleton sea visible, luego carga las reales
             setTimeout(() => { 
                 recipeHTML = ''; 
                 if (recipesToRender.length === 0) {
@@ -545,7 +555,7 @@
                     });
                 }
                 dom.grid.innerHTML = recipeHTML;
-                // updateFavoriteIcons(); // Comentado temporalmente para simplificar la carga inicial
+                // updateFavoriteIcons(); // Comentado temporalmente, se reactivará con Firebase
                 console.log('renderRecipes: Renderizado completado. Total recetas mostradas:', recipesToRender.length);
             }, 500); 
         }
@@ -568,55 +578,46 @@
             }
         }
 
-        // --- Funciones de Firebase (ahora solo como stubs para que no causen errores de importación/inicialización) ---
-        // Descomentar y reintroducir ESTO SOLO CUANDO las recetas se vean.
-        /*
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ", 
-            authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
-            projectId: "lucid-copilot-454618-k7",
-            storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
-            messagingSenderId: "948763528254",
-            appId: "1:948763528254:web:3eba3d724edf844528956f", 
-            measurementId: "G-256GP1S7YX" 
-        };
-        const appId = firebaseConfig.appId;
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app); 
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        */
-
-        // STUBS para Firebase para evitar errores de referencia si no están importadas
+        // --- Funciones de Firebase (STUBS: NO REQUIEREN IMPORTACIONES DE FIREBASE. Se reactivarán después) ---
         let userFavorites = [];
-        let userId = "guest_user"; // ID de usuario por defecto si Firebase no está activo
-        function loadUserData() { console.log("Firebase deshabilitado. No se cargan datos de usuario."); }
-        function saveData(data) { console.log("Firebase deshabilitado. No se guardan datos."); }
+        let userId = "guest_user_local"; // ID de usuario por defecto
+        function loadUserData() { console.log("Firebase deshabilitado. No se cargan datos de usuario."); return Promise.resolve(); } // Añadir Promise.resolve
+        function saveData(data) { 
+            console.log("Firebase deshabilitado. No se guardan datos."); 
+            // Simula guardar favoritos en userFavorites localmente sin persistencia real
+            userFavorites = data.favorites || [];
+            updateFavoriteIcons(); // Llama para actualizar los iconos localmente
+            return Promise.resolve(); // Añadir Promise.resolve
+        }
         function toggleFavorite(recipeId) { 
             console.log("Firebase deshabilitado. No se puede alternar favorito."); 
             showToast('Favoritos deshabilitados temporalmente.', 'info');
+            
             // Lógica simple para simular el cambio de corazón sin Firebase
-            const card = document.querySelector(`.recipe-card[data-id="${recipeId}"]`);
-            if (card) {
+            const isFavorite = userFavorites.includes(recipeId);
+            userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
+            
+            updateFavoriteIcons(); // Llama para actualizar los iconos
+            applyFilters(); // Re-aplica filtros para actualizar la vista
+            
+            // Simula guardar la lista en local storage (persistencia local)
+            localStorage.setItem('localFavorites', JSON.stringify(userFavorites)); 
+        }
+        function updateFavoriteIcons() { 
+             console.log('updateFavoriteIcons: Actualizando iconos de favoritos. userFavorites:', userFavorites);
+            document.querySelectorAll('.recipe-card').forEach(card => {
                 const heartIcon = card.querySelector('.favorite-btn svg');
                 if (heartIcon) {
-                    const isFav = heartIcon.classList.contains('text-red-500');
-                    if (isFav) {
-                        heartIcon.classList.remove('text-red-500', 'fill-current');
-                        heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
-                    } else {
+                    if (userFavorites.includes(card.dataset.id)) {
                         heartIcon.classList.add('text-red-500', 'fill-current');
                         heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
+                    } else {
+                        heartIcon.classList.remove('text-red-500', 'fill-current');
+                        heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
                     }
                 }
-            }
+            });
         }
-        function updateFavoriteIcons() { /* No hace nada si no hay favoritos reales */ }
 
 
         // ====================================================================
@@ -635,12 +636,15 @@
                 filteredRecipes = filteredRecipes.filter(recipe => recipe.categoria === currentCategory);
             }
             if (currentFilter === 'favorites') {
+                // Aquí, userFavorites se carga desde localStorage en initApp.
+                // Si Firebase está deshabilitado, userFavorites se carga del stub local.
                 filteredRecipes = filteredRecipes.filter(recipe => userFavorites.includes(recipe.titulo));
             }
             if (currentTimeFilter !== 'all') {
                 filteredRecipes = filteredRecipes.filter(recipe => {
                     const prepareTimeValue = parseInt(recipe.tiempo.replace(' min', '')); 
                     const prepareTime = isNaN(prepareTimeValue) ? 0 : prepareTimeValue; 
+
                     if (currentTimeFilter === 'short') {
                         return prepareTime < 30;
                     } else if (currentTimeFilter === 'medium') {
@@ -700,8 +704,14 @@
                 "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal", "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
                 "huevo duro": "huevo duro", "jamón serrano": "jamón serrano", "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
                 "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado", "arroz integral": "arroz integral", "maicena": "maicena",
-                "champiñones": "champiñón", "patatas": "patata", "garbanzos": "garbanzo", "espinacas": "espinaca", 
-                "judiones": "judión", "fabes": "fabes", "cebolletas": "cebolleta", "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
+                "champiñones": "champiñón", 
+                "patatas": "patata", 
+                "garbanzos": "garbanzo", 
+                "espinacas": "espinaca", 
+                "judiones": "judión", 
+                "fabes": "fabes", 
+                "cebolletas": "cebolleta",
+                "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
                 "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
                 "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
                 "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
@@ -712,11 +722,14 @@
                 "ramita": "ramitas", "bola": "bolas", "pieza": "piezas", "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
                 "filete": "filetes", "manojo": "manojos", "lata": "latas", "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
                 "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas", "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "loncha": "lonchas", "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros", "loncha": "lonchas",
+                "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
                 "judía": "judías", "tomate": "tomates", "seta": "setas", "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
                 "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles", "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
-                "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros", "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
-                "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones", "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                 "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
             }; for (const word of words) { if (commonSingularPluralMap[word]) return word; const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); if (singularForm) return singularForm; }
             if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) return lowerName.slice(0, -1);
@@ -735,9 +748,12 @@
                 "filete": "filetes", "manojo": "manojos", "lata": "latas", "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
                 "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas", "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                 "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros", "loncha": "lonchas",
-                "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas", "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
-                "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas", "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
-                "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas", "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
+                "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
                 "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
                 "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                 "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
@@ -1063,8 +1079,14 @@
                 "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal", "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
                 "huevo duro": "huevo duro", "jamón serrano": "jamón serrano", "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
                 "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado", "arroz integral": "arroz integral", "maicena": "maicena",
-                "champiñones": "champiñón", "patatas": "patata", "garbanzos": "garbanzo", "espinacas": "espinaca", 
-                "judiones": "judión", "fabes": "fabes", "cebolletas": "cebolleta", "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
+                "champiñones": "champiñón", 
+                "patatas": "patata", 
+                "garbanzos": "garbanzo", 
+                "espinacas": "espinaca", 
+                "judiones": "judión", 
+                "fabes": "fabes", 
+                "cebolletas": "cebolleta",
+                "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
                 "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "fideos": "fideo",
                 "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
                 "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
@@ -1175,7 +1197,7 @@
             loadShoppingList(); 
             
             // Asignar Event Listeners generales
-            if (dom.grid) { // Solo si dom.grid se encontró
+            if (dom.grid) { 
                 dom.grid.addEventListener('click', (event) => {
                     const card = event.target.closest('.recipe-card');
                     if (!card) return;
@@ -1198,6 +1220,7 @@
             if (dom.filterFavBtn) dom.filterFavBtn.addEventListener('click', () => {
                 currentFilter = 'favorites'; dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active'); applyFilters();
             });
+            
             if (dom.categoryFilters) dom.categoryFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.category-btn')) {
                     currentCategory = e.target.dataset.category;
@@ -1246,36 +1269,36 @@
             
             if (dom.copyrightYear) dom.copyrightYear.textContent = new Date().getFullYear();
 
-            // 3. Lógica de autenticación de Firebase
-            // **IMPORTANTE:** Aquí se mantiene la lógica de Firebase porque ya confirmamos que funcionaba
-            // y está fuera de la parte crítica de renderizado inicial de recetas.
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
+            // Lógica de autenticación de Firebase (STUBS: NO REQUIEREN IMPORTACIONES DE FIREBASE. Se reactivarán después)
+            // Esto asegura que la aplicación se cargue sin errores de Firebase si las importaciones están comentadas.
+            onAuthStateChanged({uid: userId}, async (user) => { // Simula onAuthStateChanged
+                console.log("onAuthStateChanged: Se está ejecutando (simulado si Firebase está deshabilitado)");
+                // Aquí, user es el stub {uid: userId}
+                if (user && user.uid) {
                     userId = user.uid;
-                    console.log("Firebase: Usuario autenticado con ID:", userId);
                     if (dom.userInfo) dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
-                    await loadUserData();
+                    await loadUserData(); // Llama a la función stub local
                     updateFavoriteIcons();
-                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); 
+                    showToast('¡Bienvenido! Sesión iniciada (local).', 'success'); 
                 } else {
-                    console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
-                    signInAnonymously(auth).then(() => {
-                        console.log("Firebase: Sesión anónima iniciada con éxito.");
-                    }).catch((error) => {
-                        console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
-                        if (dom.userInfo) dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
-                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); 
-                    });
+                    console.log("Simulación: No hay usuario autenticado.");
+                    if (dom.userInfo) dom.userInfo.textContent = `Sesión local activa.`;
+                    showToast('Modo sin conexión. Favoritos no persistirán.', 'info'); 
                 }
+                // Renderizar las recetas por primera vez después de la "autenticación" simulada
+                console.log('initApp: Llamando a applyFilters para renderizar recetas iniciales.');
+                applyFilters(); 
             });
 
-            // 4. Renderizar las recetas por primera vez (al final de la inicialización)
-            console.log('initApp: Llamando a applyFilters para renderizar recetas iniciales.');
-            applyFilters(); 
             console.log('initApp: Aplicación inicializada por completo.');
         }
 
-        // Ejecutar initApp cuando el DOM esté completamente listo.
+        // Ejecutar initApp al cargar el DOM.
+        // Importante: Si estás abriendo el archivo directamente en el navegador, 
+        // a veces `type="module"` puede hacer que el script se ejecute antes 
+        // de que todo el DOM esté listo, o puede haber problemas de seguridad del navegador.
+        // Si sigues teniendo problemas, la última opción es eliminar `type="module"` y usar
+        // `window.onload = initApp;` pero eso es menos eficiente.
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
