@@ -980,7 +980,6 @@
                 return { value, unit, name, baseName: baseName.trim(), original: ingredient };
             }
 
-            // Función para obtener el nombre base del ingrediente
             function getBaseName(rawName) {
                 let lowerName = rawName.toLowerCase();
                 let base = lowerName;
@@ -1415,10 +1414,9 @@
                     });
 
                     recognition.addEventListener('end', () => {
-                        // Reiniciar el reconocimiento solo si el modo de cocina está activo y no estamos saliendo
                         if (cookingModeView.classList.contains('flex') && recognitionActive) {
                             console.log('Reconocimiento de voz terminado, reiniciando...');
-                            recognition.start();
+                            recognition.start(); // Reiniciar automáticamente
                         } else {
                             console.log('Reconocimiento de voz detenido permanentemente.');
                         }
@@ -1428,18 +1426,17 @@
                         console.error('Error en reconocimiento de voz:', event.error);
                         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                             showToast('Necesito permiso de micrófono para el asistente de voz. Por favor, actívalo.', 'error');
-                            recognitionActive = false; // Desactivar si no hay permiso
+                            recognitionActive = false; 
                         } else if (event.error === 'no-speech') {
                             console.log('No se detectó voz. Reintentando...');
-                            // No mostrar Toast por "no-speech" para evitar spam
                         } else {
                             showToast(`Error de voz: ${event.error}. Intenta de nuevo.`, 'error');
-                            recognitionActive = false; // Desactivar si hay otro error grave
+                            recognitionActive = false; 
                         }
                     });
                 }
                 
-                if (!recognitionActive) { // Solo si no está ya activo
+                if (!recognitionActive) { 
                     try {
                         recognitionActive = true;
                         recognition.start();
@@ -1464,31 +1461,55 @@
 
             // Función para manejar los comandos de voz
             function handleVoiceCommand(command) {
-                // Si el asistente está hablando, ignorar comandos por un breve momento para no interrumpir
                 if (speaking) {
                     console.log("Asistente hablando, ignorando comando:", command);
                     return; 
                 }
 
-                const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); // Limpiar puntuación y normalizar
+                const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); 
 
-                if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sige')) {
-                    nextStepBtn.click();
+                if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
+                    nextStep(); // Llama directamente a la función de siguiente paso
                     speak('Pasando al siguiente paso.');
                 } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
-                    prevStepBtn.click();
+                    prevStep(); // Llama directamente a la función de paso anterior
                     speak('Volviendo al paso anterior.');
                 } else if (cleanedCommand.includes('repetir')) {
-                    repeatStepBtn.click();
+                    repeatStep(); // Llama directamente a la función de repetir paso
                     speak('Repitiendo el paso actual.');
                 } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
-                    exitCookingBtn.click();
+                    exitCookingMode(); // Llama directamente a la función de salir
                     speak('Saliendo del modo de cocina.');
                 } else {
                     speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
                 }
             }
 
+            // --- Funciones de control del asistente (extraídas para ser llamadas directamente) ---
+            function nextStep() {
+                if (currentStep < currentRecipeSteps.length - 1) {
+                    currentStep++;
+                    updateCookingStep();
+                } else {
+                    speak("Has llegado al final de la receta. ¡Buen provecho!");
+                    exitCookingMode();
+                }
+            }
+
+            function prevStep() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateCookingStep();
+                } else {
+                    speak("Estás en el primer paso.");
+                }
+            }
+
+            function repeatStep() {
+                speak(currentRecipeSteps[currentStep]);
+            }
+
+            // La función `exitCookingMode` ya existe y se llama correctamente.
 
             const cookingModeView = document.getElementById('cooking-mode-view');
             const stepCounter = document.getElementById('step-counter');
@@ -1531,41 +1552,14 @@
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
                 setTimeout(() => {
                     updateCookingStep();
-                    startVoiceRecognition(); // Iniciar reconocimiento de voz después de la bienvenida
+                    startVoiceRecognition(); 
                 }, 1500); 
             }
 
-            function exitCookingMode() {
-                console.log('Saliendo del modo de cocina.');
-                speechSynthesis.cancel();
-                stopVoiceRecognition(); // Detener reconocimiento al salir
-                cookingModeView.classList.add('hidden');
-                cookingModeView.classList.remove('flex');
-            }
-
-            prevStepBtn.addEventListener('click', () => {
-                if (currentStep > 0) {
-                    currentStep--;
-                    updateCookingStep();
-                } else {
-                    speak("Estás en el primer paso.");
-                }
-            });
-
-            nextStepBtn.addEventListener('click', () => {
-                if (currentStep < currentRecipeSteps.length - 1) {
-                    currentStep++;
-                    updateCookingStep();
-                } else {
-                    speak("Has llegado al final de la receta. ¡Buen provecho!");
-                    exitCookingMode();
-                }
-            });
-
-            repeatStepBtn.addEventListener('click', () => {
-                speak(currentRecipeSteps[currentStep]);
-            });
-
+            // Las funciones de los botones ahora llaman a las funciones de control
+            prevStepBtn.addEventListener('click', prevStep);
+            nextStepBtn.addEventListener('click', nextStep);
+            repeatStepBtn.addEventListener('click', repeatStep);
             exitCookingBtn.addEventListener('click', exitCookingMode);
 
             // Cargar la lista de la compra al inicio
