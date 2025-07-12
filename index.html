@@ -115,13 +115,10 @@
         }
 
         /* ESTILOS DEL MODAL */
-        /* Lo mantenemos hidden por defecto de Tailwind */
         #recipeModal {
-            /* flex para centrar, opacidad y transición controladas por JS */
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
-        /* Clase añadida/quitada por JS para mostrar/ocultar con transición */
         #recipeModal.modal-visible {
             visibility: visible;
             opacity: 1;
@@ -147,6 +144,48 @@
             background-color: #292524;
         }
         /* FIN ESTILOS DEL MODAL */
+
+        /* ESTILOS DEL SKELETON LOADER */
+        .skeleton-card {
+            background-color: #e0e0e0; /* Color gris claro para el esqueleto */
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: pulse-bg 1.5s infinite; /* Animación de "latido" */
+        }
+        .dark .skeleton-card {
+            background-color: #3b3735; /* Gris oscuro para modo oscuro */
+        }
+
+        .skeleton-image {
+            height: 10rem; /* h-40 */
+            background-color: #cccccc; /* Gris más oscuro para el área de imagen */
+        }
+        .dark .skeleton-image {
+            background-color: #2a2826;
+        }
+
+        .skeleton-text {
+            height: 0.875rem; /* Altura de línea de texto simulada */
+            background-color: #cccccc;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .dark .skeleton-text {
+            background-color: #2a2826;
+        }
+        .skeleton-text.long { width: 90%; }
+        .skeleton-text.medium { width: 70%; }
+        .skeleton-text.short { width: 40%; }
+        .skeleton-text.small { height: 0.75rem; } /* text-sm */
+
+
+        @keyframes pulse-bg {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* FIN ESTILOS DEL SKELETON LOADER */
 
         @media print {
             body * { visibility: hidden; }
@@ -198,6 +237,13 @@
                 <button data-category="Primero" class="category-btn px-3 py-1.5 rounded-full text-sm">Primeros</button>
                 <button data-category="Segundo" class="category-btn px-3 py-1.5 rounded-full text-sm">Segundos</button>
                 <button data-category="Postre" class="category-btn px-3 py-1.5 rounded-full text-sm">Postres</button>
+            </div>
+            <div id="timeFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4 mt-2">
+                <span class="text-sm text-gray-600 dark:text-stone-400 font-medium">Tiempo:</span>
+                <button data-time="all" class="time-filter-btn active px-3 py-1.5 rounded-full text-sm">Cualquiera</button>
+                <button data-time="short" class="time-filter-btn px-3 py-1.5 rounded-full text-sm">Rápida (&lt;30 min)</button>
+                <button data-time="medium" class="time-filter-btn px-3 py-1.5 rounded-full text-sm">Media (30-60 min)</button>
+                <button data-time="long" class="time-filter-btn px-3 py-1.5 rounded-full text-sm">Larga (&gt;60 min)</button>
             </div>
         </div>
 
@@ -262,7 +308,6 @@
 
             // Inicializa la app de Firebase
             const app = initializeApp(firebaseConfig);
-            // Inicializa Analytics solo si lo vas a usar, si no, puedes comentarlo o borrarlo.
             const analytics = getAnalytics(app); 
 
             // Inicializa los servicios de Firestore y Authentication
@@ -271,6 +316,8 @@
 
             let userFavorites = [], userId = null;
             let currentFilter = 'all', currentCategory = 'all';
+            // Nuevas variables para los filtros de tiempo
+            let currentTimeFilter = 'all'; 
 
             const dom = {
                 grid: document.getElementById('recipeGrid'),
@@ -278,6 +325,7 @@
                 filterAllBtn: document.getElementById('filterAll'),
                 filterFavBtn: document.getElementById('filterFavorites'),
                 categoryFilters: document.getElementById('categoryFilters'),
+                timeFilters: document.getElementById('timeFilters'), // Nuevo elemento
                 noResults: document.getElementById('no-results'),
                 modal: document.getElementById('recipeModal'),
                 modalContent: document.getElementById('modalContent'),
@@ -403,30 +451,50 @@
             function renderRecipes(recipesToRender) {
                 console.log('renderRecipes: Renderizando', recipesToRender.length, 'recetas.');
                 let recipeHTML = '';
-                if (recipesToRender.length === 0) {
-                    dom.noResults.style.display = 'block';
-                } else {
-                    dom.noResults.style.display = 'none';
-                    recipesToRender.forEach(recipe => {
-                        const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
-                        recipeHTML += `
-                            <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
-                                <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
-                                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="console.error('Error cargando imagen para:', this.alt); this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
-                                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
-                                    <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
-                                    </button>
-                                    <div class="p-4 flex-grow flex flex-col">
-                                        <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
-                                        <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
+                // Mostrar skeletons mientras se carga
+                for (let i = 0; i < 8; i++) { // Mostrar 8 esqueletos para dar un efecto de carga
+                    recipeHTML += `
+                        <div class="skeleton-card h-64 flex flex-col p-4 space-y-3">
+                            <div class="skeleton-image w-full rounded-md"></div>
+                            <div class="flex-grow space-y-2 pt-2">
+                                <div class="skeleton-text long"></div>
+                                <div class="skeleton-text medium small"></div>
+                                <div class="skeleton-text short small"></div>
+                            </div>
+                        </div>
+                    `;
                 }
-                dom.grid.innerHTML = recipeHTML;
-                updateFavoriteIcons();
+                dom.grid.innerHTML = recipeHTML; // Mostrar esqueletos primero
+                dom.noResults.style.display = 'none'; // Ocultar el mensaje de no resultados mientras hay esqueletos
+
+                // Simulamos un tiempo de carga para ver el skeleton loader
+                setTimeout(() => { 
+                    recipeHTML = ''; // Limpiar esqueletos
+                    if (recipesToRender.length === 0) {
+                        dom.noResults.style.display = 'block';
+                    } else {
+                        dom.noResults.style.display = 'none';
+                        recipesToRender.forEach(recipe => {
+                            const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+                            recipeHTML += `
+                                <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
+                                    <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
+                                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="console.error('Error cargando imagen para:', this.alt); this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                                        <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
+                                        <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                                        </button>
+                                        <div class="p-4 flex-grow flex flex-col">
+                                            <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
+                                            <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        });
+                    }
+                    dom.grid.innerHTML = recipeHTML;
+                    updateFavoriteIcons();
+                }, 500); // Muestra los esqueletos por 500ms
             }
             
             // Un solo event listener en el contenedor padre (delegación de eventos)
@@ -543,12 +611,16 @@
                 });
             }
 
+            // Variable para el filtro de tiempo
+            let currentPrepareTimeFilter = 'all';
+
             function applyFilters() {
                 const searchTerm = dom.search.value.toLowerCase();
                 const filteredRecipes = allRecipes.filter(recipe => {
-                    const id = recipe.titulo; 
+                    const id = recipe.titulo;
                     const category = recipe.categoria;
                     const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+                    const prepareTime = parseInt(recipe.tiempo.replace(' min', '')); // Convertir tiempo a número
 
                     const isFavorite = userFavorites.includes(id);
                     
@@ -556,7 +628,17 @@
                     const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
                     const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
                     
-                    return categoryMatch && searchMatch && favoriteMatch;
+                    // Lógica para el filtro de tiempo de preparación
+                    let timeMatch = true;
+                    if (currentPrepareTimeFilter === 'short') {
+                        timeMatch = prepareTime < 30;
+                    } else if (currentPrepareTimeFilter === 'medium') {
+                        timeMatch = prepareTime >= 30 && prepareTime <= 60;
+                    } else if (currentPrepareTimeFilter === 'long') {
+                        timeMatch = prepareTime > 60;
+                    }
+                    
+                    return categoryMatch && searchMatch && favoriteMatch && timeMatch;
                 });
                 renderRecipes(filteredRecipes); 
             }
@@ -565,29 +647,27 @@
             let currentServings = 0; 
 
             function parseIngredient(ingredient) {
-                // Regex mejorada para capturar cantidades (incluyendo fracciones), cuantificadores (un, medio) y la unidad.
-                // También intenta ser más indulgente con el resto del nombre.
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 const match = ingredient.match(regex);
                 
                 if (match) {
                     let value = 0;
-                    if (match[1]) { // Si hay un número o fracción al principio
-                        if (match[1].includes('/')) { // Para fracciones como "1/2"
+                    if (match[1]) { 
+                        if (match[1].includes('/')) { 
                             const parts = match[1].split('/');
                             value = parseFloat(parts[0]) / parseFloat(parts[1]);
                         } else {
-                            value = parseFloat(match[1].replace(',', '.')); // Soporte para coma decimal
+                            value = parseFloat(match[1].replace(',', '.'));
                         }
                     } else if (match[2]) { // Si hay un cuantificador de palabra (un, medio, puñado, etc.)
                         const quantWord = match[2].toLowerCase();
                         if (quantWord === 'medio' || quantWord === 'media') {
                             value = 0.5;
-                        } else if (quantWord === 'un' || quantWord === 'una' || quantWord === 'puñado' || quantWord === 'chorrito') {
+                        } else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) {
                             value = 1; // Asume 1 unidad para estos cuantificadores si no hay número
                         }
                     } else if (match[4]) { // Si no hay cantidad explícita ni cuantificador, pero sí un nombre (ej. "Aceite de oliva")
-                        value = 1; // Asume 1 unidad para que pueda ser escalado, aunque no se mostrará "1"
+                        value = 1; // Asume 1 unidad para que pueda ser escalado. Se mostrará el nombre sin cantidad si es 1.
                     }
                     
                     let unit = match[3] ? match[3].toLowerCase() : '';
@@ -606,12 +686,20 @@
             }
 
             function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente no tenía una cantidad numérica original significativa,
-                // o si es un ingrediente como "sal" que no se debe multiplicar,
-                // simplemente devuelve el original.
-                if (parsedIng.value === 0 && parsedIng.unit === '' && parsedIng.name !== '') { 
+                // Si el ingrediente no tenía una cantidad numérica original significativa (value === 0),
+                // o si es un ingrediente que no se debe multiplicar (ej. "sal", "pimienta"),
+                // simplemente devuelve el original para no intentar multiplicarlo ni formatearlo.
+                if (parsedIng.value === 0 && parsedIng.name !== '') { 
                     return parsedIng.original; 
                 }
+                // Si el valor es 0 pero tiene unidad (ej. "0.5 g"), procede con la multiplicación.
+                if (parsedIng.value === 0 && parsedIng.unit !== '') {
+                    // Si llega aquí, significa que parseIngredient le dio valor 0 a algo que quizás sí era cuantificable
+                    // como "un limón". En este caso, ya parseIngredient debe haber asignado 1.
+                    // Si no, podríamos tener un problema de parseo o un ingrediente que no debería tener cantidad.
+                    return parsedIng.original; // Por seguridad, si el valor original es 0, no lo tocamos.
+                }
+
 
                 let newValue = parsedIng.value * factor;
                 let unit = parsedIng.unit;
@@ -643,7 +731,7 @@
                     "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                     "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
-                    "loncha": "lonchas", // Para "lonchas de jamón"
+                    "loncha": "lonchas", // Añadido para "lonchas de jamón"
                     "s": "s" // Forma genérica para pluralizar si no se encuentra mejor
                 };
 
@@ -696,12 +784,12 @@
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${newValue} ${unit}. ${formattedName}`.trim();
                 }
-                // Si la unidad es un "cuantificador" ("un", "una", "unidad", "puñado") o está vacía,
-                // y el valor es 1, solo mostramos el nombre formateado.
+                // Si la unidad es un "cuantificador" ("un", "una", "unidad", "puñado", etc.) o está vacía,
+                // y el valor es 1, solo mostramos el nombre formateado sin el "1".
                 if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(unit))) {
                     return formattedName; // Ej: "Aceite de oliva", "Puñado de nueces"
                 }
-                // Para el resto, incluye el valor y la unidad.
+                // Para el resto de los casos, incluye el valor y la unidad.
                 if (unit !== '') {
                     return `${newValue} ${unit} ${formattedName}`.trim();
                 }
@@ -774,9 +862,8 @@
 
                 updateIngredientsDisplay(currentServings);
 
-                // CONTROL DEL MODAL: Quitamos 'hidden' y añadimos 'modal-visible'
-                dom.modal.classList.remove('hidden'); // Esto cambia display: none a display: flex
-                dom.modal.classList.add('modal-visible'); // Esto activa la opacidad y la escala
+                dom.modal.classList.remove('hidden');
+                dom.modal.classList.add('modal-visible'); 
                 
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
@@ -825,8 +912,8 @@
             
             function closeModal() {
                 console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); // Inicia la transición de salida
-                // Espera a que termine la transición antes de ocultar completamente
+                dom.modal.classList.remove('modal-visible'); // Inicia la transición de opacidad/escala
+                // Después de la transición, oculta completamente
                 setTimeout(() => { 
                     dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
                     dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
@@ -898,6 +985,17 @@
                     applyFilters();
                 }
             });
+
+            // Event listener para los nuevos filtros de tiempo
+            dom.timeFilters.addEventListener('click', (e) => {
+                if (e.target.matches('.time-filter-btn')) {
+                    currentTimeFilter = e.target.dataset.time;
+                    console.log('Filtro por tiempo:', currentTimeFilter);
+                    document.querySelectorAll('.time-filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    applyFilters();
+                }
+            });
             
             // Listener para cerrar el modal al hacer clic fuera
             dom.modal.addEventListener('click', (event) => { 
@@ -907,8 +1005,9 @@
                 }
             });
             
-            // Asegura que el filtro "Todas" esté activo al cargar
+            // Asegura que los filtros "Todas" y "Cualquiera" estén activos al cargar
             dom.filterAllBtn.classList.add('active');
+            document.querySelector('.time-filter-btn[data-time="all"]').classList.add('active');
             
             // --- COPYRIGHT YEAR ---
             dom.copyrightYear.textContent = new Date().getFullYear();
