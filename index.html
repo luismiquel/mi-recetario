@@ -115,7 +115,6 @@
         }
 
         /* ESTILOS DEL MODAL */
-        /* Lo mantenemos hidden por defecto de Tailwind */
         #recipeModal, #shoppingListModal { 
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
@@ -234,7 +233,7 @@
 
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
-            <p class="text-gray-600 dark:text-stone-400 mt-2">100 recetas para inspirar tu cocina.</p>
+            <p class="text-gray-600 dark:text-stone-400 mt-2">120 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
             
             <div class="absolute top-0 right-0">
@@ -421,6 +420,13 @@
                 { categoria: "Aperitivo", titulo: "Pincho de tortilla de patatas", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pincho+Tortilla", ingredientes: ["2 huevos", "1 patata pequeña", "1/4 cebolla", "Aceite de oliva", "Sal"], pasos: ["Pela y corta la patata y la cebolla en trozos pequeños, sofríe en aceite.", "Bate los huevos, añade la patata y cebolla escurridas y sal.", "Cuaja la tortilla en una sartén pequeña por ambos lados.", "Corta en pinchos."] },
                 { categoria: "Aperitivo", titulo: "Vasitos de gazpacho con langostinos", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Gazpacho", ingredientes: ["2 tomates maduros", "1/4 pepino", "1/4 pimiento verde", "1/4 diente de ajo", "Aceite de oliva", "Vinagre", "Sal", "8 langostinos cocidos"], pasos: ["Prepara el gazpacho triturando los ingredientes y colándolo.", "Sirve el gazpacho frío en vasitos pequeños y decora con un langostino en cada uno."] },
                 { categoria: "Aperitivo", titulo: "Brochetas de pollo satay mini", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Pollo+Satay", ingredientes: ["150 g pechuga de pollo", "1 cda. salsa de cacahuete", "1/2 cdita. curry en polvo", "Palillos de brocheta"], pasos: ["Corta el pollo en dados y marina con la salsa de cacahuete y curry.", "Ensarta el pollo en mini brochetas y cocina a la plancha hasta que estén doradas."] },
+                // 5 Nuevos Aperitivos Típicos Españoles
+                { categoria: "Aperitivo", titulo: "Patatas Bravas Caseras", raciones: 4, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Patatas+Bravas", ingredientes: ["4 patatas medianas", "Aceite de oliva virgen extra", "Sal", "Para la salsa brava: 1 cebolla", "2 dientes de ajo", "1 lata tomate triturado (400g)", "1 cda. pimentón dulce", "1/2 cdita. pimentón picante", "Caldo de pollo o verdura (100ml)"], pasos: ["Pela y corta las patatas en dados, fríelas hasta que estén doradas y crujientes.", "Para la salsa: sofríe la cebolla y el ajo. Añade el tomate, pimentones y caldo. Cocina 15 min a fuego lento. Tritura.", "Sirve las patatas con la salsa por encima."] },
+                { categoria: "Aperitivo", titulo: "Gambas al Ajillo", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gambas+Ajillo", ingredientes: ["250 g gambas peladas", "4 dientes de ajo", "1 guindilla (opcional)", "Aceite de oliva virgen extra", "Perejil fresco picado", "Sal"], pasos: ["En una cazuela de barro, calienta el aceite. Añade el ajo laminado y la guindilla.", "Cuando el ajo dore, incorpora las gambas y cocina 2-3 min hasta que cambien de color.", "Retira del fuego, añade perejil picado y sirve burbujeando."] },
+                { categoria: "Aperitivo", titulo: "Pan con Tomate y Jamón", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pan+Tomate+Jamon", ingredientes: ["2 rebanadas de pan de pueblo", "1 tomate maduro", "1 diente de ajo (opcional)", "Aceite de oliva virgen extra", "Sal", "4 lonchas de jamón serrano"], pasos: ["Tuesta el pan. Frota el tomate sobre el pan tostado (puedes frotar un diente de ajo antes).", "Rocía con aceite de oliva y un poco de sal.", "Coloca las lonchas de jamón serrano por encima y sirve."] },
+                { categoria: "Aperitivo", titulo: "Banderillas de Encurtidos", raciones: 4, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Banderillas+Encurtidos", ingredientes: ["10 aceitunas rellenas", "10 pepinillos en vinagre", "10 cebolletas en vinagre", "10 trozos de pimiento rojo asado (de bote)", "10 boquerones en vinagre (opcional)"], pasos: ["Ensarta los ingredientes en palillos de brocheta en el orden deseado.", "Sirve en un plato como aperitivo frío."] },
+                { categoria: "Aperitivo", titulo: "Pintxo de Gilda", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pintxo+Gilda", ingredientes: ["4 guindillas en vinagre", "4 aceitunas rellenas de anchoa", "2 filetes de anchoa en aceite"], pasos: ["Ensarta en un palillo una guindilla, una aceituna y dobla un filete de anchoa.", "Repite el proceso para hacer 2 pintxos por ración. Sirve inmediatamente."] },
+
 
                 // 25 Primeros
                 { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Quinoa", ingredientes: ["1 taza de quinoa cocida", "Pimiento rojo y verde", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Mezcla la quinoa con las verduras picadas.", "Aliña con aceite y limón."] },
@@ -448,6 +454,13 @@
                 { categoria: "Primero", titulo: "Ensalada de cuscús con pasas y piñones", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Cuscús", ingredientes: ["1 taza de cuscús", "1.5 tazas de agua o caldo", "1/4 taza de pasas", "2 cdas. piñones tostados", "Pepino y tomate picado", "Aceite de oliva", "Zumo de limón", "Menta fresca"], pasos: ["Hidrata el cuscús con el agua caliente.", "Mezcla con pasas, piñones, pepino, tomate, aceite, limón y menta picada.", "Deja reposar antes de servir."] },
                 { categoria: "Primero", titulo: "Crema de calabacín y manzana", raciones: 4, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabacin+Manzana", ingredientes: ["2 calabacines", "1 manzana verde", "1/2 cebolla", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, añade el calabacín y la manzana troceados.", "Cubre con caldo y cuece hasta que estén tiernos.", "Tritura hasta obtener una crema suave."] },
                 { categoria: "Primero", titulo: "Salpicón de marisco ligero", raciones: 2, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salpicon+Marisco", ingredientes: ["100 g gambas cocidas y peladas", "100 g pulpo cocido", "1/2 cebolla morada", "1/2 pimiento rojo", "Perejil fresco", "Aceite de oliva", "Vinagre de vino", "Sal"], pasos: ["Corta el marisco y las verduras en trozos pequeños.", "Mezcla todo en un bol.", "Aliña con aceite, vinagre y sal. Sirve frío."] },
+                // 5 Nuevos Primeros Típicos Españoles
+                { categoria: "Primero", titulo: "Cocido Madrileño (Sopa)", raciones: 4, tiempo: "90 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Cocido+Madrileno+Sopa", ingredientes: ["200 g garbanzos (previamente en remojo)", "100 g fideos finos", "1 zanahoria", "1 puerro", "1 trozo de carne de res (jarrete)", "1 trozo de hueso de jamón", "Agua", "Sal"], pasos: ["Cocer los garbanzos, carne y hueso en olla a presión hasta que estén tiernos.", "Retirar la carne y el hueso. Colar el caldo y desgrasar. Volver a calentar.", "Añadir la zanahoria y el puerro picados, y los fideos. Cocinar hasta que los fideos estén listos.", "Servir caliente. La carne y los garbanzos se sirven aparte."] },
+                { categoria: "Primero", titulo: "Sopa de Pescado y Marisco", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Pescado+Marisco", ingredientes: ["200 g pescado blanco (merluza)", "100 g gambas", "1 cebolla", "2 tomates", "1 diente de ajo", "Perejil", "1 litro de caldo de pescado", "Aceite de oliva", "Sal y pimienta"], pasos: ["Sofríe la cebolla, ajo y tomate picados. Añade el pescado en trozos y las gambas.", "Cubre con caldo y cocina 15 min. Salpimenta.", "Tritura ligeramente una parte si quieres una sopa más espesa. Sirve con perejil."] },
+                { categoria: "Primero", titulo: "Judiones de la Granja", raciones: 3, tiempo: "120 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Judiones+Granja", ingredientes: ["250 g judiones (alubias grandes, en remojo)", "100 g chorizo", "50 g panceta", "1 cebolla", "1 diente de ajo", "Pimentón dulce", "Agua", "Sal"], pasos: ["Cocer los judiones con chorizo y panceta hasta que estén tiernos (en olla a presión 30-40 min).", "Sofríe cebolla y ajo, añade pimentón y agrega a las judías.", "Cocinar a fuego lento 20 min más para que los sabores se mezclen. Ajustar de sal."] },
+                { categoria: "Primero", titulo: "Crema de Marisco (Suave)", raciones: 4, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Marisco", ingredientes: ["200 g langostinos o gambas", "1 cebolla", "1 puerro", "1 zanahoria", "2 cdas. arroz", "1 litro de caldo de pescado", "50 ml nata líquida para cocinar", "Aceite de oliva", "Sal y pimienta"], pasos: ["Sofríe las verduras picadas. Añade las cabezas y pieles de los langostinos (reservar cuerpos) y sofríe.", "Incorpora el arroz y el caldo. Cocina 20 min.", "Tritura y cuela. Vuelve al fuego, añade la nata y los cuerpos de langostino troceados. Calienta sin hervir. Sirve."] },
+                { categoria: "Primero", titulo: "Potaje de Garbanzos y Espinacas", raciones: 3, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Potaje+Garbanzos", ingredientes: ["400 g garbanzos cocidos", "200 g espinacas frescas", "1 cebolla", "2 dientes de ajo", "1 rebanada de pan frito", "1 huevo duro", "Pimentón dulce", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe cebolla y ajo. Añade las espinacas y cocina hasta que se reduzcan.", "Haz un majado con el pan frito y un poco de ajo. Incorpora al sofrito.", "Añade los garbanzos y el caldo. Cocina 15 min. Sirve con huevo duro troceado."] },
+
 
                 // 25 Segundos
                 { categoria: "Segundo", titulo: "Pollo al horno con limón y hierbas", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Horno+Limon", ingredientes: ["2 pechugas de pollo", "1 limón", "Tomillo", "Romero", "Aceite de oliva", "Sal y pimienta"], pasos: ["Marina el pollo con zumo de limón, hierbas, aceite, sal y pimienta.", "Hornea 25 minutos a 200°C."] },
@@ -475,6 +488,13 @@
                 { categoria: "Segundo", titulo: "Champiñones rellenos de verduras", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Champinones+Rellenos", ingredientes: ["8 champiñones grandes", "1/2 pimiento", "1/2 cebolla", "Pulpa de champiñones", "Queso light rallado"], pasos: ["Limpia los champiñones y pica los tallos y las verduras.", "Sofríe las verduras con la pulpa de los champiñones.", "Rellena los sombreros, espolvorea queso y gratina."] },
                 { categoria: "Segundo", titulo: "Brochetas de verduras a la parrilla", raciones: 2, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Verduras", ingredientes: ["Calabacín", "Berenjena", "Pimiento", "Cebolla", "Tomates cherry", "Aceite de oliva", "Hierbas provenzales", "Palillos de brocheta"], pasos: ["Corta las verduras en trozos, ensártalas en los palillos.", "Aliña con aceite y hierbas.", "Cocina en parrilla o sartén hasta que estén tiernas y doradas."] },
                 { categoria: "Segundo", titulo: "Pollo estilo oriental con arroz basmati", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Oriental", ingredientes: ["200 g pechuga de pollo", "1/2 pimiento rojo", "1/2 cebolla", "Salsa de soja", "Jengibre", "Arroz basmati cocido"], pasos: ["Corta el pollo y las verduras en tiras.", "Saltea en un wok con jengibre y salsa de soja.", "Sirve con arroz basmati."] },
+                // 5 Nuevos Segundos Típicos Españoles
+                { categoria: "Segundo", titulo: "Paella de Marisco (Vegetariana)", raciones: 4, tiempo: "50 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Paella+Marisco", ingredientes: ["300 g arroz redondo", "100 g garrofón", "100 g judía verde plana", "1 tomate maduro", "1/2 cebolla", "1 diente de ajo", "Pimentón dulce", "Azafrán o colorante alimentario", "1 litro caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, ajo, judía verde y garrofón. Añade el tomate rallado y pimentón.", "Incorpora el arroz y rehoga. Añade el caldo caliente con azafrán.", "Cocina a fuego medio-alto 18 min, luego 2 min a fuego fuerte para el 'socarrat'. Deja reposar."] },
+                { categoria: "Segundo", titulo: "Tortilla de Patatas Española", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tortilla+Patatas", ingredientes: ["500 g patatas", "1 cebolla grande (opcional)", "6 huevos grandes", "Aceite de oliva virgen extra", "Sal"], pasos: ["Pela y corta las patatas en láminas finas. Si usas cebolla, córtala en juliana.", "Fríe las patatas (y cebolla) en abundante aceite a fuego medio-bajo hasta que estén blandas.", "Escurre bien el aceite. Bate los huevos con sal. Mezcla las patatas con los huevos.", "Cuaja la tortilla en una sartén antiadherente con un poco de aceite, volteando para dorar por ambos lados. Sirve caliente o templada."] },
+                { categoria: "Segundo", titulo: "Bacalao a la Vizcaína", raciones: 2, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bacalao+Vizcaina", ingredientes: ["400 g lomos de bacalao desalado", "3 cebollas grandes", "2 dientes de ajo", "3 pimientos choriceros (previamente hidratados)", "100 ml caldo de pescado", "Aceite de oliva", "Sal"], pasos: ["Sofríe las cebollas cortadas en juliana hasta que estén muy pochadas. Añade el ajo laminado.", "Añade la pulpa de los pimientos choriceros y un poco de caldo. Cocina 10 min.", "Coloca los lomos de bacalao en la salsa y cocina a fuego lento unos 10-15 min, moviendo suavemente para que la salsa ligue. Rectifica de sal."] },
+                { categoria: "Segundo", titulo: "Pescado al Horno con Verduras Mediterráneas", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pescado+Verduras+Horno", ingredientes: ["2 rodajas de merluza o dorada", "1 calabacín", "1 berenjena", "1 pimiento rojo", "1 cebolla", "Tomates cherry", "Aceite de oliva", "Hierbas provenzales", "Sal y pimienta"], pasos: ["Corta las verduras en rodajas o dados. Colócalas en una bandeja de horno.", "Rocía con aceite, sal, pimienta y hierbas. Hornea 15 min a 180°C.", "Añade el pescado sobre las verduras y hornea 15-20 min más hasta que el pescado esté hecho."] },
+                { categoria: "Segundo", titulo: "Fabada Asturiana (Adaptada)", raciones: 4, tiempo: "120 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fabada+Asturiana", ingredientes: ["250 g fabes (alubias blancas, en remojo)", "100 g chorizo asturiano", "50 g morcilla asturiana", "50 g lacón o panceta curada", "1 cebolla", "Ajo", "Agua", "Sal"], pasos: ["Cocer las fabes con el chorizo, morcilla y lacón en agua fría. Llevar a ebullición y 'asustar' (añadir un chorro de agua fría tres veces).", "Cocinar a fuego lento durante 1.5 - 2 horas o hasta que las fabes estén muy tiernas. Puedes usar olla a presión (30-40 min).", "Sofríe un poco de cebolla y ajo, tritúralo y añádelo a la fabada para espesar. Ajustar de sal. Dejar reposar antes de servir."] },
+
 
                 // 25 Postres
                 { categoria: "Postre", titulo: "Brochetas de fruta fresca", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Fruta", ingredientes: ["Fresas", "Kiwi", "Melón", "Uvas"], pasos: ["Corta la fruta en trozos.", "Ensarta en palillos de brocheta."] },
@@ -501,7 +521,13 @@
                 { categoria: "Postre", titulo: "Gelatina de frutas variadas", raciones: 4, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gelatina+Frutas", ingredientes: ["1 sobre de gelatina sin azúcar (sabor a elegir)", "Frutas frescas picadas (fresas, kiwi, melocotón)", "Agua"], pasos: ["Disuelve la gelatina en agua caliente y luego añade agua fría.", "Incorpora las frutas picadas en los moldes.", "Refrigera hasta que cuaje."] },
                 { categoria: "Postre", titulo: "Bizcocho de limón sin azúcar", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bizcocho+Limon+Sin+Azucar", ingredientes: ["3 huevos", "150 g harina integral", "Zumo y ralladura de 1 limón", "Edulcorante al gusto", "1 sobre de levadura", "50 ml aceite de oliva suave"], pasos: ["Bate los huevos con el edulcorante y ralladura.", "Incorpora el zumo, aceite, harina y levadura.", "Vierte en un molde y hornea 30 min a 180°C."] },
                 { categoria: "Postre", titulo: "Vasitos de yogur con granola y frutas", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Yogur+Granola", ingredientes: ["2 yogures naturales", "Granola casera o sin azúcar", "Frutos rojos o plátano en rodajas"], pasos: ["En vasitos, alterna capas de yogur, granola y fruta.", "Sirve inmediatamente."] },
-                { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
+                { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] },
+                // 5 Nuevos Postres Típicos Españoles
+                { categoria: "Postre", titulo: "Arroz con Leche Cremoso", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Arroz+con+Leche", ingredientes: ["100 g arroz redondo", "1 litro de leche entera", "100 g azúcar", "1 rama de canela", "Piel de 1 limón"], pasos: ["Lava el arroz. En una olla, hierve la leche con la canela y la piel de limón.", "Cuando hierva, añade el arroz y cocina a fuego muy lento, removiendo constantemente, hasta que el arroz esté tierno y la mezcla cremosa (aprox. 45 min).", "Retira del fuego, añade el azúcar y remueve. Deja enfriar. Sirve espolvoreado con canela molida."] },
+                { categoria: "Postre", titulo: "Natillas Caseras", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Natillas+Caseras", ingredientes: ["500 ml leche", "4 yemas de huevo", "75 g azúcar", "1 cda. maicena", "Piel de limón", "1 rama de canela", "Galletas María para decorar"], pasos: ["Calienta la leche con piel de limón y canela. Retira del fuego antes de que hierva y deja infusionar.", "En un bol, bate las yemas con el azúcar y la maicena. Cuela la leche e incorpórala poco a poco a las yemas, sin dejar de remover.", "Lleva la mezcla al fuego lento, removiendo constantemente hasta que espese. No dejes que hierva. Vierte en cuencos individuales.", "Deja enfriar y decora con una galleta María."] },
+                { categoria: "Postre", titulo: "Torrijas de Leche", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Torrijas+Leche", ingredientes: ["4 rebanadas de pan de torrija (o pan del día anterior)", "250 ml leche", "50 g azúcar", "Piel de limón", "1 rama de canela", "1 huevo", "Aceite para freír", "Azúcar y canela para rebozar"], pasos: ["Hierve la leche con la mitad del azúcar, piel de limón y canela. Deja enfriar.", "Moja las rebanadas de pan en la leche infusionada. Pásalas por huevo batido.", "Fríe las torrijas en aceite caliente hasta que estén doradas por ambos lados. Escurre sobre papel absorbente.", "Reboza en una mezcla de azúcar y canela. Sirve templadas."] },
+                { categoria: "Postre", titulo: "Tarta de Santiago (Simple)", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Santiago", ingredientes: ["250 g almendra molida", "200 g azúcar", "4 huevos grandes", "Ralladura de 1 limón", "Azúcar glas para decorar (opcional: Cruz de Santiago)"], pasos: ["Bate los huevos con el azúcar hasta que blanqueen. Añade la almendra molida y la ralladura de limón. Mezcla bien.", "Vierte la masa en un molde previamente engrasado y enharinado.", "Hornea a 180°C durante 30-35 min o hasta que al pinchar con un palillo salga limpio.", "Deja enfriar. Espolvorea con azúcar glas. Puedes usar una plantilla de la Cruz de Santiago para decorar."] },
+                { categoria: "Postre", titulo: "Churros Caseros con Chocolate", raciones: 2, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Churros+Chocolate", ingredientes: ["250 ml agua", "150 g harina de trigo", "1/2 cdita. sal", "Aceite de girasol para freír", "Para el chocolate: 100 g chocolate negro para postres", "200 ml leche"], pasos: ["Hierve el agua con la sal. Retira del fuego, añade la harina de golpe y remueve hasta formar una bola. Deja templar.", "Introduce la masa en una churrera o manga pastelera con boquilla de estrella. Fríe los churros en abundante aceite caliente hasta que estén dorados y crujientes. Escurre sobre papel absorbente.", "Para el chocolate: calienta la leche y disuelve el chocolate troceado, removiendo hasta que espese. Sirve los churros con el chocolate caliente."] }
             ];
             
             // Función para renderizar las tarjetas de receta.
@@ -721,7 +747,7 @@
 
             // Actualizar el contador de la lista de la compra en el botón
             function updateShoppingListCount() {
-                const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length; // Contamos items con cantidad o sin cantidad pero con string original
+                const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length; 
                 dom.shoppingListCount.textContent = totalItems;
             }
 
@@ -732,24 +758,21 @@
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    // Para la lista de compra, si no tiene una cantidad numérica (value === 0)
-                    // pero SÍ tiene un nombre (ej. "Aceite de oliva", "Sal"), lo añadimos como 1 unidad
-                    // pero con un indicador para que no se multiplique si es un "al gusto".
-                    // Si tiene baseName, es un ingrediente que queremos consolidar.
-                    if (parsed.value > 0 || parsed.baseName) { 
+                    // Solo procesar si tiene un nombre base para consolidar O si es un ingrediente sin cantidad pero con string original
+                    if (parsed.baseName || (parsed.value === 0 && parsed.name && !['sal', 'pimienta', 'aceite de oliva', 'agua'].includes(parsed.name.toLowerCase()))) { 
                          ingredientsToProcess.push({
                             name: parsed.baseName || parsed.name.toLowerCase(), // Usar baseName o nombre normalizado
                             unit: parsed.unit,
                             value: parsed.value,
                             originalFormatted: formatIngredient(parsed, factor) // Guardamos el formato escalado para mostrar
                         });
-                    } else {
-                        // Para ingredientes sin cantidad numérica ni baseName (ej. "Sal"), añadir como están
+                    } else if (parsed.original) {
+                        // Para ingredientes que no se parsean pero tienen un string original (ej. "a gusto")
                         ingredientsToProcess.push({
-                            name: originalIng.toLowerCase(), // Usar el original como nombre para no mezclarlo
+                            name: parsed.original.toLowerCase(),
                             unit: '',
-                            value: 0, // Indicar que no tiene cantidad
-                            originalFormatted: originalIng
+                            value: 0,
+                            originalFormatted: parsed.original
                         });
                     }
                 });
@@ -763,16 +786,14 @@
                         // Si el ingrediente tiene una cantidad numérica, la sumamos
                         if (ing.value > 0) {
                             shoppingList[existingItemIndex].value += ing.value; 
-                            // Si era un "sin cantidad" y ahora le sumamos, actualizamos el formato original por si lo necesitamos.
-                             if (shoppingList[existingItemIndex].value > 0 && shoppingList[existingItemIndex].originalFormatted === ing.original) {
-                                // Re-formatear para mostrar la nueva cantidad si aplica
+                            // Re-formatear para mostrar la nueva cantidad si aplica
+                             if (shoppingList[existingItemIndex].value > 0) { // Solo si tiene cantidad
                                 const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
                                 shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
                              }
                         }
-                        // Si no tiene cantidad (ej. "sal"), no hacemos nada, ya estará en la lista si se añadió una vez.
                     } else {
-                        // Si no existe, añadir el ingrediente (ya con su valor escalado desde ingredientsToProcess)
+                        // Si no existe, añadir el ingrediente (ya con su valor escalado o como original)
                         shoppingList.push({
                             name: ing.name,
                             unit: ing.unit,
@@ -785,14 +806,11 @@
                 saveShoppingList(); 
                 alert(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos a la lista de compra!`);
                 closeModal(); 
-                // NO llamamos a showShoppingListModal aquí, el usuario la abrirá cuando quiera.
-                // Es mejor que la app no salte directamente al modal de la lista de compra cada vez.
             }
 
             // Función para mostrar el modal de la lista de la compra
             function showShoppingListModal() {
                 dom.finalShoppingList.innerHTML = ''; 
-                // Filtrar elementos con cantidad > 0 o que no tenían cantidad pero sí un formato original
                 const itemsToDisplay = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted));
 
                 if (itemsToDisplay.length === 0) {
@@ -802,13 +820,13 @@
                     
                     sortedList.forEach(item => {
                         const li = document.createElement('li');
-                        // Si el ingrediente tenía una cantidad numérica (value > 0), lo formateamos.
-                        // Si no tenía (value === 0), mostramos su `originalFormatted` (ej. "Sal").
-                        if (item.value > 0) {
-                            const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
-                            li.textContent = formatIngredient(tempParsed, 1); // Factor 1 porque ya está consolidado
+                        // Usar originalFormatted si existe y es un ingrediente "al gusto"
+                        if (item.value === 0 && item.originalFormatted) {
+                            li.textContent = item.originalFormatted; 
                         } else {
-                            li.textContent = item.originalFormatted; // Para "Sal", "Pimienta"
+                            // Si tiene cantidad o es un ingrediente que parseamos, lo formateamos.
+                            const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
+                            li.textContent = formatIngredient(tempParsed, 1); 
                         }
                         dom.finalShoppingList.appendChild(li);
                     });
@@ -834,47 +852,46 @@
 
             // --- Lógica de parseo y formateo de ingredientes ---
             function parseIngredient(ingredient) {
-                // Regex mejorada: el grupo 4 (.+) captura todo lo que viene después de la unidad/cuantificador.
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 let match = ingredient.match(regex);
                 
                 let value = 0;
                 let unit = '';
-                let name = ingredient.trim(); // Por defecto, el nombre es todo el ingrediente original
-                let baseName = ''; // Inicializar baseName
+                let name = ingredient.trim(); 
+                let baseName = ''; 
 
                 if (match) {
-                    if (match[1]) { // Cantidad numérica o fracción
+                    if (match[1]) { 
                         value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
-                    } else if (match[2]) { // Cuantificador de palabra
+                    } else if (match[2]) { 
                         const quantWord = match[2].toLowerCase();
                         if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
                         else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
                     }
 
                     unit = match[3] ? match[3].toLowerCase() : '';
-                    name = match[4] ? match[4].trim() : ''; // El resto del string después de la unidad/cuantificador
+                    name = match[4] ? match[4].trim() : ''; 
                     
-                    // Si el cuantificador de palabra (match[2]) no fue una unidad formal (match[3]),
-                    // pero era algo como "un", "una", "medio", o "puñado", incorpóralo al nombre.
                     if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
                         name = (match[2] + ' ' + name).trim();
                         unit = ''; 
                     }
+                } else {
+                    // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
+                    // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
+                    // Esto se manejará en `formatIngredient` para mostrar el string original.
                 }
                 
-                // Lógica mejorada para extraer el baseName.
-                // Esta parte ahora es más robusta.
-                baseName = getBaseName(name);
+                baseName = getBaseName(name || ingredient); // Si name está vacío (no parseado), usa el ingredient original
                 
                 return { value, unit, name, baseName: baseName.trim(), original: ingredient };
             }
 
+            // Nueva función para obtener el nombre base del ingrediente
             function getBaseName(rawName) {
                 let lowerName = rawName.toLowerCase();
                 let base = lowerName;
 
-                // Nombres compuestos que deben mantenerse juntos o con una forma base específica
                 const specificCompoundsMap = {
                     "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry",
                     "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
@@ -901,7 +918,13 @@
                     "huevo duro": "huevo duro", "jamón serrano": "jamón serrano",
                     "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
                     "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
-                    "arroz integral": "arroz integral", "maicena": "maicena" // Nuevos
+                    "arroz integral": "arroz integral", "maicena": "maicena",
+                    "champiñones": "champiñón", // Para casos donde se pasa solo "champiñones"
+                    "patatas": "patata", // Para casos donde se pasa solo "patatas"
+                    "garbanzos": "garbanzo", // Para casos donde se pasa solo "garbanzos"
+                    "espinacas": "espinaca", // Para casos donde se pasa solo "espinacas"
+                    "judiones": "judión", // Para judiones de la granja
+                    "fabes": "fabes" // Para fabada
                 };
 
                 for (const compound in specificCompoundsMap) {
@@ -910,50 +933,50 @@
                     }
                 }
 
-                // Sustantivos comunes, se singularizan si es necesario
-                const commonNounsMap = {
-                    "aceituna": "aceitunas", "pimiento": "pimientos", "albahaca": "albahaca", "aguacate": "aguacates",
-                    "cebolla": "cebollas", "tomate": "tomates", "lima": "limas", "nacho": "nachos",
-                    "loncha": "lonchas", "espárrago": "espárragos", "kale": "kale", "yogur": "yogures",
-                    "pepino": "pepinos", "ajo": "ajos", "hierbabuena": "hierbabuena", "queso": "quesos",
-                    "cebollino": "cebollinos", "pan": "panes", "tortilla": "tortillas", "patata": "patatas",
-                    "zanahoria": "zanahorias", "edamame": "edamame", "hummus": "hummus", "orégano": "orégano",
-                    "remolacha": "remolachas", "cilantro": "cilantro", "apio": "apio", "batata": "batatas",
-                    "mozzarella": "mozzarellas", "berenjena": "berenjenas", "tahini": "tahini", "comino": "comino",
-                    "pulpo": "pulpo", "gamba": "gambas", "cuscús": "cuscús", "quinoa": "quinoa",
-                    "lenteja": "lentejas", "brócoli": "brócoli", "champiñón": "champiñones", "atún": "atún",
-                    "rúcula": "rúcula", "solomillo": "solomillos", "tofu": "tofu", "bacalao": "bacalao",
-                    "sepia": "sepias", "pollo": "pollo", "pavo": "pavo", "dorada": "dorada",
-                    "açaí": "açaí", "chía": "chía", "avena": "avena", "piña": "piñas",
-                    "fresa": "fresas", "naranja": "naranjas", "uva": "uvas", "melón": "melones",
-                    "kiwi": "kiwis", "dátil": "dátiles", "almendra": "almendras", "cacao": "cacao",
-                    "canela": "canela", "sirope": "sirope", "coco": "coco", "gelatina": "gelatinas",
-                    "bizcocho": "bizcochos", "harina": "harina", "levadura": "levadura", "leche": "leche",
-                    "masa": "masas", "azúcar": "azúcar", "pimienta": "pimienta", "sal": "sal",
-                    "aceite": "aceite", "vinagre": "vinagre", "caldo": "caldos", "pasta": "pasta",
-                    "arroz": "arroz", "maíz": "maíz", "guisante": "guisantes", "nuez": "nueces",
-                    "limón": "limones", "copo": "copos", "fruto": "frutos", "semilla": "semillas",
-                    "plátano": "plátanos", "carne": "carne", "cebollita": "cebollitas" // Añadidos extra
+                const commonSingularPluralMap = {
+                    "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                    "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                    "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                    "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                    "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                    "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                    "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                    "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                    "brocheta": "brochetas", "espárrago": "espárragos", "loncha": "lonchas",
+                    "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                    "judía": "judías", "tomate": "tomates", "seta": "setas",
+                    "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                    "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                    "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                    "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroz", "chicharro": "chicharros", // Algunos que no están en la lista
+                    "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacon", "garrofón": "garrofones", // Para fabada/cocido
+                    "fideo": "fideos", "fabes": "fabes", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos" // Ejemplos
                 };
                 
-                const words = lowerName.split(' ').map(w => w.replace(/[^a-záéíóúüñ]/g, '')); // Limpiar puntuación
+                // Buscar la forma singular o plural en el mapa para normalizar
+                const words = lowerName.split(' ');
                 for (const word of words) {
-                    if (commonNounsMap[word]) return commonNounsMap[word]; // Si es singular
-                    const singularForm = Object.keys(commonNounsMap).find(key => commonNounsMap[key] === word); // Si es plural
-                    if (singularForm) return singularForm;
+                    const singularMatch = Object.keys(commonSingularPluralMap).find(key => key === word);
+                    if (singularMatch) return singularMatch; // Si la palabra es un singular conocido
+                    
+                    const pluralMatch = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word);
+                    if (pluralMatch) return pluralMatch; // Si la palabra es un plural conocido
                 }
                 
-                // Si no se encuentra en mapas, intenta una singularización/normalización genérica
-                if (lowerName.endsWith('s') && lowerName.length > 3) { // Evitar singularizar "hummus", "tres", etc.
+                // Último intento: Si termina en 's' y no es una palabra especial, intenta quitar la 's'
+                if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí'].includes(lowerName)) {
                     return lowerName.slice(0, -1);
                 }
-                return lowerName; // Si no hay reglas, devuelve el nombre en minúsculas
+
+                return lowerName; // Devuelve el nombre original en minúsculas si no se puede normalizar más
             }
 
-
             function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente tiene un valor de 0, significa que no se debe multiplicar ni mostrar cantidad.
-                // Ej. "Aceite de oliva", "Sal". Simplemente devuelve el nombre original.
+                // Si el ingrediente NO tiene un valor numérico (value === 0),
+                // devuelve el string original completo (ej. "Aceite de oliva", "Sal").
+                // Esto es para ingredientes "al gusto" que no se multiplican numéricamente.
                 if (parsedIng.value === 0) { 
                     return parsedIng.original; 
                 }
@@ -980,7 +1003,6 @@
                 
                 let formattedName = name;
                 // Definir las formas comunes de plurales/singulares.
-                // Clave: singular, Valor: plural. Para buscar el plural de una palabra base.
                 const commonFormsMap = {
                     "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
                     "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
@@ -992,10 +1014,19 @@
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                     "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
                     "loncha": "lonchas",
-                    "aceituna": "aceitunas", "nueces": "nuez", "pasas": "pasa", "espinacas": "espinaca",
+                    "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
                     "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
                     "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
-                    "fruto rojo": "frutos rojos", "zumo": "zumos", "rebanada": "rebanadas" // Ajuste para que "frutos rojos" pluralice correctamente
+                    "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                    "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                    "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroz", "chicharro": "chicharros",
+                    "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                    "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos",
+                    "tortilla": "tortillas", "coliflor": "coliflores", "brócoli": "brócolis",
+                    "remolacha": "remolachas", "lenteja": "lentejas", "garbanzo": "garbanzos",
+                    "pasta": "pastas", "cuscús": "cuscús", "quinoa": "quinoa", "mijo": "mijo" // Agregados para pluralizar mejor
                 };
 
                 // Normalizar baseName para buscar en el diccionario
@@ -1005,13 +1036,11 @@
                 let targetNounForm = normalizedBaseName;
 
                 if (newValue === 1) {
-                    // Si el valor es 1, intentamos singularizar.
                     targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === normalizedBaseName) || normalizedBaseName;
-                    if (targetNounForm === normalizedBaseName && normalizedBaseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas'].includes(normalizedBaseName)) {
+                    if (targetNounForm === normalizedBaseName && normalizedBaseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(normalizedBaseName)) {
                          targetNounForm = normalizedBaseName.slice(0, -1); // Singularizar genérico
                     }
                 } else { // newValue > 1
-                    // Si el valor es > 1, intentamos pluralizar.
                     targetNounForm = commonFormsMap[normalizedBaseName] || normalizedBaseName;
                     if (targetNounForm === normalizedBaseName && !normalizedBaseName.endsWith('s')) {
                         targetNounForm = normalizedBaseName + 's'; // Pluralizar genérico
@@ -1019,7 +1048,8 @@
                 }
                 
                 // Reemplazar la forma original del nombre con la forma plural/singular deseada
-                formattedName = name.replace(new RegExp(`\\b${getBaseName(name).replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
+                // Aseguramos que la baseName sea reconocida en el nombre original para reemplazar
+                formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
                 
                 formattedName = formattedName.trim();
 
@@ -1079,7 +1109,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
-                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
                         <div id="recipe-content-normal">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
                                 <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
@@ -1139,7 +1169,6 @@
                 }
                 
                 document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
-                // Event listener para el botón "Añadir a la Lista de Compra"
                 document.getElementById('add-to-shopping-list-btn').addEventListener('click', () => {
                     addToShoppingList(currentRecipeDetail, currentServings);
                 });
