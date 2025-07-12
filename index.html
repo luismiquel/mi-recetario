@@ -434,12 +434,12 @@
         let speaking = false; // Bandera para saber si el asistente está hablando
         let recognitionActive = false; // Nueva bandera para controlar si el reconocimiento debe estar activo
         let recognition = null; // Variable global para el objeto SpeechRecognition
+        
+        // Inicialización de DOM globalmente para que showToast pueda usarlo
+        let dom = {}; 
 
         // --- FUNCIÓN PARA NOTIFICACIONES TOAST (también global para accesibilidad) ---
-        // Requiere que dom.toastContainer esté inicializado.
-        let dom = {}; // Declarar dom globalmente para showToast si se llama antes de runRecipeApp
         function showToast(message, type = 'info', duration = 3000) {
-            // Asegurarse de que toastContainer exista antes de usarlo
             if (!dom.toastContainer) {
                 dom.toastContainer = document.getElementById('toast-container');
                 if (!dom.toastContainer) {
@@ -459,9 +459,142 @@
             }, duration);
         }
 
-        function runRecipeApp() {
+        // --- FUNCIONES DE CONTROL DEL ASISTENTE DE VOZ (Declaradas aquí para ser accesibles) ---
+        // Función para iniciar el reconocimiento de voz
+        function startVoiceRecognition() {
+            if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+                console.warn('SpeechRecognition API no soportada en este navegador.');
+                showToast('Tu navegador no soporta el control por voz.', 'error');
+                return;
+            }
+            
+            if (!recognition) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = 'es-ES';
+                recognition.interimResults = false; 
+                recognition.maxAlternatives = 1; 
+
+                recognition.addEventListener('result', (event) => {
+                    const command = event.results[0][0].transcript.toLowerCase();
+                    console.log('Comando detectado:', command);
+                    handleVoiceCommand(command);
+                });
+
+                recognition.addEventListener('end', () => {
+                    if (cookingModeView.classList.contains('flex') && recognitionActive) {
+                        console.log('Reconocimiento de voz terminado, reiniciando...');
+                        recognition.start(); 
+                    } else {
+                        console.log('Reconocimiento de voz detenido permanentemente.');
+                    }
+                });
+
+                recognition.addEventListener('error', (event) => {
+                    console.error('Error en reconocimiento de voz:', event.error);
+                    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                        showToast('Necesito permiso de micrófono para el asistente de voz. Por favor, actívalo.', 'error');
+                        recognitionActive = false; 
+                    } else if (event.error === 'no-speech') {
+                        console.log('No se detectó voz. Reintentando...');
+                    } else {
+                        showToast(`Error de voz: ${event.error}. Intenta de nuevo.`, 'error');
+                        recognitionActive = false; 
+                    }
+                });
+            }
+            
+            if (!recognitionActive) { 
+                try {
+                    recognitionActive = true;
+                    recognition.start();
+                    console.log('Reconocimiento de voz iniciado.');
+                    showToast('Asistente de voz escuchando...', 'info');
+                } catch (e) {
+                    console.error('Error al iniciar SpeechRecognition:', e);
+                    showToast('Error al iniciar el reconocimiento de voz. Intenta recargar.', 'error');
+                    recognitionActive = false;
+                }
+            }
+        }
+
+        // Función para detener el reconocimiento de voz
+        function stopVoiceRecognition() {
+            if (recognition && recognitionActive) {
+                recognitionActive = false;
+                recognition.stop();
+                console.log('Reconocimiento de voz detenido.');
+            }
+        }
+
+        // Funciones que controlan el progreso de la receta
+        function updateCookingStep() {
+            stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
+            stepText.textContent = currentRecipeSteps[currentStep];
+            speak(currentRecipeSteps[currentStep]);
+        }
+
+        function nextStepAction() { 
+            if (currentStep < currentRecipeSteps.length - 1) {
+                currentStep++;
+                updateCookingStep();
+            } else {
+                speak("Has llegado al final de la receta. ¡Buen provecho!");
+                exitCookingMode();
+            }
+        }
+
+        function prevStepAction() { 
+            if (currentStep > 0) {
+                currentStep--;
+                updateCookingStep();
+            } else {
+                speak("Estás en el primer paso.");
+            }
+        }
+
+        function repeatStepAction() { 
+            speak(currentRecipeSteps[currentStep]);
+        }
+
+        function exitCookingMode() {
+            console.log('Saliendo del modo de cocina.');
+            speechSynthesis.cancel();
+            stopVoiceRecognition(); 
+            cookingModeView.classList.add('hidden');
+            cookingModeView.classList.remove('flex');
+        }
+
+        // Función para manejar los comandos de voz
+        function handleVoiceCommand(command) {
+            if (speaking) {
+                console.log("Asistente hablando, ignorando comando:", command);
+                return; 
+            }
+
+            const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); 
+
+            if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
+                nextStepAction(); 
+                // speak('Pasando al siguiente paso.'); // No repetir feedback si ya la acción lo hace
+            } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
+                prevStepAction(); 
+                // speak('Volviendo al paso anterior.'); // No repetir feedback
+            } else if (cleanedCommand.includes('repetir')) {
+                repeatStepAction(); 
+                // speak('Repitiendo el paso actual.'); // No repetir feedback
+            } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
+                exitCookingMode(); 
+                // speak('Saliendo del modo de cocina.'); // No repetir feedback
+            } else {
+                speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
+            }
+        }
+
+        // --- La función principal de la aplicación ---
+        // Envuelve la ejecución en DOMContentLoaded para asegurar que todos los elementos HTML existan.
+        document.addEventListener('DOMContentLoaded', () => {
             // Inicializar dom aquí dentro, después de que el DOM esté cargado.
-            // Esto asegura que todos los elementos existan.
             dom = {
                 grid: document.getElementById('recipeGrid'),
                 search: document.getElementById('searchInput'),
@@ -486,7 +619,23 @@
                 printShoppingListBtn: document.getElementById('printShoppingListBtn'),
                 toastContainer: document.getElementById('toast-container') 
             };
-            
+
+            // Asignación de elementos DOM globales para el asistente
+            cookingModeView = document.getElementById('cooking-mode-view');
+            stepCounter = document.getElementById('step-counter');
+            stepText = document.getElementById('step-text');
+            prevStepBtn = document.getElementById('prev-step-btn');
+            repeatStepBtn = document.getElementById('repeat-step-btn');
+            nextStepBtn = document.getElementById('next-step-btn');
+            exitCookingBtn = document.getElementById('exit-cooking-btn');
+
+            // Ahora podemos llamar a runRecipeApp, ya que todos los DOM elementos están cargados.
+            runRecipeAppInternal();
+        });
+
+
+        // La lógica principal de la aplicación ahora se encapsula aquí
+        function runRecipeAppInternal() {
             const firebaseConfig = {
                 apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ", // <--- ¡Asegúrate de pegar tu API Key real aquí!
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
@@ -586,9 +735,4 @@
                 { categoria: "Segundo", titulo: "Wok de ternera y brócoli", raciones: 2, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Wok+Ternera+Brocoli", ingredientes: ["200 g ternera en tiras", "1 brócoli", "Salsa de soja baja en sodio", "Jengibre rallado", "Aceite de sésamo"], pasos: ["Saltea la ternera en un wok.", "Añade el brócoli y cocina hasta que esté tierno.", "Adereza con soja, jengibre y aceite de sésamo."] },
                 { categoria: "Segundo", titulo: "Pavo a la plancha con puré de manzana", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pavo+Plancha+Pure+Manzana", ingredientes: ["2 filetes de pavo", "2 manzanas", "Canela", "Sal"], pasos: ["Cocina el pavo a la plancha.", "Asa las manzanas y tritúralas con canela para hacer el puré.", "Sirve el pavo con el puré."] },
                 { categoria: "Segundo", titulo: "Merluza en salsa verde", raciones: 2, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Merluza+Salsa+Verde", ingredientes: ["2 lomos de merluza", "1 diente de ajo", "Perejil fresco", "1/2 vaso de vino blanco", "Caldo de pescado", "Guisantes"], pasos: ["Sofríe el ajo y perejil.", "Añade la merluza, vino y caldo.", "Cocina 10 minutos y agrega los guisantes."] },
-                { categoria: "Segundo", titulo: "Berenjenas rellenas de carne picada", raciones: 2, tiempo: "50 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Berenjenas+Rellenas+Carne", ingredientes: ["2 berenjenas", "200 g carne picada de pavo", "Cebolla", "Tomate triturado", "Queso rallado light"], pasos: ["Asa las berenjenas y vacía la pulpa.", "Sofríe la carne con cebolla y tomate, mezcla con la pulpa.", "Rellena, espolvorea queso y gratina."] },
-                { categoria: "Segundo", titulo: "Tofu salteado con verduras", raciones: 2, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tofu+Salteado+Verduras", ingredientes: ["200 g tofu firme", "Pimiento", "Calabacín", "Cebolla", "Salsa de soja"], pasos: ["Corta el tofu y las verduras.", "Saltea todo en un wok con un poco de salsa de soja."] },
-                { categoria: "Segundo", titulo: "Pechuga de pollo a la naranja", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pechuga+Pollo+Naranja", ingredientes: ["2 pechugas de pollo", "Zumo de 2 naranjas", "1 cdita maicena", "Sal y pimienta"], pasos: ["Dora el pollo en una sartén.", "Mezcla el zumo con la maicena, vierte sobre el pollo y cocina hasta que espese."] },
-                { categoria: "Segundo", titulo: "Atún a la plancha con ensalada", raciones: 2, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Atun+Plancha+Ensalada", ingredientes: ["2 filetes de atún fresco", "Tomates cherry", "Rúcula", "Vinagre balsámico"], pasos: ["Cocina el atún a la plancha, vuelta y vuelta.", "Sirve con una ensalada de tomates y rúcula, aliñada con balsámico."] },
-                { categoria: "Segundo", titulo: "Solomillo de cerdo con champiñones", raciones: 2, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Solomillo+Cerdo+Champiñones", ingredientes: ["1 solomillo de cerdo", "200 g champiñones", "1/2 cebolla", "Nata líquida light", "Sal y pimienta"], pasos: ["Sella el solomillo y reserva.", "Sofríe la cebolla y los champiñones, añade la nata y tritura.", "Sirve el solomillo con la salsa."] },
-                { categoria: "Segundo", titulo: "Lasaña de verduras ligera", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Lasagna+Verduras+Ligera", ingredientes: ["Láminas de lasaña integral", "Calabacín", "Berenjena", "Pimiento", "Tomate triturado", "Queso rallado light"], pasos: ["Saltea las verduras picadas con el tomate.", "Monta la lasaña alternando capas de pasta y verduras.", "Cubre con queso y hornea."]
+                { categoria: "Segundo", titulo: "Berenjenas rellenas de carne picada", raciones: 2, tiempo: "50 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Berenjenas+Rellenas+Carne", ingredientes: ["2 berenjenas", "200 g carne picada de pavo", "Cebolla", "Tomate triturado", "Queso rallado light"], pasos: ["Asa las berenjenas y vacía la pulpa.", "Sofríe la carne con cebolla y tomate, mezcla con la pulpa.", "Rellena, espolvorea queso y gratina."]
