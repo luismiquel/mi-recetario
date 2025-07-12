@@ -422,7 +422,7 @@
 
         function runRecipeApp() {
             const firebaseConfig = {
-                apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
+                apiKey: "TU_API_KEY_AQUI", // <--- ¡Asegúrate de pegar tu API Key real aquí!
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
                 projectId: "lucid-copilot-454618-k7",
                 storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
@@ -443,8 +443,6 @@
             let currentFilter = 'all', currentCategory = 'all';
             let currentTimeFilter = 'all'; 
 
-            // Lista de la compra global (se guardará en localStorage)
-            // Cada item ahora tendrá una propiedad `checked` para la checklist
             let shoppingList = []; 
 
             const dom = {
@@ -1393,6 +1391,83 @@
             dom.copyrightYear.textContent = new Date().getFullYear();
 
             // --- ASISTENTE DE VOZ ---
+            // Variable para el objeto SpeechRecognition
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition = null;
+            let speaking = false; // Bandera para saber si el asistente está hablando
+
+            // Función para iniciar el reconocimiento de voz
+            function startVoiceRecognition() {
+                if (SpeechRecognition) {
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'es-ES';
+                    recognition.interimResults = false; // Solo resultados finales
+                    recognition.maxAlternatives = 1; // La alternativa más probable
+
+                    recognition.addEventListener('result', (event) => {
+                        const command = event.results[0][0].transcript.toLowerCase();
+                        console.log('Comando detectado:', command);
+                        handleVoiceCommand(command);
+                    });
+
+                    recognition.addEventListener('end', () => {
+                        // Reiniciar el reconocimiento si no estamos saliendo
+                        if (cookingModeView.classList.contains('flex')) {
+                            console.log('Reconocimiento de voz terminado, reiniciando...');
+                            recognition.start();
+                        }
+                    });
+
+                    recognition.addEventListener('error', (event) => {
+                        console.error('Error en reconocimiento de voz:', event.error);
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                            showToast('Necesito permiso de micrófono para el asistente de voz.', 'error');
+                        } else if (event.error !== 'no-speech') {
+                             showToast('Problema con el reconocimiento de voz.', 'error');
+                        }
+                    });
+
+                    recognition.start();
+                    console.log('Reconocimiento de voz iniciado.');
+                    showToast('Asistente de voz escuchando...', 'info');
+                } else {
+                    console.warn('SpeechRecognition API no soportada en este navegador.');
+                    showToast('Tu navegador no soporta el control por voz.', 'error');
+                }
+            }
+
+            // Función para detener el reconocimiento de voz
+            function stopVoiceRecognition() {
+                if (recognition) {
+                    recognition.stop();
+                    console.log('Reconocimiento de voz detenido.');
+                }
+            }
+
+            // Función para manejar los comandos de voz
+            function handleVoiceCommand(command) {
+                // Si el asistente está hablando, ignorar comandos por un breve momento para no interrumpir
+                if (speaking) return; 
+
+                if (command.includes('siguiente')) {
+                    nextStepBtn.click();
+                    speak('Pasando al siguiente paso.');
+                } else if (command.includes('anterior')) {
+                    prevStepBtn.click();
+                    speak('Volviendo al paso anterior.');
+                } else if (command.includes('repetir')) {
+                    repeatStepBtn.click();
+                    speak('Repitiendo el paso actual.');
+                } else if (command.includes('salir') || command.includes('detener')) {
+                    exitCookingBtn.click();
+                    speak('Saliendo del modo de cocina.');
+                } else {
+                    // Si no se reconoce el comando, el asistente puede confirmarlo
+                    speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
+                }
+            }
+
+
             const cookingModeView = document.getElementById('cooking-mode-view');
             const stepCounter = document.getElementById('step-counter');
             const stepText = document.getElementById('step-text');
@@ -1410,6 +1485,11 @@
                 utterance.lang = 'es-ES'; 
                 utterance.rate = 0.9; 
                 utterance.pitch = 1; 
+
+                utterance.onstart = () => { speaking = true; };
+                utterance.onend = () => { speaking = false; };
+                utterance.onerror = () => { speaking = false; console.error("Error en SpeechSynthesis");};
+
                 speechSynthesis.speak(utterance);
             }
 
@@ -1427,12 +1507,16 @@
                 cookingModeView.classList.remove('hidden');
                 cookingModeView.classList.add('flex');
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
-                setTimeout(updateCookingStep, 1500); 
+                setTimeout(() => {
+                    updateCookingStep();
+                    startVoiceRecognition(); // Iniciar reconocimiento de voz después de la bienvenida
+                }, 1500); 
             }
 
             function exitCookingMode() {
                 console.log('Saliendo del modo de cocina.');
                 speechSynthesis.cancel();
+                stopVoiceRecognition(); // Detener reconocimiento al salir
                 cookingModeView.classList.add('hidden');
                 cookingModeView.classList.remove('flex');
             }
@@ -1465,7 +1549,7 @@
             // Cargar la lista de la compra al inicio
             loadShoppingList();
 
-            // --- NUEVA FUNCIÓN PARA NOTIFICACIONES TOAST ---
+            // --- FUNCIÓN PARA NOTIFICACIONES TOAST ---
             function showToast(message, type = 'info', duration = 3000) {
                 const toast = document.createElement('div');
                 toast.classList.add('toast-message', type);
