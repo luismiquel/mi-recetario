@@ -191,6 +191,39 @@
         }
         /* FIN ESTILOS DEL SKELETON LOADER */
 
+        /* NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+        #finalShoppingList li {
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+        }
+        #finalShoppingList li:hover {
+            background-color: #f0ead6;
+            border-radius: 0.25rem;
+        }
+        .dark #finalShoppingList li:hover {
+            background-color: #3b3735;
+        }
+
+        /* Estilo para los ítems marcados */
+        #finalShoppingList li.checked {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+            opacity: 0.7;
+        }
+        .dark #finalShoppingList li.checked {
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Ocultar el bullet point por defecto para los items marcados o con iconos */
+        #finalShoppingList li.checked {
+            list-style: none; /* Eliminar el bullet point */
+        }
+        /* Añadir un checkbox o icono personalizado si se desea, por ahora solo el tachado */
+
+
         @media print {
             body * { visibility: hidden; }
             #recipeModal, #recipeModal * { display: none !important; } 
@@ -330,34 +363,27 @@
     
     <script type="module">
         // --- CONSOLIDACIÓN DE IMPORTACIONES Y CONFIGURACIÓN DE FIREBASE ---
-        // Estas importaciones son necesarias para Firebase App, Authentication y Firestore
-        // ¡Usando la versión 11.10.0 que me proporcionaste, para que todo sea consistente!
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        
-        // Importación opcional para Analytics, si la quieres usar.
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         function runRecipeApp() {
-            // --- TU CONFIGURACIÓN REAL DE FIREBASE ---
             const firebaseConfig = {
                 apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
                 projectId: "lucid-copilot-454618-k7",
                 storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
                 messagingSenderId: "948763528254",
-                appId: "1:948763528254:web:3eba3d724edf844528956f", // Este es tu App ID real
-                measurementId: "G-256GP1S7YX" // Este es tu Measurement ID real
+                appId: "1:948763528254:web:3eba3d724edf844528956f", 
+                measurementId: "G-256GP1S7YX" 
             };
 
             const appId = firebaseConfig.appId;
 
-            // Inicializa la app de Firebase
             const app = initializeApp(firebaseConfig);
             const analytics = getAnalytics(app); 
 
-            // Inicializa los servicios de Firestore y Authentication
             const db = getFirestore(app);
             const auth = getAuth(app);
 
@@ -366,7 +392,8 @@
             let currentTimeFilter = 'all'; 
 
             // Lista de la compra global (se guardará en localStorage)
-            let shoppingList = [];
+            // Cada item ahora tendrá una propiedad `checked`
+            let shoppingList = []; 
 
             const dom = {
                 grid: document.getElementById('recipeGrid'),
@@ -383,9 +410,9 @@
                 darkIcon: document.getElementById('theme-toggle-dark-icon'),
                 lightIcon: document.getElementById('theme-toggle-light-icon'),
                 copyrightYear: document.getElementById('copyright-year'),
-                viewShoppingListBtn: document.getElementById('viewShoppingListBtn'), // Nuevo botón
-                shoppingListCount: document.getElementById('shopping-list-count'), // Contador de la lista
-                shoppingListModal: document.getElementById('shoppingListModal'), // Nuevo modal de lista
+                viewShoppingListBtn: document.getElementById('viewShoppingListBtn'), 
+                shoppingListCount: document.getElementById('shopping-list-count'), 
+                shoppingListModal: document.getElementById('shoppingListModal'), 
                 closeShoppingListModalBtn: document.getElementById('closeShoppingListModalBtn'),
                 finalShoppingList: document.getElementById('finalShoppingList'),
                 clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
@@ -527,7 +554,7 @@
                 { categoria: "Postre", titulo: "Natillas Caseras", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Natillas+Caseras", ingredientes: ["500 ml leche", "4 yemas de huevo", "75 g azúcar", "1 cda. maicena", "Piel de limón", "1 rama de canela", "Galletas María para decorar"], pasos: ["Calienta la leche con piel de limón y canela. Retira del fuego antes de que hierva y deja infusionar.", "En un bol, bate las yemas con el azúcar y la maicena. Cuela la leche e incorpórala poco a poco a las yemas, sin dejar de remover.", "Lleva la mezcla al fuego lento, removiendo constantemente hasta que espese. No dejes que hierva. Vierte en cuencos individuales.", "Deja enfriar y decora con una galleta María."] },
                 { categoria: "Postre", titulo: "Torrijas de Leche", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Torrijas+Leche", ingredientes: ["4 rebanadas de pan de torrija (o pan del día anterior)", "250 ml leche", "50 g azúcar", "Piel de limón", "1 rama de canela", "1 huevo", "Aceite para freír", "Azúcar y canela para rebozar"], pasos: ["Hierve la leche con la mitad del azúcar, piel de limón y canela. Deja enfriar.", "Moja las rebanadas de pan en la leche infusionada. Pásalas por huevo batido.", "Fríe las torrijas en aceite caliente hasta que estén doradas por ambos lados. Escurre sobre papel absorbente.", "Reboza en una mezcla de azúcar y canela. Sirve templadas."] },
                 { categoria: "Postre", titulo: "Tarta de Santiago (Simple)", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Santiago", ingredientes: ["250 g almendra molida", "200 g azúcar", "4 huevos grandes", "Ralladura de 1 limón", "Azúcar glas para decorar (opcional: Cruz de Santiago)"], pasos: ["Bate los huevos con el azúcar hasta que blanqueen. Añade la almendra molida y la ralladura de limón. Mezcla bien.", "Vierte la masa en un molde previamente engrasado y enharinado.", "Hornea a 180°C durante 30-35 min o hasta que al pinchar con un palillo salga limpio.", "Deja enfriar. Espolvorea con azúcar glas. Puedes usar una plantilla de la Cruz de Santiago para decorar."] },
-                { categoria: "Postre", titulo: "Churros Caseros con Chocolate", raciones: 2, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Churros+Chocolate", ingredientes: ["250 ml agua", "150 g harina de trigo", "1/2 cdita. sal", "Aceite de girasol para freír", "Para el chocolate: 100 g chocolate negro para postres", "200 ml leche"], pasos: ["Hierve el agua con la sal. Retira del fuego, añade la harina de golpe y remueve hasta formar una bola. Deja templar.", "Introduce la masa en una churrera o manga pastelera con boquilla de estrella. Fríe los churros en abundante aceite caliente hasta que estén dorados y crujientes. Escurre sobre papel absorbente.", "Para el chocolate: calienta la leche y disuelve el chocolate troceado, removiendo hasta que espese. Sirve los churros con el chocolate caliente."] }
+                { categoria: "Postre", titulo: "Churros Caseros con Chocolate", raciones: 2, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Churros+Chocolate", ingredientes: ["250 ml agua", "150 g harina de trigo", "1/2 cdita. sal", "Aceite de girasol para freír", "Para el chocolate: 100 g chocolate negro para postres", "200 ml leche"], pasos: ["Hierve el agua con la sal. Retira del fuego, añade la harina de golpe y remueve hasta formar una bola. Deja templar.", "Introduce la masa en una churrera o manga pastelera con boquilla de estrella. Fríe los churros en abundante aceite caliente hasta que estén doradas y crujientes. Escurre sobre papel absorbente.", "Para el chocolate: calienta la leche y disuelve el chocolate troceado, removiendo hasta que espese. Sirve los churros con el chocolate caliente."] }
             ];
             
             // Función para renderizar las tarjetas de receta.
@@ -665,7 +692,7 @@
             async function toggleFavorite(recipeId) {
                 if (!userId) {
                     console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
-                    alert('No se pudo guardar el favorito. Intenta recargar la página o verifica tu conexión.');
+                    alert('Debes iniciar sesión para guardar favoritos. Se está intentando iniciar sesión anónimamente...');
                     signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
                     return;
                 }
@@ -758,21 +785,25 @@
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    // Solo procesar si tiene un nombre base para consolidar O si es un ingrediente sin cantidad pero con string original
-                    if (parsed.baseName || (parsed.value === 0 && parsed.name && !['sal', 'pimienta', 'aceite de oliva', 'agua'].includes(parsed.name.toLowerCase()))) { 
+                    // Para la lista de compra, si no tiene una cantidad numérica (value === 0)
+                    // pero SÍ tiene un nombre (ej. "Aceite de oliva", "Sal"), lo añadimos como 1 unidad
+                    // pero con un indicador para que no se multiplique si es un "al gusto".
+                    // Si tiene baseName, es un ingrediente que queremos consolidar.
+                    if (parsed.baseName) { // Priorizar baseName para ingredientes con nombre pero sin cantidad
                          ingredientsToProcess.push({
-                            name: parsed.baseName || parsed.name.toLowerCase(), // Usar baseName o nombre normalizado
+                            name: parsed.baseName, 
                             unit: parsed.unit,
                             value: parsed.value,
-                            originalFormatted: formatIngredient(parsed, factor) // Guardamos el formato escalado para mostrar
+                            originalFormatted: formatIngredient(parsed, factor), 
+                            checked: false // Nuevo: estado inicial no marcado
                         });
-                    } else if (parsed.original) {
-                        // Para ingredientes que no se parsean pero tienen un string original (ej. "a gusto")
+                    } else if (parsed.original) { // Para ingredientes que no se parsean pero tienen un string original (ej. "a gusto")
                         ingredientsToProcess.push({
                             name: parsed.original.toLowerCase(),
                             unit: '',
-                            value: 0,
-                            originalFormatted: parsed.original
+                            value: 0, 
+                            originalFormatted: parsed.original,
+                            checked: false // Nuevo: estado inicial no marcado
                         });
                     }
                 });
@@ -787,18 +818,19 @@
                         if (ing.value > 0) {
                             shoppingList[existingItemIndex].value += ing.value; 
                             // Re-formatear para mostrar la nueva cantidad si aplica
-                             if (shoppingList[existingItemIndex].value > 0) { // Solo si tiene cantidad
+                             if (shoppingList[existingItemIndex].value > 0) { 
                                 const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
                                 shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
                              }
                         }
                     } else {
-                        // Si no existe, añadir el ingrediente (ya con su valor escalado o como original)
+                        // Si no existe, añadir el ingrediente 
                         shoppingList.push({
                             name: ing.name,
                             unit: ing.unit,
                             value: ing.value,
-                            originalFormatted: ing.originalFormatted 
+                            originalFormatted: ing.originalFormatted,
+                            checked: false // Nuevo: estado inicial no marcado
                         });
                     }
                 });
@@ -818,29 +850,53 @@
                 } else {
                     const sortedList = [...itemsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
                     
-                    sortedList.forEach(item => {
+                    sortedList.forEach((item, index) => { // Añadimos index para identificar el item al marcar
                         const li = document.createElement('li');
-                        // Usar originalFormatted si existe y es un ingrediente "al gusto"
-                        if (item.value === 0 && item.originalFormatted) {
-                            li.textContent = item.originalFormatted; 
-                        } else {
-                            // Si tiene cantidad o es un ingrediente que parseamos, lo formateamos.
+                        li.dataset.index = index; // Guardar el índice para identificar el item al hacer clic
+                        
+                        // Añadir la clase 'checked' si el item ya está marcado
+                        if (item.checked) {
+                            li.classList.add('checked');
+                        }
+
+                        if (item.value > 0) {
                             const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
                             li.textContent = formatIngredient(tempParsed, 1); 
+                        } else {
+                            li.textContent = item.originalFormatted; 
                         }
                         dom.finalShoppingList.appendChild(li);
                     });
                 }
                 dom.shoppingListModal.classList.remove('hidden');
                 dom.shoppingListModal.classList.add('modal-visible');
+
+                // NUEVO: Añadir event listener a la lista completa para la delegación
+                dom.finalShoppingList.addEventListener('click', toggleIngredientChecked);
             }
 
             function closeShoppingListModal() {
                 dom.shoppingListModal.classList.remove('modal-visible');
+                // IMPORTANTE: Quitar el event listener para evitar duplicados si se abre y cierra varias veces
+                dom.finalShoppingList.removeEventListener('click', toggleIngredientChecked); 
                 setTimeout(() => {
                     dom.shoppingListModal.classList.add('hidden');
                 }, 300);
             }
+
+            // NUEVO: Función para marcar/desmarcar ingredientes
+            function toggleIngredientChecked(event) {
+                const listItem = event.target.closest('li');
+                if (listItem && listItem.dataset.index) {
+                    const index = parseInt(listItem.dataset.index);
+                    if (shoppingList[index]) {
+                        shoppingList[index].checked = !shoppingList[index].checked; // Alternar estado
+                        saveShoppingList(); // Guardar el nuevo estado
+                        showShoppingListModal(); // Refrescar la lista en el modal para que se vea el cambio
+                    }
+                }
+            }
+
 
             function clearShoppingList() {
                 if (confirm('¿Estás seguro de que quieres vaciar toda la lista de compra?')) {
@@ -882,12 +938,12 @@
                     // Esto se manejará en `formatIngredient` para mostrar el string original.
                 }
                 
-                baseName = getBaseName(name || ingredient); // Si name está vacío (no parseado), usa el ingredient original
+                baseName = getBaseName(name || ingredient); 
                 
                 return { value, unit, name, baseName: baseName.trim(), original: ingredient };
             }
 
-            // Nueva función para obtener el nombre base del ingrediente
+            // Función para obtener el nombre base del ingrediente
             function getBaseName(rawName) {
                 let lowerName = rawName.toLowerCase();
                 let base = lowerName;
@@ -919,12 +975,18 @@
                     "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
                     "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
                     "arroz integral": "arroz integral", "maicena": "maicena",
-                    "champiñones": "champiñón", // Para casos donde se pasa solo "champiñones"
-                    "patatas": "patata", // Para casos donde se pasa solo "patatas"
-                    "garbanzos": "garbanzo", // Para casos donde se pasa solo "garbanzos"
-                    "espinacas": "espinaca", // Para casos donde se pasa solo "espinacas"
-                    "judiones": "judión", // Para judiones de la granja
-                    "fabes": "fabes" // Para fabada
+                    "champiñones": "champiñón", 
+                    "patatas": "patata", 
+                    "garbanzos": "garbanzo", 
+                    "espinacas": "espinaca", 
+                    "judiones": "judión", 
+                    "fabes": "fabes", 
+                    "cebolletas": "cebolleta",
+                    "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
+                    "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
+                    "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
+                    "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
+                    "gelatina": "gelatina", "almendra molida": "almendra molida", "azúcar glas": "azúcar glas"
                 };
 
                 for (const compound in specificCompoundsMap) {
@@ -949,34 +1011,29 @@
                     "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
                     "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                     "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
-                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroz", "chicharro": "chicharros", // Algunos que no están en la lista
-                    "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacon", "garrofón": "garrofones", // Para fabada/cocido
-                    "fideo": "fideos", "fabes": "fabes", "guindilla": "guindillas", "pepinillo": "pepinillos",
-                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos" // Ejemplos
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", // Arroz es especial
+                    "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                    "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
                 };
                 
-                // Buscar la forma singular o plural en el mapa para normalizar
-                const words = lowerName.split(' ');
+                const words = lowerName.split(' ').map(w => w.replace(/[^a-záéíóúüñ]/g, '')); 
                 for (const word of words) {
-                    const singularMatch = Object.keys(commonSingularPluralMap).find(key => key === word);
-                    if (singularMatch) return singularMatch; // Si la palabra es un singular conocido
-                    
-                    const pluralMatch = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word);
-                    if (pluralMatch) return pluralMatch; // Si la palabra es un plural conocido
+                    if (commonSingularPluralMap[word]) return word; // Si la palabra es un singular conocido
+                    const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
+                    if (singularForm) return singularForm; 
                 }
                 
-                // Último intento: Si termina en 's' y no es una palabra especial, intenta quitar la 's'
-                if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí'].includes(lowerName)) {
+                if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
                     return lowerName.slice(0, -1);
                 }
 
-                return lowerName; // Devuelve el nombre original en minúsculas si no se puede normalizar más
+                return lowerName; 
             }
 
             function formatIngredient(parsedIng, factor) {
                 // Si el ingrediente NO tiene un valor numérico (value === 0),
                 // devuelve el string original completo (ej. "Aceite de oliva", "Sal").
-                // Esto es para ingredientes "al gusto" que no se multiplican numéricamente.
                 if (parsedIng.value === 0) { 
                     return parsedIng.original; 
                 }
@@ -984,15 +1041,13 @@
                 let newValue = parsedIng.value * factor;
                 let unit = parsedIng.unit;
                 let name = parsedIng.name;
-                let baseName = parsedIng.baseName; // Usamos el baseName para la lógica de pluralización
+                let baseName = parsedIng.baseName; 
 
-                // Ajustes de unidades para mayor claridad y precisión (kg <-> g, litro <-> ml)
                 if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
                 else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
                 else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
                 else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
                 
-                // Redondear para evitar decimales muy largos.
                 if (Math.abs(newValue % 1) < 0.0001) { 
                     newValue = Math.round(newValue);
                 } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
@@ -1002,7 +1057,6 @@
                 }
                 
                 let formattedName = name;
-                // Definir las formas comunes de plurales/singulares.
                 const commonFormsMap = {
                     "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
                     "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
@@ -1020,62 +1074,46 @@
                     "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
                     "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                     "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
-                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroz", "chicharro": "chicharros",
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
                     "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                     "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
-                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos",
-                    "tortilla": "tortillas", "coliflor": "coliflores", "brócoli": "brócolis",
-                    "remolacha": "remolachas", "lenteja": "lentejas", "garbanzo": "garbanzos",
-                    "pasta": "pastas", "cuscús": "cuscús", "quinoa": "quinoa", "mijo": "mijo" // Agregados para pluralizar mejor
+                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
                 };
 
-                // Normalizar baseName para buscar en el diccionario
-                let normalizedBaseName = baseName.toLowerCase();
-                
-                // Intentar pluralizar/singularizar usando el `baseName`
-                let targetNounForm = normalizedBaseName;
+                let targetNounForm = baseName;
 
                 if (newValue === 1) {
-                    targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === normalizedBaseName) || normalizedBaseName;
-                    if (targetNounForm === normalizedBaseName && normalizedBaseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(normalizedBaseName)) {
-                         targetNounForm = normalizedBaseName.slice(0, -1); // Singularizar genérico
+                    targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
+                    if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
+                         targetNounForm = baseName.slice(0, -1); 
                     }
-                } else { // newValue > 1
-                    targetNounForm = commonFormsMap[normalizedBaseName] || normalizedBaseName;
-                    if (targetNounForm === normalizedBaseName && !normalizedBaseName.endsWith('s')) {
-                        targetNounForm = normalizedBaseName + 's'; // Pluralizar genérico
+                } else { 
+                    targetNounForm = commonFormsMap[baseName] || baseName;
+                    if (targetNounForm === baseName && !baseName.endsWith('s')) {
+                        targetNounForm = baseName + 's'; 
                     }
                 }
                 
-                // Reemplazar la forma original del nombre con la forma plural/singular deseada
-                // Aseguramos que la baseName sea reconocida en el nombre original para reemplazar
                 formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
                 
                 formattedName = formattedName.trim();
 
-                // Eliminar la unidad del nombre si ya está en la parte de la unidad (ej. "gramos de gramos")
                 const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
                 formattedName = formattedName.replace(unitInNameRegex, '').trim();
                 
-                // Asegurar que no haya palabras duplicadas seguidas (ej. "zanahoria zanahoria")
                 formattedName = formattedName.split(' ').filter((word, index, arr) => {
                     return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
                 }).join(' ').trim();
 
-                // Formato final de la cadena de ingrediente
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${newValue} ${unit}. ${formattedName}`.trim();
                 }
-                // Si la cantidad es 1 y la unidad es un "cuantificador" ("un", "una", "unidad", "puñado", etc.) o está vacía,
-                // solo mostramos el nombre formateado sin el "1".
                 if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
-                    return formattedName; // Ej: "Aceite de oliva", "Puñado de nueces"
+                    return formattedName; 
                 }
-                // Para el resto de los casos, incluye el valor y la unidad.
                 if (unit !== '') {
                     return `${newValue} ${unit} ${formattedName}`.trim();
                 }
-                // Si no hay unidad explícita y no es un caso especial de "1", muestra solo el valor y el nombre.
                 return `${newValue} ${formattedName}`.trim();
             }
 
@@ -1109,7 +1147,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
-                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null; this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
                         <div id="recipe-content-normal">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
                                 <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
@@ -1198,12 +1236,13 @@
             
             function closeModal() {
                 console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); 
+                dom.modal.classList.remove('modal-visible'); // Inicia la transición de opacidad/escala
+                // Después de la transición, oculta completamente
                 setTimeout(() => { 
-                    dom.modal.classList.add('hidden'); 
-                    dom.modalContent.innerHTML = ''; 
+                    dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
+                    dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
                     console.log('Modal completamente cerrado y contenido limpiado.');
-                }, 300); 
+                }, 300); // Coincide con la duración de la transición en CSS
                 currentRecipeDetail = null; 
                 currentServings = 0; 
             }
