@@ -217,11 +217,28 @@
             color: #6b7280; /* gray-500 */
         }
 
-        /* Ocultar el bullet point por defecto para los items marcados o con iconos */
-        #finalShoppingList li.checked {
-            list-style: none; /* Eliminar el bullet point */
+        /* Eliminar el bullet point por defecto */
+        #finalShoppingList li {
+            list-style: none;
+            position: relative; /* Para posicionar pseudo-elementos si quisieras un checkbox personalizado */
+            padding-left: 1.5rem; /* Espacio para un posible checkbox si lo añades más tarde */
         }
-        /* Añadir un checkbox o icono personalizado si se desea, por ahora solo el tachado */
+        /* Para simular un bullet o checkbox, puedes usar un pseudo-elemento si lo deseas */
+        #finalShoppingList li::before {
+            content: '•'; /* Un bullet simple */
+            color: #78350f; /* Color del bullet */
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            line-height: 1;
+        }
+        #finalShoppingList li.checked::before {
+            content: '✓'; /* Un checkmark */
+            color: #10b981; /* green-500 */
+        }
+        /* FIN NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
 
 
         @media print {
@@ -366,6 +383,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         function runRecipeApp() {
@@ -392,7 +410,7 @@
             let currentTimeFilter = 'all'; 
 
             // Lista de la compra global (se guardará en localStorage)
-            // Cada item ahora tendrá una propiedad `checked`
+            // Cada item ahora tendrá una propiedad `checked` para la checklist
             let shoppingList = []; 
 
             const dom = {
@@ -785,11 +803,7 @@
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    // Para la lista de compra, si no tiene una cantidad numérica (value === 0)
-                    // pero SÍ tiene un nombre (ej. "Aceite de oliva", "Sal"), lo añadimos como 1 unidad
-                    // pero con un indicador para que no se multiplique si es un "al gusto".
-                    // Si tiene baseName, es un ingrediente que queremos consolidar.
-                    if (parsed.baseName) { // Priorizar baseName para ingredientes con nombre pero sin cantidad
+                    if (parsed.baseName) { 
                          ingredientsToProcess.push({
                             name: parsed.baseName, 
                             unit: parsed.unit,
@@ -797,13 +811,13 @@
                             originalFormatted: formatIngredient(parsed, factor), 
                             checked: false // Nuevo: estado inicial no marcado
                         });
-                    } else if (parsed.original) { // Para ingredientes que no se parsean pero tienen un string original (ej. "a gusto")
+                    } else if (parsed.original) {
                         ingredientsToProcess.push({
                             name: parsed.original.toLowerCase(),
                             unit: '',
                             value: 0, 
                             originalFormatted: parsed.original,
-                            checked: false // Nuevo: estado inicial no marcado
+                            checked: false 
                         });
                     }
                 });
@@ -814,23 +828,20 @@
                     );
 
                     if (existingItemIndex !== -1) {
-                        // Si el ingrediente tiene una cantidad numérica, la sumamos
                         if (ing.value > 0) {
                             shoppingList[existingItemIndex].value += ing.value; 
-                            // Re-formatear para mostrar la nueva cantidad si aplica
                              if (shoppingList[existingItemIndex].value > 0) { 
                                 const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
                                 shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
                              }
                         }
                     } else {
-                        // Si no existe, añadir el ingrediente 
                         shoppingList.push({
                             name: ing.name,
                             unit: ing.unit,
                             value: ing.value,
                             originalFormatted: ing.originalFormatted,
-                            checked: false // Nuevo: estado inicial no marcado
+                            checked: false 
                         });
                     }
                 });
@@ -850,11 +861,10 @@
                 } else {
                     const sortedList = [...itemsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
                     
-                    sortedList.forEach((item, index) => { // Añadimos index para identificar el item al marcar
+                    sortedList.forEach((item, index) => { 
                         const li = document.createElement('li');
                         li.dataset.index = index; // Guardar el índice para identificar el item al hacer clic
                         
-                        // Añadir la clase 'checked' si el item ya está marcado
                         if (item.checked) {
                             li.classList.add('checked');
                         }
@@ -884,15 +894,15 @@
                 }, 300);
             }
 
-            // NUEVO: Función para marcar/desmarcar ingredientes
+            // NUEVO: Función para marcar/desmarcar ingredientes en la lista
             function toggleIngredientChecked(event) {
                 const listItem = event.target.closest('li');
                 if (listItem && listItem.dataset.index) {
                     const index = parseInt(listItem.dataset.index);
                     if (shoppingList[index]) {
                         shoppingList[index].checked = !shoppingList[index].checked; // Alternar estado
-                        saveShoppingList(); // Guardar el nuevo estado
-                        showShoppingListModal(); // Refrescar la lista en el modal para que se vea el cambio
+                        saveShoppingList(); // Guardar el nuevo estado en localStorage
+                        showShoppingListModal(); // Refrescar la lista para que se vea el cambio
                     }
                 }
             }
@@ -1011,7 +1021,7 @@
                     "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
                     "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                     "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
-                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", // Arroz es especial
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
                     "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                     "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                     "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
@@ -1019,7 +1029,7 @@
                 
                 const words = lowerName.split(' ').map(w => w.replace(/[^a-záéíóúüñ]/g, '')); 
                 for (const word of words) {
-                    if (commonSingularPluralMap[word]) return word; // Si la palabra es un singular conocido
+                    if (commonSingularPluralMap[word]) return word; 
                     const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
                     if (singularForm) return singularForm; 
                 }
@@ -1236,13 +1246,12 @@
             
             function closeModal() {
                 console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); // Inicia la transición de opacidad/escala
-                // Después de la transición, oculta completamente
+                dom.modal.classList.remove('modal-visible'); 
                 setTimeout(() => { 
-                    dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
-                    dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
+                    dom.modal.classList.add('hidden'); 
+                    dom.modalContent.innerHTML = ''; 
                     console.log('Modal completamente cerrado y contenido limpiado.');
-                }, 300); // Coincide con la duración de la transición en CSS
+                }, 300); 
                 currentRecipeDetail = null; 
                 currentServings = 0; 
             }
