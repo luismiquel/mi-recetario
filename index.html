@@ -125,8 +125,7 @@
             z-index: 50;
             padding: 1rem; /* p-4 */
 
-            /* Control de visibilidad y opacidad */
-            visibility: hidden; /* Oculto por defecto, sin display:none de Tailwind */
+            visibility: hidden;
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
@@ -571,6 +570,11 @@
                         value = 0.5;
                     } else if (match[2] && (match[2].toLowerCase() === 'un' || match[2].toLowerCase() === 'una')) {
                         value = 1; 
+                    } else if (match[4]) { // Si no hay número ni cuantificador, pero hay nombre (ej. "Aceite de oliva")
+                        // Estos ingredientes se consideran "1 unidad" para que se escalen,
+                        // pero no se mostrará un "1" si no se ha formateado
+                        value = 1; // Asume una unidad para poder multiplicarlo
+                        unit = ''; // No tienen una unidad formal aquí
                     } else {
                         value = 0; 
                     }
@@ -591,19 +595,23 @@
             }
 
             function formatIngredient(parsedIng, factor) {
-                if (parsedIng.value === 0) { 
-                    return parsedIng.original; 
+                // Si el ingrediente no tiene una cantidad numérica original (ej. "Aceite de oliva", "Sal")
+                // O si su valor es 0, simplemente devuelve el original para no intentar multiplicarlo.
+                if (parsedIng.value === 0 && parsedIng.unit === '') { 
+                    return parsedIng.original; 
                 }
 
                 let newValue = parsedIng.value * factor;
                 let unit = parsedIng.unit;
                 let name = parsedIng.name;
 
+                // Ajustes de unidades para mayor claridad y precisión
                 if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
                 else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
                 else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
                 else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
                 
+                // Redondear para evitar decimales muy largos.
                 if (Math.abs(newValue % 1) < 0.0001) { 
                     newValue = Math.round(newValue);
                 } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
@@ -623,6 +631,7 @@
                     "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                     "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                    "loncha": "lonchas", // Añadido para lonchas
                     "s": "s" 
                 };
 
@@ -633,9 +642,19 @@
                     let baseForm = firstNounCandidate.toLowerCase();
                     let targetForm = '';
                     if (newValue === 1) {
+                        // Intenta singularizar la palabra si es un plural en commonForms
                         targetForm = Object.keys(commonForms).find(key => commonForms[key] === baseForm) || baseForm;
-                    } else {
-                        targetForm = commonForms[baseForm] || baseForm + 's';
+                        if (targetForm === baseForm && baseForm.endsWith('s') && baseForm.length > 3) {
+                            // Si no está en commonForms, pero termina en 's', intenta singularizar.
+                            targetForm = baseForm.slice(0, -1);
+                        }
+                    } else { // newValue > 1
+                        // Intenta pluralizar la palabra
+                        targetForm = commonForms[baseForm] || baseForm;
+                        if (targetForm === baseForm && !baseForm.endsWith('s') && baseForm.length > 0) {
+                            // Si no está en commonForms, pero no termina en 's', intenta pluralizar añadiendo 's'.
+                            targetForm = baseForm + 's';
+                        }
                     }
                     formattedName = name.replace(new RegExp(`\\b${firstNounCandidate}\\b`, 'i'), targetForm);
                 } else if (newValue > 1 && !name.endsWith('s') && name.length > 0 && !['sal', 'pimienta', 'aceite', 'agua', 'miel', 'curry', 'jengibre', 'eneldo', 'orégano', 'albahaca', 'hierbabuena', 'menta'].includes(name.toLowerCase())) {
@@ -656,6 +675,12 @@
                 formattedName = formattedName.split(' ').filter((word, index, arr) => {
                     return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
                 }).join(' ').trim();
+
+                // Regla para no mostrar la cantidad si es 1 y no tiene unidad definida (ej. "1 Aceite de oliva")
+                if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades'].includes(unit))) {
+                    return formattedName; // Solo muestra el nombre (ej. "Aceite de oliva")
+                }
+
 
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${newValue} ${unit}. ${formattedName}`.trim();
@@ -703,7 +728,7 @@
                                 <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
                                     <span>Raciones:</span>
                                     <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
-                                    <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1">
+                                                                            <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1">
                                     <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">+</button>
                                 </div>
                             </div>
