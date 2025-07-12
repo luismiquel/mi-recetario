@@ -198,6 +198,9 @@
             transition: all 0.2s ease-in-out;
             display: flex;
             align-items: center;
+            list-style: none; /* Eliminar el bullet point por defecto */
+            position: relative; 
+            padding-left: 1.5rem; 
         }
         #finalShoppingList li:hover {
             background-color: #f0ead6;
@@ -217,20 +220,12 @@
             color: #6b7280; /* gray-500 */
         }
 
-        /* Eliminar el bullet point por defecto */
-        #finalShoppingList li {
-            list-style: none;
-            position: relative; /* Para posicionar pseudo-elementos si quisieras un checkbox personalizado */
-            padding-left: 1.5rem; /* Espacio para un posible checkbox si lo añades más tarde */
-        }
-        /* Para simular un bullet o checkbox, puedes usar un pseudo-elemento si lo deseas */
+        /* Pseudo-elementos para el icono de check/bullet */
         #finalShoppingList li::before {
             content: '•'; /* Un bullet simple */
             color: #78350f; /* Color del bullet */
             position: absolute;
             left: 0;
-            top: 0.5rem;
-            transform: translateY(-50%);
             font-size: 1.2em;
             line-height: 1;
         }
@@ -240,6 +235,44 @@
         }
         /* FIN NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
 
+        /* Estilos para las notificaciones Toast */
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 20rem; /* Ancho máximo para que no sea demasiado largo */
+        }
+
+        .toast-message {
+            background-color: #333;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeIn 0.3s forwards, fadeOut 0.5s 2.5s forwards; /* Entra, se queda 2.5s, sale */
+            transition: background-color 0.2s ease;
+        }
+
+        .toast-message.success { background-color: #10b981; } /* green-500 */
+        .toast-message.error { background-color: #ef4444; }   /* red-500 */
+        .toast-message.info { background-color: #3b82f6; }    /* blue-500 */
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        /* Fin de estilos Toast */
 
         @media print {
             body * { visibility: hidden; }
@@ -266,7 +299,7 @@
                 color: black !important; 
                 transform: scale(1) !important; 
             }
-            #closeShoppingListModalBtn, .modal-buttons-container { display: none !important; } 
+            #closeShoppingListModalBtn, .modal-buttons-container, #toast-container { display: none !important; } 
             .dark #shoppingListModal > div, .dark #shoppingListModal * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
@@ -371,6 +404,8 @@
         </button>
     </div>
 
+    <div id="toast-container"></div>
+
 
     <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
         <p class="text-sm text-gray-500 dark:text-stone-400">
@@ -434,7 +469,8 @@
                 closeShoppingListModalBtn: document.getElementById('closeShoppingListModalBtn'),
                 finalShoppingList: document.getElementById('finalShoppingList'),
                 clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
-                printShoppingListBtn: document.getElementById('printShoppingListBtn')
+                printShoppingListBtn: document.getElementById('printShoppingListBtn'),
+                toastContainer: document.getElementById('toast-container') // Nuevo contenedor para Toasts
             };
             
             // Recetas con tiempo de preparación actualizado y con 25 por categoría
@@ -660,13 +696,16 @@
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
                     await loadUserData();
                     updateFavoriteIcons();
+                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); // Notificación de bienvenida
                 } else {
                     console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
                     signInAnonymously(auth).then(() => {
                         console.log("Firebase: Sesión anónima iniciada con éxito.");
+                        // showToast('Sesión iniciada anónimamente.', 'info'); // Puedes descomentar si quieres notificar esto
                     }).catch((error) => {
                         console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
                         dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
+                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); // Notificación de error
                     });
                 }
             });
@@ -703,14 +742,14 @@
                     console.log("Firebase: Favoritos guardados con éxito.");
                 } catch (error) {
                     console.error("Firebase: Error guardando datos de usuario:", error.message);
-                    alert(`Error al guardar favoritos. Verifica las reglas de seguridad de Firestore. Error: ${error.message}`);
+                    showToast(`Error al guardar: ${error.message}`, 'error'); // Usar Toast para el error
                 }
             }
 
             async function toggleFavorite(recipeId) {
                 if (!userId) {
                     console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
-                    alert('Debes iniciar sesión para guardar favoritos. Se está intentando iniciar sesión anónimamente...');
+                    showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info'); // Usar Toast
                     signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
                     return;
                 }
@@ -721,6 +760,7 @@
                 applyFilters(); 
 
                 await saveData({ favorites: userFavorites });
+                showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success'); // Notificación Toast
             }
 
             function updateFavoriteIcons() {
@@ -778,7 +818,8 @@
             // Cargar la lista del localStorage al inicio
             function loadShoppingList() {
                 const storedList = localStorage.getItem('shoppingList');
-                shoppingList = storedList ? JSON.parse(storedList) : [];
+                // Asegurarse de que `checked` exista para ítems antiguos si no lo tenían
+                shoppingList = storedList ? JSON.parse(storedList).map(item => ({ ...item, checked: item.checked ?? false })) : [];
                 updateShoppingListCount();
                 console.log("Lista de compra cargada:", shoppingList);
             }
@@ -803,6 +844,7 @@
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
+                    // Solo procesar si tiene un nombre base para consolidar O si es un ingrediente sin cantidad pero con string original
                     if (parsed.baseName) { 
                          ingredientsToProcess.push({
                             name: parsed.baseName, 
@@ -847,7 +889,7 @@
                 });
 
                 saveShoppingList(); 
-                alert(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos a la lista de compra!`);
+                showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success'); // Notificación Toast
                 closeModal(); 
             }
 
@@ -863,7 +905,8 @@
                     
                     sortedList.forEach((item, index) => { 
                         const li = document.createElement('li');
-                        li.dataset.index = index; // Guardar el índice para identificar el item al hacer clic
+                        // Guardar el índice real en la lista de `shoppingList` para la función `toggleIngredientChecked`
+                        li.dataset.itemIndex = shoppingList.indexOf(item); 
                         
                         if (item.checked) {
                             li.classList.add('checked');
@@ -881,7 +924,7 @@
                 dom.shoppingListModal.classList.remove('hidden');
                 dom.shoppingListModal.classList.add('modal-visible');
 
-                // NUEVO: Añadir event listener a la lista completa para la delegación
+                // Añadir event listener a la lista completa para la delegación
                 dom.finalShoppingList.addEventListener('click', toggleIngredientChecked);
             }
 
@@ -894,15 +937,16 @@
                 }, 300);
             }
 
-            // NUEVO: Función para marcar/desmarcar ingredientes en la lista
+            // Función para marcar/desmarcar ingredientes en la lista
             function toggleIngredientChecked(event) {
                 const listItem = event.target.closest('li');
-                if (listItem && listItem.dataset.index) {
-                    const index = parseInt(listItem.dataset.index);
+                if (listItem && listItem.dataset.itemIndex) { // Usamos dataset.itemIndex
+                    const index = parseInt(listItem.dataset.itemIndex);
                     if (shoppingList[index]) {
                         shoppingList[index].checked = !shoppingList[index].checked; // Alternar estado
                         saveShoppingList(); // Guardar el nuevo estado en localStorage
                         showShoppingListModal(); // Refrescar la lista para que se vea el cambio
+                        showToast(shoppingList[index].checked ? 'Ingrediente marcado.' : 'Ingrediente desmarcado.', 'info');
                     }
                 }
             }
@@ -913,6 +957,7 @@
                     shoppingList = [];
                     saveShoppingList();
                     showShoppingListModal(); 
+                    showToast('Lista de compra vaciada.', 'info');
                 }
             }
 
@@ -1042,8 +1087,6 @@
             }
 
             function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente NO tiene un valor numérico (value === 0),
-                // devuelve el string original completo (ej. "Aceite de oliva", "Sal").
                 if (parsedIng.value === 0) { 
                     return parsedIng.original; 
                 }
@@ -1163,8 +1206,8 @@
                                 <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
                                 <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
                                     <span>Raciones:</span>
-                                    <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
                                     <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1">
+                                    <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
                                     <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">+</button>
                                 </div>
                             </div>
@@ -1350,7 +1393,6 @@
                     window.print();
                     document.body.innerHTML = originalBody;
                     // Restaurar los listeners después de restaurar el HTML del body
-                    // Esto es crucial porque al cambiar innerHTML, todos los eventos se pierden.
                     runRecipeApp(); 
                 } else {
                     window.print(); 
@@ -1437,6 +1479,21 @@
 
             // Cargar la lista de la compra al inicio
             loadShoppingList();
+
+            // --- NUEVA FUNCIÓN PARA NOTIFICACIONES TOAST ---
+            function showToast(message, type = 'info', duration = 3000) {
+                const toast = document.createElement('div');
+                toast.classList.add('toast-message', type);
+                toast.textContent = message;
+                dom.toastContainer.appendChild(toast);
+
+                // Eliminar el toast después de la duración de la animación de salida
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, duration);
+            }
         }
 
         // Ejecuta la app cuando el DOM esté listo
