@@ -422,7 +422,7 @@
 
         function runRecipeApp() {
             const firebaseConfig = {
-                apiKey: "TU_API_KEY_AQUI", // <--- ¡Asegúrate de pegar tu API Key real aquí!
+                apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ", // <--- ¡Asegúrate de pegar tu API Key real aquí!
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
                 projectId: "lucid-copilot-454618-k7",
                 storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
@@ -1283,28 +1283,25 @@
 
             // --- MODO OSCURO ---
             function setupTheme() {
-                // Determine theme from localStorage or system preference
                 const currentTheme = localStorage.getItem('color-theme');
                 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
                 if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
                     document.documentElement.classList.add('dark');
-                    dom.lightIcon.classList.remove('hidden'); // Show light icon
-                    dom.darkIcon.classList.add('hidden');    // Hide dark icon
+                    dom.lightIcon.classList.remove('hidden'); 
+                    dom.darkIcon.classList.add('hidden');    
                     console.log("Tema: Oscuro (inicial)");
                 } else {
                     document.documentElement.classList.remove('dark');
-                    dom.darkIcon.classList.remove('hidden'); // Show dark icon
-                    dom.lightIcon.classList.add('hidden');   // Hide light icon
+                    dom.darkIcon.classList.remove('hidden'); 
+                    dom.lightIcon.classList.add('hidden');   
                     console.log("Tema: Claro (inicial)");
                 }
             }
 
             dom.themeToggle.addEventListener('click', function() {
-                // Toggle the 'dark' class on the root element
                 document.documentElement.classList.toggle('dark');
                 
-                // Update localStorage and icons based on current state
                 if (document.documentElement.classList.contains('dark')) {
                     localStorage.setItem('color-theme', 'dark');
                     dom.lightIcon.classList.remove('hidden');
@@ -1318,7 +1315,7 @@
                 }
             });
 
-            setupTheme(); // Llamada inicial para configurar el tema al cargar
+            setupTheme();
 
             // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
             dom.search.addEventListener('input', applyFilters);
@@ -1395,14 +1392,21 @@
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             let recognition = null;
             let speaking = false; // Bandera para saber si el asistente está hablando
+            let recognitionActive = false; // Nueva bandera para controlar si el reconocimiento debe estar activo
 
             // Función para iniciar el reconocimiento de voz
             function startVoiceRecognition() {
-                if (SpeechRecognition) {
+                if (!SpeechRecognition) {
+                    console.warn('SpeechRecognition API no soportada en este navegador.');
+                    showToast('Tu navegador no soporta el control por voz.', 'error');
+                    return;
+                }
+                
+                if (!recognition) {
                     recognition = new SpeechRecognition();
                     recognition.lang = 'es-ES';
-                    recognition.interimResults = false; // Solo resultados finales
-                    recognition.maxAlternatives = 1; // La alternativa más probable
+                    recognition.interimResults = false; 
+                    recognition.maxAlternatives = 1; 
 
                     recognition.addEventListener('result', (event) => {
                         const command = event.results[0][0].transcript.toLowerCase();
@@ -1411,34 +1415,48 @@
                     });
 
                     recognition.addEventListener('end', () => {
-                        // Reiniciar el reconocimiento si no estamos saliendo
-                        if (cookingModeView.classList.contains('flex')) {
+                        // Reiniciar el reconocimiento solo si el modo de cocina está activo y no estamos saliendo
+                        if (cookingModeView.classList.contains('flex') && recognitionActive) {
                             console.log('Reconocimiento de voz terminado, reiniciando...');
                             recognition.start();
+                        } else {
+                            console.log('Reconocimiento de voz detenido permanentemente.');
                         }
                     });
 
                     recognition.addEventListener('error', (event) => {
                         console.error('Error en reconocimiento de voz:', event.error);
                         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-                            showToast('Necesito permiso de micrófono para el asistente de voz.', 'error');
-                        } else if (event.error !== 'no-speech') {
-                             showToast('Problema con el reconocimiento de voz.', 'error');
+                            showToast('Necesito permiso de micrófono para el asistente de voz. Por favor, actívalo.', 'error');
+                            recognitionActive = false; // Desactivar si no hay permiso
+                        } else if (event.error === 'no-speech') {
+                            console.log('No se detectó voz. Reintentando...');
+                            // No mostrar Toast por "no-speech" para evitar spam
+                        } else {
+                            showToast(`Error de voz: ${event.error}. Intenta de nuevo.`, 'error');
+                            recognitionActive = false; // Desactivar si hay otro error grave
                         }
                     });
-
-                    recognition.start();
-                    console.log('Reconocimiento de voz iniciado.');
-                    showToast('Asistente de voz escuchando...', 'info');
-                } else {
-                    console.warn('SpeechRecognition API no soportada en este navegador.');
-                    showToast('Tu navegador no soporta el control por voz.', 'error');
+                }
+                
+                if (!recognitionActive) { // Solo si no está ya activo
+                    try {
+                        recognitionActive = true;
+                        recognition.start();
+                        console.log('Reconocimiento de voz iniciado.');
+                        showToast('Asistente de voz escuchando...', 'info');
+                    } catch (e) {
+                        console.error('Error al iniciar SpeechRecognition:', e);
+                        showToast('Error al iniciar el reconocimiento de voz. Intenta recargar.', 'error');
+                        recognitionActive = false;
+                    }
                 }
             }
 
             // Función para detener el reconocimiento de voz
             function stopVoiceRecognition() {
-                if (recognition) {
+                if (recognition && recognitionActive) {
+                    recognitionActive = false;
                     recognition.stop();
                     console.log('Reconocimiento de voz detenido.');
                 }
@@ -1447,22 +1465,26 @@
             // Función para manejar los comandos de voz
             function handleVoiceCommand(command) {
                 // Si el asistente está hablando, ignorar comandos por un breve momento para no interrumpir
-                if (speaking) return; 
+                if (speaking) {
+                    console.log("Asistente hablando, ignorando comando:", command);
+                    return; 
+                }
 
-                if (command.includes('siguiente')) {
+                const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); // Limpiar puntuación y normalizar
+
+                if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sige')) {
                     nextStepBtn.click();
                     speak('Pasando al siguiente paso.');
-                } else if (command.includes('anterior')) {
+                } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
                     prevStepBtn.click();
                     speak('Volviendo al paso anterior.');
-                } else if (command.includes('repetir')) {
+                } else if (cleanedCommand.includes('repetir')) {
                     repeatStepBtn.click();
                     speak('Repitiendo el paso actual.');
-                } else if (command.includes('salir') || command.includes('detener')) {
+                } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
                     exitCookingBtn.click();
                     speak('Saliendo del modo de cocina.');
                 } else {
-                    // Si no se reconoce el comando, el asistente puede confirmarlo
                     speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
                 }
             }
@@ -1488,7 +1510,7 @@
 
                 utterance.onstart = () => { speaking = true; };
                 utterance.onend = () => { speaking = false; };
-                utterance.onerror = () => { speaking = false; console.error("Error en SpeechSynthesis");};
+                utterance.onerror = (e) => { speaking = false; console.error("Error en SpeechSynthesis:", e);};
 
                 speechSynthesis.speak(utterance);
             }
