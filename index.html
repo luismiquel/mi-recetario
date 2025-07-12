@@ -420,16 +420,16 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         // ====================================================================
-        // VARIABLES GLOBALES (declaradas fuera de cualquier función para accesibilidad)
+        // VARIABLES GLOBALES (declaradas al principio del script para máxima accesibilidad)
         // ====================================================================
         let dom = {}; // Objeto para almacenar referencias a elementos DOM
         
         // Variables de estado de la aplicación
         let userFavorites = [];
         let userId = null;
-        let currentFilter = 'all';
-        let currentCategory = 'all';
-        let currentTimeFilter = 'all'; 
+        let currentFilter = 'all'; // 'all' o 'favorites'
+        let currentCategory = 'all'; // 'all' o una categoría específica
+        let currentTimeFilter = 'all'; // 'all', 'short', 'medium', 'long'
         let shoppingList = []; 
 
         // Variables de estado y DOM para el asistente de voz
@@ -494,7 +494,7 @@
         ];
         
         // ====================================================================
-        // FUNCIONES DE LA APLICACIÓN (GLOBALES)
+        // FUNCIONES DE LA APLICACIÓN (DECLARADAS PARA SER ACCESIBLES)
         // ====================================================================
 
         // Función para renderizar las tarjetas de receta.
@@ -576,7 +576,7 @@
             }
         }
 
-        // --- Funciones de control de Firebase ---
+        // --- Funciones de Firebase ---
         const firebaseConfig = {
             apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ", 
             authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
@@ -698,7 +698,7 @@
                     } else if (currentTimeFilter === 'long') {
                         return prepareTime > 60;
                     }
-                    return true; // Si el filtro es 'all', no hay restricción de tiempo
+                    return true; 
                 });
             }
 
@@ -793,7 +793,7 @@
                 "fabes": "fabes", 
                 "cebolletas": "cebolleta",
                 "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
-                "morcilla": "morcillas", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
+                "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
                 "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
                 "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
                 "gelatina": "gelatina", "almendra molida": "almendra molida", "azúcar glas": "azúcar glas"
@@ -814,7 +814,8 @@
                 "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
                 "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
                 "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "loncha": "lonchas",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
                 "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
                 "judía": "judías", "tomate": "tomates", "seta": "setas",
                 "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
@@ -1072,38 +1073,382 @@
         }
 
         // ====================================================================
-        // LÓGICA PRINCIPAL DE INICIALIZACIÓN DE LA APLICACIÓN
-        // Se ejecuta una vez el DOM esté completamente cargado.
+        // LÓGICA DE LA LISTA DE COMPRA
         // ====================================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOMContentLoaded: El DOM está completamente cargado. Iniciando aplicación.');
+        function loadShoppingList() {
+            const storedList = localStorage.getItem('shoppingList');
+            shoppingList = storedList ? JSON.parse(storedList).map(item => ({ ...item, checked: item.checked ?? false })) : [];
+            updateShoppingListCount();
+            console.log("Lista de compra cargada:", shoppingList);
+        }
 
-            // Inicializar el objeto dom aquí
-            dom = {
-                grid: document.getElementById('recipeGrid'),
-                search: document.getElementById('searchInput'),
-                filterAllBtn: document.getElementById('filterAll'),
-                filterFavBtn: document.getElementById('filterFavorites'),
-                categoryFilters: document.getElementById('categoryFilters'),
-                timeFilters: document.getElementById('timeFilters'), 
-                noResults: document.getElementById('no-results'),
-                modal: document.getElementById('recipeModal'),
-                modalContent: document.getElementById('modalContent'),
-                userInfo: document.getElementById('user-info'),
-                themeToggle: document.getElementById('theme-toggle'),
-                darkIcon: document.getElementById('theme-toggle-dark-icon'),
-                lightIcon: document.getElementById('theme-toggle-light-icon'),
-                copyrightYear: document.getElementById('copyright-year'),
-                viewShoppingListBtn: document.getElementById('viewShoppingListBtn'), 
-                shoppingListCount: document.getElementById('shopping-list-count'), 
-                shoppingListModal: document.getElementById('shoppingListModal'), 
-                closeShoppingListModalBtn: document.getElementById('closeShoppingListModalBtn'),
-                finalShoppingList: document.getElementById('finalShoppingList'),
-                clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
-                printShoppingListBtn: document.getElementById('printShoppingListBtn'),
-                toastContainer: document.getElementById('toast-container') 
+        function saveShoppingList() {
+            localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+            updateShoppingListCount();
+            console.log("Lista de compra guardada:", shoppingList);
+        }
+
+        function updateShoppingListCount() {
+            const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length; 
+            dom.shoppingListCount.textContent = totalItems;
+        }
+
+        function addToShoppingList(recipe, servings) {
+            const factor = servings / recipe.raciones;
+            const ingredientsToProcess = [];
+
+            recipe.ingredientes.forEach(originalIng => {
+                const parsed = parseIngredient(originalIng);
+                if (parsed.baseName || (parsed.value === 0 && parsed.original)) { 
+                     ingredientsToProcess.push({
+                        name: parsed.baseName || parsed.original.toLowerCase(), 
+                        unit: parsed.unit,
+                        value: parsed.value,
+                        originalFormatted: formatIngredient(parsed, factor), 
+                        checked: false 
+                    });
+                } else if (parsed.original) {
+                    ingredientsToProcess.push({
+                        name: parsed.original.toLowerCase(),
+                        unit: '',
+                        value: 0, 
+                        originalFormatted: parsed.original,
+                        checked: false 
+                    });
+                }
+            });
+
+            ingredientsToProcess.forEach(ing => {
+                const existingItemIndex = shoppingList.findIndex(item => 
+                    item.name === ing.name && item.unit === ing.unit
+                );
+
+                if (existingItemIndex !== -1) {
+                    if (ing.value > 0) { 
+                        shoppingList[existingItemIndex].value += ing.value; 
+                         if (shoppingList[existingItemIndex].value > 0) { 
+                            const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
+                            shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
+                         }
+                    }
+                } else {
+                    shoppingList.push({
+                        name: ing.name,
+                        unit: ing.unit,
+                        value: ing.value,
+                        originalFormatted: ing.originalFormatted,
+                        checked: false 
+                    });
+                }
+            });
+
+            saveShoppingList(); 
+            showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success'); 
+            closeModal(); 
+        }
+
+        function showShoppingListModal() {
+            dom.finalShoppingList.innerHTML = ''; 
+            const itemsToDisplay = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted));
+
+            if (itemsToDisplay.length === 0) {
+                dom.finalShoppingList.innerHTML = '<li class="text-gray-500 dark:text-stone-400">Tu lista de compra está vacía.</li>';
+            } else {
+                const sortedList = [...itemsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
+                
+                sortedList.forEach((item, index) => { 
+                    const li = document.createElement('li');
+                    li.dataset.itemIndex = shoppingList.indexOf(item); 
+                    
+                    if (item.checked) {
+                        li.classList.add('checked');
+                    }
+
+                    if (item.value > 0) {
+                        const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
+                        li.textContent = formatIngredient(tempParsed, 1); 
+                    } else {
+                        li.textContent = item.originalFormatted; 
+                    }
+                    dom.finalShoppingList.appendChild(li);
+                });
+            }
+            dom.shoppingListModal.classList.remove('hidden');
+            dom.shoppingListModal.classList.add('modal-visible');
+
+            dom.finalShoppingList.addEventListener('click', toggleIngredientChecked);
+        }
+
+        function closeShoppingListModal() {
+            dom.shoppingListModal.classList.remove('modal-visible');
+            dom.finalShoppingList.removeEventListener('click', toggleIngredientChecked); 
+            setTimeout(() => {
+                dom.shoppingListModal.classList.add('hidden');
+            }, 300);
+        }
+
+        function toggleIngredientChecked(event) {
+            const listItem = event.target.closest('li');
+            if (listItem && listItem.dataset.itemIndex !== undefined) { 
+                const index = parseInt(listItem.dataset.itemIndex);
+                if (shoppingList[index]) {
+                    shoppingList[index].checked = !shoppingList[index].checked; 
+                    saveShoppingList(); 
+                    showShoppingListModal(); 
+                    showToast(shoppingList[index].checked ? 'Ingrediente marcado.' : 'Ingrediente desmarcado.', 'info');
+                }
+            }
+        }
+
+
+        function clearShoppingList() {
+            if (confirm('¿Estás seguro de que quieres vaciar toda la lista de compra?')) {
+                shoppingList = [];
+                saveShoppingList();
+                showShoppingListModal(); 
+                showToast('Lista de compra vaciada.', 'info');
+            }
+        }
+
+        // ====================================================================
+        // LÓGICA DE PARSEO Y FORMATEO DE INGREDIENTES
+        // ====================================================================
+        function parseIngredient(ingredient) {
+            const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
+            let match = ingredient.match(regex);
+            
+            let value = 0;
+            let unit = '';
+            let name = ingredient.trim(); 
+            let baseName = ''; 
+
+            if (match) {
+                if (match[1]) { 
+                    value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
+                } else if (match[2]) { 
+                    const quantWord = match[2].toLowerCase();
+                    if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
+                    else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
+                }
+
+                unit = match[3] ? match[3].toLowerCase() : '';
+                name = match[4] ? match[4].trim() : ''; 
+                
+                if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
+                    name = (match[2] + ' ' + name).trim();
+                    unit = ''; 
+                }
+            } else {
+                // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
+                // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
+            }
+            
+            baseName = getBaseName(name || ingredient); 
+            
+            return { value, unit, name, baseName: baseName.trim(), original: ingredient };
+        }
+
+        function getBaseName(rawName) {
+            let lowerName = rawName.toLowerCase();
+            let base = lowerName;
+
+            const specificCompoundsMap = {
+                "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry",
+                "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
+                "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro",
+                "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
+                "pan integral": "pan integral", "carne picada": "carne picada",
+                "alga wakame": "alga wakame", "pan de telera": "pan de telera",
+                "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde",
+                "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
+                "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde",
+                "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
+                "queso rallado": "queso rallado", "zumo de limón": "zumo de limón",
+                "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
+                "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla",
+                "harina integral": "harina integral", "copos de avena": "copos de avena",
+                "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo",
+                "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
+                "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja",
+                "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
+                "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada",
+                "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
+                "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal",
+                "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
+                "huevo duro": "huevo duro", "jamón serrano": "jamón serrano",
+                "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
+                "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
+                "arroz integral": "arroz integral", "maicena": "maicena",
+                "champiñones": "champiñón", 
+                "patatas": "patata", 
+                "garbanzos": "garbanzo", 
+                "espinacas": "espinaca", 
+                "judiones": "judión", 
+                "fabes": "fabes", 
+                "cebolletas": "cebolleta",
+                "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
+                "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
+                "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
+                "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
+                "gelatina": "gelatina", "almendra molida": "almendra molida", "azúcar glas": "azúcar glas"
             };
 
+            for (const compound in specificCompoundsMap) {
+                if (lowerName.includes(compound)) {
+                    return specificCompoundsMap[compound];
+                }
+            }
+
+            const commonSingularPluralMap = {
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
+                "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                "judía": "judías", "tomate": "tomates", "seta": "setas",
+                "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
+            };
+
+            for (const word of words) {
+                if (commonSingularPluralMap[word]) return word; 
+                const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
+                if (singularForm) return singularForm; 
+            }
+            
+            if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
+                return lowerName.slice(0, -1);
+            }
+
+            return lowerName; 
+        }
+
+        function formatIngredient(parsedIng, factor) {
+            if (parsedIng.value === 0) { 
+                return parsedIng.original; 
+            }
+            
+            let newValue = parsedIng.value * factor;
+            let unit = parsedIng.unit;
+            let name = parsedIng.name;
+            let baseName = parsedIng.baseName; 
+
+            if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
+            else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
+            else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
+            else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
+            
+            if (Math.abs(newValue % 1) < 0.0001) { 
+                newValue = Math.round(newValue);
+            } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
+                newValue = Math.round(newValue * 10) / 10;
+            } else { 
+                newValue = Math.round(newValue * 100) / 100; 
+            }
+            
+            let formattedName = name;
+            const commonFormsMap = {
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
+                "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
+                "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
+            };
+
+            let targetNounForm = baseName;
+
+            if (newValue === 1) {
+                targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
+                if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
+                     targetNounForm = baseName.slice(0, -1); 
+                }
+            } else { 
+                targetNounForm = commonFormsMap[baseName] || baseName;
+                if (targetNounForm === baseName && !baseName.endsWith('s')) {
+                    targetNounForm = baseName + 's'; 
+                }
+            }
+            
+            formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
+            
+            formattedName = formattedName.trim();
+
+            const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
+            formattedName = formattedName.replace(unitInNameRegex, '').trim();
+            
+            formattedName = formattedName.split(' ').filter((word, index, arr) => {
+                return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
+            }).join(' ').trim();
+
+            if (unit === 'cdita' || unit === 'cda') {
+                return `${newValue} ${unit}. ${formattedName}`.trim();
+            }
+            if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
+                return formattedName; 
+            }
+            if (unit !== '') {
+                return `${newValue} ${unit} ${formattedName}`.trim();
+            }
+            return `${newValue} ${formattedName}`.trim();
+        }
+
+        // ====================================================================
+        // FUNCIÓN PRINCIPAL DE INICIALIZACIÓN (llamada por DOMContentLoaded)
+        // ====================================================================
+        function initApp() {
+            console.log('initApp: Iniciando la aplicación...');
+
+            // 1. Inicializar todas las referencias DOM
+            dom.grid = document.getElementById('recipeGrid');
+            dom.search = document.getElementById('searchInput');
+            dom.filterAllBtn = document.getElementById('filterAll');
+            dom.filterFavBtn = document.getElementById('filterFavorites');
+            dom.categoryFilters = document.getElementById('categoryFilters');
+            dom.timeFilters = document.getElementById('timeFilters'); 
+            dom.noResults = document.getElementById('no-results');
+            dom.modal = document.getElementById('recipeModal');
+            dom.modalContent = document.getElementById('modalContent');
+            dom.userInfo = document.getElementById('user-info');
+            dom.themeToggle = document.getElementById('theme-toggle');
+            dom.darkIcon = document.getElementById('theme-toggle-dark-icon');
+            dom.lightIcon = document.getElementById('theme-toggle-light-icon');
+            dom.copyrightYear = document.getElementById('copyright-year');
+            dom.viewShoppingListBtn = document.getElementById('viewShoppingListBtn'); 
+            dom.shoppingListCount = document.getElementById('shopping-list-count'); 
+            dom.shoppingListModal = document.getElementById('shoppingListModal'); 
+            dom.closeShoppingListModalBtn = document.getElementById('closeShoppingListModalBtn');
+            dom.finalShoppingList = document.getElementById('finalShoppingList');
+            dom.clearShoppingListBtn = document.getElementById('clearShoppingListBtn');
+            dom.printShoppingListBtn = document.getElementById('printShoppingListBtn');
+            dom.toastContainer = document.getElementById('toast-container');
+            
             // Asignación de elementos DOM globales para el asistente de voz
             cookingModeView = document.getElementById('cooking-mode-view'); 
             stepCounter = document.getElementById('step-counter');
@@ -1113,22 +1458,36 @@
             nextStepBtn = document.getElementById('next-step-btn');
             exitCookingBtn = document.getElementById('exit-cooking-btn');
 
-            // --- Configuración inicial de la aplicación ---
+            console.log('initApp: Elementos DOM inicializados.', dom);
+            if (!dom.grid) {
+                console.error("CRÍTICO: dom.grid no encontrado. La cuadrícula de recetas no se mostrará.");
+                return; // Detener la ejecución si el elemento crítico no se encuentra
+            }
+
+            // 2. Configuración inicial de la aplicación
             setupTheme(); // Configura el tema claro/oscuro
             loadShoppingList(); // Carga la lista de la compra guardada
-            applyFilters(); // Renderiza las recetas por primera vez
             
-            // Asignar Event Listeners generales (fuera de funciones de renderizado repetidas)
+            // 3. Asignar Event Listeners generales
+            dom.grid.addEventListener('click', (event) => {
+                const card = event.target.closest('.recipe-card');
+                if (!card) return;
+                if (event.target.closest('.favorite-btn')) { 
+                    event.stopPropagation(); 
+                    toggleFavorite(card.dataset.id);
+                } else { 
+                    const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
+                    if (recipe) showRecipeDetail(recipe);
+                }
+            });
             dom.search.addEventListener('input', applyFilters);
 
             dom.filterAllBtn.addEventListener('click', () => {
-                console.log('Filtro: Todas');
                 currentFilter = 'all';
                 dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
                 applyFilters();
             });
             dom.filterFavBtn.addEventListener('click', () => {
-                console.log('Filtro: Favoritas');
                 currentFilter = 'favorites';
                 dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
                 applyFilters();
@@ -1137,7 +1496,6 @@
             dom.categoryFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.category-btn')) {
                     currentCategory = e.target.dataset.category;
-                    console.log('Filtro por categoría:', currentCategory);
                     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
                     e.target.classList.add('active');
                     applyFilters();
@@ -1147,7 +1505,6 @@
             dom.timeFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.time-filter-btn')) {
                     currentTimeFilter = e.target.dataset.time;
-                    console.log('Filtro por tiempo:', currentTimeFilter);
                     document.querySelectorAll('.time-filter-btn').forEach(btn => btn.classList.remove('active'));
                     e.target.classList.add('active');
                     applyFilters();
@@ -1156,7 +1513,6 @@
             
             dom.modal.addEventListener('click', (event) => { 
                 if (event.target === dom.modal) { 
-                    console.log('Clic en fondo del modal, cerrando.');
                     closeModal(); 
                 }
             });
@@ -1171,19 +1527,17 @@
                     document.body.innerHTML = printContent.outerHTML;
                     window.print();
                     document.body.innerHTML = originalBody;
-                    // Al restaurar el DOM con innerHTML, los event listeners se pierden.
-                    // Necesitamos re-inicializar la aplicación para que los eventos vuelvan a funcionar.
-                    initAppLogic(); // Esto re-ejecuta toda la inicialización
+                    initApp(); // Re-inicializar para restaurar event listeners
                 } else {
                     window.print(); 
                 }
             });
 
             // Asignar event listeners a los botones del asistente de voz
-            prevStepBtn.addEventListener('click', prevStepAction);
-            nextStepBtn.addEventListener('click', nextStepAction);
-            repeatStepBtn.addEventListener('click', repeatStepAction);
-            exitCookingBtn.addEventListener('click', exitCookingMode);
+            if (prevStepBtn) prevStepBtn.addEventListener('click', prevStepAction);
+            if (nextStepBtn) nextStepBtn.addEventListener('click', nextStepAction);
+            if (repeatStepBtn) repeatStepBtn.addEventListener('click', repeatStepAction);
+            if (exitCookingBtn) exitCookingBtn.addEventListener('click', exitCookingMode);
 
             // Asegura que los filtros "Todas" y "Cualquiera" estén activos al cargar
             dom.filterAllBtn.classList.add('active');
@@ -1191,7 +1545,7 @@
             
             dom.copyrightYear.textContent = new Date().getFullYear();
 
-            // Lógica de autenticación de Firebase
+            // 4. Lógica de autenticación de Firebase
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid;
@@ -1211,8 +1565,15 @@
                     });
                 }
             });
-            console.log('initAppLogic: Inicialización completada.');
-        });
+
+            // 5. Renderizar las recetas por primera vez
+            console.log('initApp: Llamando a applyFilters para renderizar recetas iniciales.');
+            applyFilters(); 
+            console.log('initApp: Aplicación inicializada por completo.');
+        }
+
+        // Ejecutar initApp cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
