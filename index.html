@@ -413,14 +413,11 @@
     </footer>
     
     <script type="module">
-        // ====================================================================
-        // IMPORTACIONES DE FIREBASE (TEMPORALMENTE DESHABILITADAS PARA DEPURACIÓN)
-        // ====================================================================
-        // Si las recetas aparecen con este código, reactivaremos Firebase paso a paso.
-        // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        // import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-        // import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        // import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
+        // --- IMPORTACIONES DE FIREBASE ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         // ====================================================================
         // VARIABLES GLOBALES (declaradas al principio del script para máxima accesibilidad)
@@ -428,8 +425,8 @@
         let dom = {}; // Objeto para almacenar referencias a elementos DOM
         
         // Variables de estado de la aplicación
-        let userFavorites = []; // Vacío o gestionado por stubs si Firebase no está activo
-        let userId = "guest_user_local"; // ID de usuario por defecto si Firebase no está activo
+        let userFavorites = [];
+        let userId = null;
         let currentFilter = 'all'; // 'all' o 'favorites'
         let currentCategory = 'all'; // 'all' o una categoría específica
         let currentTimeFilter = 'all'; // 'all', 'short', 'medium', 'long'
@@ -447,7 +444,7 @@
         let currentRecipeSteps = [];
         let speaking = false; 
         let recognitionActive = false; 
-        let recognition = null; // Objeto SpeechRecognition
+        let recognition = null; 
 
         // ====================================================================
         // DEFINICIÓN DE RECETAS (CONSTANTE GLOBAL)
@@ -488,21 +485,23 @@
 
 
             // 25 Primeros
-            { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Quinoa", ingredientes: ["1 taza de quinoa cocida", "Pimiento rojo y verde", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Mezcla la quinoa con las verduras picadas.", "Aliña con aceite y limón."] }
-            // ... (rest of recipes, same as before, no changes needed for this part)
+            { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Quinoa", ingredientes: ["1 taza de quinoa cocida", "Pimiento rojo y verde", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Mezcla la quinoa con las verduras picadas.", "Aliña con aceite y limón."] },
+            { categoria: "Primero", titulo: "Sopa de lentejas rojas", raciones: 4, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Lentejas+Rojas", ingredientes: ["1 taza lentejas rojas", "1 zanahoria", "1 cebolla", "1 diente de ajo", "1 cdita comino", "Sal y pimienta"], pasos: ["Sofríe ajo, cebolla y zanahoria picados.", "Agrega lentejas y agua, cocina 20 min.", "Tritura si deseas una textura cremosa."] },
+            { categoria: "Primero", titulo: "Crema de calabaza", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabaza", ingredientes: ["500 g calabaza", "1 puerro", "1 patata", "Aceite de oliva", "Sal y nuez moscada"], pasos: ["Cocina calabaza, patata y puerro en agua.", "Tritura con aceite y nuez moscada."] },
+            { categoria: "Primero", titulo: "Ensalada de garbanzos mediterránea", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Garbanzos", ingredientes: ["400 g garbanzos cocidos", "Pepino", "Tomate", "Cebolla morada", "Aceitunas negras", "Limón y aceite"], pasos: ["Mezcla todos los ingredientes picados.", "Aliña con limón y aceite."] },
+            { categoria: "Primero", titulo: "Gazpacho andaluz tradicional", raciones: 4, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gazpacho+Andaluz", ingredientes: ["1 kg tomates maduros", "1 pepino", "1/2 pimiento verde", "1 diente de ajo", "Aceite de oliva", "Vinagre de jerez", "Sal"], pasos: ["Tritura todos los ingredientes hasta obtener una sopa fina.", "Sirve muy frío, opcionalmente con picatostes."] }
+            // ... (rest of recipes, same as before)
         ];
         
         // ====================================================================
-        // FUNCIONES DE LA APLICACIÓN (Declaradas fuera de initApp para ser accesibles globalmente)
+        // FUNCIONES DE LA APLICACIÓN (DECLARADAS PARA SER ACCESIBLES)
         // ====================================================================
 
         // Función para renderizar las tarjetas de receta.
         function renderRecipes(recipesToRender) {
-            console.log('renderRecipes: Iniciando renderizado. Recetas a mostrar:', recipesToRender.length);
-            console.log('renderRecipes: dom.grid está:', dom.grid);
-
+            console.log('renderRecipes: Iniciando renderizado.');
             if (!dom.grid) {
-                console.error('renderRecipes: El elemento dom.grid NO ESTÁ DISPONIBLE. No se pueden mostrar las recetas.');
+                console.error('renderRecipes: El elemento dom.grid no está disponible.');
                 return;
             }
             if (!allRecipes || allRecipes.length === 0) {
@@ -529,7 +528,6 @@
             dom.grid.innerHTML = recipeHTML; 
             dom.noResults.style.display = 'none'; 
 
-            // Pequeño retraso para que el skeleton sea visible, luego carga las reales
             setTimeout(() => { 
                 recipeHTML = ''; 
                 if (recipesToRender.length === 0) {
@@ -555,7 +553,7 @@
                     });
                 }
                 dom.grid.innerHTML = recipeHTML;
-                // updateFavoriteIcons(); // Comentado temporalmente, se reactivará con Firebase
+                updateFavoriteIcons();
                 console.log('renderRecipes: Renderizado completado. Total recetas mostradas:', recipesToRender.length);
             }, 500); 
         }
@@ -578,36 +576,83 @@
             }
         }
 
-        // --- Funciones de Firebase (STUBS: NO REQUIEREN IMPORTACIONES DE FIREBASE. Se reactivarán después) ---
+        // --- Funciones de Firebase ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ", 
+            authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
+            projectId: "lucid-copilot-454618-k7",
+            storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
+            messagingSenderId: "948763528254",
+            appId: "1:948763528254:web:3eba3d724edf844528956f", 
+            measurementId: "G-256GP1S7YX" 
+        };
+
+        const appId = firebaseConfig.appId;
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app); 
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
         let userFavorites = [];
-        let userId = "guest_user_local"; // ID de usuario por defecto
-        function loadUserData() { console.log("Firebase deshabilitado. No se cargan datos de usuario."); return Promise.resolve(); } // Añadir Promise.resolve
-        function saveData(data) { 
-            console.log("Firebase deshabilitado. No se guardan datos."); 
-            // Simula guardar favoritos en userFavorites localmente sin persistencia real
-            userFavorites = data.favorites || [];
-            updateFavoriteIcons(); // Llama para actualizar los iconos localmente
-            return Promise.resolve(); // Añadir Promise.resolve
+        let userId = null;
+
+        async function loadUserData() {
+            if (!userId) {
+                console.warn("loadUserData: No hay userId para cargar datos.");
+                return;
+            }
+            try {
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    userFavorites = data.favorites || [];
+                    console.log("Firebase: Favoritos cargados:", userFavorites);
+                } else {
+                    console.log("Firebase: Documento de favoritos no existe para este usuario.");
+                    userFavorites = [];
+                }
+            } catch (error) {
+                console.error("Firebase: Error cargando datos de usuario:", error.message);
+            }
         }
-        function toggleFavorite(recipeId) { 
-            console.log("Firebase deshabilitado. No se puede alternar favorito."); 
-            showToast('Favoritos deshabilitados temporalmente.', 'info');
-            
-            // Lógica simple para simular el cambio de corazón sin Firebase
+
+        async function saveData(data) {
+            if (!userId) {
+                console.warn("saveData: No hay userId para guardar datos.");
+                return;
+            }
+            try {
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                await setDoc(userDocRef, data, { merge: true });
+                console.log("Firebase: Favoritos guardados con éxito.");
+            } catch (error) {
+                console.error("Firebase: Error guardando datos de usuario:", error.message);
+                showToast(`Error al guardar: ${error.message}`, 'error'); 
+            }
+        }
+
+        async function toggleFavorite(recipeId) {
+            if (!userId) {
+                console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
+                showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info'); 
+                signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
+                return;
+            }
             const isFavorite = userFavorites.includes(recipeId);
             userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
             
-            updateFavoriteIcons(); // Llama para actualizar los iconos
-            applyFilters(); // Re-aplica filtros para actualizar la vista
-            
-            // Simula guardar la lista en local storage (persistencia local)
-            localStorage.setItem('localFavorites', JSON.stringify(userFavorites)); 
+            updateFavoriteIcons(); 
+            applyFilters(); 
+
+            await saveData({ favorites: userFavorites });
+            showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success'); 
         }
-        function updateFavoriteIcons() { 
-             console.log('updateFavoriteIcons: Actualizando iconos de favoritos. userFavorites:', userFavorites);
+
+        function updateFavoriteIcons() {
             document.querySelectorAll('.recipe-card').forEach(card => {
                 const heartIcon = card.querySelector('.favorite-btn svg');
-                if (heartIcon) {
+                if (heartIcon) { 
                     if (userFavorites.includes(card.dataset.id)) {
                         heartIcon.classList.add('text-red-500', 'fill-current');
                         heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
@@ -619,27 +664,28 @@
             });
         }
 
-
         // ====================================================================
         // LÓGICA DE FILTROS
         // ====================================================================
-        let currentFilter = 'all'; 
-        let currentCategory = 'all'; 
-        let currentTimeFilter = 'all'; 
+        let currentFilter = 'all'; // 'all' o 'favorites'
+        let currentCategory = 'all'; // 'all' o una categoría específica
+        let currentTimeFilter = 'all'; // 'all', 'short', 'medium', 'long'
 
         function applyFilters() {
-            console.log('applyFilters: Aplicando filtros. allRecipes.length:', allRecipes.length);
             const searchTerm = dom.search.value.toLowerCase();
             let filteredRecipes = allRecipes;
 
+            // 1. Filtrar por categoría
             if (currentCategory !== 'all') {
                 filteredRecipes = filteredRecipes.filter(recipe => recipe.categoria === currentCategory);
             }
+
+            // 2. Filtrar por favoritos
             if (currentFilter === 'favorites') {
-                // Aquí, userFavorites se carga desde localStorage en initApp.
-                // Si Firebase está deshabilitado, userFavorites se carga del stub local.
                 filteredRecipes = filteredRecipes.filter(recipe => userFavorites.includes(recipe.titulo));
             }
+
+            // 3. Filtrar por tiempo de preparación
             if (currentTimeFilter !== 'all') {
                 filteredRecipes = filteredRecipes.filter(recipe => {
                     const prepareTimeValue = parseInt(recipe.tiempo.replace(' min', '')); 
@@ -655,13 +701,15 @@
                     return true; 
                 });
             }
+
+            // 4. Filtrar por búsqueda de texto
             if (searchTerm !== '') {
                 filteredRecipes = filteredRecipes.filter(recipe => {
                     const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
                     return searchData.includes(searchTerm);
                 });
             }
-            console.log('applyFilters: Recetas filtradas para mostrar:', filteredRecipes.length);
+            console.log('applyFilters: Recetas filtradas:', filteredRecipes.length);
             renderRecipes(filteredRecipes); 
         }
 
@@ -674,36 +722,69 @@
         function parseIngredient(ingredient) {
             const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
             let match = ingredient.match(regex);
-            let value = 0, unit = '', name = ingredient.trim(), baseName = ''; 
+            
+            let value = 0;
+            let unit = '';
+            let name = ingredient.trim(); 
+            let baseName = ''; 
+
             if (match) {
-                if (match[1]) value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
-                else if (match[2]) value = (match[2].toLowerCase() === 'medio' || match[2].toLowerCase() === 'media') ? 0.5 : 1;
+                if (match[1]) { 
+                    value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
+                } else if (match[2]) { 
+                    const quantWord = match[2].toLowerCase();
+                    if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
+                    else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
+                }
+
                 unit = match[3] ? match[3].toLowerCase() : '';
                 name = match[4] ? match[4].trim() : ''; 
+                
                 if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
-                    name = (match[2] + ' ' + name).trim(); unit = ''; 
+                    name = (match[2] + ' ' + name).trim();
+                    unit = ''; 
                 }
+            } else {
+                // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
+                // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
             }
+            
             baseName = getBaseName(name || ingredient); 
+            
             return { value, unit, name, baseName: baseName.trim(), original: ingredient };
         }
 
         function getBaseName(rawName) {
             let lowerName = rawName.toLowerCase();
+            let base = lowerName;
+
             const specificCompoundsMap = {
-                "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry", "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
-                "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro", "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
-                "pan integral": "pan integral", "carne picada": "carne picada", "alga wakame": "alga wakame", "pan de telera": "pan de telera",
-                "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde", "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
-                "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde", "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
-                "queso rallado": "queso rallado", "zumo de limón": "zumo de limón", "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
-                "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla", "harina integral": "harina integral", "copos de avena": "copos de avena",
-                "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo", "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
-                "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja", "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
-                "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada", "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
-                "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal", "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
-                "huevo duro": "huevo duro", "jamón serrano": "jamón serrano", "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
-                "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado", "arroz integral": "arroz integral", "maicena": "maicena",
+                "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry",
+                "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
+                "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro",
+                "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
+                "pan integral": "pan integral", "carne picada": "carne picada",
+                "alga wakame": "alga wakame", "pan de telera": "pan de telera",
+                "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde",
+                "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
+                "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde",
+                "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
+                "queso rallado": "queso rallado", "zumo de limón": "zumo de limón",
+                "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
+                "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla",
+                "harina integral": "harina integral", "copos de avena": "copos de avena",
+                "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo",
+                "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
+                "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja",
+                "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
+                "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada",
+                "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
+                "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal",
+                "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
+                "huevo duro": "huevo duro", "jamón serrano": "jamón serrano",
+                "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
+                "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
+                "arroz integral": "arroz integral", "maicena": "maicena",
                 "champiñones": "champiñón", 
                 "patatas": "patata", 
                 "garbanzos": "garbanzo", 
@@ -716,38 +797,85 @@
                 "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
                 "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
                 "gelatina": "gelatina", "almendra molida": "almendra molida", "azúcar glas": "azúcar glas"
-            }; for (const compound in specificCompoundsMap) { if (lowerName.includes(compound)) return specificCompoundsMap[compound]; }
+            };
+
+            for (const compound in specificCompoundsMap) {
+                if (lowerName.includes(compound)) {
+                    return specificCompoundsMap[compound];
+                }
+            }
+
             const commonSingularPluralMap = {
-                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas", "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas", "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-                "filete": "filetes", "manojo": "manojos", "lata": "latas", "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas", "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros", "loncha": "lonchas",
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
                 "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
-                "judía": "judías", "tomate": "tomates", "seta": "setas", "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
-                "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles", "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                "judía": "judías", "tomate": "tomates", "seta": "setas",
+                "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                 "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
                 "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
                 "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                 "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                 "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
-            }; for (const word of words) { if (commonSingularPluralMap[word]) return word; const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); if (singularForm) return singularForm; }
-            if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) return lowerName.slice(0, -1);
+            };
+
+            for (const word of words) {
+                if (commonSingularPluralMap[word]) return word; 
+                const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
+                if (singularForm) return singularForm; 
+            }
+            
+            if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
+                return lowerName.slice(0, -1);
+            }
+
             return lowerName; 
         }
 
         function formatIngredient(parsedIng, factor) {
-            if (parsedIng.value === 0) return parsedIng.original; 
-            let newValue = parsedIng.value * factor, unit = parsedIng.unit, name = parsedIng.name, baseName = parsedIng.baseName; 
-            if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
-            if (Math.abs(newValue % 1) < 0.0001) newValue = Math.round(newValue); else if (Math.abs((newValue * 10) % 1) < 0.0001) newValue = Math.round(newValue * 10) / 10; else newValue = Math.round(newValue * 100) / 100; 
+            if (parsedIng.value === 0) { 
+                return parsedIng.original; 
+            }
+            
+            let newValue = parsedIng.value * factor;
+            let unit = parsedIng.unit;
+            let name = parsedIng.name;
+            let baseName = parsedIng.baseName; 
+
+            if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
+            else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
+            else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
+            else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
+            
+            if (Math.abs(newValue % 1) < 0.0001) { 
+                newValue = Math.round(newValue);
+            } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
+                newValue = Math.round(newValue * 10) / 10;
+            } else { 
+                newValue = Math.round(newValue * 100) / 100; 
+            }
+            
             let formattedName = name;
             const commonFormsMap = {
-                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas", "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas", "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-                "filete": "filetes", "manojo": "manojos", "lata": "latas", "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas", "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros", "loncha": "lonchas",
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
                 "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
                 "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
                 "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
@@ -758,37 +886,76 @@
                 "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                 "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                 "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
-            }; let targetNounForm = baseName;
-            if (newValue === 1) { targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName; if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) targetNounForm = baseName.slice(0, -1); }
-            else { targetNounForm = commonFormsMap[baseName] || baseName; if (targetNounForm === baseName && !baseName.endsWith('s')) targetNounForm = baseName + 's'; }
+            };
+
+            let targetNounForm = baseName;
+
+            if (newValue === 1) {
+                targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
+                if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
+                     targetNounForm = baseName.slice(0, -1); 
+                }
+            } else { 
+                targetNounForm = commonFormsMap[baseName] || baseName;
+                if (targetNounForm === baseName && !baseName.endsWith('s')) {
+                    targetNounForm = baseName + 's'; 
+                }
+            }
+            
             formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
+            
             formattedName = formattedName.trim();
-            const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i'); formattedName = formattedName.replace(unitInNameRegex, '').trim();
-            formattedName = formattedName.split(' ').filter((word, index, arr) => { return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase(); }).join(' ').trim();
-            if (unit === 'cdita' || unit === 'cda') return `${newValue} ${unit}. ${formattedName}`.trim();
-            if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) return formattedName; 
-            if (unit !== '') return `${newValue} ${unit} ${formattedName}`.trim();
+
+            const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
+            formattedName = formattedName.replace(unitInNameRegex, '').trim();
+            
+            formattedName = formattedName.split(' ').filter((word, index, arr) => {
+                return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
+            }).join(' ').trim();
+
+            if (unit === 'cdita' || unit === 'cda') {
+                return `${newValue} ${unit}. ${formattedName}`.trim();
+            }
+            if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
+                return formattedName; 
+            }
+            if (unit !== '') {
+                return `${newValue} ${unit} ${formattedName}`.trim();
+            }
             return `${newValue} ${formattedName}`.trim();
         }
 
+
         function updateIngredientsDisplay(servings) {
-            if (!currentRecipeDetail) { console.error("updateIngredientsDisplay: currentRecipeDetail es nulo."); return; }
-            if (!dom.ingredientList) { 
-                dom.ingredientList = document.getElementById('ingredient-list');
-                if (!dom.ingredientList) { console.error("updateIngredientsDisplay: El elemento 'ingredient-list' no está disponible."); return; }
+            if (!currentRecipeDetail) {
+                console.error("updateIngredientsDisplay: currentRecipeDetail es nulo.");
+                return;
             }
+            if (!dom.ingredientList) { // Asegurar que el elemento exista
+                dom.ingredientList = document.getElementById('ingredient-list');
+                if (!dom.ingredientList) {
+                    console.error("updateIngredientsDisplay: El elemento 'ingredient-list' no está disponible.");
+                    return;
+                }
+            }
+
             dom.ingredientList.innerHTML = '';
             const factor = servings / currentRecipeDetail.raciones;
+
             currentRecipeDetail.ingredientes.forEach(originalIng => {
                 const parsed = parseIngredient(originalIng);
                 const formatted = formatIngredient(parsed, factor);
-                const li = document.createElement('li'); li.textContent = formatted; dom.ingredientList.appendChild(li);
+                const li = document.createElement('li');
+                li.textContent = formatted;
+                dom.ingredientList.appendChild(li);
             });
         }
         
         function showRecipeDetail(recipe) {
             console.log('showRecipeDetail: Abriendo modal para', recipe.titulo);
-            currentRecipeDetail = recipe; currentServings = recipe.raciones; 
+            currentRecipeDetail = recipe; 
+            currentServings = recipe.raciones; 
+
             dom.modalContent.innerHTML = `
                 <div class="p-6 md:p-8">
                     <div class="flex justify-between items-start">
@@ -1049,36 +1216,69 @@
         function parseIngredient(ingredient) {
             const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
             let match = ingredient.match(regex);
-            let value = 0, unit = '', name = ingredient.trim(), baseName = ''; 
+            
+            let value = 0;
+            let unit = '';
+            let name = ingredient.trim(); 
+            let baseName = ''; 
+
             if (match) {
-                if (match[1]) value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
-                else if (match[2]) value = (match[2].toLowerCase() === 'medio' || match[2].toLowerCase() === 'media') ? 0.5 : 1;
+                if (match[1]) { 
+                    value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
+                } else if (match[2]) { 
+                    const quantWord = match[2].toLowerCase();
+                    if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
+                    else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
+                }
+
                 unit = match[3] ? match[3].toLowerCase() : '';
                 name = match[4] ? match[4].trim() : ''; 
+                
                 if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
-                    name = (match[2] + ' ' + name).trim(); unit = ''; 
+                    name = (match[2] + ' ' + name).trim();
+                    unit = ''; 
                 }
+            } else {
+                // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
+                // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
             }
+            
             baseName = getBaseName(name || ingredient); 
+            
             return { value, unit, name, baseName: baseName.trim(), original: ingredient };
         }
 
         function getBaseName(rawName) {
             let lowerName = rawName.toLowerCase();
+            let base = lowerName;
+
             const specificCompoundsMap = {
-                "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry", "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
-                "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro", "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
-                "pan integral": "pan integral", "carne picada": "carne picada", "alga wakame": "alga wakame", "pan de telera": "pan de telera",
-                "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde", "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
-                "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde", "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
-                "queso rallado": "queso rallado", "zumo de limón": "zumo de limón", "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
-                "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla", "harina integral": "harina integral", "copos de avena": "copos de avena",
-                "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo", "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
-                "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja", "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
-                "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada", "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
-                "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal", "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
-                "huevo duro": "huevo duro", "jamón serrano": "jamón serrano", "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
-                "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado", "arroz integral": "arroz integral", "maicena": "maicena",
+                "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry",
+                "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
+                "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro",
+                "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
+                "pan integral": "pan integral", "carne picada": "carne picada",
+                "alga wakame": "alga wakame", "pan de telera": "pan de telera",
+                "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde",
+                "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
+                "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde",
+                "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
+                "queso rallado": "queso rallado", "zumo de limón": "zumo de limón",
+                "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
+                "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla",
+                "harina integral": "harina integral", "copos de avena": "copos de avena",
+                "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo",
+                "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
+                "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja",
+                "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
+                "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada",
+                "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
+                "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal",
+                "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
+                "huevo duro": "huevo duro", "jamón serrano": "jamón serrano",
+                "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
+                "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
+                "arroz integral": "arroz integral", "maicena": "maicena",
                 "champiñones": "champiñón", 
                 "patatas": "patata", 
                 "garbanzos": "garbanzo", 
@@ -1087,42 +1287,89 @@
                 "fabes": "fabes", 
                 "cebolletas": "cebolleta",
                 "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
-                "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "fideos": "fideo",
+                "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
                 "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
                 "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
                 "gelatina": "gelatina", "almendra molida": "almendra molida", "azúcar glas": "azúcar glas"
-            }; for (const compound in specificCompoundsMap) { if (lowerName.includes(compound)) return specificCompoundsMap[compound]; }
+            };
+
+            for (const compound in specificCompoundsMap) {
+                if (lowerName.includes(compound)) {
+                    return specificCompoundsMap[compound];
+                }
+            }
+
             const commonSingularPluralMap = {
-                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas", "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas", "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-                "filete": "filetes", "manojo": "manojos", "lata": "latas", "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas", "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros", "loncha": "lonchas",
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
                 "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
-                "judía": "judías", "tomate": "tomates", "seta": "setas", "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
-                "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles", "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                "judía": "judías", "tomate": "tomates", "seta": "setas",
+                "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                 "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
                 "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
                 "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                 "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                 "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
-            }; for (const word of words) { if (commonSingularPluralMap[word]) return word; const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); if (singularForm) return singularForm; }
-            if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) return lowerName.slice(0, -1);
+            };
+
+            for (const word of words) {
+                if (commonSingularPluralMap[word]) return word; 
+                const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
+                if (singularForm) return singularForm; 
+            }
+            
+            if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
+                return lowerName.slice(0, -1);
+            }
+
             return lowerName; 
         }
 
         function formatIngredient(parsedIng, factor) {
-            if (parsedIng.value === 0) return parsedIng.original; 
-            let newValue = parsedIng.value * factor, unit = parsedIng.unit, name = parsedIng.name, baseName = parsedIng.baseName; 
-            if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
-            if (Math.abs(newValue % 1) < 0.0001) newValue = Math.round(newValue); else if (Math.abs((newValue * 10) % 1) < 0.0001) newValue = Math.round(newValue * 10) / 10; else newValue = Math.round(newValue * 100) / 100; 
+            if (parsedIng.value === 0) { 
+                return parsedIng.original; 
+            }
+            
+            let newValue = parsedIng.value * factor;
+            let unit = parsedIng.unit;
+            let name = parsedIng.name;
+            let baseName = parsedIng.baseName; 
+
+            if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
+            else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
+            else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
+            else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
+            
+            if (Math.abs(newValue % 1) < 0.0001) { 
+                newValue = Math.round(newValue);
+            } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
+                newValue = Math.round(newValue * 10) / 10;
+            } else { 
+                newValue = Math.round(newValue * 100) / 100; 
+            }
+            
             let formattedName = name;
             const commonFormsMap = {
-                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas", "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas", "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-                "filete": "filetes", "manojo": "manojos", "lata": "latas", "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas", "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros", "loncha": "lonchas",
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas",
                 "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
                 "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
                 "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
@@ -1133,21 +1380,47 @@
                 "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                 "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                 "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
-            }; let targetNounForm = baseName;
-            if (newValue === 1) { targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName; if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) targetNounForm = baseName.slice(0, -1); }
-            else { targetNounForm = commonFormsMap[baseName] || baseName; if (targetNounForm === baseName && !baseName.endsWith('s')) targetNounForm = baseName + 's'; }
+            };
+
+            let targetNounForm = baseName;
+
+            if (newValue === 1) {
+                targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
+                if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
+                     targetNounForm = baseName.slice(0, -1); 
+                }
+            } else { 
+                targetNounForm = commonFormsMap[baseName] || baseName;
+                if (targetNounForm === baseName && !baseName.endsWith('s')) {
+                    targetNounForm = baseName + 's'; 
+                }
+            }
+            
             formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
+            
             formattedName = formattedName.trim();
-            const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i'); formattedName = formattedName.replace(unitInNameRegex, '').trim();
-            formattedName = formattedName.split(' ').filter((word, index, arr) => { return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase(); }).join(' ').trim();
-            if (unit === 'cdita' || unit === 'cda') return `${newValue} ${unit}. ${formattedName}`.trim();
-            if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) return formattedName; 
-            if (unit !== '') return `${newValue} ${unit} ${formattedName}`.trim();
+
+            const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
+            formattedName = formattedName.replace(unitInNameRegex, '').trim();
+            
+            formattedName = formattedName.split(' ').filter((word, index, arr) => {
+                return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
+            }).join(' ').trim();
+
+            if (unit === 'cdita' || unit === 'cda') {
+                return `${newValue} ${unit}. ${formattedName}`.trim();
+            }
+            if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
+                return formattedName; 
+            }
+            if (unit !== '') {
+                return `${newValue} ${unit} ${formattedName}`.trim();
+            }
             return `${newValue} ${formattedName}`.trim();
         }
 
         // ====================================================================
-        // FUNCIÓN PRINCIPAL DE INICIALIZACIÓN (llamada al final del script)
+        // FUNCIÓN PRINCIPAL DE INICIALIZACIÓN (llamada por DOMContentLoaded)
         // ====================================================================
         function initApp() {
             console.log('initApp: Iniciando la aplicación...');
@@ -1185,65 +1458,69 @@
             nextStepBtn = document.getElementById('next-step-btn');
             exitCookingBtn = document.getElementById('exit-cooking-btn');
 
-            console.log('initApp: Elementos DOM inicializados.', {
-                grid: dom.grid,
-                search: dom.search,
-                themeToggle: dom.themeToggle,
-                cookingModeView: cookingModeView // Check this as well
-            });
-
-            // 2. Configuración inicial de la aplicación y listeners
-            setupTheme(); 
-            loadShoppingList(); 
-            
-            // Asignar Event Listeners generales
-            if (dom.grid) { 
-                dom.grid.addEventListener('click', (event) => {
-                    const card = event.target.closest('.recipe-card');
-                    if (!card) return;
-                    if (event.target.closest('.favorite-btn')) { 
-                        event.stopPropagation(); 
-                        toggleFavorite(card.dataset.id);
-                    } else { 
-                        const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
-                        if (recipe) showRecipeDetail(recipe);
-                    }
-                });
-            } else {
-                console.error("No se pudo asignar listener a dom.grid porque es nulo.");
+            console.log('initApp: Elementos DOM inicializados.', dom);
+            if (!dom.grid) {
+                console.error("CRÍTICO: dom.grid no encontrado. La cuadrícula de recetas no se mostrará.");
+                return; // Detener la ejecución si el elemento crítico no se encuentra
             }
 
-            if (dom.search) dom.search.addEventListener('input', applyFilters);
-            if (dom.filterAllBtn) dom.filterAllBtn.addEventListener('click', () => {
-                currentFilter = 'all'; dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active'); applyFilters();
+            // 2. Configuración inicial de la aplicación
+            setupTheme(); // Configura el tema claro/oscuro
+            loadShoppingList(); // Carga la lista de la compra guardada
+            
+            // 3. Asignar Event Listeners generales
+            dom.grid.addEventListener('click', (event) => {
+                const card = event.target.closest('.recipe-card');
+                if (!card) return;
+                if (event.target.closest('.favorite-btn')) { 
+                    event.stopPropagation(); 
+                    toggleFavorite(card.dataset.id);
+                } else { 
+                    const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
+                    if (recipe) showRecipeDetail(recipe);
+                }
             });
-            if (dom.filterFavBtn) dom.filterFavBtn.addEventListener('click', () => {
-                currentFilter = 'favorites'; dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active'); applyFilters();
+            dom.search.addEventListener('input', applyFilters);
+
+            dom.filterAllBtn.addEventListener('click', () => {
+                currentFilter = 'all';
+                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+                applyFilters();
+            });
+            dom.filterFavBtn.addEventListener('click', () => {
+                currentFilter = 'favorites';
+                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+                applyFilters();
             });
             
-            if (dom.categoryFilters) dom.categoryFilters.addEventListener('click', (e) => {
+            dom.categoryFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.category-btn')) {
                     currentCategory = e.target.dataset.category;
                     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active'); applyFilters();
+                    e.target.classList.add('active');
+                    applyFilters();
                 }
             });
-            if (dom.timeFilters) dom.timeFilters.addEventListener('click', (e) => {
+
+            dom.timeFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.time-filter-btn')) {
                     currentTimeFilter = e.target.dataset.time;
                     document.querySelectorAll('.time-filter-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active'); applyFilters();
+                    e.target.classList.add('active');
+                    applyFilters();
                 }
             });
             
-            if (dom.modal) dom.modal.addEventListener('click', (event) => { 
-                if (event.target === dom.modal) closeModal(); 
+            dom.modal.addEventListener('click', (event) => { 
+                if (event.target === dom.modal) { 
+                    closeModal(); 
+                }
             });
 
-            if (dom.viewShoppingListBtn) dom.viewShoppingListBtn.addEventListener('click', showShoppingListModal);
-            if (dom.closeShoppingListModalBtn) dom.closeShoppingListModalBtn.addEventListener('click', closeShoppingListModal);
-            if (dom.clearShoppingListBtn) dom.clearShoppingListBtn.addEventListener('click', clearShoppingList);
-            if (dom.printShoppingListBtn) dom.printShoppingListBtn.addEventListener('click', () => {
+            dom.viewShoppingListBtn.addEventListener('click', showShoppingListModal);
+            dom.closeShoppingListModalBtn.addEventListener('click', closeShoppingListModal);
+            dom.clearShoppingListBtn.addEventListener('click', clearShoppingList);
+            dom.printShoppingListBtn.addEventListener('click', () => {
                 const printContent = dom.shoppingListModal.querySelector('.bg-white.dark\\:bg-stone-800');
                 if (printContent) {
                     const originalBody = document.body.innerHTML;
@@ -1263,42 +1540,39 @@
             if (exitCookingBtn) exitCookingBtn.addEventListener('click', exitCookingMode);
 
             // Asegura que los filtros "Todas" y "Cualquiera" estén activos al cargar
-            if (dom.filterAllBtn) dom.filterAllBtn.classList.add('active');
-            const defaultTimeFilterBtn = document.querySelector('.time-filter-btn[data-time="all"]');
-            if (defaultTimeFilterBtn) defaultTimeFilterBtn.classList.add('active');
+            dom.filterAllBtn.classList.add('active');
+            document.querySelector('.time-filter-btn[data-time="all"]').classList.add('active');
             
-            if (dom.copyrightYear) dom.copyrightYear.textContent = new Date().getFullYear();
+            dom.copyrightYear.textContent = new Date().getFullYear();
 
-            // Lógica de autenticación de Firebase (STUBS: NO REQUIEREN IMPORTACIONES DE FIREBASE. Se reactivarán después)
-            // Esto asegura que la aplicación se cargue sin errores de Firebase si las importaciones están comentadas.
-            onAuthStateChanged({uid: userId}, async (user) => { // Simula onAuthStateChanged
-                console.log("onAuthStateChanged: Se está ejecutando (simulado si Firebase está deshabilitado)");
-                // Aquí, user es el stub {uid: userId}
-                if (user && user.uid) {
+            // 4. Lógica de autenticación de Firebase
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
                     userId = user.uid;
-                    if (dom.userInfo) dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
-                    await loadUserData(); // Llama a la función stub local
+                    console.log("Firebase: Usuario autenticado con ID:", userId);
+                    dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
+                    await loadUserData();
                     updateFavoriteIcons();
-                    showToast('¡Bienvenido! Sesión iniciada (local).', 'success'); 
+                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); 
                 } else {
-                    console.log("Simulación: No hay usuario autenticado.");
-                    if (dom.userInfo) dom.userInfo.textContent = `Sesión local activa.`;
-                    showToast('Modo sin conexión. Favoritos no persistirán.', 'info'); 
+                    console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
+                    signInAnonymously(auth).then(() => {
+                        console.log("Firebase: Sesión anónima iniciada con éxito.");
+                    }).catch((error) => {
+                        console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
+                        dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
+                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); 
+                    });
                 }
-                // Renderizar las recetas por primera vez después de la "autenticación" simulada
-                console.log('initApp: Llamando a applyFilters para renderizar recetas iniciales.');
-                applyFilters(); 
             });
 
+            // 5. Renderizar las recetas por primera vez
+            console.log('initApp: Llamando a applyFilters para renderizar recetas iniciales.');
+            applyFilters(); 
             console.log('initApp: Aplicación inicializada por completo.');
         }
 
-        // Ejecutar initApp al cargar el DOM.
-        // Importante: Si estás abriendo el archivo directamente en el navegador, 
-        // a veces `type="module"` puede hacer que el script se ejecute antes 
-        // de que todo el DOM esté listo, o puede haber problemas de seguridad del navegador.
-        // Si sigues teniendo problemas, la última opción es eliminar `type="module"` y usar
-        // `window.onload = initApp;` pero eso es menos eficiente.
+        // Ejecutar initApp cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
