@@ -153,7 +153,6 @@
         .skeleton-card {
             background-color: #e0e0e0; 
             border-radius: 1.25rem;
-            overflow: hidden;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             animation: pulse-bg 1.5s infinite; 
         }
@@ -696,16 +695,15 @@
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
                     await loadUserData();
                     updateFavoriteIcons();
-                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); // Notificación de bienvenida
+                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); 
                 } else {
                     console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
                     signInAnonymously(auth).then(() => {
                         console.log("Firebase: Sesión anónima iniciada con éxito.");
-                        // showToast('Sesión iniciada anónimamente.', 'info'); // Puedes descomentar si quieres notificar esto
                     }).catch((error) => {
                         console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
                         dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
-                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); // Notificación de error
+                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); 
                     });
                 }
             });
@@ -742,14 +740,14 @@
                     console.log("Firebase: Favoritos guardados con éxito.");
                 } catch (error) {
                     console.error("Firebase: Error guardando datos de usuario:", error.message);
-                    showToast(`Error al guardar: ${error.message}`, 'error'); // Usar Toast para el error
+                    showToast(`Error al guardar: ${error.message}`, 'error'); 
                 }
             }
 
             async function toggleFavorite(recipeId) {
                 if (!userId) {
                     console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
-                    showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info'); // Usar Toast
+                    showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info'); 
                     signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
                     return;
                 }
@@ -760,7 +758,7 @@
                 applyFilters(); 
 
                 await saveData({ favorites: userFavorites });
-                showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success'); // Notificación Toast
+                showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success'); 
             }
 
             function updateFavoriteIcons() {
@@ -778,7 +776,6 @@
                 });
             }
 
-            // Variable para el filtro de tiempo
             let currentPrepareTimeFilter = 'all';
 
             function applyFilters() {
@@ -844,21 +841,12 @@
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    // Solo procesar si tiene un nombre base para consolidar O si es un ingrediente sin cantidad pero con string original
-                    if (parsed.baseName) { 
+                    if (parsed.baseName || (parsed.value === 0 && parsed.original)) { // Incluye ingredientes sin cantidad si tienen original string
                          ingredientsToProcess.push({
-                            name: parsed.baseName, 
+                            name: parsed.baseName || parsed.original.toLowerCase(), 
                             unit: parsed.unit,
                             value: parsed.value,
                             originalFormatted: formatIngredient(parsed, factor), 
-                            checked: false // Nuevo: estado inicial no marcado
-                        });
-                    } else if (parsed.original) {
-                        ingredientsToProcess.push({
-                            name: parsed.original.toLowerCase(),
-                            unit: '',
-                            value: 0, 
-                            originalFormatted: parsed.original,
                             checked: false 
                         });
                     }
@@ -870,13 +858,13 @@
                     );
 
                     if (existingItemIndex !== -1) {
-                        if (ing.value > 0) {
+                        if (ing.value > 0) { // Solo sumamos si el ingrediente tiene una cantidad numérica
                             shoppingList[existingItemIndex].value += ing.value; 
-                             if (shoppingList[existingItemIndex].value > 0) { 
-                                const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
-                                shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
-                             }
+                            const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
+                            shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
                         }
+                        // Si el ingrediente existente no tiene cantidad (value === 0) y el nuevo tampoco, no hacemos nada.
+                        // Si el nuevo no tiene cantidad pero el existente sí, mantenemos el existente.
                     } else {
                         shoppingList.push({
                             name: ing.name,
@@ -905,7 +893,7 @@
                     
                     sortedList.forEach((item, index) => { 
                         const li = document.createElement('li');
-                        // Guardar el índice real en la lista de `shoppingList` para la función `toggleIngredientChecked`
+                        // Guardar el índice REAL del item en la `shoppingList` original para `toggleIngredientChecked`
                         li.dataset.itemIndex = shoppingList.indexOf(item); 
                         
                         if (item.checked) {
@@ -924,27 +912,24 @@
                 dom.shoppingListModal.classList.remove('hidden');
                 dom.shoppingListModal.classList.add('modal-visible');
 
-                // Añadir event listener a la lista completa para la delegación
                 dom.finalShoppingList.addEventListener('click', toggleIngredientChecked);
             }
 
             function closeShoppingListModal() {
                 dom.shoppingListModal.classList.remove('modal-visible');
-                // IMPORTANTE: Quitar el event listener para evitar duplicados si se abre y cierra varias veces
                 dom.finalShoppingList.removeEventListener('click', toggleIngredientChecked); 
                 setTimeout(() => {
                     dom.shoppingListModal.classList.add('hidden');
                 }, 300);
             }
 
-            // Función para marcar/desmarcar ingredientes en la lista
             function toggleIngredientChecked(event) {
                 const listItem = event.target.closest('li');
-                if (listItem && listItem.dataset.itemIndex) { // Usamos dataset.itemIndex
+                if (listItem && listItem.dataset.itemIndex !== undefined) { 
                     const index = parseInt(listItem.dataset.itemIndex);
                     if (shoppingList[index]) {
-                        shoppingList[index].checked = !shoppingList[index].checked; // Alternar estado
-                        saveShoppingList(); // Guardar el nuevo estado en localStorage
+                        shoppingList[index].checked = !shoppingList[index].checked; 
+                        saveShoppingList(); 
                         showShoppingListModal(); // Refrescar la lista para que se vea el cambio
                         showToast(shoppingList[index].checked ? 'Ingrediente marcado.' : 'Ingrediente desmarcado.', 'info');
                     }
@@ -989,8 +974,7 @@
                     }
                 } else {
                     // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
-                    // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
-                    // Esto se manejará en `formatIngredient` para mostrar el string original.
+                    // Su `value` seguirá siendo 0. La `name` ya es el `ingredient` original por defecto.
                 }
                 
                 baseName = getBaseName(name || ingredient); 
@@ -1392,7 +1376,6 @@
                     document.body.innerHTML = printContent.outerHTML;
                     window.print();
                     document.body.innerHTML = originalBody;
-                    // Restaurar los listeners después de restaurar el HTML del body
                     runRecipeApp(); 
                 } else {
                     window.print(); 
