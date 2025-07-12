@@ -114,33 +114,26 @@
             ring-offset-width: 1px;
         }
 
-        /* ESTILOS DEL MODAL (Ajustados para evitar conflictos con Tailwind) */
+        /* ESTILOS DEL MODAL */
+        /* Lo mantenemos hidden por defecto de Tailwind */
         #recipeModal {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex; /* Siempre flex para centrar contenido */
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            padding: 1rem; /* p-4 */
-
-            visibility: hidden;
+            /* flex para centrar, opacidad y transición controladas por JS */
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
+        /* Clase añadida/quitada por JS para mostrar/ocultar con transición */
         #recipeModal.modal-visible {
             visibility: visible;
             opacity: 1;
         }
 
         #modalContent {
-            background-color: white; /* bg-white */
-            border-radius: 1.5rem; /* rounded-2xl */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-xl */
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 42rem; /* max-w-2xl */
-            max-height: 90vh; /* max-h-[90vh] */
+            max-width: 42rem;
+            max-height: 90vh;
             overflow-y: auto;
             
             transform: scale(0.95);
@@ -151,7 +144,7 @@
         }
 
         .dark #modalContent {
-            background-color: #292524; /* dark:bg-stone-800 */
+            background-color: #292524;
         }
         /* FIN ESTILOS DEL MODAL */
 
@@ -212,11 +205,11 @@
             <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
         </div>
 
-        <div id="recipeGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+        <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8">
             </div>
     </div>
 
-    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 items-center justify-center z-50 p-4">
+    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
         <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"></div>
     </div>
     
@@ -254,7 +247,7 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         function runRecipeApp() {
-            // --- TU CONFIGURACIÓN REAL DE FIREBASE (¡Esta es la que me enviaste y es correcta!) ---
+            // --- TU CONFIGURACIÓN REAL DE FIREBASE ---
             const firebaseConfig = {
                 apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
@@ -265,7 +258,6 @@
                 measurementId: "G-256GP1S7YX" // Este es tu Measurement ID real
             };
 
-            // La variable `appId` de tu código ahora toma el valor directamente de `firebaseConfig.appId`
             const appId = firebaseConfig.appId;
 
             // Inicializa la app de Firebase
@@ -405,568 +397,595 @@
                 { categoria: "Postre", titulo: "Bizcocho de limón sin azúcar", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bizcocho+Limon+Sin+Azucar", ingredientes: ["3 huevos", "150 g harina integral", "Zumo y ralladura de 1 limón", "Edulcorante al gusto", "1 sobre de levadura", "50 ml aceite de oliva suave"], pasos: ["Bate los huevos con el edulcorante y ralladura.", "Incorpora el zumo, aceite, harina y levadura.", "Vierte en un molde y hornea 30 min a 180°C."] },
                 { categoria: "Postre", titulo: "Vasitos de yogur con granola y frutas", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Yogur+Granola", ingredientes: ["2 yogures naturales", "Granola casera o sin azúcar", "Frutos rojos o plátano en rodajas"], pasos: ["En vasitos, alterna capas de yogur, granola y fruta.", "Sirve inmediatamente."] },
                 { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
-            ];
-            
-            // Función para renderizar las tarjetas de receta.
-            function renderRecipes(recipesToRender) {
-                console.log('renderRecipes: Renderizando', recipesToRender.length, 'recetas.');
-                let recipeHTML = '';
-                if (recipesToRender.length === 0) {
-                    dom.noResults.style.display = 'block';
-                } else {
-                    dom.noResults.style.display = 'none';
-                    recipesToRender.forEach(recipe => {
-                        const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
-                        recipeHTML += `
-                            <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
-                                <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
-                                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="console.error('Error cargando imagen para:', this.alt); this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
-                                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
-                                    <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
-                                    </button>
-                                    <div class="p-4 flex-grow flex flex-col">
-                                        <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
-                                        <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
-                }
-                dom.grid.innerHTML = recipeHTML;
-                updateFavoriteIcons();
-            }
-            
-            // Un solo event listener en el contenedor padre (delegación de eventos)
-            dom.grid.addEventListener('click', (event) => {
-                console.log('Clic detectado en dom.grid.');
-                const card = event.target.closest('.recipe-card');
-                if (!card) {
-                    console.log('Clic no fue en una tarjeta de receta.');
-                    return; 
-                }
+            ];
+            
+            // Función para renderizar las tarjetas de receta.
+            function renderRecipes(recipesToRender) {
+                console.log('renderRecipes: Renderizando', recipesToRender.length, 'recetas.');
+                let recipeHTML = '';
+                if (recipesToRender.length === 0) {
+                    dom.noResults.style.display = 'block';
+                } else {
+                    dom.noResults.style.display = 'none';
+                    recipesToRender.forEach(recipe => {
+                        const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+                        recipeHTML += `
+                            <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
+                                <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
+                                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="console.error('Error cargando imagen para:', this.alt); this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
+                                    <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                                    </button>
+                                    <div class="p-4 flex-grow flex flex-col">
+                                        <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
+                                        <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                }
+                dom.grid.innerHTML = recipeHTML;
+                updateFavoriteIcons();
+            }
+            
+            // Un solo event listener en el contenedor padre (delegación de eventos)
+            dom.grid.addEventListener('click', (event) => {
+                console.log('Clic detectado en dom.grid.');
+                const card = event.target.closest('.recipe-card');
+                if (!card) {
+                    console.log('Clic no fue en una tarjeta de receta.');
+                    return; 
+                }
 
-                console.log('Clic en tarjeta:', card.dataset.id);
+                console.log('Clic en tarjeta:', card.dataset.id);
 
-                if (event.target.closest('.favorite-btn')) { 
-                    console.log('Clic en botón de favoritos.');
-                    event.stopPropagation(); 
-                    toggleFavorite(card.dataset.id);
-                } else { 
-                    console.log('Clic para abrir detalles de receta.');
-                    const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
-                    if (recipe) {
-                        showRecipeDetail(recipe);
-                    } else {
-                        console.error('Receta no encontrada para ID:', card.dataset.id);
-                    }
-                }
-            });
-            
-            // Inicializa la UI con todas las recetas al cargar la página
-            renderRecipes(allRecipes); 
+                if (event.target.closest('.favorite-btn')) { 
+                    console.log('Clic en botón de favoritos.');
+                    event.stopPropagation(); 
+                    toggleFavorite(card.dataset.id);
+                } else { 
+                    console.log('Clic para abrir detalles de receta.');
+                    const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
+                    if (recipe) {
+                        showRecipeDetail(recipe);
+                    } else {
+                        console.error('Receta no encontrada para ID:', card.dataset.id);
+                    }
+                }
+            });
+            
+            // Inicializa la UI con todas las recetas al cargar la página
+            renderRecipes(allRecipes); 
 
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    dom.userInfo.textContent = `Sincronizando...`;
-                    await loadUserData();
-                    updateFavoriteIcons();
-                    dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
-                } else {
-                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo:", error));
-                }
-            });
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    console.log("Firebase: Usuario autenticado con ID:", userId);
+                    dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
+                    await loadUserData();
+                    updateFavoriteIcons();
+                } else {
+                    console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
+                    signInAnonymously(auth).then(() => {
+                        console.log("Firebase: Sesión anónima iniciada con éxito.");
+                    }).catch((error) => {
+                        console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
+                        dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
+                    });
+                }
+            });
 
-            async function loadUserData() {
-                if (!userId) return;
-                try {
-                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                    const userDoc = await getDoc(userDocRef);
-                    if (userDoc.exists()) {
-                        const data = userDoc.data();
-                        userFavorites = data.favorites || [];
-                    }
-                } catch (error) {
-                    console.error("Error cargando datos de usuario:", error);
-                }
-            }
+            async function loadUserData() {
+                if (!userId) {
+                    console.warn("loadUserData: No hay userId para cargar datos.");
+                    return;
+                }
+                try {
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        userFavorites = data.favorites || [];
+                        console.log("Firebase: Favoritos cargados:", userFavorites);
+                    } else {
+                        console.log("Firebase: Documento de favoritos no existe para este usuario.");
+                        userFavorites = [];
+                    }
+                } catch (error) {
+                    console.error("Firebase: Error cargando datos de usuario:", error.message);
+                }
+            }
 
-            async function saveData(data) {
-                if (!userId) return;
-                try {
-                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                    await setDoc(userDocRef, data, { merge: true });
-                } catch (error) {
-                    console.error("Error guardando datos de usuario:", error);
-                }
-            }
+            async function saveData(data) {
+                if (!userId) {
+                    console.warn("saveData: No hay userId para guardar datos.");
+                    return;
+                }
+                try {
+                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
+                    await setDoc(userDocRef, data, { merge: true });
+                    console.log("Firebase: Favoritos guardados con éxito.");
+                } catch (error) {
+                    console.error("Firebase: Error guardando datos de usuario:", error.message);
+                    alert(`Error al guardar favoritos. Verifica las reglas de seguridad de Firestore. Error: ${error.message}`);
+                }
+            }
 
-            async function toggleFavorite(recipeId) {
-                if (!userId) {
-                    alert('Debes iniciar sesión para guardar favoritos. Se está intentando iniciar sesión anónimamente...');
-                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
-                    return;
-                }
-                const isFavorite = userFavorites.includes(recipeId);
-                userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
-                
-                updateFavoriteIcons(); 
-                applyFilters(); 
+            async function toggleFavorite(recipeId) {
+                if (!userId) {
+                    console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
+                    alert('No se pudo guardar el favorito. Intenta recargar la página o verifica tu conexión.');
+                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
+                    return;
+                }
+                const isFavorite = userFavorites.includes(recipeId);
+                userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
+                
+                updateFavoriteIcons(); 
+                applyFilters(); 
 
-                await saveData({ favorites: userFavorites });
-            }
+                await saveData({ favorites: userFavorites });
+            }
 
-            function updateFavoriteIcons() {
-                document.querySelectorAll('.recipe-card').forEach(card => {
-                    const heartIcon = card.querySelector('.favorite-btn svg');
-                    if (heartIcon) { 
-                        if (userFavorites.includes(card.dataset.id)) {
-                            heartIcon.classList.add('text-red-500', 'fill-current');
-                            heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
-                        } else {
-                            heartIcon.classList.remove('text-red-500', 'fill-current');
-                            heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
-                        }
-                    }
-                });
-            }
+            function updateFavoriteIcons() {
+                document.querySelectorAll('.recipe-card').forEach(card => {
+                    const heartIcon = card.querySelector('.favorite-btn svg');
+                    if (heartIcon) { 
+                        if (userFavorites.includes(card.dataset.id)) {
+                            heartIcon.classList.add('text-red-500', 'fill-current');
+                            heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
+                        } else {
+                            heartIcon.classList.remove('text-red-500', 'fill-current');
+                            heartIcon.classList.add('text-gray-600', 'dark:text-gray-400');
+                        }
+                    }
+                });
+            }
 
-            function applyFilters() {
-                const searchTerm = dom.search.value.toLowerCase();
-                const filteredRecipes = allRecipes.filter(recipe => {
-                    const id = recipe.titulo;
-                    const category = recipe.categoria;
-                    const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+            function applyFilters() {
+                const searchTerm = dom.search.value.toLowerCase();
+                const filteredRecipes = allRecipes.filter(recipe => {
+                    const id = recipe.titulo; 
+                    const category = recipe.categoria;
+                    const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
 
-                    const isFavorite = userFavorites.includes(id);
-                    
-                    const categoryMatch = currentCategory === 'all' || category === currentCategory;
-                    const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
-                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
-                    
-                    return categoryMatch && searchMatch && favoriteMatch;
-                });
-                renderRecipes(filteredRecipes); 
-            }
+                    const isFavorite = userFavorites.includes(id);
+                    
+                    const categoryMatch = currentCategory === 'all' || category === currentCategory;
+                    const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
+                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
+                    
+                    return categoryMatch && searchMatch && favoriteMatch;
+                });
+                renderRecipes(filteredRecipes); 
+            }
 
-            let currentRecipeDetail = null; 
-            let currentServings = 0; 
+            let currentRecipeDetail = null; 
+            let currentServings = 0; 
 
-            function parseIngredient(ingredient) {
-                const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|puñado|trozo|hojas|onza|rebanada|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
-                const match = ingredient.match(regex);
-                
-                if (match) {
-                    let value = 0;
-                    if (match[1]) { 
-                        if (match[1].includes('/')) { 
-                            const parts = match[1].split('/');
-                            value = parseFloat(parts[0]) / parseFloat(parts[1]);
-                        } else {
-                            value = parseFloat(match[1].replace(',', '.'));
-                        }
-                    } else if (match[2] && (match[2].toLowerCase() === 'medio' || match[2].toLowerCase() === 'media')) {
-                        value = 0.5;
-                    } else if (match[2] && (match[2].toLowerCase() === 'un' || match[2].toLowerCase() === 'una')) {
-                        value = 1; 
-                    } else if (match[4]) { // Si no hay número ni cuantificador, pero hay nombre (ej. "Aceite de oliva")
-                        // Estos ingredientes se consideran "1 unidad" para que se escalen,
-                        // pero no se mostrará un "1" si no se ha formateado
-                        value = 1; // Asume una unidad para poder multiplicarlo
-                        unit = ''; // No tienen una unidad formal aquí
-                    } else {
-                        value = 0; 
-                    }
+            function parseIngredient(ingredient) {
+                // Regex mejorada para capturar cantidades (incluyendo fracciones), cuantificadores (un, medio) y la unidad.
+                // También intenta ser más indulgente con el resto del nombre.
+                const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
+                const match = ingredient.match(regex);
+                
+                if (match) {
+                    let value = 0;
+                    if (match[1]) { // Si hay un número o fracción al principio
+                        if (match[1].includes('/')) { // Para fracciones como "1/2"
+                            const parts = match[1].split('/');
+                            value = parseFloat(parts[0]) / parseFloat(parts[1]);
+                        } else {
+                            value = parseFloat(match[1].replace(',', '.')); // Soporte para coma decimal
+                        }
+                    } else if (match[2]) { // Si hay un cuantificador de palabra (un, medio, puñado, etc.)
+                        const quantWord = match[2].toLowerCase();
+                        if (quantWord === 'medio' || quantWord === 'media') {
+                            value = 0.5;
+                        } else if (quantWord === 'un' || quantWord === 'una' || quantWord === 'puñado' || quantWord === 'chorrito') {
+                            value = 1; // Asume 1 unidad para estos cuantificadores si no hay número
+                        }
+                    } else if (match[4]) { // Si no hay cantidad explícita ni cuantificador, pero sí un nombre (ej. "Aceite de oliva")
+                        value = 1; // Asume 1 unidad para que pueda ser escalado, aunque no se mostrará "1"
+                    }
+                    
+                    let unit = match[3] ? match[3].toLowerCase() : '';
+                    let name = match[4] ? match[4].trim() : '';
 
-                    let unit = match[3] ? match[3].toLowerCase() : '';
-                    let name = match[4] ? match[4].trim() : '';
+                    // Si el cuantificador de palabra (match[2]) no fue una unidad formal (match[3]),
+                    // pero era algo como "un", "una", "medio", o "puñado", incorpóralo al nombre.
+                    if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
+                        name = (match[2] + ' ' + name).trim();
+                        unit = ''; // Aseguramos que la unidad no se duplique aquí
+                    }
 
-                    if (match[2] && ['un', 'una'].includes(match[2].toLowerCase()) && !match[3]) {
-                        name = (match[2] + ' ' + name).trim();
-                        unit = ''; 
-                    } else if (match[2] && !match[3] && !['un', 'una', 'medio', 'media'].includes(match[2].toLowerCase())) {
-                        name = (match[2] + ' ' + name).trim();
-                    }
+                    return { value, unit, name, original: ingredient };
+                }
+                return { value: 0, unit: '', name: ingredient, original: ingredient };
+            }
 
-                    return { value, unit, name, original: ingredient };
-                }
-                return { value: 0, unit: '', name: ingredient, original: ingredient };
-            }
+            function formatIngredient(parsedIng, factor) {
+                // Si el ingrediente no tenía una cantidad numérica original significativa,
+                // o si es un ingrediente como "sal" que no se debe multiplicar,
+                // simplemente devuelve el original.
+                if (parsedIng.value === 0 && parsedIng.unit === '' && parsedIng.name !== '') { 
+                    return parsedIng.original; 
+                }
 
-            function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente no tiene una cantidad numérica original (ej. "Aceite de oliva", "Sal")
-                // O si su valor es 0, simplemente devuelve el original para no intentar multiplicarlo.
-                if (parsedIng.value === 0 && parsedIng.unit === '') { 
-                    return parsedIng.original; 
-                }
+                let newValue = parsedIng.value * factor;
+                let unit = parsedIng.unit;
+                let name = parsedIng.name;
 
-                let newValue = parsedIng.value * factor;
-                let unit = parsedIng.unit;
-                let name = parsedIng.name;
+                // Ajustes de unidades para mayor claridad y precisión (kg <-> g, litro <-> ml)
+                if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
+                else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
+                else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
+                else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
+                
+                // Redondear para evitar decimales muy largos.
+                if (Math.abs(newValue % 1) < 0.0001) { // Es un entero o muy cercano
+                    newValue = Math.round(newValue);
+                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { // Es un decimal con una cifra
+                    newValue = Math.round(newValue * 10) / 10;
+                } else { // Más de un decimal, redondear a dos
+                    newValue = Math.round(newValue * 100) / 100;
+                }
+                
+                let formattedName = name;
+                const commonForms = {
+                    "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                    "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                    "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                    "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                    "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                    "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                    "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                    "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                    "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                    "loncha": "lonchas", // Para "lonchas de jamón"
+                    "s": "s" // Forma genérica para pluralizar si no se encuentra mejor
+                };
 
-                // Ajustes de unidades para mayor claridad y precisión
-                if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
-                else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
-                else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
-                else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
-                
-                // Redondear para evitar decimales muy largos.
-                if (Math.abs(newValue % 1) < 0.0001) { 
-                    newValue = Math.round(newValue);
-                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
-                    newValue = Math.round(newValue * 10) / 10;
-                } else { 
-                    newValue = Math.round(newValue * 100) / 100; 
-                }
-                
-                let formattedName = name;
-                const commonForms = {
-                    "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
-                    "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-                    "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
-                    "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-                    "filete": "filetes", "manojo": "manojos", "lata": "latas",
-                    "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                    "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
-                    "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                    "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
-                    "loncha": "lonchas", // Añadido para lonchas
-                    "s": "s" 
-                };
+                // Lógica de singularización/pluralización del nombre
+                let nameWords = name.split(' ');
+                let primaryNounIndex = -1;
+                // Intentar encontrar la primera palabra que sea un sustantivo común o su plural
+                for (let i = 0; i < nameWords.length; i++) {
+                    const word = nameWords[i].toLowerCase();
+                    if (commonForms[word] || Object.values(commonForms).includes(word)) {
+                        primaryNounIndex = i;
+                        break;
+                    }
+                }
 
-                let nameWords = name.split(' ');
-                let firstNounCandidate = nameWords.find(word => commonForms[word.toLowerCase()] || Object.values(commonForms).includes(word.toLowerCase()));
+                if (primaryNounIndex !== -1) {
+                    let baseForm = nameWords[primaryNounIndex].toLowerCase();
+                    let targetForm = '';
+                    if (newValue === 1) {
+                        targetForm = Object.keys(commonForms).find(key => commonForms[key] === baseForm) || baseForm;
+                        if (targetForm === baseForm && baseForm.endsWith('s') && baseForm.length > 3 && !['pasas', 'nueces', 'espinacas'].includes(baseForm)) {
+                            targetForm = baseForm.slice(0, -1);
+                        }
+                    } else { // newValue > 1
+                        targetForm = commonForms[baseForm] || baseForm;
+                        if (targetForm === baseForm && !baseForm.endsWith('s')) {
+                            targetForm = baseForm + 's';
+                        }
+                    }
+                    nameWords[primaryNounIndex] = targetForm;
+                    formattedName = nameWords.join(' ').trim();
+                } else if (newValue > 1 && !name.endsWith('s') && name.length > 0 && !['sal', 'pimienta', 'aceite', 'agua', 'miel', 'curry', 'jengibre', 'eneldo', 'orégano', 'albahaca', 'hierbabuena', 'menta'].includes(name.toLowerCase())) {
+                    formattedName = name + 's';
+                } else if (newValue === 1 && name.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'].includes(name.toLowerCase())) {
+                    formattedName = name.slice(0, -1);
+                }
+                
+                formattedName = formattedName.trim();
 
-                if (firstNounCandidate) {
-                    let baseForm = firstNounCandidate.toLowerCase();
-                    let targetForm = '';
-                    if (newValue === 1) {
-                        // Intenta singularizar la palabra si es un plural en commonForms
-                        targetForm = Object.keys(commonForms).find(key => commonForms[key] === baseForm) || baseForm;
-                        if (targetForm === baseForm && baseForm.endsWith('s') && baseForm.length > 3) {
-                            // Si no está en commonForms, pero termina en 's', intenta singularizar.
-                            targetForm = baseForm.slice(0, -1);
-                        }
-                    } else { // newValue > 1
-                        // Intenta pluralizar la palabra
-                        targetForm = commonForms[baseForm] || baseForm;
-                        if (targetForm === baseForm && !baseForm.endsWith('s') && baseForm.length > 0) {
-                            // Si no está en commonForms, pero no termina en 's', intenta pluralizar añadiendo 's'.
-                            targetForm = baseForm + 's';
-                        }
-                    }
-                    formattedName = name.replace(new RegExp(`\\b${firstNounCandidate}\\b`, 'i'), targetForm);
-                } else if (newValue > 1 && !name.endsWith('s') && name.length > 0 && !['sal', 'pimienta', 'aceite', 'agua', 'miel', 'curry', 'jengibre', 'eneldo', 'orégano', 'albahaca', 'hierbabuena', 'menta'].includes(name.toLowerCase())) {
-                    formattedName = name + 's';
-                } else if (newValue === 1 && name.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'].includes(name.toLowerCase())) {
-                    formattedName = name.slice(0, -1);
-                }
-                
-                formattedName = formattedName.trim();
+                // Eliminar la unidad del nombre si ya está en la parte de la unidad (ej. "gramos de gramos")
+                const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
+                formattedName = formattedName.replace(unitInNameRegex, '').trim();
+                
+                // Asegurar que no haya palabras duplicadas seguidas (ej. "zanahoria zanahoria")
+                formattedName = formattedName.split(' ').filter((word, index, arr) => {
+                    return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
+                }).join(' ').trim();
 
-                const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
-                formattedName = formattedName.replace(unitInNameRegex, '').trim();
-                
-                if (formattedName.toLowerCase().endsWith(unit) && formattedName.toLowerCase().length > unit.length && unit !== '') {
-                    formattedName = formattedName.slice(0, -(unit.length)).trim();
-                }
-
-                formattedName = formattedName.split(' ').filter((word, index, arr) => {
-                    return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
-                }).join(' ').trim();
-
-                // Regla para no mostrar la cantidad si es 1 y no tiene unidad definida (ej. "1 Aceite de oliva")
-                if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades'].includes(unit))) {
-                    return formattedName; // Solo muestra el nombre (ej. "Aceite de oliva")
-                }
+                // Formato final de la cadena de ingrediente
+                if (unit === 'cdita' || unit === 'cda') {
+                    return `${newValue} ${unit}. ${formattedName}`.trim();
+                }
+                // Si la unidad es un "cuantificador" ("un", "una", "unidad", "puñado") o está vacía,
+                // y el valor es 1, solo mostramos el nombre formateado.
+                if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(unit))) {
+                    return formattedName; // Ej: "Aceite de oliva", "Puñado de nueces"
+                }
+                // Para el resto, incluye el valor y la unidad.
+                if (unit !== '') {
+                    return `${newValue} ${unit} ${formattedName}`.trim();
+                }
+                // Si no hay unidad explícita y no es un caso especial de "1", muestra solo el valor y el nombre.
+                return `${newValue} ${formattedName}`.trim();
+            }
 
 
-                if (unit === 'cdita' || unit === 'cda') {
-                    return `${newValue} ${unit}. ${formattedName}`.trim();
-                }
-                if (unit !== '' && !['un', 'una', 'unidad', 'unidades'].includes(unit)) {
-                    return `${newValue} ${unit} ${formattedName}`.trim();
-                }
-                return `${newValue} ${formattedName}`.trim();
-            }
+            function updateIngredientsDisplay(servings) {
+                if (!currentRecipeDetail) return;
 
+                const ingredientList = document.getElementById('ingredient-list');
+                ingredientList.innerHTML = '';
+                const factor = servings / currentRecipeDetail.raciones;
 
-            function updateIngredientsDisplay(servings) {
-                if (!currentRecipeDetail) return;
+                currentRecipeDetail.ingredientes.forEach(originalIng => {
+                    const parsed = parseIngredient(originalIng);
+                    const formatted = formatIngredient(parsed, factor);
+                    const li = document.createElement('li');
+                    li.textContent = formatted;
+                    ingredientList.appendChild(li);
+                });
+            }
+            
+            function showRecipeDetail(recipe) {
+                console.log('showRecipeDetail: Abriendo modal para', recipe.titulo);
+                currentRecipeDetail = recipe; 
+                currentServings = recipe.raciones; 
 
-                const ingredientList = document.getElementById('ingredient-list');
-                ingredientList.innerHTML = '';
-                const factor = servings / currentRecipeDetail.raciones;
+                dom.modalContent.innerHTML = `
+                    <div class="p-6 md:p-8">
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
+                            <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="console.error('Error cargando imagen en modal para:', this.alt); this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <div id="recipe-content-normal">
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
+                                <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
+                                <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
+                                    <span>Raciones:</span>
+                                    <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
+                                    <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1">
+                                    <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">+</button>
+                                </div>
+                            </div>
 
-                currentRecipeDetail.ingredientes.forEach(originalIng => {
-                    const parsed = parseIngredient(originalIng);
-                    const formatted = formatIngredient(parsed, factor);
-                    const li = document.createElement('li');
-                    li.textContent = formatted;
-                    ingredientList.appendChild(li);
-                });
-            }
-            
-            function showRecipeDetail(recipe) {
-                console.log('showRecipeDetail: Abriendo modal para', recipe.titulo);
-                currentRecipeDetail = recipe; 
-                currentServings = recipe.raciones; 
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
+                                    <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
+                                    <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
+                                </div>
+                            </div>
+                             <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
+                                <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                                <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
+                                <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Iniciar Cocina Guiada</button>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                const stepsList = document.getElementById('steps-list');
+                stepsList.innerHTML = recipe.pasos.map(step => `<li>${step}</li>`).join('');
 
-                dom.modalContent.innerHTML = `
-                    <div class="p-6 md:p-8">
-                        <div class="flex justify-between items-start">
-                            <h2 class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
-                            <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                            </button>
-                        </div>
-                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="console.error('Error cargando imagen en modal para:', this.alt); this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
-                        <div id="recipe-content-normal">
-                            <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
-                                <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
-                                <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
-                                    <span>Raciones:</span>
-                                    <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
-                                                                            <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1">
-                                    <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">+</button>
-                                </div>
-                            </div>
+                updateIngredientsDisplay(currentServings);
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div>
-                                    <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
-                                    <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
-                                    <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
-                                </div>
-                            </div>
-                             <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
-                                <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
-                                <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
-                                <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Iniciar Cocina Guiada</button>
-                            </div>
-                        </div>
-                    </div>`;
-                
-                const stepsList = document.getElementById('steps-list');
-                stepsList.innerHTML = recipe.pasos.map(step => `<li>${step}</li>`).join('');
+                // CONTROL DEL MODAL: Quitamos 'hidden' y añadimos 'modal-visible'
+                dom.modal.classList.remove('hidden'); // Esto cambia display: none a display: flex
+                dom.modal.classList.add('modal-visible'); // Esto activa la opacidad y la escala
+                
+                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+                document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
+                
+                const shareBtn = document.getElementById('shareRecipeBtn');
+                if (navigator.share) {
+                    shareBtn.addEventListener('click', async () => {
+                        try {
+                            await navigator.share({
+                                title: recipe.titulo,
+                                text: `¡Mira esta receta de ${recipe.titulo}!`,
+                                url: window.location.href,
+                            });
+                        } catch (err) {
+                            console.error('Error al compartir:', err);
+                        }
+                    });
+                } else {
+                    shareBtn.style.display = 'none';
+                }
+                
+                document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
 
-                updateIngredientsDisplay(currentServings);
+                const servingsInput = document.getElementById('servings-input');
+                document.getElementById('decrease-servings').addEventListener('click', () => {
+                    let newServings = parseInt(servingsInput.value) - 1;
+                    if (newServings < 1) newServings = 1;
+                    servingsInput.value = newServings;
+                    currentServings = newServings;
+                    updateIngredientsDisplay(currentServings);
+                });
+                document.getElementById('increase-servings').addEventListener('click', () => {
+                    let newServings = parseInt(servingsInput.value) + 1;
+                    servingsInput.value = newServings;
+                    currentServings = newServings;
+                    updateIngredientsDisplay(currentServings);
+                });
+                servingsInput.addEventListener('change', (e) => {
+                    let newServings = parseInt(e.target.value);
+                    if (isNaN(newServings) || newServings < 1) newServings = 1;
+                    e.target.value = newServings;
+                    currentServings = newServings;
+                    updateIngredientsDisplay(currentServings);
+                });
+            }
+            
+            function closeModal() {
+                console.log('closeModal: Cerrando modal.');
+                dom.modal.classList.remove('modal-visible'); // Inicia la transición de salida
+                // Espera a que termine la transición antes de ocultar completamente
+                setTimeout(() => { 
+                    dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
+                    dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
+                    console.log('Modal completamente cerrado y contenido limpiado.');
+                }, 300); // Coincide con la duración de la transición en CSS
+                currentRecipeDetail = null; 
+                currentServings = 0; 
+            }
 
-                dom.modal.classList.remove('hidden');
-                dom.modal.classList.add('modal-visible'); 
-                
-                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-                document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
-                
-                const shareBtn = document.getElementById('shareRecipeBtn');
-                if (navigator.share) {
-                    shareBtn.addEventListener('click', async () => {
-                        try {
-                            await navigator.share({
-                                title: recipe.titulo,
-                                text: `¡Mira esta receta de ${recipe.titulo}!`,
-                                url: window.location.href,
-                            });
-                        } catch (err) {
-                            console.error('Error al compartir:', err);
-                        }
-                    });
-                } else {
-                    shareBtn.style.display = 'none';
-                }
-                
-                document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
+            // --- MODO OSCURO ---
+            function setupTheme() {
+                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                    dom.lightIcon.classList.remove('hidden');
+                    dom.darkIcon.classList.add('hidden'); 
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    dom.darkIcon.classList.remove('hidden');
+                    dom.lightIcon.classList.add('hidden'); 
+                }
+            }
 
-                const servingsInput = document.getElementById('servings-input');
-                document.getElementById('decrease-servings').addEventListener('click', () => {
-                    let newServings = parseInt(servingsInput.value) - 1;
-                    if (newServings < 1) newServings = 1;
-                    servingsInput.value = newServings;
-                    currentServings = newServings;
-                    updateIngredientsDisplay(currentServings);
-                });
-                document.getElementById('increase-servings').addEventListener('click', () => {
-                    let newServings = parseInt(servingsInput.value) + 1;
-                    servingsInput.value = newServings;
-                    currentServings = newServings;
-                    updateIngredientsDisplay(currentServings);
-                });
-                servingsInput.addEventListener('change', (e) => {
-                    let newServings = parseInt(e.target.value);
-                    if (isNaN(newServings) || newServings < 1) newServings = 1;
-                    e.target.value = newServings;
-                    currentServings = newServings;
-                    updateIngredientsDisplay(currentServings);
-                });
-            }
-            
-            function closeModal() {
-                console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); // Inicia la transición de opacidad/escala
-                // Después de la transición, oculta completamente
-                setTimeout(() => { 
-                    dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
-                    dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
-                    console.log('Modal completamente cerrado y contenido limpiado.');
-                }, 300); // Coincide con la duración de la transición en CSS
-                currentRecipeDetail = null; 
-                currentServings = 0; 
-            }
+            dom.themeToggle.addEventListener('click', function() {
+                dom.darkIcon.classList.toggle('hidden');
+                dom.lightIcon.classList.toggle('hidden');
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
 
-            // --- MODO OSCURO ---
-            function setupTheme() {
-                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    dom.lightIcon.classList.remove('hidden');
-                    dom.darkIcon.classList.add('hidden'); 
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    dom.darkIcon.classList.remove('hidden');
-                    dom.lightIcon.classList.add('hidden'); 
-                }
-            }
+            setupTheme();
 
-            dom.themeToggle.addEventListener('click', function() {
-                dom.darkIcon.classList.toggle('hidden');
-                dom.lightIcon.classList.toggle('hidden');
-                if (localStorage.getItem('color-theme')) {
-                    if (localStorage.getItem('color-theme') === 'light') {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    }
-                } else {
-                    if (document.documentElement.classList.contains('dark')) {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'light');
-                    } else {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    }
-                }
-            });
+            // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
+            dom.search.addEventListener('input', applyFilters);
 
-            setupTheme();
+            dom.filterAllBtn.addEventListener('click', () => {
+                console.log('Filtro: Todas');
+                currentFilter = 'all';
+                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+                applyFilters();
+            });
+            dom.filterFavBtn.addEventListener('click', () => {
+                console.log('Filtro: Favoritas');
+                currentFilter = 'favorites';
+                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+                applyFilters();
+            });
+            
+            dom.categoryFilters.addEventListener('click', (e) => {
+                if (e.target.matches('.category-btn')) {
+                    currentCategory = e.target.dataset.category;
+                    console.log('Filtro por categoría:', currentCategory);
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    applyFilters();
+                }
+            });
+            
+            // Listener para cerrar el modal al hacer clic fuera
+            dom.modal.addEventListener('click', (event) => { 
+                if (event.target === dom.modal) { 
+                    console.log('Clic en fondo del modal, cerrando.');
+                    closeModal(); 
+                }
+            });
+            
+            // Asegura que el filtro "Todas" esté activo al cargar
+            dom.filterAllBtn.classList.add('active');
+            
+            // --- COPYRIGHT YEAR ---
+            dom.copyrightYear.textContent = new Date().getFullYear();
 
-            // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
-            dom.search.addEventListener('input', applyFilters);
+            // --- ASISTENTE DE VOZ ---
+            const cookingModeView = document.getElementById('cooking-mode-view');
+            const stepCounter = document.getElementById('step-counter');
+            const stepText = document.getElementById('step-text');
+            const prevStepBtn = document.getElementById('prev-step-btn');
+            const repeatStepBtn = document.getElementById('repeat-step-btn');
+            const nextStepBtn = document.getElementById('next-step-btn');
+            const exitCookingBtn = document.getElementById('exit-cooking-btn');
 
-            dom.filterAllBtn.addEventListener('click', () => {
-                console.log('Filtro: Todas');
-                currentFilter = 'all';
-                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
-                applyFilters();
-            });
-            dom.filterFavBtn.addEventListener('click', () => {
-                console.log('Filtro: Favoritas');
-                currentFilter = 'favorites';
-                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
-                applyFilters();
-            });
-            
-            dom.categoryFilters.addEventListener('click', (e) => {
-                if (e.target.matches('.category-btn')) {
-                    currentCategory = e.target.dataset.category;
-                    console.log('Filtro por categoría:', currentCategory);
-                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-                    e.target.classList.add('active');
-                    applyFilters();
-                }
-            });
-            
-            // Listener para cerrar el modal al hacer clic fuera
-            dom.modal.addEventListener('click', (event) => { 
-                if (event.target === dom.modal) { 
-                    console.log('Clic en fondo del modal, cerrando.');
-                    closeModal(); 
-                }
-            });
-            
-            // Asegura que el filtro "Todas" esté activo al cargar
-            dom.filterAllBtn.classList.add('active');
-            
-            // --- COPYRIGHT YEAR ---
-            dom.copyrightYear.textContent = new Date().getFullYear();
+            let currentStep = 0;
+            let currentRecipeSteps = [];
 
-            // --- ASISTENTE DE VOZ ---
-            const cookingModeView = document.getElementById('cooking-mode-view');
-            const stepCounter = document.getElementById('step-counter');
-            const stepText = document.getElementById('step-text');
-            const prevStepBtn = document.getElementById('prev-step-btn');
-            const repeatStepBtn = document.getElementById('repeat-step-btn');
-            const nextStepBtn = document.getElementById('next-step-btn');
-            const exitCookingBtn = document.getElementById('exit-cooking-btn');
+            function speak(text) {
+                speechSynthesis.cancel(); 
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES'; 
+                utterance.rate = 0.9; 
+                utterance.pitch = 1; 
+                speechSynthesis.speak(utterance);
+            }
 
-            let currentStep = 0;
-            let currentRecipeSteps = [];
+            function updateCookingStep() {
+                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
+                stepText.textContent = currentRecipeSteps[currentStep];
+                speak(currentRecipeSteps[currentStep]);
+            }
 
-            function speak(text) {
-                speechSynthesis.cancel(); 
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES'; 
-                utterance.rate = 0.9; 
-                utterance.pitch = 1; 
-                speechSynthesis.speak(utterance);
-            }
+            function startCookingMode(recipe) {
+                console.log('Iniciando modo de cocina para:', recipe.titulo);
+                currentRecipeSteps = recipe.pasos;
+                currentStep = 0;
+                closeModal(); 
+                cookingModeView.classList.remove('hidden');
+                cookingModeView.classList.add('flex');
+                speak(`Comenzamos la receta de ${recipe.titulo}.`);
+                setTimeout(updateCookingStep, 1500); 
+            }
 
-            function updateCookingStep() {
-                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
-                stepText.textContent = currentRecipeSteps[currentStep];
-                speak(currentRecipeSteps[currentStep]);
-            }
+            function exitCookingMode() {
+                console.log('Saliendo del modo de cocina.');
+                speechSynthesis.cancel();
+                cookingModeView.classList.add('hidden');
+                cookingModeView.classList.remove('flex');
+            }
 
-            function startCookingMode(recipe) {
-                console.log('Iniciando modo de cocina para:', recipe.titulo);
-                currentRecipeSteps = recipe.pasos;
-                currentStep = 0;
-                closeModal(); 
-                cookingModeView.classList.remove('hidden');
-                cookingModeView.classList.add('flex');
-                speak(`Comenzamos la receta de ${recipe.titulo}.`);
-                setTimeout(updateCookingStep, 1500); 
-            }
+            prevStepBtn.addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateCookingStep();
+                } else {
+                    speak("Estás en el primer paso.");
+                }
+            });
 
-            function exitCookingMode() {
-                console.log('Saliendo del modo de cocina.');
-                speechSynthesis.cancel();
-                cookingModeView.classList.add('hidden');
-                cookingModeView.classList.remove('flex');
-            }
+            nextStepBtn.addEventListener('click', () => {
+                if (currentStep < currentRecipeSteps.length - 1) {
+                    currentStep++;
+                    updateCookingStep();
+                } else {
+                    speak("Has llegado al final de la receta. ¡Buen provecho!");
+                    exitCookingMode();
+                }
+            });
 
-            prevStepBtn.addEventListener('click', () => {
-                if (currentStep > 0) {
-                    currentStep--;
-                    updateCookingStep();
-                } else {
-                    speak("Estás en el primer paso.");
-                }
-            });
+            repeatStepBtn.addEventListener('click', () => {
+                speak(currentRecipeSteps[currentStep]);
+            });
 
-            nextStepBtn.addEventListener('click', () => {
-                if (currentStep < currentRecipeSteps.length - 1) {
-                    currentStep++;
-                    updateCookingStep();
-                } else {
-                    speak("Has llegado al final de la receta. ¡Buen provecho!");
-                    exitCookingMode();
-                }
-            });
+            exitCookingBtn.addEventListener('click', exitCookingMode);
+        }
 
-            repeatStepBtn.addEventListener('click', () => {
-                speak(currentRecipeSteps[currentStep]);
-            });
-
-            exitCookingBtn.addEventListener('click', exitCookingMode);
-        }
-
-        // Ejecuta la app cuando el DOM esté listo
-        runRecipeApp();
-    </script>
+        // Ejecuta la app cuando el DOM esté listo
+        runRecipeApp();
+    </script>
 </body>
 </html>
