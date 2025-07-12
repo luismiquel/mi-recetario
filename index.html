@@ -449,7 +449,7 @@
                 grid: document.getElementById('recipeGrid'),
                 search: document.getElementById('searchInput'),
                 filterAllBtn: document.getElementById('filterAll'),
-                filterFavBtn: document.getElementById('filterFavorites'),
+                dom.filterFavBtn: document.getElementById('filterFavorites'),
                 categoryFilters: document.getElementById('categoryFilters'),
                 timeFilters: document.getElementById('timeFilters'), 
                 noResults: document.getElementById('no-results'),
@@ -1315,7 +1315,7 @@
                 }
             });
 
-            setupTheme(); 
+            setupTheme();
 
             // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
             dom.search.addEventListener('input', applyFilters);
@@ -1388,11 +1388,21 @@
             dom.copyrightYear.textContent = new Date().getFullYear();
 
             // --- ASISTENTE DE VOZ ---
-            // Variable para el objeto SpeechRecognition
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             let recognition = null;
             let speaking = false; 
             let recognitionActive = false; 
+
+            // Funciones de control de pasos, declaradas al principio del ámbito para ser accesibles
+            let currentStep = 0; // Deben estar aquí para ser globales en este ámbito
+            let currentRecipeSteps = []; // Deben estar aquí
+            let cookingModeView = null; // Se inicializará en runRecipeApp
+            let stepCounter = null;
+            let stepText = null;
+            let prevStepBtn = null;
+            let repeatStepBtn = null;
+            let nextStepBtn = null;
+            let exitCookingBtn = null;
 
             // Función para iniciar el reconocimiento de voz
             function startVoiceRecognition() {
@@ -1460,8 +1470,14 @@
                 }
             }
 
-            // --- Funciones de control del asistente (extraídas para ser llamadas directamente) ---
-            function nextStepAction() { // Renombrada para evitar conflicto si "nextStep" ya existía
+            // Funciones que controlan el progreso de la receta
+            function updateCookingStep() {
+                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
+                stepText.textContent = currentRecipeSteps[currentStep];
+                speak(currentRecipeSteps[currentStep]);
+            }
+
+            function nextStepAction() { 
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
                     updateCookingStep();
@@ -1471,7 +1487,7 @@
                 }
             }
 
-            function prevStepAction() { // Renombrada
+            function prevStepAction() { 
                 if (currentStep > 0) {
                     currentStep--;
                     updateCookingStep();
@@ -1480,11 +1496,17 @@
                 }
             }
 
-            function repeatStepAction() { // Renombrada
+            function repeatStepAction() { 
                 speak(currentRecipeSteps[currentStep]);
             }
-            // La función `exitCookingMode` ya existe y se llama correctamente.
 
+            function exitCookingMode() {
+                console.log('Saliendo del modo de cocina.');
+                speechSynthesis.cancel();
+                stopVoiceRecognition(); 
+                cookingModeView.classList.add('hidden');
+                cookingModeView.classList.remove('flex');
+            }
 
             // Función para manejar los comandos de voz
             function handleVoiceCommand(command) {
@@ -1496,13 +1518,13 @@
                 const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); 
 
                 if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
-                    nextStepAction(); // Llama a la nueva función de acción
+                    nextStepAction(); 
                     speak('Pasando al siguiente paso.');
                 } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
-                    prevStepAction(); // Llama a la nueva función de acción
+                    prevStepAction(); 
                     speak('Volviendo al paso anterior.');
                 } else if (cleanedCommand.includes('repetir')) {
-                    repeatStepAction(); // Llama a la nueva función de acción
+                    repeatStepAction(); 
                     speak('Repitiendo el paso actual.');
                 } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
                     exitCookingMode(); 
@@ -1513,60 +1535,16 @@
             }
 
 
-            const cookingModeView = document.getElementById('cooking-mode-view');
-            const stepCounter = document.getElementById('step-counter');
-            const stepText = document.getElementById('step-text');
-            const prevStepBtn = document.getElementById('prev-step-btn');
-            const repeatStepBtn = document.getElementById('repeat-step-btn');
-            const nextStepBtn = document.getElementById('next-step-btn');
-            const exitCookingBtn = document.getElementById('exit-cooking-btn');
+            // Asignación de elementos DOM específicos para el asistente
+            cookingModeView = document.getElementById('cooking-mode-view');
+            stepCounter = document.getElementById('step-counter');
+            stepText = document.getElementById('step-text');
+            prevStepBtn = document.getElementById('prev-step-btn');
+            repeatStepBtn = document.getElementById('repeat-step-btn');
+            nextStepBtn = document.getElementById('next-step-btn');
+            exitCookingBtn = document.getElementById('exit-cooking-btn');
 
-            let currentStep = 0;
-            let currentRecipeSteps = [];
-
-            function speak(text) {
-                speechSynthesis.cancel(); 
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES'; 
-                utterance.rate = 0.9; 
-                utterance.pitch = 1; 
-
-                utterance.onstart = () => { speaking = true; };
-                utterance.onend = () => { speaking = false; };
-                utterance.onerror = (e) => { speaking = false; console.error("Error en SpeechSynthesis:", e);};
-
-                speechSynthesis.speak(utterance);
-            }
-
-            function updateCookingStep() {
-                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
-                stepText.textContent = currentRecipeSteps[currentStep];
-                speak(currentRecipeSteps[currentStep]);
-            }
-
-            function startCookingMode(recipe) {
-                console.log('Iniciando modo de cocina para:', recipe.titulo);
-                currentRecipeSteps = recipe.pasos;
-                currentStep = 0;
-                closeModal(); 
-                cookingModeView.classList.remove('hidden');
-                cookingModeView.classList.add('flex');
-                speak(`Comenzamos la receta de ${recipe.titulo}.`);
-                setTimeout(() => {
-                    updateCookingStep();
-                    startVoiceRecognition(); 
-                }, 1500); 
-            }
-
-            function exitCookingMode() {
-                console.log('Saliendo del modo de cocina.');
-                speechSynthesis.cancel();
-                stopVoiceRecognition(); 
-                cookingModeView.classList.add('hidden');
-                cookingModeView.classList.remove('flex');
-            }
-
-            // Los event listeners de los botones ahora llaman a las funciones de acción directamente
+            // Las funciones de los botones ahora llaman a las funciones de acción directamente
             prevStepBtn.addEventListener('click', prevStepAction);
             nextStepBtn.addEventListener('click', nextStepAction);
             repeatStepBtn.addEventListener('click', repeatStepAction);
