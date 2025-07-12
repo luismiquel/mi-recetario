@@ -469,10 +469,9 @@
                 finalShoppingList: document.getElementById('finalShoppingList'),
                 clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
                 printShoppingListBtn: document.getElementById('printShoppingListBtn'),
-                toastContainer: document.getElementById('toast-container') // Nuevo contenedor para Toasts
+                toastContainer: document.getElementById('toast-container') 
             };
             
-            // Recetas con tiempo de preparación actualizado y con 25 por categoría
             const allRecipes = [
                 // 25 Aperitivos
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
@@ -812,41 +811,44 @@
             let currentServings = 0; 
 
             // --- LISTA DE LA COMPRA ---
-            // Cargar la lista del localStorage al inicio
             function loadShoppingList() {
                 const storedList = localStorage.getItem('shoppingList');
-                // Asegurarse de que `checked` exista para ítems antiguos si no lo tenían
                 shoppingList = storedList ? JSON.parse(storedList).map(item => ({ ...item, checked: item.checked ?? false })) : [];
                 updateShoppingListCount();
                 console.log("Lista de compra cargada:", shoppingList);
             }
 
-            // Guardar la lista en localStorage
             function saveShoppingList() {
                 localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
                 updateShoppingListCount();
                 console.log("Lista de compra guardada:", shoppingList);
             }
 
-            // Actualizar el contador de la lista de la compra en el botón
             function updateShoppingListCount() {
                 const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length; 
                 dom.shoppingListCount.textContent = totalItems;
             }
 
-            // Función para añadir ingredientes a la lista de la compra
             function addToShoppingList(recipe, servings) {
                 const factor = servings / recipe.raciones;
                 const ingredientsToProcess = [];
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    if (parsed.baseName || (parsed.value === 0 && parsed.original)) { // Incluye ingredientes sin cantidad si tienen original string
+                    if (parsed.baseName || (parsed.value === 0 && parsed.original)) { 
                          ingredientsToProcess.push({
                             name: parsed.baseName || parsed.original.toLowerCase(), 
                             unit: parsed.unit,
                             value: parsed.value,
                             originalFormatted: formatIngredient(parsed, factor), 
+                            checked: false 
+                        });
+                    } else if (parsed.original) {
+                        ingredientsToProcess.push({
+                            name: parsed.original.toLowerCase(),
+                            unit: '',
+                            value: 0, 
+                            originalFormatted: parsed.original,
                             checked: false 
                         });
                     }
@@ -858,13 +860,13 @@
                     );
 
                     if (existingItemIndex !== -1) {
-                        if (ing.value > 0) { // Solo sumamos si el ingrediente tiene una cantidad numérica
+                        if (ing.value > 0) { 
                             shoppingList[existingItemIndex].value += ing.value; 
-                            const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
-                            shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
+                             if (shoppingList[existingItemIndex].value > 0) { 
+                                const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
+                                shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
+                             }
                         }
-                        // Si el ingrediente existente no tiene cantidad (value === 0) y el nuevo tampoco, no hacemos nada.
-                        // Si el nuevo no tiene cantidad pero el existente sí, mantenemos el existente.
                     } else {
                         shoppingList.push({
                             name: ing.name,
@@ -877,11 +879,10 @@
                 });
 
                 saveShoppingList(); 
-                showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success'); // Notificación Toast
+                showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success'); 
                 closeModal(); 
             }
 
-            // Función para mostrar el modal de la lista de la compra
             function showShoppingListModal() {
                 dom.finalShoppingList.innerHTML = ''; 
                 const itemsToDisplay = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted));
@@ -893,7 +894,6 @@
                     
                     sortedList.forEach((item, index) => { 
                         const li = document.createElement('li');
-                        // Guardar el índice REAL del item en la `shoppingList` original para `toggleIngredientChecked`
                         li.dataset.itemIndex = shoppingList.indexOf(item); 
                         
                         if (item.checked) {
@@ -930,7 +930,7 @@
                     if (shoppingList[index]) {
                         shoppingList[index].checked = !shoppingList[index].checked; 
                         saveShoppingList(); 
-                        showShoppingListModal(); // Refrescar la lista para que se vea el cambio
+                        showShoppingListModal(); 
                         showToast(shoppingList[index].checked ? 'Ingrediente marcado.' : 'Ingrediente desmarcado.', 'info');
                     }
                 }
@@ -946,7 +946,6 @@
                 }
             }
 
-            // --- Lógica de parseo y formateo de ingredientes ---
             function parseIngredient(ingredient) {
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 let match = ingredient.match(regex);
@@ -974,7 +973,8 @@
                     }
                 } else {
                     // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
-                    // Su `value` seguirá siendo 0. La `name` ya es el `ingredient` original por defecto.
+                    // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
+                    // Esto se manejará en `formatIngredient` para mostrar el string original.
                 }
                 
                 baseName = getBaseName(name || ingredient); 
@@ -1287,38 +1287,36 @@
             function setupTheme() {
                 if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
-                    dom.lightIcon.classList.remove('hidden');
-                    dom.darkIcon.classList.add('hidden'); 
+                    dom.lightIcon.classList.remove('hidden'); // Asegúrate de que el icono de luz esté visible en modo oscuro
+                    dom.darkIcon.classList.add('hidden');    // Y el de oscuridad oculto
+                    console.log("Tema: Oscuro");
                 } else {
                     document.documentElement.classList.remove('dark');
-                    dom.darkIcon.classList.remove('hidden');
-                    dom.lightIcon.classList.add('hidden'); 
+                    dom.darkIcon.classList.remove('hidden'); // Asegúrate de que el icono de oscuridad esté visible en modo claro
+                    dom.lightIcon.classList.add('hidden');   // Y el de luz oculto
+                    console.log("Tema: Claro");
                 }
             }
 
             dom.themeToggle.addEventListener('click', function() {
-                dom.darkIcon.classList.toggle('hidden');
-                dom.lightIcon.classList.toggle('hidden');
-                if (localStorage.getItem('color-theme')) {
-                    if (localStorage.getItem('color-theme') === 'light') {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    }
+                // Alternar la clase 'dark' en el elemento raíz
+                document.documentElement.classList.toggle('dark');
+                
+                // Actualizar localStorage y los iconos
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.setItem('color-theme', 'dark');
+                    dom.lightIcon.classList.remove('hidden');
+                    dom.darkIcon.classList.add('hidden');
+                    console.log("Cambiando a tema: Oscuro (manual)");
                 } else {
-                    if (document.documentElement.classList.contains('dark')) {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'light');
-                    } else {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    }
+                    localStorage.setItem('color-theme', 'light');
+                    dom.darkIcon.classList.remove('hidden');
+                    dom.lightIcon.classList.add('hidden');
+                    console.log("Cambiando a tema: Claro (manual)");
                 }
             });
 
-            setupTheme();
+            setupTheme(); // Llamada inicial para configurar el tema al cargar
 
             // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
             dom.search.addEventListener('input', applyFilters);
