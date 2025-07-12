@@ -246,15 +246,16 @@
     <script type="module">
         // --- CONSOLIDACIÓN DE IMPORTACIONES Y CONFIGURACIÓN DE FIREBASE ---
         // Estas importaciones son necesarias para Firebase App, Authentication y Firestore
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"; // Usando la versión 11.10.0 que me mostraste
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"; // Versión 11.10.0
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js"; // Versión 11.10.0
+        // ¡Usando la versión 11.10.0 que me proporcionaste, para que todo sea consistente!
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         
-        // Importación opcional para Analytics, asegúrate de que la versión también sea 11.10.0
+        // Importación opcional para Analytics, si la quieres usar.
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         function runRecipeApp() {
-            // --- TU CONFIGURACIÓN REAL DE FIREBASE ---
+            // --- TU CONFIGURACIÓN REAL DE FIREBASE (¡Esta es la que me enviaste y es correcta!) ---
             const firebaseConfig = {
                 apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
@@ -265,16 +266,13 @@
                 measurementId: "G-256GP1S7YX" // Este es tu Measurement ID real
             };
 
-            // Asegúrate de que este `appId` es el mismo que el de tu `firebaseConfig.appId`
-            // Si tu ID de aplicación de Firebase es diferente a 'recetario-delicioso-final',
-            // el path en Firestore para guardar favoritos debe usar el ID de Firebase.
-            // Para simplificar y asegurar que funcione, usaremos el `appId` de FirebaseConfig.
-            const appId = firebaseConfig.appId; // Usamos el appId de tu configuración de Firebase
+            // La variable `appId` de tu código ahora toma el valor directamente de `firebaseConfig.appId`
+            const appId = firebaseConfig.appId;
 
             // Inicializa la app de Firebase
             const app = initializeApp(firebaseConfig);
             // Inicializa Analytics solo si lo vas a usar, si no, puedes comentarlo o borrarlo.
-            const analytics = getAnalytics(app); // Puedes comentar esta línea si no necesitas Analytics.
+            const analytics = getAnalytics(app); 
 
             // Inicializa los servicios de Firestore y Authentication
             const db = getFirestore(app);
