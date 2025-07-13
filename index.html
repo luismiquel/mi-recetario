@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Recetario Ligero</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Oculta scrollbars de la lista */
+    #cartList { max-height:50vh; overflow-y:auto; }
+    #cartList::-webkit-scrollbar { display:none; }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
   <div class="max-w-7xl mx-auto p-6">
@@ -13,11 +18,13 @@
       <p class="text-gray-600">120 recetas para inspirar tu cocina.</p>
     </header>
 
+    <!-- BUSCADOR + FILTROS -->
     <div class="flex flex-col sm:flex-row gap-3 mb-4">
       <input id="search" type="text" placeholder="Buscar receta..."
         class="flex-1 p-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-amber-400">
       <button id="btn-all" class="px-4 py-2 bg-amber-500 text-white rounded-full">Todas</button>
       <button id="btn-fav" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full">Favoritas</button>
+      <button id="btn-cart" class="px-4 py-2 bg-teal-500 text-white rounded-full">Carrito (<span id="cart-count">0</span>)</button>
     </div>
 
     <div id="no-results" class="hidden text-center py-12 text-gray-500">
@@ -27,125 +34,316 @@
     <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
   </div>
 
-  <div id="toasts" class="fixed top-4 right-4 space-y-2"></div>
+  <!-- MODAL RECETA -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+      <button id="close-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
+        ✕
+      </button>
+      <h2 id="modal-title" class="text-2xl font-bold text-amber-600 mb-4"></h2>
+      <img id="modal-img" class="w-full h-48 object-cover rounded-lg mb-4">
+      <p class="mb-4"><strong>Tiempo:</strong> <span id="modal-time"></span> | <strong>Raciones:</strong> <span id="modal-serv"></span></p>
+
+      <div class="flex items-center gap-2 mb-4">
+        <button id="dec-serv" class="px-3 py-1 bg-amber-100 rounded-md">−</button>
+        <input id="inp-serv" type="number" min="1" class="w-16 text-center border rounded" value="1">
+        <button id="inc-serv" class="px-3 py-1 bg-amber-100 rounded-md">+</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-semibold mb-2">Ingredientes</h3>
+          <ul id="ing-list" class="list-disc list-inside space-y-1 text-gray-700"></ul>
+        </div>
+        <div>
+          <h3 class="font-semibold mb-2">Pasos</h3>
+          <ol id="step-list" class="list-decimal list-inside space-y-2 text-gray-700"></ol>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3 justify-center">
+        <button id="add-cart" class="bg-teal-600 text-white px-6 py-2 rounded-full">Añadir al Carrito</button>
+        <button id="start-cook" class="bg-green-600 text-white px-6 py-2 rounded-full">Modo Cocina</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODO COCINA -->
+  <div id="cook-mode" class="fixed inset-0 bg-white hidden flex-col z-50">
+    <div class="flex-grow flex flex-col justify-center items-center p-8 text-center">
+      <p id="cook-counter" class="text-lg text-amber-600 font-semibold mb-4"></p>
+      <p id="cook-text" class="text-3xl font-bold"></p>
+    </div>
+    <div class="p-4 bg-gray-100 grid grid-cols-3 gap-4">
+      <button id="prev-step" class="py-2 bg-gray-200 rounded">Anterior</button>
+      <button id="repeat-step" class="py-2 bg-amber-500 text-white rounded">Repetir</button>
+      <button id="next-step" class="py-2 bg-gray-200 rounded">Siguiente</button>
+    </div>
+    <button id="exit-cook" class="absolute top-4 right-4 p-2 bg-gray-200 rounded">✕</button>
+  </div>
+
+  <!-- MODAL CARRITO -->
+  <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-6 relative">
+      <button id="close-cart" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">✕</button>
+      <h2 class="text-2xl font-bold text-teal-600 mb-4">Tu Lista de la Compra</h2>
+      <ul id="cartList" class="space-y-2 text-gray-700 mb-6"></ul>
+      <div class="flex justify-center gap-4">
+        <button id="clear-cart" class="bg-red-500 text-white px-6 py-2 rounded">Vaciar</button>
+        <button id="print-cart" class="bg-gray-500 text-white px-6 py-2 rounded">Imprimir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toasts" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
   <script>
-    // ——— AQUI PEGA TUS 120 RECETAS ———
-    // El array debe ser puro JavaScript, sin comentarios internos ni comas finales.
-    const recipes = [
-      {
-        categoria: "Aperitivo",
-        titulo: "Brochetas de aceituna y pimiento",
-        raciones: 4,
-        tiempo: "15 min",
-        imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna",
-        ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"],
-        pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."]
-      },
-      {
-        categoria: "Postre",
-        titulo: "Manzana asada con canela",
-        raciones: 1,
-        tiempo: "35 min",
-        imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Manzana+Asada+Canela",
-        ingredientes: ["1 manzana", "Canela en polvo"],
-        pasos: ["Quita el corazón de la manzana.", "Espolvorea canela y hornea 30 min a 180 °C."]
-      }
-      // … añade aquí las otras 118 recetas COMO OBJETOS SIN COMENTARIOS NI COMAS AL FINAL …
-    ];
+  // —————————————— 1) Pega tus 120 recetas aquí ——————————————
+  const recipes = [
+    /* {categoria:"Aperitivo",titulo:"Brochetas de aceituna y pimiento",raciones:4,tiempo:"15 min",
+       imagen:"https://...",ingredientes:["Aceitunas","Pimiento"],pasos:["Ensarta","Sirve"]},
+       ... tus 118 más ...
+    */
+  ];
 
-    let favorites = new Set(JSON.parse(localStorage.getItem('favRecipes')||'[]'));
-    let showOnlyFav = false;
+  // —————————————————————————————————————————————————————————————
+  // Variables y referencias DOM
+  let favs = new Set(JSON.parse(localStorage.getItem('favRecipes')||'[]'));
+  let cart = JSON.parse(localStorage.getItem('shoppingCart')||'[]');
+  let showFavOnly = false;
 
-    const grid      = document.getElementById('grid');
-    const noResults = document.getElementById('no-results');
-    const input     = document.getElementById('search');
-    const btnAll    = document.getElementById('btn-all');
-    const btnFav    = document.getElementById('btn-fav');
-    const toasts    = document.getElementById('toasts');
+  const grid     = document.getElementById('grid');
+  const noRes    = document.getElementById('no-results');
+  const input    = document.getElementById('search');
+  const btnAll   = document.getElementById('btn-all');
+  const btnFav   = document.getElementById('btn-fav');
+  const btnCart  = document.getElementById('btn-cart');
+  const cartCnt  = document.getElementById('cart-count');
+  const toasts   = document.getElementById('toasts');
 
-    function showToast(msg, type='info') {
-      const t = document.createElement('div');
-      t.textContent = msg;
-      t.className = 'px-4 py-2 rounded shadow text-white ' +
-        (type==='success'?'bg-green-500':'bg-blue-500');
-      toasts.appendChild(t);
-      setTimeout(() => t.remove(), 2500);
-    }
+  // Modal receta
+  const modal     = document.getElementById('modal');
+  const closeMod  = document.getElementById('close-modal');
+  const mTitle    = document.getElementById('modal-title');
+  const mImg      = document.getElementById('modal-img');
+  const mTime     = document.getElementById('modal-time');
+  const mServ     = document.getElementById('modal-serv');
+  const decServ   = document.getElementById('dec-serv');
+  const incServ   = document.getElementById('inc-serv');
+  const inpServ   = document.getElementById('inp-serv');
+  const ingList   = document.getElementById('ing-list');
+  const stepList  = document.getElementById('step-list');
+  const addCartB  = document.getElementById('add-cart');
+  const startCook = document.getElementById('start-cook');
 
-    function renderList() {
-      const term = input.value.trim().toLowerCase();
-      let list = recipes.filter(r =>
-        r.titulo.toLowerCase().includes(term) ||
-        r.ingredientes.some(i=>i.toLowerCase().includes(term))
-      );
-      if (showOnlyFav) list = list.filter(r => favorites.has(r.titulo));
+  // Modo cocina
+  const cookMode   = document.getElementById('cook-mode');
+  const cookCnt    = document.getElementById('cook-counter');
+  const cookText   = document.getElementById('cook-text');
+  const prevStep   = document.getElementById('prev-step');
+  const nextStep   = document.getElementById('next-step');
+  const repeatStep = document.getElementById('repeat-step');
+  const exitCook   = document.getElementById('exit-cook');
 
-      grid.innerHTML = '';
-      if (!list.length) {
-        return noResults.classList.remove('hidden');
-      }
-      noResults.classList.add('hidden');
+  // Carrito
+  const cartModal = document.getElementById('cart-modal');
+  const closeCart = document.getElementById('close-cart');
+  const clearCart = document.getElementById('clear-cart');
+  const printCart = document.getElementById('print-cart');
+  const cartList  = document.getElementById('cartList');
 
-      list.forEach(r => {
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col';
-        card.innerHTML = `
-          <img src="${r.imagen}" alt="${r.titulo}"
-               class="h-32 w-full object-cover rounded-t-xl">
-          <div class="p-4 flex-grow flex flex-col">
-            <h2 class="font-semibold text-lg">${r.titulo}</h2>
-            <p class="text-sm text-gray-500 mt-1">
-              Tiempo: ${r.tiempo} | Raciones: ${r.raciones}
-            </p>
-            <button data-id="${r.titulo}"
-              class="mt-auto self-end focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 ${favorites.has(r.titulo)?'text-red-500':'text-gray-300'}"
-                fill="${favorites.has(r.titulo)?'currentColor':'none'}"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4.318 6.318a4.5 4.5 0
-                     016.364 0L12 7.636l1.318-1.318a4.5 4.5 0
-                     016.364 6.364L12 20.364l-7.682-7.682a4.5
-                     4.5 0 010-6.364z" />
-              </svg>
-            </button>
-          </div>`;
-        // Toggle favorito
-        card.querySelector('button').onclick = e => {
-          const id = e.currentTarget.dataset.id;
-          if (favorites.has(id)) {
-            favorites.delete(id);
-            showToast('Eliminado de favoritos');
-          } else {
-            favorites.add(id);
-            showToast('Añadido a favoritos','success');
-          }
-          localStorage.setItem('favRecipes', JSON.stringify([...favorites]));
-          renderList();
-        };
-        grid.appendChild(card);
-      });
-    }
+  // Estado modal receta
+  let currRecipe = null, currServ=1;
 
-    // Listeners
-    input.addEventListener('input', () => renderList());
-    btnAll.onclick = () => {
-      showOnlyFav = false;
-      btnAll.className = 'px-4 py-2 bg-amber-500 text-white rounded-full';
-      btnFav.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-full';
-      renderList();
+  // —————————————————————————————————————————— Utilidades ——————————————————————————————————————————
+  function toast(msg, type='info') {
+    const t = document.createElement('div');
+    t.textContent = msg;
+    t.className = 'px-4 py-2 rounded shadow text-white '+
+      (type==='success'?'bg-green-500':'bg-blue-500');
+    toasts.appendChild(t);
+    setTimeout(()=>t.remove(),2500);
+  }
+  function saveFavs(){ localStorage.setItem('favRecipes',JSON.stringify([...favs])); }
+  function saveCart(){ localStorage.setItem('shoppingCart',JSON.stringify(cart)); updateCartCount(); }
+  function updateCartCount(){ cartCnt.textContent = cart.length; }
+
+  // ————————————————————————————————————————— Renderizado recetas ————————————————————————————————————————
+  function renderList(){
+    const term = input.value.trim().toLowerCase();
+    let list = recipes.filter(r=>
+      r.titulo.toLowerCase().includes(term) ||
+      r.ingredientes.some(i=>i.toLowerCase().includes(term))
+    );
+    if(showFavOnly) list=list.filter(r=>favs.has(r.titulo));
+
+    grid.innerHTML='';
+    if(!list.length){ return noRes.classList.remove('hidden'); }
+    noRes.classList.add('hidden');
+
+    list.forEach(r=>{
+      const card = document.createElement('div');
+      card.className='bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col';
+      card.innerHTML=`
+        <img src="${r.imagen}" alt="${r.titulo}"
+             class="h-32 w-full object-cover rounded-t-xl">
+        <div class="p-4 flex-grow flex flex-col">
+          <h2 class="font-semibold text-lg">${r.titulo}</h2>
+          <p class="text-sm text-gray-500 mt-1">Tiempo: ${r.tiempo}</p>
+          <div class="mt-auto flex justify-between items-center">
+            <button class="text-${favs.has(r.titulo)?'red':'gray'}-500"
+                    title="Favorito">♥</button>
+            <button class="text-blue-500" title="Ver">Ver →</button>
+          </div>
+        </div>`;
+      // Favorito
+      card.querySelector('button:first-of-type').onclick=e=>{
+        e.stopPropagation();
+        if(favs.has(r.titulo)){ favs.delete(r.titulo); toast('Eliminado de fav'); }
+        else { favs.add(r.titulo); toast('Añadido a fav','success'); }
+        saveFavs(); renderList();
+      };
+      // Ver detalle
+      card.querySelector('button:last-of-type').onclick=()=>{
+        openModal(r);
+      };
+      grid.appendChild(card);
+    });
+  }
+
+  // —————————————————————————————————————————— Detalle receta ————————————————————————————————————————
+  function openModal(r){
+    currRecipe=r; currServ=r.raciones;
+    mTitle.textContent=r.titulo;
+    mImg.src=r.imagen;
+    mTime.textContent=r.tiempo;
+    inpServ.value=currServ;
+    mServ.textContent=currServ;
+
+    // ingredientes
+    ingList.innerHTML='';
+    r.ingredientes.forEach(i=>{
+      const li=document.createElement('li');
+      li.textContent=i;
+      ingList.appendChild(li);
+    });
+    // pasos
+    stepList.innerHTML='';
+    r.pasos.forEach(p=>{
+      const li=document.createElement('li');
+      li.textContent=p;
+      stepList.appendChild(li);
+    });
+
+    modal.classList.remove('hidden');
+  }
+  closeMod.onclick=()=>modal.classList.add('hidden');
+
+  // ajustar raciones
+  decServ.onclick=()=>{ if(currServ>1) inpServ.value=--currServ; };
+  incServ.onclick=()=>inpServ.value=++currServ;
+  inpServ.onchange=()=>{ currServ=Math.max(1,parseInt(inpServ.value)); inpServ.value=currServ; };
+
+  // Añadir al carrito
+  addCartB.onclick=()=>{
+    // simple: guardamos sólo el título
+    cart.push(currRecipe.titulo);
+    saveCart();
+    toast('Añadido al carrito','success');
+  };
+
+  // —————————————————————————————————————————— Carrito —————————————————————————————————————————
+  btnCart.onclick=()=>cartModal.classList.remove('hidden');
+  closeCart.onclick=()=>cartModal.classList.add('hidden');
+  clearCart.onclick=()=>{ cart=[]; saveCart(); renderCart(); toast('Carrito vaciado'); };
+  printCart.onclick=()=>window.print();
+
+  function renderCart(){
+    cartList.innerHTML='';
+    if(!cart.length){ cartList.innerHTML='<li class="text-gray-500">Vacío</li>'; return; }
+    // contamos repeticiones
+    const cnt = {};
+    cart.forEach(i=>cnt[i]=(cnt[i]||0)+1);
+    Object.entries(cnt).forEach(([titulo,cantidad])=>{
+      const li=document.createElement('li');
+      li.className='flex justify-between items-center';
+      li.innerHTML=`<span>${cantidad}× ${titulo}</span>
+                    <button class="text-red-500">✕</button>`;
+      li.querySelector('button').onclick=()=>{
+        // eliminar todas las apariciones
+        cart = cart.filter(x=>x!==titulo);
+        saveCart(); renderCart();
+      };
+      cartList.appendChild(li);
+    });
+  }
+
+  // —————————————————————————————————————————— Modo cocina por voz —————————————————————————————————
+  let cookSteps=[], cookIdx=0;
+  function startCooking(){
+    cookSteps = currRecipe.pasos;
+    cookIdx=0;
+    modal.classList.add('hidden');
+    cookMode.classList.remove('hidden');
+    speak(`Empezamos receta de ${currRecipe.titulo}`);
+    setTimeout(updateCookStep,800);
+    recognition.start();
+  }
+  document.getElementById('start-cook').onclick=startCooking;
+
+  function updateCookStep(){
+    cookCnt.textContent=`Paso ${cookIdx+1} de ${cookSteps.length}`;
+    cookText.textContent=cookSteps[cookIdx];
+    speak(cookSteps[cookIdx]);
+  }
+  function nextCook(){ if(cookIdx<cookSteps.length-1){ cookIdx++; updateCookStep(); } else { speak('Fin de la receta'); exitCookMode(); } }
+  function prevCook(){ if(cookIdx>0){ cookIdx--; updateCookStep(); } else speak('Primer paso'); }
+  function repeatCook(){ speak(cookSteps[cookIdx]); }
+
+  prevStep.onclick=prevCook;
+  nextStep.onclick=nextCook;
+  repeatStep.onclick=repeatCook;
+  exitCook.onclick=exitCookMode;
+
+  function exitCookMode(){
+    cookMode.classList.add('hidden');
+    recognition.stop();
+  }
+
+  // SpeechRecognition
+  const SpeechRecognition = window.SpeechRecognition||window.webkitSpeechRecognition;
+  const recognition = SpeechRecognition? new SpeechRecognition(): null;
+  if(recognition){
+    recognition.lang='es-ES'; recognition.interimResults=false;
+    recognition.onresult=e=>{
+      const cmd=e.results[0][0].transcript.toLowerCase();
+      if(cmd.includes('siguiente')) nextCook();
+      else if(cmd.includes('anterior')) prevCook();
+      else if(cmd.includes('repetir')) repeatCook();
+      else if(cmd.includes('salir')) exitCookMode();
     };
-    btnFav.onclick = () => {
-      showOnlyFav = true;
-      btnFav.className = 'px-4 py-2 bg-amber-500 text-white rounded-full';
-      btnAll.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-full';
-      renderList();
+    recognition.onend=()=>{
+      if(!cookMode.classList.contains('hidden')) recognition.start();
     };
+  }
 
-    // Arranca
-    renderList();
+  function speak(txt){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.lang='es-ES'; u.rate=1; speechSynthesis.speak(u);
+  }
+
+  // ————————————————————————————————————————— Inicialización ——————————————————————————————————————
+  input.oninput=renderList;
+  btnAll.onclick=()=>{ showFavOnly=false; btnAll.classList.replace('bg-gray-200','bg-amber-500'); btnFav.classList.replace('bg-amber-500','bg-gray-200'); renderList(); };
+  btnFav.onclick=()=>{ showFavOnly=true; btnFav.classList.replace('bg-gray-200','bg-amber-500'); btnAll.classList.replace('bg-amber-500','bg-gray-200'); renderList(); };
+
+  // carga inicial
+  renderList();
+  renderCart();
+  updateCartCount();
+
   </script>
 </body>
 </html>
