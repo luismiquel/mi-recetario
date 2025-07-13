@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Recetario Ligero</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Oculta scrollbars de la lista */
-    #cartList { max-height:50vh; overflow-y:auto; }
-    #cartList::-webkit-scrollbar { display:none; }
-  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+
   <div class="max-w-7xl mx-auto p-6">
-    <header class="mb-6">
+    <header class="mb-6 text-center">
       <h1 class="text-4xl font-bold text-amber-600">Recetario Ligero</h1>
       <p class="text-gray-600">120 recetas para inspirar tu cocina.</p>
     </header>
 
-    <!-- BUSCADOR + FILTROS -->
-    <div class="flex flex-col sm:flex-row gap-3 mb-4">
+    <!-- CONTROLES -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-4 items-center">
       <input id="search" type="text" placeholder="Buscar receta..."
-        class="flex-1 p-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-amber-400">
+        class="flex-1 p-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-amber-400" />
       <button id="btn-all" class="px-4 py-2 bg-amber-500 text-white rounded-full">Todas</button>
       <button id="btn-fav" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full">Favoritas</button>
-      <button id="btn-cart" class="px-4 py-2 bg-teal-500 text-white rounded-full">Carrito (<span id="cart-count">0</span>)</button>
+      <button id="btn-cart" class="px-4 py-2 bg-teal-500 text-white rounded-full">
+        Carrito (<span id="cart-count">0</span>)
+      </button>
     </div>
 
     <div id="no-results" class="hidden text-center py-12 text-gray-500">
@@ -37,19 +35,18 @@
   <!-- MODAL RECETA -->
   <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
-      <button id="close-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
-        ✕
-      </button>
+      <button id="close-modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">✕</button>
       <h2 id="modal-title" class="text-2xl font-bold text-amber-600 mb-4"></h2>
-      <img id="modal-img" class="w-full h-48 object-cover rounded-lg mb-4">
-      <p class="mb-4"><strong>Tiempo:</strong> <span id="modal-time"></span> | <strong>Raciones:</strong> <span id="modal-serv"></span></p>
-
-      <div class="flex items-center gap-2 mb-4">
+      <img id="modal-img" class="w-full h-48 object-cover rounded-lg mb-4" />
+      <p class="mb-4">
+        <strong>Tiempo:</strong> <span id="modal-time"></span> |
+        <strong>Raciones:</strong> <span id="modal-serv"></span>
+      </p>
+      <div class="flex items-center gap-2 mb-4 justify-center">
         <button id="dec-serv" class="px-3 py-1 bg-amber-100 rounded-md">−</button>
-        <input id="inp-serv" type="number" min="1" class="w-16 text-center border rounded" value="1">
+        <input id="inp-serv" type="number" min="1" class="w-16 text-center border rounded" value="1" />
         <button id="inc-serv" class="px-3 py-1 bg-amber-100 rounded-md">+</button>
       </div>
-
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h3 class="font-semibold mb-2">Ingredientes</h3>
@@ -60,7 +57,6 @@
           <ol id="step-list" class="list-decimal list-inside space-y-2 text-gray-700"></ol>
         </div>
       </div>
-
       <div class="mt-6 flex flex-wrap gap-3 justify-center">
         <button id="add-cart" class="bg-teal-600 text-white px-6 py-2 rounded-full">Añadir al Carrito</button>
         <button id="start-cook" class="bg-green-600 text-white px-6 py-2 rounded-full">Modo Cocina</button>
@@ -69,281 +65,250 @@
   </div>
 
   <!-- MODO COCINA -->
-  <div id="cook-mode" class="fixed inset-0 bg-white hidden flex-col z-50">
-    <div class="flex-grow flex flex-col justify-center items-center p-8 text-center">
-      <p id="cook-counter" class="text-lg text-amber-600 font-semibold mb-4"></p>
-      <p id="cook-text" class="text-3xl font-bold"></p>
+  <div id="cook-mode" class="fixed inset-0 bg-white hidden flex-col items-center justify-center p-6 z-50">
+    <div id="step-counter" class="text-xl font-semibold text-amber-600 mb-4"></div>
+    <div id="step-text" class="text-2xl text-gray-800 mb-6 text-center"></div>
+    <div class="flex gap-4">
+      <button id="prev-step" class="px-4 py-2 bg-gray-200 rounded">Anterior</button>
+      <button id="repeat-step" class="px-4 py-2 bg-amber-400 text-white rounded">Repetir</button>
+      <button id="next-step" class="px-4 py-2 bg-gray-200 rounded">Siguiente</button>
     </div>
-    <div class="p-4 bg-gray-100 grid grid-cols-3 gap-4">
-      <button id="prev-step" class="py-2 bg-gray-200 rounded">Anterior</button>
-      <button id="repeat-step" class="py-2 bg-amber-500 text-white rounded">Repetir</button>
-      <button id="next-step" class="py-2 bg-gray-200 rounded">Siguiente</button>
-    </div>
-    <button id="exit-cook" class="absolute top-4 right-4 p-2 bg-gray-200 rounded">✕</button>
+    <button id="exit-cook" class="absolute top-4 right-4 px-3 py-1 bg-red-400 text-white rounded">✕</button>
   </div>
 
-  <!-- MODAL CARRITO -->
+  <!-- CARRITO -->
   <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-6 relative">
       <button id="close-cart" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">✕</button>
-      <h2 class="text-2xl font-bold text-teal-600 mb-4">Tu Lista de la Compra</h2>
-      <ul id="cartList" class="space-y-2 text-gray-700 mb-6"></ul>
-      <div class="flex justify-center gap-4">
-        <button id="clear-cart" class="bg-red-500 text-white px-6 py-2 rounded">Vaciar</button>
-        <button id="print-cart" class="bg-gray-500 text-white px-6 py-2 rounded">Imprimir</button>
+      <h2 class="text-2xl font-bold text-teal-600 mb-4">Tu Carrito</h2>
+      <ul id="cart-list" class="list-disc list-inside space-y-2 text-gray-700"></ul>
+      <div class="mt-4 text-center">
+        <button id="clear-cart" class="bg-red-500 text-white px-6 py-2 rounded-full">Vaciar Carrito</button>
       </div>
     </div>
   </div>
 
-  <!-- TOASTS -->
-  <div id="toasts" class="fixed top-4 right-4 space-y-2 z-50"></div>
+  <!-- TOAST -->
+  <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
   <script>
-  // —————————————— 1) Pega tus 120 recetas aquí ——————————————
-  const recipes = [
-    /* {categoria:"Aperitivo",titulo:"Brochetas de aceituna y pimiento",raciones:4,tiempo:"15 min",
-       imagen:"https://...",ingredientes:["Aceitunas","Pimiento"],pasos:["Ensarta","Sirve"]},
-       ... tus 118 más ...
-    */
-  ];
+    // === DATOS ===
+    // Pega aquí tu array original con las 120 recetas:
+    const allRecipes = [ /* ... tus 120 objetos de receta ... */ ];
 
-  // —————————————————————————————————————————————————————————————
-  // Variables y referencias DOM
-  let favs = new Set(JSON.parse(localStorage.getItem('favRecipes')||'[]'));
-  let cart = JSON.parse(localStorage.getItem('shoppingCart')||'[]');
-  let showFavOnly = false;
+    // === ESTADO ===
+    let favs = new Set();
+    let cart = [];
+    let filtered = allRecipes.slice();
+    let currentRecipe = null;
+    let cookSteps = [], cookIndex = 0;
 
-  const grid     = document.getElementById('grid');
-  const noRes    = document.getElementById('no-results');
-  const input    = document.getElementById('search');
-  const btnAll   = document.getElementById('btn-all');
-  const btnFav   = document.getElementById('btn-fav');
-  const btnCart  = document.getElementById('btn-cart');
-  const cartCnt  = document.getElementById('cart-count');
-  const toasts   = document.getElementById('toasts');
+    // === REFERENCIAS DOM ===
+    const grid = document.getElementById('grid'),
+          noRes = document.getElementById('no-results'),
+          btnAll = document.getElementById('btn-all'),
+          btnFav = document.getElementById('btn-fav'),
+          btnCart = document.getElementById('btn-cart'),
+          cartCount = document.getElementById('cart-count'),
+          searchInput = document.getElementById('search'),
+          modal = document.getElementById('modal'),
+          mTitle = document.getElementById('modal-title'),
+          mImg = document.getElementById('modal-img'),
+          mTime = document.getElementById('modal-time'),
+          mServ = document.getElementById('modal-serv'),
+          decServ = document.getElementById('dec-serv'),
+          incServ = document.getElementById('inc-serv'),
+          inpServ = document.getElementById('inp-serv'),
+          ingList = document.getElementById('ing-list'),
+          stepList = document.getElementById('step-list'),
+          addCart = document.getElementById('add-cart'),
+          startCook = document.getElementById('start-cook'),
+          closeModal = document.getElementById('close-modal'),
+          cookMode = document.getElementById('cook-mode'),
+          stepCounter = document.getElementById('step-counter'),
+          stepText = document.getElementById('step-text'),
+          prevStep = document.getElementById('prev-step'),
+          nextStep = document.getElementById('next-step'),
+          repeatStep = document.getElementById('repeat-step'),
+          exitCook = document.getElementById('exit-cook'),
+          cartModal = document.getElementById('cart-modal'),
+          cartList = document.getElementById('cart-list'),
+          closeCart = document.getElementById('close-cart'),
+          clearCart = document.getElementById('clear-cart'),
+          toastC = document.getElementById('toast-container');
 
-  // Modal receta
-  const modal     = document.getElementById('modal');
-  const closeMod  = document.getElementById('close-modal');
-  const mTitle    = document.getElementById('modal-title');
-  const mImg      = document.getElementById('modal-img');
-  const mTime     = document.getElementById('modal-time');
-  const mServ     = document.getElementById('modal-serv');
-  const decServ   = document.getElementById('dec-serv');
-  const incServ   = document.getElementById('inc-serv');
-  const inpServ   = document.getElementById('inp-serv');
-  const ingList   = document.getElementById('ing-list');
-  const stepList  = document.getElementById('step-list');
-  const addCartB  = document.getElementById('add-cart');
-  const startCook = document.getElementById('start-cook');
+    // === RENDER ===
+    function renderList(){
+      grid.innerHTML = '';
+      const list = filtered;
+      if(!list.length){ noRes.classList.remove('hidden'); return }
+      noRes.classList.add('hidden');
 
-  // Modo cocina
-  const cookMode   = document.getElementById('cook-mode');
-  const cookCnt    = document.getElementById('cook-counter');
-  const cookText   = document.getElementById('cook-text');
-  const prevStep   = document.getElementById('prev-step');
-  const nextStep   = document.getElementById('next-step');
-  const repeatStep = document.getElementById('repeat-step');
-  const exitCook   = document.getElementById('exit-cook');
+      list.forEach(r=>{
+        const c = document.createElement('div');
+        c.className = 'bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col cursor-pointer';
+        c.innerHTML = `
+          <img src="${r.imagen}" alt="${r.titulo}"
+               class="h-32 w-full object-cover rounded-t-xl">
+          <div class="p-4 flex-grow flex flex-col">
+            <h2 class="font-semibold text-lg">${r.titulo}</h2>
+            <p class="text-sm text-gray-500 mt-1">Tiempo: ${r.tiempo}</p>
+            <div class="mt-auto flex justify-between items-center">
+              <button class="fav-btn text-${favs.has(r.titulo)?'red':'gray'}-500">♥</button>
+              <button class="view-btn text-blue-500">Ver →</button>
+            </div>
+          </div>`;
+        c.onclick = ()=> openModal(r);
+        c.querySelector('.fav-btn').onclick = e=>{
+          e.stopPropagation();
+          if(favs.has(r.titulo)) favs.delete(r.titulo), toast('Eliminado de favoritos');
+          else favs.add(r.titulo), toast('Añadido a favoritos','success');
+          renderList();
+        };
+        grid.appendChild(c);
+      });
+    }
 
-  // Carrito
-  const cartModal = document.getElementById('cart-modal');
-  const closeCart = document.getElementById('close-cart');
-  const clearCart = document.getElementById('clear-cart');
-  const printCart = document.getElementById('print-cart');
-  const cartList  = document.getElementById('cartList');
+    // === FILTROS ===
+    function applyFilter(mode){
+      if(mode==='all') filtered = allRecipes.slice();
+      else filtered = allRecipes.filter(r=>favs.has(r.titulo));
+      const term = searchInput.value.toLowerCase();
+      if(term) filtered = filtered.filter(r=>
+        r.titulo.toLowerCase().includes(term) ||
+        r.ingredientes.join(' ').toLowerCase().includes(term)
+      );
+      renderList();
+    }
+    btnAll.onclick  = ()=>{ applyFilter('all'); };
+    btnFav.onclick  = ()=>{ applyFilter('fav'); };
+    searchInput.oninput = ()=>applyFilter();
 
-  // Estado modal receta
-  let currRecipe = null, currServ=1;
-
-  // —————————————————————————————————————————— Utilidades ——————————————————————————————————————————
-  function toast(msg, type='info') {
-    const t = document.createElement('div');
-    t.textContent = msg;
-    t.className = 'px-4 py-2 rounded shadow text-white '+
-      (type==='success'?'bg-green-500':'bg-blue-500');
-    toasts.appendChild(t);
-    setTimeout(()=>t.remove(),2500);
-  }
-  function saveFavs(){ localStorage.setItem('favRecipes',JSON.stringify([...favs])); }
-  function saveCart(){ localStorage.setItem('shoppingCart',JSON.stringify(cart)); updateCartCount(); }
-  function updateCartCount(){ cartCnt.textContent = cart.length; }
-
-  // ————————————————————————————————————————— Renderizado recetas ————————————————————————————————————————
-  function renderList(){
-    const term = input.value.trim().toLowerCase();
-    let list = recipes.filter(r=>
-      r.titulo.toLowerCase().includes(term) ||
-      r.ingredientes.some(i=>i.toLowerCase().includes(term))
-    );
-    if(showFavOnly) list=list.filter(r=>favs.has(r.titulo));
-
-    grid.innerHTML='';
-    if(!list.length){ return noRes.classList.remove('hidden'); }
-    noRes.classList.add('hidden');
-
-    list.forEach(r=>{
-      const card = document.createElement('div');
-      card.className='bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col';
-      card.innerHTML=`
-        <img src="${r.imagen}" alt="${r.titulo}"
-             class="h-32 w-full object-cover rounded-t-xl">
-        <div class="p-4 flex-grow flex flex-col">
-          <h2 class="font-semibold text-lg">${r.titulo}</h2>
-          <p class="text-sm text-gray-500 mt-1">Tiempo: ${r.tiempo}</p>
-          <div class="mt-auto flex justify-between items-center">
-            <button class="text-${favs.has(r.titulo)?'red':'gray'}-500"
-                    title="Favorito">♥</button>
-            <button class="text-blue-500" title="Ver">Ver →</button>
-          </div>
-        </div>`;
-      // Favorito
-      card.querySelector('button:first-of-type').onclick=e=>{
-        e.stopPropagation();
-        if(favs.has(r.titulo)){ favs.delete(r.titulo); toast('Eliminado de fav'); }
-        else { favs.add(r.titulo); toast('Añadido a fav','success'); }
-        saveFavs(); renderList();
-      };
-      // Ver detalle
-      card.querySelector('button:last-of-type').onclick=()=>{
-        openModal(r);
-      };
-      grid.appendChild(card);
-    });
-  }
-
-  // —————————————————————————————————————————— Detalle receta ————————————————————————————————————————
-  function openModal(r){
-    currRecipe=r; currServ=r.raciones;
-    mTitle.textContent=r.titulo;
-    mImg.src=r.imagen;
-    mTime.textContent=r.tiempo;
-    inpServ.value=currServ;
-    mServ.textContent=currServ;
-
-    // ingredientes
-    ingList.innerHTML='';
-    r.ingredientes.forEach(i=>{
-      const li=document.createElement('li');
-      li.textContent=i;
-      ingList.appendChild(li);
-    });
-    // pasos
-    stepList.innerHTML='';
-    r.pasos.forEach(p=>{
-      const li=document.createElement('li');
-      li.textContent=p;
-      stepList.appendChild(li);
-    });
-
-    modal.classList.remove('hidden');
-  }
-  closeMod.onclick=()=>modal.classList.add('hidden');
-
-  // ajustar raciones
-  decServ.onclick=()=>{ if(currServ>1) inpServ.value=--currServ; };
-  incServ.onclick=()=>inpServ.value=++currServ;
-  inpServ.onchange=()=>{ currServ=Math.max(1,parseInt(inpServ.value)); inpServ.value=currServ; };
-
-  // Añadir al carrito
-  addCartB.onclick=()=>{
-    // simple: guardamos sólo el título
-    cart.push(currRecipe.titulo);
-    saveCart();
-    toast('Añadido al carrito','success');
-  };
-
-  // —————————————————————————————————————————— Carrito —————————————————————————————————————————
-  btnCart.onclick=()=>cartModal.classList.remove('hidden');
-  closeCart.onclick=()=>cartModal.classList.add('hidden');
-  clearCart.onclick=()=>{ cart=[]; saveCart(); renderCart(); toast('Carrito vaciado'); };
-  printCart.onclick=()=>window.print();
-
-  function renderCart(){
-    cartList.innerHTML='';
-    if(!cart.length){ cartList.innerHTML='<li class="text-gray-500">Vacío</li>'; return; }
-    // contamos repeticiones
-    const cnt = {};
-    cart.forEach(i=>cnt[i]=(cnt[i]||0)+1);
-    Object.entries(cnt).forEach(([titulo,cantidad])=>{
-      const li=document.createElement('li');
-      li.className='flex justify-between items-center';
-      li.innerHTML=`<span>${cantidad}× ${titulo}</span>
-                    <button class="text-red-500">✕</button>`;
-      li.querySelector('button').onclick=()=>{
-        // eliminar todas las apariciones
-        cart = cart.filter(x=>x!==titulo);
-        saveCart(); renderCart();
-      };
-      cartList.appendChild(li);
-    });
-  }
-
-  // —————————————————————————————————————————— Modo cocina por voz —————————————————————————————————
-  let cookSteps=[], cookIdx=0;
-  function startCooking(){
-    cookSteps = currRecipe.pasos;
-    cookIdx=0;
-    modal.classList.add('hidden');
-    cookMode.classList.remove('hidden');
-    speak(`Empezamos receta de ${currRecipe.titulo}`);
-    setTimeout(updateCookStep,800);
-    recognition.start();
-  }
-  document.getElementById('start-cook').onclick=startCooking;
-
-  function updateCookStep(){
-    cookCnt.textContent=`Paso ${cookIdx+1} de ${cookSteps.length}`;
-    cookText.textContent=cookSteps[cookIdx];
-    speak(cookSteps[cookIdx]);
-  }
-  function nextCook(){ if(cookIdx<cookSteps.length-1){ cookIdx++; updateCookStep(); } else { speak('Fin de la receta'); exitCookMode(); } }
-  function prevCook(){ if(cookIdx>0){ cookIdx--; updateCookStep(); } else speak('Primer paso'); }
-  function repeatCook(){ speak(cookSteps[cookIdx]); }
-
-  prevStep.onclick=prevCook;
-  nextStep.onclick=nextCook;
-  repeatStep.onclick=repeatCook;
-  exitCook.onclick=exitCookMode;
-
-  function exitCookMode(){
-    cookMode.classList.add('hidden');
-    recognition.stop();
-  }
-
-  // SpeechRecognition
-  const SpeechRecognition = window.SpeechRecognition||window.webkitSpeechRecognition;
-  const recognition = SpeechRecognition? new SpeechRecognition(): null;
-  if(recognition){
-    recognition.lang='es-ES'; recognition.interimResults=false;
-    recognition.onresult=e=>{
-      const cmd=e.results[0][0].transcript.toLowerCase();
-      if(cmd.includes('siguiente')) nextCook();
-      else if(cmd.includes('anterior')) prevCook();
-      else if(cmd.includes('repetir')) repeatCook();
-      else if(cmd.includes('salir')) exitCookMode();
+    // === MODAL RECETA ===
+    function openModal(r){
+      currentRecipe = r;
+      mTitle.textContent = r.titulo;
+      mImg.src = r.imagen;
+      mTime.textContent = r.tiempo;
+      inpServ.value = r.raciones;
+      mServ.textContent = r.raciones;
+      // ingredientes
+      ingList.innerHTML = '';
+      r.ingredientes.forEach(i=>{
+        const li = document.createElement('li');
+        li.textContent = i; ingList.appendChild(li);
+      });
+      // pasos
+      stepList.innerHTML = '';
+      r.pasos.forEach(p=>{
+        const li=document.createElement('li');
+        li.textContent=p; stepList.appendChild(li);
+      });
+      modal.classList.remove('hidden');
+    }
+    closeModal.onclick = ()=>modal.classList.add('hidden');
+    decServ.onclick = ()=>{
+      let v = Math.max(1, parseInt(inpServ.value)-1);
+      inpServ.value = v; mServ.textContent = v;
     };
-    recognition.onend=()=>{
-      if(!cookMode.classList.contains('hidden')) recognition.start();
+    incServ.onclick = ()=>{
+      let v = parseInt(inpServ.value)+1;
+      inpServ.value = v; mServ.textContent = v;
     };
-  }
 
-  function speak(txt){
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(txt);
-    u.lang='es-ES'; u.rate=1; speechSynthesis.speak(u);
-  }
+    // === CARRITO ===
+    addCart.onclick = ()=>{
+      const qty = parseInt(inpServ.value);
+      cart.push({r:currentRecipe.titulo,n:qty});
+      cartCount.textContent = cart.length;
+      toast(`Añadido ${qty} raciones de "${currentRecipe.titulo}" al carrito`,'success');
+    };
+    btnCart.onclick = ()=>cartModal.classList.remove('hidden');
+    closeCart.onclick = ()=>cartModal.classList.add('hidden');
+    clearCart.onclick = ()=>{
+      cart = []; cartCount.textContent=0; cartList.innerHTML='';
+      toast('Carrito vaciado','info');
+    };
+    function renderCart(){
+      cartList.innerHTML='';
+      if(!cart.length) cartList.innerHTML='<li>Carrito vacío</li>';
+      else cart.forEach((it,i)=>{
+        const li=document.createElement('li');
+        li.textContent=`${it.n} × ${it.r}`;
+        cartList.appendChild(li);
+      });
+    }
+    cartModal.addEventListener('transitionend',renderCart);
 
-  // ————————————————————————————————————————— Inicialización ——————————————————————————————————————
-  input.oninput=renderList;
-  btnAll.onclick=()=>{ showFavOnly=false; btnAll.classList.replace('bg-gray-200','bg-amber-500'); btnFav.classList.replace('bg-amber-500','bg-gray-200'); renderList(); };
-  btnFav.onclick=()=>{ showFavOnly=true; btnFav.classList.replace('bg-gray-200','bg-amber-500'); btnAll.classList.replace('bg-amber-500','bg-gray-200'); renderList(); };
+    // === MODO COCINA / VOZ ===
+    exitCook.onclick = ()=>{ cookMode.classList.add('hidden'); window.speechSynthesis.cancel(); };
+    function startCooking(){
+      cookSteps = currentRecipe.pasos.slice();
+      cookIndex = 0;
+      cookMode.classList.remove('hidden');
+      showStep();
+      startVoice();
+    }
+    startCook.onclick = startCooking;
+    function showStep(){
+      stepCounter.textContent = `Paso ${cookIndex+1} de ${cookSteps.length}`;
+      stepText.textContent = cookSteps[cookIndex];
+      speak(cookSteps[cookIndex]);
+    }
+    prevStep.onclick = ()=>{
+      if(cookIndex>0){ cookIndex--; showStep(); } else speak('Estás en el primer paso');
+    };
+    nextStep.onclick = ()=>{
+      if(cookIndex<cookSteps.length-1){ cookIndex++; showStep(); }
+      else{ speak('Receta completada'); exitCook.onclick(); }
+    };
+    repeatStep.onclick = ()=>showStep();
 
-  // carga inicial
-  renderList();
-  renderCart();
-  updateCartCount();
+    // voz
+    const SpeechRecognition = window.SpeechRecognition||window.webkitSpeechRecognition;
+    let recog=null, listening=false, speaking=false;
+    function speak(txt){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(txt);
+      u.lang='es-ES'; u.rate=0.9;
+      u.onend=()=>speaking=false;
+      u.onstart=()=>speaking=true;
+      speechSynthesis.speak(u);
+    }
+    function startVoice(){
+      if(!SpeechRecognition) return;
+      if(!recog){
+        recog=new SpeechRecognition();
+        recog.lang='es-ES'; recog.interimResults=false;
+        recog.onresult=e=>{
+          const cmd=e.results[0][0].transcript.toLowerCase();
+          if(speaking) return;
+          if(cmd.includes('siguiente')) nextStep.onclick();
+          else if(cmd.includes('anterior')) prevStep.onclick();
+          else if(cmd.includes('repetir')) repeatStep.onclick();
+          else if(cmd.includes('salir')) exitCook.onclick();
+          else speak('Di siguiente, anterior, repetir o salir');
+        };
+        recog.onend=()=>{ if(!cookMode.classList.contains('hidden')) recog.start(); };
+      }
+      if(!listening){ recog.start(); listening=true; }
+    }
 
+    // === TOAST ===
+    function toast(msg,type='info'){
+      const d=document.createElement('div');
+      d.className=`px-4 py-2 rounded shadow text-white ${{
+        info:'bg-blue-500',success:'bg-green-500',error:'bg-red-500'
+      }[type]||'bg-gray-500'}`;
+      d.textContent=msg; toastC.appendChild(d);
+      setTimeout(()=>{
+        d.remove();
+      },3000);
+    }
+
+    // === INIT ===
+    renderList();
   </script>
+
 </body>
 </html>
