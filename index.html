@@ -1,18 +1,84 @@
-# **Recetario Delicioso** > **Nota:** Para que la aplicación funcione correctamente, debes servirla desde un servidor HTTP (por ejemplo, con `serve .` de Node.js o `python -m http.server`). Abrir el archivo localmente (`file://`) no carga los módulos ES y Firebase. ```html
-Recetario Delicioso
-120 recetas para inspirar tu cocina.
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetario Delicioso</title>
 
-Buscar por nombre o ingrediente...
-Todas
-Favoritas
-Todos
-Aperitivos
-Primeros
-Segundos
-Postres
-Tiempo:
-Cualquiera
-Rápida (<30 min)
-Media (30-60 min)
-Larga (>60 min)
-Ver Lista de Compra (
+    <meta name="theme-color" content="#78350f"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Recetario">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Aquí van tus estilos CSS personalizados (modo oscuro, botones, modal, etc.) */
+    </style>
+</head>
+<body class="dark:bg-stone-900 dark:text-stone-200">
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
+            <p class="text-gray-600 dark:text-stone-400 mt-2">120 recetas para inspirar tu cocina.</p>
+        </header>
+
+        <section class="filters sticky top-4 bg-white dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm mb-8">
+            <div class="flex flex-wrap gap-4 mb-4">
+                <input id="searchInput" type="text" placeholder="Buscar por nombre o ingrediente..." class="flex-grow px-4 py-3 rounded-full border border-gray-300 dark:border-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-stone-800" />
+                <button id="filterAll" class="filter-btn px-6 py-2 rounded-full">Todas</button>
+                <button id="filterFavorites" class="filter-btn px-6 py-2 rounded-full">Favoritas</button>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button data-category="all" class="category-btn active">Todos</button>
+                <button data-category="Aperitivo" class="category-btn">Aperitivos</button>
+                <button data-category="Primero" class="category-btn">Primeros</button>
+                <button data-category="Segundo" class="category-btn">Segundos</button>
+                <button data-category="Postre" class="category-btn">Postres</button>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <span class="font-medium">Tiempo:</span>
+                <button data-time="all" class="time-filter-btn active">Cualquiera</button>
+                <button data-time="short" class="time-filter-btn">Rápida (&lt;30 min)</button>
+                <button data-time="medium" class="time-filter-btn">Media (30-60 min)</button>
+                <button data-time="long" class="time-filter-btn">Larga (&gt;60 min)</button>
+            </div>
+            <button id="viewShoppingListBtn" class="bg-amber-700 text-white px-6 py-3 rounded-full shadow-md flex items-center gap-2">
+                Ver Lista de Compra (<span id="shopping-list-count">0</span>)
+            </button>
+        </section>
+
+        <main id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            <!-- Aquí se renderizan las cards de recetas -->
+        </main>
+
+        <div id="no-results" class="hidden text-center py-12">
+            <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
+        </div>
+
+        <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
+            <p class="text-sm text-gray-500 dark:text-stone-400">&copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <!-- Modals, cooking mode y asistente de voz -->
+    <!-- El archivo app.js incluye: -->
+    <!-- - Lógica de renderizado y filtros -->
+    <!-- - Integración con Firebase para favoritos -->
+    <!-- - Modo de cocina guiada con navegación paso a paso -->
+    <!-- - Control por voz usando SpeechRecognition: -->
+    <!--     • "siguiente" o "sigue" → pasa al siguiente paso y lee el contenido del paso -->
+    <!--     • "anterior" o "atrás" → vuelve al paso previo -->
+    <!--     • "repetir" → repite el paso actual -->
+    <!--     • "salir" o "detener" → cierra el modo de cocina -->
+    <!-- - Sintetizador de voz (SpeechSynthesis) para leer cada paso automáticamente -->
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
