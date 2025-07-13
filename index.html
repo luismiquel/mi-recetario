@@ -4,15 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Recetario Ligero</title>
-  <!-- Tailwind -->
+  <!-- TailwindCSS desde CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Para ocultar scrollbar en filtros */
+    /* Oculta scrollbars en filtros si los añades */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* Animación skeleton */
-    @keyframes pulse { 0%{opacity:1}50%{opacity:.5}100%{opacity:1} }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -29,43 +26,24 @@
     <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <!-- Toast container -->
+  <!-- Toasts -->
   <div id="toasts" class="fixed top-4 right-4 space-y-2"></div>
 
   <script>
-    // Datos simplificados (solo 2 recetas de ejemplo)
+    // Tus recetas de ejemplo
     const recipes = [
-      {
-        id: 1, title: 'Brochetas de aceituna y pimiento',
-        time: '15 min', ingr: ['Aceitunas', 'Pimiento', 'Albahaca'],
-      },
-      {
-        id: 2, title: 'Manzana asada con canela',
-        time: '35 min', ingr: ['Manzana', 'Canela'],
-      },
+      { id: 1, title: 'Brochetas de aceituna y pimiento', time: '15 min' },
+      { id: 2, title: 'Manzana asada con canela',      time: '35 min' }
     ];
     let favorites = new Set();
-    const grid = document.getElementById('grid');
-    const noResults = document.getElementById('no-results');
-    const input = document.getElementById('search');
-    const btnAll = document.getElementById('btn-all');
-    const btnFav = document.getElementById('btn-fav');
-    const toasts = document.getElementById('toasts');
     let showOnlyFav = false;
 
-    function renderSkeleton() {
-      grid.innerHTML = '';
-      for (let i=0; i<6; i++) {
-        const div = document.createElement('div');
-        div.className = 'animate-pulse bg-white rounded-xl p-4 space-y-2 shadow';
-        div.innerHTML = `
-          <div class="h-32 bg-gray-200 rounded"></div>
-          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-        `;
-        grid.appendChild(div);
-      }
-    }
+    const grid      = document.getElementById('grid');
+    const noResults = document.getElementById('no-results');
+    const input     = document.getElementById('search');
+    const btnAll    = document.getElementById('btn-all');
+    const btnFav    = document.getElementById('btn-fav');
+    const toasts    = document.getElementById('toasts');
 
     function showToast(msg, type='info') {
       const t = document.createElement('div');
@@ -73,20 +51,21 @@
       t.className = 'px-4 py-2 rounded shadow text-white ' +
         (type==='success'?'bg-green-500':'bg-blue-500');
       toasts.appendChild(t);
-      setTimeout(()=> t.remove(), 2500);
+      setTimeout(() => t.remove(), 2500);
     }
 
     function renderList() {
-      // filtrar con debounce
       const term = input.value.trim().toLowerCase();
       let list = recipes.filter(r => r.title.toLowerCase().includes(term));
       if (showOnlyFav) list = list.filter(r => favorites.has(r.id));
+
       grid.innerHTML = '';
       if (!list.length) {
         noResults.classList.remove('hidden');
         return;
       }
       noResults.classList.add('hidden');
+
       list.forEach(r => {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col';
@@ -99,8 +78,10 @@
               fill="${favorites.has(r.id)?'currentColor':'none'}"
               viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0
-                   016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                d="M4.318 6.318a4.5 4.5 0
+                   016.364 0L12 7.636l1.318-1.318a4.5 4.5 0
+                   016.364 6.364L12 20.364l-7.682-7.682a4.5
+                   4.5 0 010-6.364z" />
             </svg>
           </button>
         `;
@@ -119,22 +100,18 @@
       });
     }
 
-    // debounce búsqueda
-    let debounceTimer;
-    input.addEventListener('input',()=>{
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(renderList,300);
-    });
-    btnAll.onclick = ()=>{
-      showOnlyFav=false;
+    // Filtro y botones
+    input.addEventListener('input', () => setTimeout(renderList, 200));
+    btnAll.onclick = () => {
+      showOnlyFav = false;
       btnAll.classList.replace('bg-gray-200','bg-amber-500');
       btnAll.classList.replace('text-gray-700','text-white');
       btnFav.classList.replace('bg-amber-500','bg-gray-200');
       btnFav.classList.replace('text-white','text-gray-700');
       renderList();
     };
-    btnFav.onclick = ()=>{
-      showOnlyFav=true;
+    btnFav.onclick = () => {
+      showOnlyFav = true;
       btnFav.classList.replace('bg-gray-200','bg-amber-500');
       btnFav.classList.replace('text-gray-700','text-white');
       btnAll.classList.replace('bg-amber-500','bg-gray-200');
@@ -142,9 +119,8 @@
       renderList();
     };
 
-    // inicio
-    renderSkeleton();
-    setTimeout(renderList,500);
+    // Inicial
+    renderList();
   </script>
 </body>
 </html>
