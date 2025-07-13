@@ -8,57 +8,317 @@
     <meta name="theme-color" content="#78350f"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta</td></tr>
-<tr><td id="L2547" class="blob-num js-line-number" data-line-number="2547"></td><td><pre>                    dom.filterFavBtn.classList.remove('active'); dom.filterAllBtn.classList.add('active'); applyFilters();</pre></td></tr>
-<tr><td id="L2548" class="blob-num js-line-number" data-line-number="2548"></td><td><pre>                });</pre></td></tr>
-<tr><td id="L2549" class="blob-num js-line-number" data-line-number="2549"></td><td><pre>                if (dom.filterFavBtn) dom.filterFavBtn.addEventListener('click', () => {</pre></td></tr>
-<tr><td id="L2550" class="blob-num js-line-number" data-line-number="2550"></td><td><pre>                    currentFilter = 'favorites'; dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active'); applyFilters();</pre></td></tr>
-<tr><td id="L2551" class="blob-num js-line-number" data-line-number="2551"></td><td><pre>                });</pre></td></tr>
-<tr><td id="L2552" class="blob-num js-line-number" data-line-number="2552"></td><td><pre>                </pre></td></tr>
-<tr><td id="L2553" class="blob-num js-line-number" data-line-number="2553"></td><td><pre>                if (dom.categoryFilters) dom.categoryFilters.addEventListener('click', (e) => {</pre></td></tr>
-<tr><td id="L2554" class="blob-num js-line-number" data-line-number="2554"></td><td><pre>                    if (e.target.matches('.category-btn')) {</pre></td></tr>
-<tr><td id="L2555" class="blob-num js-line-number" data-line-number="2555"></td><td><pre>                        currentCategory = e.target.dataset.category;</pre></td></tr>
-<tr><td id="L2556" class="blob-num js-line-number" data-line-number="2556"></td><td><pre>                        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));</pre></td></tr>
-<tr><td id="L2557" class="blob-num js-line-number" data-line-number="2557"></td><td><pre>                        e.target.classList.add('active'); applyFilters();</pre></td></tr>
-<tr><td id="L2558" class="blob-num js-line-number" data-line-number="2558"></td><td><pre>                    }</pre></td></tr>
-<tr><td id="L2559" class="blob-num js-line-number" data-line-number="2559"></td><td><pre>                });</pre></td></tr>
-<tr><td id="L2560" class="blob-num js-line-number" data-line-number="2560"></td><td><pre>                if (dom.timeFilters) dom.timeFilters.addEventListener('click', (e) => {</pre></td></tr>
-<tr><td id="L2561" class="blob-num js-line-number" data-line-number="2561"></td><td><pre>                    if (e.target.matches('.time-filter-btn')) {</pre></td></tr>
-<tr><td id="L2562" class="blob-num js-line-number" data-line-number="2562"></td><td><pre>                        currentTimeFilter = e.target.dataset.time;</pre></td></tr>
-<tr><td id="L2563" class="blob-num js-line-number" data-line-number="2563"></td><td><pre>                        document.querySelectorAll('.time-filter-btn').forEach(btn => btn.classList.remove('active'));</pre></td></tr>
-<tr><td id="L2564" class="blob-num js-line-number" data-line-number="2564"></td><td><pre>                        e.target.classList.add('active'); applyFilters();</pre></td></tr>
-<tr><td id="L2565" class="blob-num js-line-number" data-line-number="2565"></td><td><pre>                    }</pre></td></tr>
-<tr><td id="L2566" class="blob-num js-line-number" data-line-number="2566"></td><td><pre>                });</pre></td></tr>
-<tr><td id="L2567" class="blob-num js-line-number" data-line-number="2567"></td><td><pre>                </pre></td></tr>
-<tr><td id="L2568" class="blob-num js-line-number" data-line-number="2568"></td><td><pre>                if (dom.modal) dom.modal.addEventListener('click', (event) => { </pre></td></tr>
-<tr><td id="L2569" class="blob-num js-line-number" data-line-number="2569"></td><td><pre>                    if (event.target === dom.modal) closeModal(); </pre></td></tr>
-<tr><td id="L2570" class="blob-num js-line-number" data-line-number="2570"></td><td><pre>                });</pre></td></tr>
-<tr><td id="L2571" class="blob-num js-line-number" data-line-number="2571"></td><td><pre>                if (dom.viewShoppingListBtn) dom.viewShoppingListBtn.addEventListener('click', showShoppingListModal);</pre></td></tr>
-<tr><td id="L2572" class="blob-num js-line-number" data-line-number="2572"></td><td><pre>                if (dom.closeShoppingListModalBtn) dom.closeShoppingListModalBtn.addEventListener('click', closeShoppingListModal);</pre></td></tr>
-<tr><td id="L2573" class="blob-num js-line-number" data-line-number="2573"></td><td><pre>                if (dom.clearShoppingListBtn) dom.clearShoppingListBtn.addEventListener('click', clearShoppingList);</pre></td></tr>
-<tr><td id="L2574" class="blob-num js-line-number" data-line-number="2574"></td><td><pre>                if (dom.printShoppingListBtn) dom.printShoppingListBtn.addEventListener('click', () => {</pre></td></tr>
-<tr><td id="L2575" class="blob-num js-line-number" data-line-number="2575"></td><td><pre>                    const printContent = dom.shoppingListModal.querySelector('.bg-white.dark\\:bg-stone-800');</pre></td></tr>
-<tr><td id="L2576" class="blob-num js-line-number" data-line-number="2576"></td><td><pre>                    if (printContent) {</pre></td></tr>
-<tr><td id="L2577" class="blob-num js-line-number" data-line-number="2577"></td><td><pre>                        const originalBody = document.body.innerHTML;</pre></td></tr>
-<tr><td id="L2578" class="blob-num js-line-number" data-line-number="2578"></td><td><pre>                        document.body.innerHTML = printContent.outerHTML;</pre></td></tr>
-<tr><td id="L2579" class="blob-num js-line-number" data-line-number="2579"></td><td><pre>                        window.print();</pre></td></tr>
-<tr><td id="L2580" class="blob-num js-line-number" data-line-number="2580"></td><td><pre>                        document.body.innerHTML = originalBody;</pre></td></tr>
-<tr><td id="L2581" class="blob-num js-line-number" data-line-number="2581"></td><td><pre>                        runRecipeApp(); </pre></td></tr>
-<tr><td id="L2582" class="blob-num js-line-number" data-line-number="2582"></td><td><pre>                    } else {</pre></td></tr>
-<tr><td id="L2583" class="blob-num js-line-number" data-line-number="2583"></td><td><pre>                        window.print(); </pre></td></tr>
-<tr><td id="L2584" class="blob-num js-line-number" data-line-number="2584"></td><td><pre>                    }</pre></td></tr>
-<tr><td id="L2585" class="blob-num js-line-number" data-line-number="2585"></td><td><pre>                });</pre></td></tr>
-<tr><td id="L2586" class="blob-num js-line-number" data-line-number="2586"></td><td><pre>                </pre></td></tr>
-<tr><td id="L2587" class="blob-num js-line-number" data-line-number="2587"></td><td><pre>                // Asignar event listeners a los botones del asistente de voz</pre></td></tr>
-<tr><td id="L2588" class="blob-num js-line-number" data-line-number="2588"></td><td><pre>                if (prevStepBtn) prevStepBtn.addEventListener('click', prevStepAction);</pre></td></tr>
-<tr><td id="L2589" class="blob-num js-line-number" data-line-number="2589"></td><td><pre>                if (nextStepBtn) nextStepBtn.addEventListener('click', nextStepAction);</pre></td></tr>
-<tr><td id="L2590" class="blob-num js-line-number" data-line-number="2590"></td><td><pre>                if (repeatStepBtn) repeatStepBtn.addEventListener('click', repeatStepAction);</pre></td></tr>
-<tr><td id="L2591" class="blob-num js-line-number" data-line-number="2591"></td><td><pre>                if (exitCookingBtn) exitCookingBtn.addEventListener('click', exitCookingMode);</pre></td></tr>
-<tr><td id="L2592" class="blob-num js-line-number" data-line-number="2592"></td><td><pre>            }</pre></td></tr>
-<tr><td id="L2593" class="blob-num js-line-number" data-line-number="2593"></td><td><pre>            // Ejecuta la app cuando el DOM esté listo</pre></td></tr>
-<tr><td id="L2594" class="blob-num js-line-number" data-line-number="2594"></td><td><pre>            runRecipeApp();</pre></td></tr>
-<tr><td id="L2595" class="blob-num js-line-number" data-line-number="2595"></td><td><pre>        });</pre></td></tr>
-<tr><td id="L2596" class="blob-num js-line-number" data-line-number="2596"></td><td><pre>    </pre></td></tr>
-<tr><td id="L2597" class="blob-num js-line-number" data-line-number="2597"></td><td><pre>    </script></pre></td></tr>
-<tr><td id="L2598" class="blob-num js-line-number" data-line-number="2598"></td><td><pre></body></pre></td></tr>
-<tr><td id="L2599" class="blob-num js-line-number" data-line-number="2599"></td><td><pre></html></pre></td></tr></tbody></table>
+    <meta name="apple-mobile-web-app-title" content="Recetario">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
+    
+    <link rel="manifest" href="data:application/manifest+json,{
+        &quot;name&quot;: &quot;Recetario Delicioso&quot;,
+        &quot;short_name&quot;: &quot;Recetario&quot;,
+        &quot;start_url&quot;: &quot;.&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;#f8f7f5&quot;,
+        &quot;theme_color&quot;: &quot;#78350f&quot;,
+        &quot;description&quot;: &quot;Tu app de recetas de cocina española.&quot;,
+        &quot;icons&quot;: [{
+            &quot;src&quot;: &quot;https://placehold.co/192x192/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;192x192&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }, {
+            &quot;src&quot;: &quot;https://placehold.co/512x512/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;512x512&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }]
+    }">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f5;
+        }
+        .dark body {
+            background-color: #1c1917;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Lora', serif;
+        }
+        .category-btn.active, .filter-btn.active, .time-filter-btn.active {
+            background-color: #78350f;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .dark .category-btn.active, .dark .filter-btn.active, .dark .time-filter-btn.active {
+            background-color: #f59e0b;
+            color: #1c1917;
+        }
+        .category-btn, .filter-btn, .time-filter-btn {
+            transition: all 0.3s ease-in-out;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+        .category-btn:hover:not(.active), .filter-btn:hover:not(.active), .time-filter-btn:hover:not(.active) {
+            background-color: #f0ead6;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+        }
+        .dark .category-btn:hover:not(.active), .dark .filter-btn:hover:not(.active), .dark .time-filter-btn:hover:not(.active) {
+            background-color: #3b3735;
+        }
+
+        #categoryFilters, #timeFilters {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 0.5rem;
+        }
+        #categoryFilters::-webkit-scrollbar, #timeFilters::-webkit-scrollbar {
+            display: none;
+        }
+        #categoryFilters .category-btn, #timeFilters .time-filter-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .recipe-card > div {
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease-in-out;
+        }
+        .recipe-card > div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        #searchInput {
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+        #searchInput:focus {
+            ring-width: 3px;
+            ring-offset-width: 1px;
+        }
+
+        /* ESTILOS DEL MODAL */
+        #recipeModal, #shoppingListModal { 
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #recipeModal.modal-visible, #shoppingListModal.modal-visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #modalContent, #shoppingListModal > div { 
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 42rem; 
+            max-height: 90vh;
+            overflow-y: auto;
+            
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+        #recipeModal.modal-visible #modalContent, #shoppingListModal.modal-visible > div {
+            transform: scale(1);
+        }
+        #shoppingListModal > div { 
+            max-width: 36rem; 
+        }
+
+
+        .dark #modalContent, .dark #shoppingListModal > div {
+            background-color: #292524;
+        }
+        /* FIN ESTILOS DEL MODAL */
+
+        /* ESTILOS DEL SKELETON LOADER */
+        .skeleton-card {
+            background-color: #e0e0e0; 
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: pulse-bg 1.5s infinite; 
+        }
+        .dark .skeleton-card {
+            background-color: #3b3735;
+        }
+
+        .skeleton-image {
+            height: 10rem; 
+            background-color: #cccccc; 
+        }
+        .dark .skeleton-image {
+            background-color: #2a2826;
+        }
+
+        .skeleton-text {
+            height: 0.875rem; 
+            background-color: #cccccc;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .dark .skeleton-text {
+            background-color: #2a2826;
+        }
+        .skeleton-text.long { width: 90%; }
+        .skeleton-text.medium { width: 70%; }
+        .skeleton-text.short { width: 40%; }
+        .skeleton-text.small { height: 0.75rem; } 
+
+
+        @keyframes pulse-bg {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* FIN ESTILOS DEL SKELETON LOADER */
+
+        /* NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+        #finalShoppingList li {
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            list-style: none; /* Eliminar el bullet point por defecto */
+            position: relative; 
+            padding-left: 1.5rem; 
+        }
+        #finalShoppingList li:hover {
+            background-color: #f0ead6;
+            border-radius: 0.25rem;
+        }
+        .dark #finalShoppingList li:hover {
+            background-color: #3b3735;
+        }
+
+        /* Estilo para los ítems marcados */
+        #finalShoppingList li.checked {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+            opacity: 0.7;
+        }
+        .dark #finalShoppingList li.checked {
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Pseudo-elementos para el icono de check/bullet */
+        #finalShoppingList li::before {
+            content: '•'; /* Un bullet simple */
+            color: #78350f; /* Color del bullet */
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+        #finalShoppingList li.checked::before {
+            content: '✓'; /* Un checkmark */
+            color: #10b981; /* green-500 */
+        }
+        /* FIN NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+
+        /* Estilos para las notificaciones Toast */
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 20rem; /* Ancho máximo para que no sea demasiado largo */
+        }
+
+        .toast-message {
+            background-color: #333;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeIn 0.3s forwards, fadeOut 0.5s 2.5s forwards; /* Entra, se queda 2.5s, sale */
+            transition: background-color 0.2s ease;
+        }
+
+        .toast-message.success { background-color: #10b981; } /* green-500 */
+        .toast-message.error { background-color: #ef4444; }   /* red-500 */
+        .toast-message.info { background-color: #3b82f6; }    /* blue-500 */
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        /* Fin de estilos Toast */
+
+        @media print {
+            body * { visibility: hidden; }
+            #recipeModal, #recipeModal * { display: none !important; } 
+            #shoppingListModal, #shoppingListModal * { visibility: visible; }
+            #shoppingListModal { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                height: auto; 
+                background: none; 
+                display: block !important; 
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            #shoppingListModal > div { 
+                box-shadow: none; 
+                border: none; 
+                max-width: 100%; 
+                max-height: none; 
+                overflow-y: visible; 
+                background-color: white !important; 
+                color: black !important; 
+                transform: scale(1) !important; 
+            }
+            #closeShoppingListModalBtn, .modal-buttons-container, #toast-container { display: none !important; } 
+            .dark #shoppingListModal > div, .dark #shoppingListModal * { background-color: white !important; color: black !important; }
+            h2, h4 { color: black !important; }
+            ul, ol { color: #333 !important; }
+            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            #ingredient-list li, #steps-list li, #finalShoppingList li { 
+                color: #333 !important;
+            }
+        }
+    </style>
+</head>
+<body class="dark:bg-stone-900 dark:text-stone-200">
+
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <header class="relative text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
+            <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
+            <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
+            
+            <div class="absolute top-0 left-0"> 
+                <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
+                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 101.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1
