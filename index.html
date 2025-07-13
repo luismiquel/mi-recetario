@@ -1,88 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Buscador de Recetas</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Recetario Ligero</title>
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Pequeño sombreado en tarjetas */
-    .card { transition: transform .2s, box-shadow .2s; }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    /* Para ocultar scrollbar en filtros */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Animación skeleton */
+    @keyframes pulse { 0%{opacity:1}50%{opacity:.5}100%{opacity:1} }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <div class="max-w-2xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-4">Recetario</h1>
-    <input id="search" type="text" placeholder="Buscar receta..." 
-           class="w-full p-3 rounded-lg border mb-6"
-    />
-
-    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-    <p id="noresults" class="mt-6 text-center text-gray-500 hidden">
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-amber-600 mb-4">Recetario Ligero</h1>
+    <div class="flex gap-3 mb-4">
+      <input id="search" type="text" placeholder="Buscar receta..." class="flex-1 p-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-amber-400">
+      <button id="btn-all" class="px-4 py-2 bg-amber-500 text-white rounded-full">Todas</button>
+      <button id="btn-fav" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full">Favoritas</button>
+    </div>
+    <div id="no-results" class="hidden text-center py-12 text-gray-500">
       No se encontró ninguna receta.
-    </p>
+    </div>
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
   </div>
 
-  <script>
-    // — Debounce: retrasa la ejecución hasta que pasan `ms` ms sin nuevas llamadas
-    function debounce(fn, ms = 300) {
-      let timer;
-      return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), ms);
-      };
-    }
+  <!-- Toast container -->
+  <div id="toasts" class="fixed top-4 right-4 space-y-2"></div>
 
-    // Tus recetas
-    const allRecipes = [
+  <script>
+    // Datos simplificados (solo 2 recetas de ejemplo)
+    const recipes = [
       {
-        titulo: "Brochetas de aceituna y pimiento",
-        tiempo: "15 min",
-        ingredientes: ["Aceitunas", "Pimiento rojo", "Albahaca", "Aceite de oliva"]
+        id: 1, title: 'Brochetas de aceituna y pimiento',
+        time: '15 min', ingr: ['Aceitunas', 'Pimiento', 'Albahaca'],
       },
       {
-        titulo: "Manzana asada con canela",
-        tiempo: "35 min",
-        ingredientes: ["Manzana", "Canela en polvo"]
-      }
+        id: 2, title: 'Manzana asada con canela',
+        time: '35 min', ingr: ['Manzana', 'Canela'],
+      },
     ];
-
+    let favorites = new Set();
     const grid = document.getElementById('grid');
-    const noresults = document.getElementById('noresults');
-    const searchInput = document.getElementById('search');
+    const noResults = document.getElementById('no-results');
+    const input = document.getElementById('search');
+    const btnAll = document.getElementById('btn-all');
+    const btnFav = document.getElementById('btn-fav');
+    const toasts = document.getElementById('toasts');
+    let showOnlyFav = false;
 
-    // Renderiza las tarjetas
-    function render(recipes) {
-      grid.innerHTML = recipes.map(r => `
-        <div class="card bg-white p-4 rounded-lg shadow">
-          <h2 class="font-semibold text-lg mb-2">${r.titulo}</h2>
-          <p class="text-sm text-gray-600 mb-1">Tiempo: ${r.tiempo}</p>
-          <p class="text-xs text-gray-500">
-            Ingredientes: ${r.ingredientes.join(', ')}
-          </p>
-        </div>
-      `).join('');
-      noresults.classList.toggle('hidden', recipes.length > 0);
+    function renderSkeleton() {
+      grid.innerHTML = '';
+      for (let i=0; i<6; i++) {
+        const div = document.createElement('div');
+        div.className = 'animate-pulse bg-white rounded-xl p-4 space-y-2 shadow';
+        div.innerHTML = `
+          <div class="h-32 bg-gray-200 rounded"></div>
+          <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+        `;
+        grid.appendChild(div);
+      }
     }
 
-    // Filtra por título o ingredientes
-    function applyFilters() {
-      const term = searchInput.value.trim().toLowerCase();
-      const filtered = allRecipes.filter(r => {
-        const haystack = (
-          r.titulo + ' ' + r.ingredientes.join(' ')
-        ).toLowerCase();
-        return haystack.includes(term);
+    function showToast(msg, type='info') {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.className = 'px-4 py-2 rounded shadow text-white ' +
+        (type==='success'?'bg-green-500':'bg-blue-500');
+      toasts.appendChild(t);
+      setTimeout(()=> t.remove(), 2500);
+    }
+
+    function renderList() {
+      // filtrar con debounce
+      const term = input.value.trim().toLowerCase();
+      let list = recipes.filter(r => r.title.toLowerCase().includes(term));
+      if (showOnlyFav) list = list.filter(r => favorites.has(r.id));
+      grid.innerHTML = '';
+      if (!list.length) {
+        noResults.classList.remove('hidden');
+        return;
+      }
+      noResults.classList.add('hidden');
+      list.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col';
+        card.innerHTML = `
+          <h2 class="font-semibold text-lg">${r.title}</h2>
+          <p class="text-sm text-gray-500 mt-1">Tiempo: ${r.time}</p>
+          <button data-id="${r.id}" class="mt-auto self-end">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 ${favorites.has(r.id)?'text-red-500':'text-gray-300'}"
+              fill="${favorites.has(r.id)?'currentColor':'none'}"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0
+                   016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+            </svg>
+          </button>
+        `;
+        card.querySelector('button').onclick = e => {
+          const id = +e.currentTarget.dataset.id;
+          if (favorites.has(id)) {
+            favorites.delete(id);
+            showToast('Eliminado de favoritos');
+          } else {
+            favorites.add(id);
+            showToast('Añadido a favoritos','success');
+          }
+          renderList();
+        };
+        grid.appendChild(card);
       });
-      render(filtered);
     }
 
-    // Inicial
-    render(allRecipes);
+    // debounce búsqueda
+    let debounceTimer;
+    input.addEventListener('input',()=>{
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(renderList,300);
+    });
+    btnAll.onclick = ()=>{
+      showOnlyFav=false;
+      btnAll.classList.replace('bg-gray-200','bg-amber-500');
+      btnAll.classList.replace('text-gray-700','text-white');
+      btnFav.classList.replace('bg-amber-500','bg-gray-200');
+      btnFav.classList.replace('text-white','text-gray-700');
+      renderList();
+    };
+    btnFav.onclick = ()=>{
+      showOnlyFav=true;
+      btnFav.classList.replace('bg-gray-200','bg-amber-500');
+      btnFav.classList.replace('text-gray-700','text-white');
+      btnAll.classList.replace('bg-amber-500','bg-gray-200');
+      btnAll.classList.replace('text-white','text-gray-700');
+      renderList();
+    };
 
-    // Escucha con debounce para no filtrar en cada pulsación
-    searchInput.addEventListener('input', debounce(applyFilters, 300));
+    // inicio
+    renderSkeleton();
+    setTimeout(renderList,500);
   </script>
 </body>
 </html>
