@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -52,42 +52,42 @@
         h1, h2, h3, h4 {
             font-family: 'Lora', serif;
         }
-        .category-btn.active, .filter-btn.active {
+        .category-btn.active, .filter-btn.active, .time-filter-btn.active {
             background-color: #78350f;
             color: white;
             font-weight: 600;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        .dark .category-btn.active, .dark .filter-btn.active {
+        .dark .category-btn.active, .dark .filter-btn.active, .dark .time-filter-btn.active {
             background-color: #f59e0b;
             color: #1c1917;
         }
-        .category-btn, .filter-btn {
+        .category-btn, .filter-btn, .time-filter-btn {
             transition: all 0.3s ease-in-out;
             padding: 0.6rem 1rem;
             border-radius: 9999px;
             border: 1px solid transparent;
             font-size: 0.875rem;
         }
-        .category-btn:hover:not(.active), .filter-btn:hover:not(.active) {
+        .category-btn:hover:not(.active), .filter-btn:hover:not(.active), .time-filter-btn:hover:not(.active) {
             background-color: #f0ead6;
             box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
         }
-        .dark .category-btn:hover:not(.active), .dark .filter-btn:hover:not(.active) {
+        .dark .category-btn:hover:not(.active), .dark .filter-btn:hover:not(.active), .dark .time-filter-btn:hover:not(.active) {
             background-color: #3b3735;
         }
 
-        #categoryFilters {
+        #categoryFilters, #timeFilters {
             flex-wrap: nowrap;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
             padding-bottom: 0.5rem;
         }
-        #categoryFilters::-webkit-scrollbar {
+        #categoryFilters::-webkit-scrollbar, #timeFilters::-webkit-scrollbar {
             display: none;
         }
-        #categoryFilters .category-btn {
+        #categoryFilters .category-btn, #timeFilters .time-filter-btn {
             flex-shrink: 0;
             white-space: nowrap;
         }
@@ -115,50 +115,195 @@
         }
 
         /* ESTILOS DEL MODAL */
-        /* Lo mantenemos hidden por defecto de Tailwind */
-        #recipeModal {
-            /* flex para centrar, opacidad y transición controladas por JS */
+        #recipeModal, #shoppingListModal { 
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
-        /* Clase añadida/quitada por JS para mostrar/ocultar con transición */
-        #recipeModal.modal-visible {
+        #recipeModal.modal-visible, #shoppingListModal.modal-visible {
             visibility: visible;
             opacity: 1;
         }
 
-        #modalContent {
+        #modalContent, #shoppingListModal > div { 
             background-color: white;
             border-radius: 1.5rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 42rem;
+            max-width: 42rem; 
             max-height: 90vh;
             overflow-y: auto;
             
             transform: scale(0.95);
             transition: transform 0.3s ease-in-out;
         }
-        #recipeModal.modal-visible #modalContent {
+        #recipeModal.modal-visible #modalContent, #shoppingListModal.modal-visible > div {
             transform: scale(1);
         }
+        #shoppingListModal > div { 
+            max-width: 36rem; 
+        }
 
-        .dark #modalContent {
+
+        .dark #modalContent, .dark #shoppingListModal > div {
             background-color: #292524;
         }
         /* FIN ESTILOS DEL MODAL */
 
+        /* ESTILOS DEL SKELETON LOADER */
+        .skeleton-card {
+            background-color: #e0e0e0; 
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: pulse-bg 1.5s infinite; 
+        }
+        .dark .skeleton-card {
+            background-color: #3b3735;
+        }
+
+        .skeleton-image {
+            height: 10rem; 
+            background-color: #cccccc; 
+        }
+        .dark .skeleton-image {
+            background-color: #2a2826;
+        }
+
+        .skeleton-text {
+            height: 0.875rem; 
+            background-color: #cccccc;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .dark .skeleton-text {
+            background-color: #2a2826;
+        }
+        .skeleton-text.long { width: 90%; }
+        .skeleton-text.medium { width: 70%; }
+        .skeleton-text.short { width: 40%; }
+        .skeleton-text.small { height: 0.75rem; } 
+
+
+        @keyframes pulse-bg {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* FIN ESTILOS DEL SKELETON LOADER */
+
+        /* NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+        #finalShoppingList li {
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            list-style: none; /* Eliminar el bullet point por defecto */
+            position: relative; 
+            padding-left: 1.5rem; 
+        }
+        #finalShoppingList li:hover {
+            background-color: #f0ead6;
+            border-radius: 0.25rem;
+        }
+        .dark #finalShoppingList li:hover {
+            background-color: #3b3735;
+        }
+
+        /* Estilo para los ítems marcados */
+        #finalShoppingList li.checked {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+            opacity: 0.7;
+        }
+        .dark #finalShoppingList li.checked {
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Pseudo-elementos para el icono de check/bullet */
+        #finalShoppingList li::before {
+            content: '•'; /* Un bullet simple */
+            color: #78350f; /* Color del bullet */
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+        #finalShoppingList li.checked::before {
+            content: '✓'; /* Un checkmark */
+            color: #10b981; /* green-500 */
+        }
+        /* FIN NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+
+        /* Estilos para las notificaciones Toast */
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 20rem; /* Ancho máximo para que no sea demasiado largo */
+        }
+
+        .toast-message {
+            background-color: #333;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeIn 0.3s forwards, fadeOut 0.5s 2.5s forwards; /* Entra, se queda 2.5s, sale */
+            transition: background-color 0.2s ease;
+        }
+
+        .toast-message.success { background-color: #10b981; } /* green-500 */
+        .toast-message.error { background-color: #ef4444; }   /* red-500 */
+        .toast-message.info { background-color: #3b82f6; }    /* blue-500 */
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        /* Fin de estilos Toast */
+
         @media print {
             body * { visibility: hidden; }
-            #recipeModal, #recipeModal * { visibility: visible; }
-            #recipeModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
-            #modalContent { box-shadow: none; border: none; max-width: 100%; max-h: none; overflow-y: visible; background-color: white !important; color: black !important; }
-            #closeModalBtn, .modal-buttons-container, #cooking-mode-view, #portion-adjuster { display: none !important; }
-            .dark #modalContent, .dark #modalContent * { background-color: white !important; color: black !important; }
+            #recipeModal, #recipeModal * { display: none !important; } 
+            #shoppingListModal, #shoppingListModal * { visibility: visible; }
+            #shoppingListModal { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                height: auto; 
+                background: none; 
+                display: block !important; 
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            #shoppingListModal > div { 
+                box-shadow: none; 
+                border: none; 
+                max-width: 100%; 
+                max-height: none; 
+                overflow-y: visible; 
+                background-color: white !important; 
+                color: black !important; 
+                transform: scale(1) !important; 
+            }
+            #closeShoppingListModalBtn, .modal-buttons-container, #toast-container { display: none !important; } 
+            .dark #shoppingListModal > div, .dark #shoppingListModal * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
             img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #ingredient-list li, #steps-list li {
+            #ingredient-list li, #steps-list li, #finalShoppingList li { 
                 color: #333 !important;
             }
         }
@@ -170,10 +315,10 @@
 
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
-            <p class="text-gray-600 dark:text-stone-400 mt-2">100 recetas para inspirar tu cocina.</p>
+            <p class="text-gray-600 dark:text-stone-400 mt-2">120 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
             
-            <div class="absolute top-0 right-0">
+            <div class="absolute top-0 left-0"> 
                 <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
                     <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 101.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM13.536 16.364a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg>
@@ -199,6 +344,19 @@
                 <button data-category="Segundo" class="category-btn px-3 py-1.5 rounded-full text-sm">Segundos</button>
                 <button data-category="Postre" class="category-btn px-3 py-1.5 rounded-full text-sm">Postres</button>
             </div>
+            <div id="timeFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4 mt-2">
+                <span class="text-sm text-gray-600 dark:text-stone-400 font-medium">Tiempo:</span>
+                <button data-time="all" class="time-filter-btn active px-3 py-1.5 rounded-full text-sm">Cualquiera</button>
+                <button data-time="short" class="time-filter-btn px-3 py-1.5 rounded-full text-sm">Rápida (&lt;30 min)</button>
+                <button data-time="medium" class="time-filter-btn px-3 py-1.5 rounded-full text-sm">Media (30-60 min)</button>
+                <button data-time="long" class="time-filter-btn px-3 py-1.5 rounded-full text-sm">Larga (&gt;60 min)</button>
+            </div>
+             <button id="viewShoppingListBtn" class="mt-4 mx-4 w-auto bg-amber-700 hover:bg-amber-800 text-white font-semibold py-2 px-4 rounded-full shadow-md transition-colors flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a.75.75 0 01.75.75V11a.75.75 0 01-1.5 0V2.75A.75.75 0 0110 2zM5.5 9.75a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5H6.25a.75.75 0 01-.75-.75zM10 18a.75.75 0 01-.75-.75V12a.75.75 0 011.5 0v5.25a.75.75 0 01-.75.75z" clip-rule="evenodd" />
+                </svg>
+                Ver Lista de Compra (<span id="shopping-list-count">0</span>)
+            </button>
         </div>
 
         <div id="no-results" class="hidden text-center py-12">
@@ -213,6 +371,23 @@
         <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"></div>
     </div>
     
+    <div id="shoppingListModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8">
+            <div class="flex justify-between items-start mb-4">
+                <h2 class="text-3xl font-bold text-amber-900 dark:text-amber-500">Tu Lista de Compra</h2>
+                <button id="closeShoppingListModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <ul id="finalShoppingList" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300 mb-6">
+                </ul>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button id="clearShoppingListBtn" class="bg-red-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-700 transition shadow-lg">Vaciar Lista</button>
+                <button id="printShoppingListBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir Lista</button>
+            </div>
+        </div>
+    </div>
+
     <div id="cooking-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-50 hidden flex-col">
         <div id="cooking-step-content" class="flex-grow flex flex-col justify-center items-center p-8 text-center">
             <p id="step-counter" class="text-lg text-amber-600 dark:text-amber-400 font-semibold mb-4"></p>
@@ -228,6 +403,8 @@
         </button>
     </div>
 
+    <div id="toast-container"></div>
+
 
     <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
         <p class="text-sm text-gray-500 dark:text-stone-400">
@@ -237,40 +414,36 @@
     
     <script type="module">
         // --- CONSOLIDACIÓN DE IMPORTACIONES Y CONFIGURACIÓN DE FIREBASE ---
-        // Estas importaciones son necesarias para Firebase App, Authentication y Firestore
-        // ¡Usando la versión 11.10.0 que me proporcionaste, para que todo sea consistente!
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         
-        // Importación opcional para Analytics, si la quieres usar.
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
 
         function runRecipeApp() {
-            // --- TU CONFIGURACIÓN REAL DE FIREBASE ---
             const firebaseConfig = {
-                apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
+                apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ", // <--- ¡Asegúrate de pegar tu API Key real aquí!
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
                 projectId: "lucid-copilot-454618-k7",
                 storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
                 messagingSenderId: "948763528254",
-                appId: "1:948763528254:web:3eba3d724edf844528956f", // Este es tu App ID real
-                measurementId: "G-256GP1S7YX" // Este es tu Measurement ID real
+                appId: "1:948763528254:web:3eba3d724edf844528956f", 
+                measurementId: "G-256GP1S7YX" 
             };
 
             const appId = firebaseConfig.appId;
 
-            // Inicializa la app de Firebase
             const app = initializeApp(firebaseConfig);
-            // Inicializa Analytics solo si lo vas a usar, si no, puedes comentarlo o borrarlo.
             const analytics = getAnalytics(app); 
 
-            // Inicializa los servicios de Firestore y Authentication
             const db = getFirestore(app);
             const auth = getAuth(app);
 
             let userFavorites = [], userId = null;
             let currentFilter = 'all', currentCategory = 'all';
+            let currentTimeFilter = 'all'; 
+
+            let shoppingList = []; 
 
             const dom = {
                 grid: document.getElementById('recipeGrid'),
@@ -278,6 +451,7 @@
                 filterAllBtn: document.getElementById('filterAll'),
                 filterFavBtn: document.getElementById('filterFavorites'),
                 categoryFilters: document.getElementById('categoryFilters'),
+                timeFilters: document.getElementById('timeFilters'), 
                 noResults: document.getElementById('no-results'),
                 modal: document.getElementById('recipeModal'),
                 modalContent: document.getElementById('modalContent'),
@@ -286,9 +460,16 @@
                 darkIcon: document.getElementById('theme-toggle-dark-icon'),
                 lightIcon: document.getElementById('theme-toggle-light-icon'),
                 copyrightYear: document.getElementById('copyright-year'),
+                viewShoppingListBtn: document.getElementById('viewShoppingListBtn'), 
+                shoppingListCount: document.getElementById('shopping-list-count'), 
+                shoppingListModal: document.getElementById('shoppingListModal'), 
+                closeShoppingListModalBtn: document.getElementById('closeShoppingListModalBtn'),
+                finalShoppingList: document.getElementById('finalShoppingList'),
+                clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
+                printShoppingListBtn: document.getElementById('printShoppingListBtn'),
+                toastContainer: document.getElementById('toast-container') 
             };
             
-            // Recetas con tiempo de preparación actualizado y con 25 por categoría
             const allRecipes = [
                 // 25 Aperitivos
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
@@ -316,6 +497,13 @@
                 { categoria: "Aperitivo", titulo: "Pincho de tortilla de patatas", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pincho+Tortilla", ingredientes: ["2 huevos", "1 patata pequeña", "1/4 cebolla", "Aceite de oliva", "Sal"], pasos: ["Pela y corta la patata y la cebolla en trozos pequeños, sofríe en aceite.", "Bate los huevos, añade la patata y cebolla escurridas y sal.", "Cuaja la tortilla en una sartén pequeña por ambos lados.", "Corta en pinchos."] },
                 { categoria: "Aperitivo", titulo: "Vasitos de gazpacho con langostinos", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Gazpacho", ingredientes: ["2 tomates maduros", "1/4 pepino", "1/4 pimiento verde", "1/4 diente de ajo", "Aceite de oliva", "Vinagre", "Sal", "8 langostinos cocidos"], pasos: ["Prepara el gazpacho triturando los ingredientes y colándolo.", "Sirve el gazpacho frío en vasitos pequeños y decora con un langostino en cada uno."] },
                 { categoria: "Aperitivo", titulo: "Brochetas de pollo satay mini", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Pollo+Satay", ingredientes: ["150 g pechuga de pollo", "1 cda. salsa de cacahuete", "1/2 cdita. curry en polvo", "Palillos de brocheta"], pasos: ["Corta el pollo en dados y marina con la salsa de cacahuete y curry.", "Ensarta el pollo en mini brochetas y cocina a la plancha hasta que estén doradas."] },
+                // 5 Nuevos Aperitivos Típicos Españoles
+                { categoria: "Aperitivo", titulo: "Patatas Bravas Caseras", raciones: 4, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Patatas+Bravas", ingredientes: ["4 patatas medianas", "Aceite de oliva virgen extra", "Sal", "Para la salsa brava: 1 cebolla", "2 dientes de ajo", "1 lata tomate triturado (400g)", "1 cda. pimentón dulce", "1/2 cdita. pimentón picante", "Caldo de pollo o verdura (100ml)"], pasos: ["Pela y corta las patatas en dados, fríelas hasta que estén doradas y crujientes.", "Para la salsa: sofríe la cebolla y el ajo. Añade el tomate, pimentones y caldo. Cocina 15 min a fuego lento. Tritura.", "Sirve las patatas con la salsa por encima."] },
+                { categoria: "Aperitivo", titulo: "Gambas al Ajillo", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gambas+Ajillo", ingredientes: ["250 g gambas peladas", "4 dientes de ajo", "1 guindilla (opcional)", "Aceite de oliva virgen extra", "Perejil fresco picado", "Sal"], pasos: ["En una cazuela de barro, calienta el aceite. Añade el ajo laminado y la guindilla.", "Cuando el ajo dore, incorpora las gambas y cocina 2-3 min hasta que cambien de color.", "Retira del fuego, añade perejil picado y sirve burbujeando."] },
+                { categoria: "Aperitivo", titulo: "Pan con Tomate y Jamón", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pan+Tomate+Jamon", ingredientes: ["2 rebanadas de pan de pueblo", "1 tomate maduro", "1 diente de ajo (opcional)", "Aceite de oliva virgen extra", "Sal", "4 lonchas de jamón serrano"], pasos: ["Tuesta el pan. Frota el tomate sobre el pan tostado (puedes frotar un diente de ajo antes).", "Rocía con aceite de oliva y un poco de sal.", "Coloca las lonchas de jamón serrano por encima y sirve."] },
+                { categoria: "Aperitivo", titulo: "Banderillas de Encurtidos", raciones: 4, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Banderillas+Encurtidos", ingredientes: ["10 aceitunas rellenas", "10 pepinillos en vinagre", "10 cebolletas en vinagre", "10 trozos de pimiento rojo asado (de bote)", "10 boquerones en vinagre (opcional)"], pasos: ["Ensarta los ingredientes en palillos de brocheta en el orden deseado.", "Sirve en un plato como aperitivo frío."] },
+                { categoria: "Aperitivo", titulo: "Pintxo de Gilda", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pintxo+Gilda", ingredientes: ["4 guindillas en vinagre", "4 aceitunas rellenas de anchoa", "2 filetes de anchoa en aceite"], pasos: ["Ensarta en un palillo una guindilla, una aceituna y dobla un filete de anchoa.", "Repite el proceso para hacer 2 pintxos por ración. Sirve inmediatamente."] },
+
 
                 // 25 Primeros
                 { categoria: "Primero", titulo: "Ensalada de quinoa con verduras", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Quinoa", ingredientes: ["1 taza de quinoa cocida", "Pimiento rojo y verde", "Tomates cherry", "Cebolla morada", "Aceite de oliva", "Zumo de limón"], pasos: ["Mezcla la quinoa con las verduras picadas.", "Aliña con aceite y limón."] },
@@ -343,6 +531,13 @@
                 { categoria: "Primero", titulo: "Ensalada de cuscús con pasas y piñones", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Cuscús", ingredientes: ["1 taza de cuscús", "1.5 tazas de agua o caldo", "1/4 taza de pasas", "2 cdas. piñones tostados", "Pepino y tomate picado", "Aceite de oliva", "Zumo de limón", "Menta fresca"], pasos: ["Hidrata el cuscús con el agua caliente.", "Mezcla con pasas, piñones, pepino, tomate, aceite, limón y menta picada.", "Deja reposar antes de servir."] },
                 { categoria: "Primero", titulo: "Crema de calabacín y manzana", raciones: 4, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabacin+Manzana", ingredientes: ["2 calabacines", "1 manzana verde", "1/2 cebolla", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, añade el calabacín y la manzana troceados.", "Cubre con caldo y cuece hasta que estén tiernos.", "Tritura hasta obtener una crema suave."] },
                 { categoria: "Primero", titulo: "Salpicón de marisco ligero", raciones: 2, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salpicon+Marisco", ingredientes: ["100 g gambas cocidas y peladas", "100 g pulpo cocido", "1/2 cebolla morada", "1/2 pimiento rojo", "Perejil fresco", "Aceite de oliva", "Vinagre de vino", "Sal"], pasos: ["Corta el marisco y las verduras en trozos pequeños.", "Mezcla todo en un bol.", "Aliña con aceite, vinagre y sal. Sirve frío."] },
+                // 5 Nuevos Primeros Típicos Españoles
+                { categoria: "Primero", titulo: "Cocido Madrileño (Sopa)", raciones: 4, tiempo: "90 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Cocido+Madrileno+Sopa", ingredientes: ["200 g garbanzos (previamente en remojo)", "100 g fideos finos", "1 zanahoria", "1 puerro", "1 trozo de carne de res (jarrete)", "1 trozo de hueso de jamón", "Agua", "Sal"], pasos: ["Cocer los garbanzos, carne y hueso en olla a presión hasta que estén tiernos.", "Retirar la carne y el hueso. Colar el caldo y desgrasar. Volver a calentar.", "Añadir la zanahoria y el puerro picados, y los fideos. Cocinar hasta que los fideos estén listos.", "Servir caliente. La carne y los garbanzos se sirven aparte."] },
+                { categoria: "Primero", titulo: "Sopa de Pescado y Marisco", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Pescado+Marisco", ingredientes: ["200 g pescado blanco (merluza)", "100 g gambas", "1 cebolla", "2 tomates", "1 diente de ajo", "Perejil", "1 litro de caldo de pescado", "Aceite de oliva", "Sal y pimienta"], pasos: ["Sofríe la cebolla, ajo y tomate picados. Añade el pescado en trozos y las gambas.", "Cubre con caldo y cocina 15 min. Salpimenta.", "Tritura ligeramente una parte si quieres una sopa más espesa. Sirve con perejil."] },
+                { categoria: "Primero", titulo: "Judiones de la Granja", raciones: 3, tiempo: "120 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Judiones+Granja", ingredientes: ["250 g judiones (alubias grandes, en remojo)", "100 g chorizo", "50 g panceta", "1 cebolla", "1 diente de ajo", "Pimentón dulce", "Agua", "Sal"], pasos: ["Cocer los judiones con chorizo y panceta hasta que estén tiernos (en olla a presión 30-40 min).", "Sofríe cebolla y ajo, añade pimentón y agrega a las judías.", "Cocinar a fuego lento 20 min más para que los sabores se mezclen. Ajustar de sal."] },
+                { categoria: "Primero", titulo: "Crema de Marisco (Suave)", raciones: 4, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Marisco", ingredientes: ["200 g langostinos o gambas", "1 cebolla", "1 puerro", "1 zanahoria", "2 cdas. arroz", "1 litro de caldo de pescado", "50 ml nata líquida para cocinar", "Aceite de oliva", "Sal y pimienta"], pasos: ["Sofríe las verduras picadas. Añade las cabezas y pieles de los langostinos (reservar cuerpos) y sofríe.", "Incorpora el arroz y el caldo. Cocina 20 min.", "Tritura y cuela. Vuelve al fuego, añade la nata y los cuerpos de langostino troceados. Calienta sin hervir. Sirve."] },
+                { categoria: "Primero", titulo: "Potaje de Garbanzos y Espinacas", raciones: 3, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Potaje+Garbanzos", ingredientes: ["400 g garbanzos cocidos", "200 g espinacas frescas", "1 cebolla", "2 dientes de ajo", "1 rebanada de pan frito", "1 huevo duro", "Pimentón dulce", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe cebolla y ajo. Añade las espinacas y cocina hasta que se reduzcan.", "Haz un majado con el pan frito y un poco de ajo. Incorpora al sofrito.", "Añade los garbanzos y el caldo. Cocina 15 min. Sirve con huevo duro troceado."] },
+
 
                 // 25 Segundos
                 { categoria: "Segundo", titulo: "Pollo al horno con limón y hierbas", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Horno+Limon", ingredientes: ["2 pechugas de pollo", "1 limón", "Tomillo", "Romero", "Aceite de oliva", "Sal y pimienta"], pasos: ["Marina el pollo con zumo de limón, hierbas, aceite, sal y pimienta.", "Hornea 25 minutos a 200°C."] },
@@ -370,6 +565,13 @@
                 { categoria: "Segundo", titulo: "Champiñones rellenos de verduras", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Champinones+Rellenos", ingredientes: ["8 champiñones grandes", "1/2 pimiento", "1/2 cebolla", "Pulpa de champiñones", "Queso light rallado"], pasos: ["Limpia los champiñones y pica los tallos y las verduras.", "Sofríe las verduras con la pulpa de los champiñones.", "Rellena los sombreros, espolvorea queso y gratina."] },
                 { categoria: "Segundo", titulo: "Brochetas de verduras a la parrilla", raciones: 2, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Verduras", ingredientes: ["Calabacín", "Berenjena", "Pimiento", "Cebolla", "Tomates cherry", "Aceite de oliva", "Hierbas provenzales", "Palillos de brocheta"], pasos: ["Corta las verduras en trozos, ensártalas en los palillos.", "Aliña con aceite y hierbas.", "Cocina en parrilla o sartén hasta que estén tiernas y doradas."] },
                 { categoria: "Segundo", titulo: "Pollo estilo oriental con arroz basmati", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Oriental", ingredientes: ["200 g pechuga de pollo", "1/2 pimiento rojo", "1/2 cebolla", "Salsa de soja", "Jengibre", "Arroz basmati cocido"], pasos: ["Corta el pollo y las verduras en tiras.", "Saltea en un wok con jengibre y salsa de soja.", "Sirve con arroz basmati."] },
+                // 5 Nuevos Segundos Típicos Españoles
+                { categoria: "Segundo", titulo: "Paella de Marisco (Vegetariana)", raciones: 4, tiempo: "50 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Paella+Marisco", ingredientes: ["300 g arroz redondo", "100 g garrofón", "100 g judía verde plana", "1 tomate maduro", "1/2 cebolla", "1 diente de ajo", "Pimentón dulce", "Azafrán o colorante alimentario", "1 litro caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, ajo, judía verde y garrofón. Añade el tomate rallado y pimentón.", "Incorpora el arroz y rehoga. Añade el caldo caliente con azafrán.", "Cocina a fuego medio-alto 18 min, luego 2 min a fuego fuerte para el 'socarrat'. Deja reposar."] },
+                { categoria: "Segundo", titulo: "Tortilla de Patatas Española", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tortilla+Patatas", ingredientes: ["500 g patatas", "1 cebolla grande (opcional)", "6 huevos grandes", "Aceite de oliva virgen extra", "Sal"], pasos: ["Pela y corta las patatas en láminas finas. Si usas cebolla, córtala en juliana.", "Fríe las patatas (y cebolla) en abundante aceite a fuego medio-bajo hasta que estén blandas.", "Escurre bien el aceite. Bate los huevos con sal. Mezcla las patatas con los huevos.", "Cuaja la tortilla en una sartén antiadherente con un poco de aceite, volteando para dorar por ambos lados. Sirve caliente o templada."] },
+                { categoria: "Segundo", titulo: "Bacalao a la Vizcaína", raciones: 2, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bacalao+Vizcaina", ingredientes: ["400 g lomos de bacalao desalado", "3 cebollas grandes", "2 dientes de ajo", "3 pimientos choriceros (previamente hidratados)", "100 ml caldo de pescado", "Aceite de oliva", "Sal"], pasos: ["Sofríe las cebollas cortadas en juliana hasta que estén muy pochadas. Añade el ajo laminado.", "Añade la pulpa de los pimientos choriceros y un poco de caldo. Cocina 10 min.", "Coloca los lomos de bacalao en la salsa y cocina a fuego lento unos 10-15 min, moviendo suavemente para que la salsa ligue. Rectifica de sal."] },
+                { categoria: "Segundo", titulo: "Pescado al Horno con Verduras Mediterráneas", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pescado+Verduras+Horno", ingredientes: ["2 rodajas de merluza o dorada", "1 calabacín", "1 berenjena", "1 pimiento rojo", "1 cebolla", "Tomates cherry", "Aceite de oliva", "Hierbas provenzales", "Sal y pimienta"], pasos: ["Corta las verduras en rodajas o dados. Colócalas en una bandeja de horno.", "Rocía con aceite, sal, pimienta y hierbas. Hornea 15 min a 180°C.", "Añade el pescado sobre las verduras y hornea 15-20 min más hasta que el pescado esté hecho."] },
+                { categoria: "Segundo", titulo: "Fabada Asturiana (Adaptada)", raciones: 4, tiempo: "120 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fabada+Asturiana", ingredientes: ["250 g fabes (alubias blancas, en remojo)", "100 g chorizo asturiano", "50 g morcilla asturiana", "50 g lacón o panceta curada", "1 cebolla", "Ajo", "Agua", "Sal"], pasos: ["Cocer las fabes con el chorizo, morcilla y lacón en agua fría. Llevar a ebullición y 'asustar' (añadir un chorro de agua fría tres veces).", "Cocinar a fuego lento durante 1.5 - 2 horas o hasta que las fabes estén muy tiernas. Puedes usar olla a presión (30-40 min).", "Sofríe un poco de cebolla y ajo, tritúralo y añádelo a la fabada para espesar. Ajustar de sal. Dejar reposar antes de servir."] },
+
 
                 // 25 Postres
                 { categoria: "Postre", titulo: "Brochetas de fruta fresca", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Fruta", ingredientes: ["Fresas", "Kiwi", "Melón", "Uvas"], pasos: ["Corta la fruta en trozos.", "Ensarta en palillos de brocheta."] },
@@ -396,37 +598,62 @@
                 { categoria: "Postre", titulo: "Gelatina de frutas variadas", raciones: 4, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gelatina+Frutas", ingredientes: ["1 sobre de gelatina sin azúcar (sabor a elegir)", "Frutas frescas picadas (fresas, kiwi, melocotón)", "Agua"], pasos: ["Disuelve la gelatina en agua caliente y luego añade agua fría.", "Incorpora las frutas picadas en los moldes.", "Refrigera hasta que cuaje."] },
                 { categoria: "Postre", titulo: "Bizcocho de limón sin azúcar", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bizcocho+Limon+Sin+Azucar", ingredientes: ["3 huevos", "150 g harina integral", "Zumo y ralladura de 1 limón", "Edulcorante al gusto", "1 sobre de levadura", "50 ml aceite de oliva suave"], pasos: ["Bate los huevos con el edulcorante y ralladura.", "Incorpora el zumo, aceite, harina y levadura.", "Vierte en un molde y hornea 30 min a 180°C."] },
                 { categoria: "Postre", titulo: "Vasitos de yogur con granola y frutas", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Yogur+Granola", ingredientes: ["2 yogures naturales", "Granola casera o sin azúcar", "Frutos rojos o plátano en rodajas"], pasos: ["En vasitos, alterna capas de yogur, granola y fruta.", "Sirve inmediatamente."] },
-                { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
+                { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] },
+                // 5 Nuevos Postres Típicos Españoles
+                { categoria: "Postre", titulo: "Arroz con Leche Cremoso", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Arroz+con+Leche", ingredientes: ["100 g arroz redondo", "1 litro de leche entera", "100 g azúcar", "1 rama de canela", "Piel de 1 limón"], pasos: ["Lava el arroz. En una olla, hierve la leche con la canela y la piel de limón.", "Cuando hierva, añade el arroz y cocina a fuego muy lento, removiendo constantemente, hasta que el arroz esté tierno y la mezcla cremosa (aprox. 45 min).", "Retira del fuego, añade el azúcar y remueve. Deja enfriar. Sirve espolvoreado con canela molida."] },
+                { categoria: "Postre", titulo: "Natillas Caseras", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Natillas+Caseras", ingredientes: ["500 ml leche", "4 yemas de huevo", "75 g azúcar", "1 cda. maicena", "Piel de limón", "1 rama de canela", "Galletas María para decorar"], pasos: ["Calienta la leche con piel de limón y canela. Retira del fuego antes de que hierva y deja infusionar.", "En un bol, bate las yemas con el azúcar y la maicena. Cuela la leche e incorpórala poco a poco a las yemas, sin dejar de remover.", "Lleva la mezcla al fuego lento, removiendo constantemente hasta que espese. No dejes que hierva. Vierte en cuencos individuales.", "Deja enfriar y decora con una galleta María."] },
+                { categoria: "Postre", titulo: "Torrijas de Leche", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Torrijas+Leche", ingredientes: ["4 rebanadas de pan de torrija (o pan del día anterior)", "250 ml leche", "50 g azúcar", "Piel de limón", "1 rama de canela", "1 huevo", "Aceite para freír", "Azúcar y canela para rebozar"], pasos: ["Hierve la leche con la mitad del azúcar, piel de limón y canela. Deja enfriar.", "Moja las rebanadas de pan en la leche infusionada. Pásalas por huevo batido.", "Fríe las torrijas en aceite caliente hasta que estén doradas por ambos lados. Escurre sobre papel absorbente.", "Reboza en una mezcla de azúcar y canela. Sirve templadas."] },
+                { categoria: "Postre", titulo: "Tarta de Santiago (Simple)", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Santiago", ingredientes: ["250 g almendra molida", "200 g azúcar", "4 huevos grandes", "Ralladura de 1 limón", "Azúcar glas para decorar (opcional: Cruz de Santiago)"], pasos: ["Bate los huevos con el azúcar hasta que blanqueen. Añade la almendra molida y la ralladura de limón. Mezcla bien.", "Vierte la masa en un molde previamente engrasado y enharinado.", "Hornea a 180°C durante 30-35 min o hasta que al pinchar con un palillo salga limpio.", "Deja enfriar. Espolvorea con azúcar glas. Puedes usar una plantilla de la Cruz de Santiago para decorar."] },
+                { categoria: "Postre", titulo: "Churros Caseros con Chocolate", raciones: 2, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Churros+Chocolate", ingredientes: ["250 ml agua", "150 g harina de trigo", "1/2 cdita. sal", "Aceite de girasol para freír", "Para el chocolate: 100 g chocolate negro para postres", "200 ml leche"], pasos: ["Hierve el agua con la sal. Retira del fuego, añade la harina de golpe y remueve hasta formar una bola. Deja templar.", "Introduce la masa en una churrera o manga pastelera con boquilla de estrella. Fríe los churros en abundante aceite caliente hasta que estén doradas y crujientes. Escurre sobre papel absorbente.", "Para el chocolate: calienta la leche y disuelve el chocolate troceado, removiendo hasta que espese. Sirve los churros con el chocolate caliente."] }
             ];
             
             // Función para renderizar las tarjetas de receta.
             function renderRecipes(recipesToRender) {
                 console.log('renderRecipes: Renderizando', recipesToRender.length, 'recetas.');
                 let recipeHTML = '';
-                if (recipesToRender.length === 0) {
-                    dom.noResults.style.display = 'block';
-                } else {
-                    dom.noResults.style.display = 'none';
-                    recipesToRender.forEach(recipe => {
-                        const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
-                        recipeHTML += `
-                            <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
-                                <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
-                                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="console.error('Error cargando imagen para:', this.alt); this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
-                                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
-                                    <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
-                                    </button>
-                                    <div class="p-4 flex-grow flex flex-col">
-                                        <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
-                                        <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
+                // Mostrar skeletons mientras se carga
+                for (let i = 0; i < 8; i++) { 
+                    recipeHTML += `
+                        <div class="skeleton-card h-64 flex flex-col p-4 space-y-3">
+                            <div class="skeleton-image w-full rounded-md"></div>
+                            <div class="flex-grow space-y-2 pt-2">
+                                <div class="skeleton-text long"></div>
+                                <div class="skeleton-text medium small"></div>
+                                <div class="skeleton-text short small"></div>
+                            </div>
+                        </div>
+                    `;
                 }
-                dom.grid.innerHTML = recipeHTML;
-                updateFavoriteIcons();
+                dom.grid.innerHTML = recipeHTML; 
+                dom.noResults.style.display = 'none'; 
+
+                setTimeout(() => { 
+                    recipeHTML = ''; 
+                    if (recipesToRender.length === 0) {
+                        dom.noResults.style.display = 'block';
+                    } else {
+                        dom.noResults.style.display = 'none';
+                        recipesToRender.forEach(recipe => {
+                            const searchTerms = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+                            recipeHTML += `
+                                <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
+                                    <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
+                                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                                        <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
+                                        <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                                        </button>
+                                        <div class="p-4 flex-grow flex flex-col">
+                                            <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
+                                            <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        });
+                    }
+                    dom.grid.innerHTML = recipeHTML;
+                    updateFavoriteIcons();
+                }, 500); 
             }
             
             // Un solo event listener en el contenedor padre (delegación de eventos)
@@ -465,6 +692,7 @@
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
                     await loadUserData();
                     updateFavoriteIcons();
+                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); 
                 } else {
                     console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
                     signInAnonymously(auth).then(() => {
@@ -472,6 +700,7 @@
                     }).catch((error) => {
                         console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
                         dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
+                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); 
                     });
                 }
             });
@@ -508,14 +737,14 @@
                     console.log("Firebase: Favoritos guardados con éxito.");
                 } catch (error) {
                     console.error("Firebase: Error guardando datos de usuario:", error.message);
-                    alert(`Error al guardar favoritos. Verifica las reglas de seguridad de Firestore. Error: ${error.message}`);
+                    showToast(`Error al guardar: ${error.message}`, 'error'); 
                 }
             }
 
             async function toggleFavorite(recipeId) {
                 if (!userId) {
                     console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
-                    alert('No se pudo guardar el favorito. Intenta recargar la página o verifica tu conexión.');
+                    showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info'); 
                     signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
                     return;
                 }
@@ -526,6 +755,7 @@
                 applyFilters(); 
 
                 await saveData({ favorites: userFavorites });
+                showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success'); 
             }
 
             function updateFavoriteIcons() {
@@ -543,12 +773,17 @@
                 });
             }
 
+            let currentPrepareTimeFilter = 'all';
+
             function applyFilters() {
                 const searchTerm = dom.search.value.toLowerCase();
                 const filteredRecipes = allRecipes.filter(recipe => {
-                    const id = recipe.titulo; 
+                    const id = recipe.titulo;
                     const category = recipe.categoria;
                     const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
+                    
+                    const prepareTimeValue = parseInt(recipe.tiempo.replace(' min', '')); 
+                    const prepareTime = isNaN(prepareTimeValue) ? 0 : prepareTimeValue; 
 
                     const isFavorite = userFavorites.includes(id);
                     
@@ -556,7 +791,16 @@
                     const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
                     const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
                     
-                    return categoryMatch && searchMatch && favoriteMatch;
+                    let timeMatch = true;
+                    if (currentTimeFilter === 'short') {
+                        timeMatch = prepareTime < 30;
+                    } else if (currentTimeFilter === 'medium') {
+                        timeMatch = prepareTime >= 30 && prepareTime <= 60;
+                    } else if (currentTimeFilter === 'long') {
+                        timeMatch = prepareTime > 60;
+                    }
+                    
+                    return categoryMatch && searchMatch && favoriteMatch && timeMatch;
                 });
                 renderRecipes(filteredRecipes); 
             }
@@ -564,76 +808,291 @@
             let currentRecipeDetail = null; 
             let currentServings = 0; 
 
-            function parseIngredient(ingredient) {
-                // Regex mejorada para capturar cantidades (incluyendo fracciones), cuantificadores (un, medio) y la unidad.
-                // También intenta ser más indulgente con el resto del nombre.
-                const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
-                const match = ingredient.match(regex);
-                
-                if (match) {
-                    let value = 0;
-                    if (match[1]) { // Si hay un número o fracción al principio
-                        if (match[1].includes('/')) { // Para fracciones como "1/2"
-                            const parts = match[1].split('/');
-                            value = parseFloat(parts[0]) / parseFloat(parts[1]);
-                        } else {
-                            value = parseFloat(match[1].replace(',', '.')); // Soporte para coma decimal
-                        }
-                    } else if (match[2]) { // Si hay un cuantificador de palabra (un, medio, puñado, etc.)
-                        const quantWord = match[2].toLowerCase();
-                        if (quantWord === 'medio' || quantWord === 'media') {
-                            value = 0.5;
-                        } else if (quantWord === 'un' || quantWord === 'una' || quantWord === 'puñado' || quantWord === 'chorrito') {
-                            value = 1; // Asume 1 unidad para estos cuantificadores si no hay número
-                        }
-                    } else if (match[4]) { // Si no hay cantidad explícita ni cuantificador, pero sí un nombre (ej. "Aceite de oliva")
-                        value = 1; // Asume 1 unidad para que pueda ser escalado, aunque no se mostrará "1"
-                    }
-                    
-                    let unit = match[3] ? match[3].toLowerCase() : '';
-                    let name = match[4] ? match[4].trim() : '';
+            // --- LISTA DE LA COMPRA ---
+            function loadShoppingList() {
+                const storedList = localStorage.getItem('shoppingList');
+                shoppingList = storedList ? JSON.parse(storedList).map(item => ({ ...item, checked: item.checked ?? false })) : [];
+                updateShoppingListCount();
+                console.log("Lista de compra cargada:", shoppingList);
+            }
 
-                    // Si el cuantificador de palabra (match[2]) no fue una unidad formal (match[3]),
-                    // pero era algo como "un", "una", "medio", o "puñado", incorpóralo al nombre.
+            function saveShoppingList() {
+                localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+                updateShoppingListCount();
+                console.log("Lista de compra guardada:", shoppingList);
+            }
+
+            function updateShoppingListCount() {
+                const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length; 
+                dom.shoppingListCount.textContent = totalItems;
+            }
+
+            function addToShoppingList(recipe, servings) {
+                const factor = servings / recipe.raciones;
+                const ingredientsToProcess = [];
+
+                recipe.ingredientes.forEach(originalIng => {
+                    const parsed = parseIngredient(originalIng);
+                    if (parsed.baseName || (parsed.value === 0 && parsed.original)) { 
+                         ingredientsToProcess.push({
+                            name: parsed.baseName || parsed.original.toLowerCase(), 
+                            unit: parsed.unit,
+                            value: parsed.value,
+                            originalFormatted: formatIngredient(parsed, factor), 
+                            checked: false 
+                        });
+                    } else if (parsed.original) {
+                        ingredientsToProcess.push({
+                            name: parsed.original.toLowerCase(),
+                            unit: '',
+                            value: 0, 
+                            originalFormatted: parsed.original,
+                            checked: false 
+                        });
+                    }
+                });
+
+                ingredientsToProcess.forEach(ing => {
+                    const existingItemIndex = shoppingList.findIndex(item => 
+                        item.name === ing.name && item.unit === ing.unit
+                    );
+
+                    if (existingItemIndex !== -1) {
+                        if (ing.value > 0) { 
+                            shoppingList[existingItemIndex].value += ing.value; 
+                             if (shoppingList[existingItemIndex].value > 0) { 
+                                const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
+                                shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
+                             }
+                        }
+                    } else {
+                        shoppingList.push({
+                            name: ing.name,
+                            unit: ing.unit,
+                            value: ing.value,
+                            originalFormatted: ing.originalFormatted,
+                            checked: false 
+                        });
+                    }
+                });
+
+                saveShoppingList(); 
+                showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success'); 
+                closeModal(); 
+            }
+
+            function showShoppingListModal() {
+                dom.finalShoppingList.innerHTML = ''; 
+                const itemsToDisplay = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted));
+
+                if (itemsToDisplay.length === 0) {
+                    dom.finalShoppingList.innerHTML = '<li class="text-gray-500 dark:text-stone-400">Tu lista de compra está vacía.</li>';
+                } else {
+                    const sortedList = [...itemsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    sortedList.forEach((item, index) => { 
+                        const li = document.createElement('li');
+                        li.dataset.itemIndex = shoppingList.indexOf(item); 
+                        
+                        if (item.checked) {
+                            li.classList.add('checked');
+                        }
+
+                        if (item.value > 0) {
+                            const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
+                            li.textContent = formatIngredient(tempParsed, 1); 
+                        } else {
+                            li.textContent = item.originalFormatted; 
+                        }
+                        dom.finalShoppingList.appendChild(li);
+                    });
+                }
+                dom.shoppingListModal.classList.remove('hidden');
+                dom.shoppingListModal.classList.add('modal-visible');
+
+                dom.finalShoppingList.addEventListener('click', toggleIngredientChecked);
+            }
+
+            function closeShoppingListModal() {
+                dom.shoppingListModal.classList.remove('modal-visible');
+                dom.finalShoppingList.removeEventListener('click', toggleIngredientChecked); 
+                setTimeout(() => {
+                    dom.shoppingListModal.classList.add('hidden');
+                }, 300);
+            }
+
+            function toggleIngredientChecked(event) {
+                const listItem = event.target.closest('li');
+                if (listItem && listItem.dataset.itemIndex !== undefined) { 
+                    const index = parseInt(listItem.dataset.itemIndex);
+                    if (shoppingList[index]) {
+                        shoppingList[index].checked = !shoppingList[index].checked; 
+                        saveShoppingList(); 
+                        showShoppingListModal(); 
+                        showToast(shoppingList[index].checked ? 'Ingrediente marcado.' : 'Ingrediente desmarcado.', 'info');
+                    }
+                }
+            }
+
+
+            function clearShoppingList() {
+                if (confirm('¿Estás seguro de que quieres vaciar toda la lista de compra?')) {
+                    shoppingList = [];
+                    saveShoppingList();
+                    showShoppingListModal(); 
+                    showToast('Lista de compra vaciada.', 'info');
+                }
+            }
+
+            function parseIngredient(ingredient) {
+                const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
+                let match = ingredient.match(regex);
+                
+                let value = 0;
+                let unit = '';
+                let name = ingredient.trim(); 
+                let baseName = ''; 
+
+                if (match) {
+                    if (match[1]) { 
+                        value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
+                    } else if (match[2]) { 
+                        const quantWord = match[2].toLowerCase();
+                        if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
+                        else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
+                    }
+
+                    unit = match[3] ? match[3].toLowerCase() : '';
+                    name = match[4] ? match[4].trim() : ''; 
+                    
                     if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
                         name = (match[2] + ' ' + name).trim();
-                        unit = ''; // Aseguramos que la unidad no se duplique aquí
+                        unit = ''; 
                     }
-
-                    return { value, unit, name, original: ingredient };
+                } else {
+                    // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
+                    // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
+                    // Esto se manejará en `formatIngredient` para mostrar el string original.
                 }
-                return { value: 0, unit: '', name: ingredient, original: ingredient };
+                
+                baseName = getBaseName(name || ingredient); 
+                
+                return { value, unit, name, baseName: baseName.trim(), original: ingredient };
+            }
+
+            // Función para obtener el nombre base del ingrediente
+            function getBaseName(rawName) {
+                let lowerName = rawName.toLowerCase();
+                let base = lowerName;
+
+                const specificCompoundsMap = {
+                    "jamón serrano": "jamón serrano", "tomates cherry": "tomate cherry",
+                    "espárragos verdes": "espárrago verde", "queso crema": "queso crema",
+                    "leche vegetal": "leche vegetal", "chocolate negro": "chocolate negro",
+                    "sirope de agave": "sirope de agave", "aceite de oliva": "aceite de oliva",
+                    "pan integral": "pan integral", "carne picada": "carne picada",
+                    "alga wakame": "alga wakame", "pan de telera": "pan de telera",
+                    "judías verdes": "judía verde", "aceitunas verdes": "aceituna verde",
+                    "aceitunas negras": "aceituna negra", "cebolla morada": "cebolla morada",
+                    "pimiento rojo": "pimiento rojo", "pimiento verde": "pimiento verde",
+                    "crema de cacahuete": "crema de cacahuete", "sal marina": "sal marina",
+                    "queso rallado": "queso rallado", "zumo de limón": "zumo de limón",
+                    "vinagre balsámico": "vinagre balsámico", "leche desnatada": "leche desnatada",
+                    "yogur griego": "yogur griego", "esencia de vainilla": "esencia de vainilla",
+                    "harina integral": "harina integral", "copos de avena": "copos de avena",
+                    "semillas de chía": "semillas de chía", "frutos rojos": "fruto rojo",
+                    "fruta fresca": "fruta fresca", "caldo de verduras": "caldo de verduras",
+                    "caldo de pollo": "caldo de pollo", "salsa de soja": "salsa de soja",
+                    "aceite de sésamo": "aceite de sésamo", "pasta miso": "pasta miso",
+                    "pimienta negra": "pimienta negra", "nuez moscada": "nuez moscada",
+                    "curry en polvo": "curry en polvo", "jengibre fresco": "jengibre fresco",
+                    "hierbas aromáticas": "hierba aromática", "hierbas provenzales": "hierba provenzal",
+                    "pulpa de açaí": "pulpa de açaí", "pan rallado": "pan rallado",
+                    "huevo duro": "huevo duro", "jamón serrano": "jamón serrano",
+                    "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
+                    "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
+                    "arroz integral": "arroz integral", "maicena": "maicena",
+                    "champiñones": "champiñón", 
+                    "patatas": "patata", 
+                    "garbanzos": "garbanzo", 
+                    "espinacas": "espinaca", 
+                    "judiones": "judión", 
+                    "fabes": "fabes", 
+                    "cebolletas": "cebolleta",
+                    "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
+                    "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
+                    "churro": "churro", "natillas": "natilla", "torrija": "torrija", "arroz": "arroz",
+                    "tarta": "tarta", "galleta": "galleta", "bizcocho": "bizcocho", "flan": "flan",
+                    "gelatina": "gelatina", "almendra molida": "almendra molida", "azúcar glas": "azúcar glas"
+                };
+
+                for (const compound in specificCompoundsMap) {
+                    if (lowerName.includes(compound)) {
+                        return specificCompoundsMap[compound];
+                    }
+                }
+
+                const commonSingularPluralMap = {
+                    "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                    "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                    "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                    "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                    "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                    "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                    "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                    "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                    "brocheta": "brochetas", "espárrago": "espárragos", "loncha": "lonchas",
+                    "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                    "judía": "judías", "tomate": "tomates", "seta": "setas",
+                    "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                    "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                    "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                    "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                    "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                    "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
+                };
+                
+                const words = lowerName.split(' ').map(w => w.replace(/[^a-záéíóúüñ]/g, '')); 
+                for (const word of words) {
+                    if (commonSingularPluralMap[word]) return word; 
+                    const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
+                    if (singularForm) return singularForm; 
+                }
+                
+                if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
+                    return lowerName.slice(0, -1);
+                }
+
+                return lowerName; 
             }
 
             function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente no tenía una cantidad numérica original significativa,
-                // o si es un ingrediente como "sal" que no se debe multiplicar,
-                // simplemente devuelve el original.
-                if (parsedIng.value === 0 && parsedIng.unit === '' && parsedIng.name !== '') { 
+                if (parsedIng.value === 0) { 
                     return parsedIng.original; 
                 }
-
+                
                 let newValue = parsedIng.value * factor;
                 let unit = parsedIng.unit;
                 let name = parsedIng.name;
+                let baseName = parsedIng.baseName; 
 
-                // Ajustes de unidades para mayor claridad y precisión (kg <-> g, litro <-> ml)
                 if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
                 else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
                 else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
                 else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
                 
-                // Redondear para evitar decimales muy largos.
-                if (Math.abs(newValue % 1) < 0.0001) { // Es un entero o muy cercano
+                if (Math.abs(newValue % 1) < 0.0001) { 
                     newValue = Math.round(newValue);
-                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { // Es un decimal con una cifra
+                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
                     newValue = Math.round(newValue * 10) / 10;
-                } else { // Más de un decimal, redondear a dos
-                    newValue = Math.round(newValue * 100) / 100;
+                } else { 
+                    newValue = Math.round(newValue * 100) / 100; 
                 }
                 
                 let formattedName = name;
-                const commonForms = {
+                const commonFormsMap = {
                     "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
                     "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
                     "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
@@ -643,69 +1102,53 @@
                     "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                     "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
-                    "loncha": "lonchas", // Para "lonchas de jamón"
-                    "s": "s" // Forma genérica para pluralizar si no se encuentra mejor
+                    "loncha": "lonchas",
+                    "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
+                    "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
+                    "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
+                    "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                    "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
+                    "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                    "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
+                    "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
+                    "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos"
                 };
 
-                // Lógica de singularización/pluralización del nombre
-                let nameWords = name.split(' ');
-                let primaryNounIndex = -1;
-                // Intentar encontrar la primera palabra que sea un sustantivo común o su plural
-                for (let i = 0; i < nameWords.length; i++) {
-                    const word = nameWords[i].toLowerCase();
-                    if (commonForms[word] || Object.values(commonForms).includes(word)) {
-                        primaryNounIndex = i;
-                        break;
-                    }
-                }
+                let targetNounForm = baseName;
 
-                if (primaryNounIndex !== -1) {
-                    let baseForm = nameWords[primaryNounIndex].toLowerCase();
-                    let targetForm = '';
-                    if (newValue === 1) {
-                        targetForm = Object.keys(commonForms).find(key => commonForms[key] === baseForm) || baseForm;
-                        if (targetForm === baseForm && baseForm.endsWith('s') && baseForm.length > 3 && !['pasas', 'nueces', 'espinacas'].includes(baseForm)) {
-                            targetForm = baseForm.slice(0, -1);
-                        }
-                    } else { // newValue > 1
-                        targetForm = commonForms[baseForm] || baseForm;
-                        if (targetForm === baseForm && !baseForm.endsWith('s')) {
-                            targetForm = baseForm + 's';
-                        }
+                if (newValue === 1) {
+                    targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
+                    if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
+                         targetNounForm = baseName.slice(0, -1); 
                     }
-                    nameWords[primaryNounIndex] = targetForm;
-                    formattedName = nameWords.join(' ').trim();
-                } else if (newValue > 1 && !name.endsWith('s') && name.length > 0 && !['sal', 'pimienta', 'aceite', 'agua', 'miel', 'curry', 'jengibre', 'eneldo', 'orégano', 'albahaca', 'hierbabuena', 'menta'].includes(name.toLowerCase())) {
-                    formattedName = name + 's';
-                } else if (newValue === 1 && name.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'].includes(name.toLowerCase())) {
-                    formattedName = name.slice(0, -1);
+                } else { 
+                    targetNounForm = commonFormsMap[baseName] || baseName;
+                    if (targetNounForm === baseName && !baseName.endsWith('s')) {
+                        targetNounForm = baseName + 's'; 
+                    }
                 }
+                
+                formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
                 
                 formattedName = formattedName.trim();
 
-                // Eliminar la unidad del nombre si ya está en la parte de la unidad (ej. "gramos de gramos")
                 const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
                 formattedName = formattedName.replace(unitInNameRegex, '').trim();
                 
-                // Asegurar que no haya palabras duplicadas seguidas (ej. "zanahoria zanahoria")
                 formattedName = formattedName.split(' ').filter((word, index, arr) => {
                     return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
                 }).join(' ').trim();
 
-                // Formato final de la cadena de ingrediente
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${newValue} ${unit}. ${formattedName}`.trim();
                 }
-                // Si la unidad es un "cuantificador" ("un", "una", "unidad", "puñado") o está vacía,
-                // y el valor es 1, solo mostramos el nombre formateado.
-                if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(unit))) {
-                    return formattedName; // Ej: "Aceite de oliva", "Puñado de nueces"
+                if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
+                    return formattedName; 
                 }
-                // Para el resto, incluye el valor y la unidad.
                 if (unit !== '') {
                     return `${newValue} ${unit} ${formattedName}`.trim();
                 }
-                // Si no hay unidad explícita y no es un caso especial de "1", muestra solo el valor y el nombre.
                 return `${newValue} ${formattedName}`.trim();
             }
 
@@ -739,14 +1182,14 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
-                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="console.error('Error cargando imagen en modal para:', this.alt); this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
                         <div id="recipe-content-normal">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
                                 <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
                                 <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
                                     <span>Raciones:</span>
-                                    <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
                                     <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1">
+                                    <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">-</button>
                                     <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors">+</button>
                                 </div>
                             </div>
@@ -765,6 +1208,7 @@
                                 <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
                                 <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
                                 <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Iniciar Cocina Guiada</button>
+                                <button id="add-to-shopping-list-btn" class="bg-teal-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-teal-700 transition shadow-lg">Añadir a la Lista de Compra</button>
                             </div>
                         </div>
                     </div>`;
@@ -774,9 +1218,8 @@
 
                 updateIngredientsDisplay(currentServings);
 
-                // CONTROL DEL MODAL: Quitamos 'hidden' y añadimos 'modal-visible'
-                dom.modal.classList.remove('hidden'); // Esto cambia display: none a display: flex
-                dom.modal.classList.add('modal-visible'); // Esto activa la opacidad y la escala
+                dom.modal.classList.remove('hidden');
+                dom.modal.classList.add('modal-visible'); 
                 
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
@@ -799,6 +1242,9 @@
                 }
                 
                 document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
+                document.getElementById('add-to-shopping-list-btn').addEventListener('click', () => {
+                    addToShoppingList(currentRecipeDetail, currentServings);
+                });
 
                 const servingsInput = document.getElementById('servings-input');
                 document.getElementById('decrease-servings').addEventListener('click', () => {
@@ -825,53 +1271,51 @@
             
             function closeModal() {
                 console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); // Inicia la transición de salida
-                // Espera a que termine la transición antes de ocultar completamente
+                dom.modal.classList.remove('modal-visible'); 
                 setTimeout(() => { 
-                    dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
-                    dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
+                    dom.modal.classList.add('hidden'); 
+                    dom.modalContent.innerHTML = ''; 
                     console.log('Modal completamente cerrado y contenido limpiado.');
-                }, 300); // Coincide con la duración de la transición en CSS
+                }, 300); 
                 currentRecipeDetail = null; 
                 currentServings = 0; 
             }
 
             // --- MODO OSCURO ---
             function setupTheme() {
-                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                const currentTheme = localStorage.getItem('color-theme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
                     document.documentElement.classList.add('dark');
-                    dom.lightIcon.classList.remove('hidden');
-                    dom.darkIcon.classList.add('hidden'); 
+                    dom.lightIcon.classList.remove('hidden'); 
+                    dom.darkIcon.classList.add('hidden');    
+                    console.log("Tema: Oscuro (inicial)");
                 } else {
                     document.documentElement.classList.remove('dark');
-                    dom.darkIcon.classList.remove('hidden');
-                    dom.lightIcon.classList.add('hidden'); 
+                    dom.darkIcon.classList.remove('hidden'); 
+                    dom.lightIcon.classList.add('hidden');   
+                    console.log("Tema: Claro (inicial)");
                 }
             }
 
             dom.themeToggle.addEventListener('click', function() {
-                dom.darkIcon.classList.toggle('hidden');
-                dom.lightIcon.classList.toggle('hidden');
-                if (localStorage.getItem('color-theme')) {
-                    if (localStorage.getItem('color-theme') === 'light') {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    }
+                document.documentElement.classList.toggle('dark');
+                
+                if (document.documentElement.classList.contains('dark')) {
+                    localStorage.setItem('color-theme', 'dark');
+                    dom.lightIcon.classList.remove('hidden');
+                    dom.darkIcon.classList.add('hidden');
+                    console.log("Cambiando a tema: Oscuro (manual)");
                 } else {
-                    if (document.documentElement.classList.contains('dark')) {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('color-theme', 'light');
-                    } else {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('color-theme', 'dark');
-                    }
+                    localStorage.setItem('color-theme', 'light');
+                    dom.darkIcon.classList.remove('hidden');
+                    dom.lightIcon.classList.add('hidden');
+                    console.log("Cambiando a tema: Claro (manual)");
                 }
             });
 
-            setupTheme();
+            setupTheme(); 
 
             // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
             dom.search.addEventListener('input', applyFilters);
@@ -898,6 +1342,17 @@
                     applyFilters();
                 }
             });
+
+            // Event listener para los nuevos filtros de tiempo
+            dom.timeFilters.addEventListener('click', (e) => {
+                if (e.target.matches('.time-filter-btn')) {
+                    currentTimeFilter = e.target.dataset.time;
+                    console.log('Filtro por tiempo:', currentTimeFilter);
+                    document.querySelectorAll('.time-filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    applyFilters();
+                }
+            });
             
             // Listener para cerrar el modal al hacer clic fuera
             dom.modal.addEventListener('click', (event) => { 
@@ -906,14 +1361,158 @@
                     closeModal(); 
                 }
             });
-            
-            // Asegura que el filtro "Todas" esté activo al cargar
+
+            // Event listeners para el modal de la lista de compra
+            dom.viewShoppingListBtn.addEventListener('click', showShoppingListModal);
+            dom.closeShoppingListModalBtn.addEventListener('click', closeShoppingListModal);
+            dom.clearShoppingListBtn.addEventListener('click', clearShoppingList);
+            dom.printShoppingListBtn.addEventListener('click', () => {
+                const printContent = dom.shoppingListModal.querySelector('.bg-white.dark\\:bg-stone-800');
+                if (printContent) {
+                    const originalBody = document.body.innerHTML;
+                    document.body.innerHTML = printContent.outerHTML;
+                    window.print();
+                    document.body.innerHTML = originalBody;
+                    runRecipeApp(); 
+                } else {
+                    window.print(); 
+                }
+            });
+
+
+            // Asegura que los filtros "Todas" y "Cualquiera" estén activos al cargar
             dom.filterAllBtn.classList.add('active');
+            document.querySelector('.time-filter-btn[data-time="all"]').classList.add('active');
             
             // --- COPYRIGHT YEAR ---
             dom.copyrightYear.textContent = new Date().getFullYear();
 
             // --- ASISTENTE DE VOZ ---
+            // Variable para el objeto SpeechRecognition
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition = null;
+            let speaking = false; 
+            let recognitionActive = false; 
+
+            // Función para iniciar el reconocimiento de voz
+            function startVoiceRecognition() {
+                if (!SpeechRecognition) {
+                    console.warn('SpeechRecognition API no soportada en este navegador.');
+                    showToast('Tu navegador no soporta el control por voz.', 'error');
+                    return;
+                }
+                
+                if (!recognition) {
+                    recognition = new SpeechRecognition();
+                    recognition.lang = 'es-ES';
+                    recognition.interimResults = false; 
+                    recognition.maxAlternatives = 1; 
+
+                    recognition.addEventListener('result', (event) => {
+                        const command = event.results[0][0].transcript.toLowerCase();
+                        console.log('Comando detectado:', command);
+                        handleVoiceCommand(command);
+                    });
+
+                    recognition.addEventListener('end', () => {
+                        if (cookingModeView.classList.contains('flex') && recognitionActive) {
+                            console.log('Reconocimiento de voz terminado, reiniciando...');
+                            recognition.start(); 
+                        } else {
+                            console.log('Reconocimiento de voz detenido permanentemente.');
+                        }
+                    });
+
+                    recognition.addEventListener('error', (event) => {
+                        console.error('Error en reconocimiento de voz:', event.error);
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                            showToast('Necesito permiso de micrófono para el asistente de voz. Por favor, actívalo.', 'error');
+                            recognitionActive = false; 
+                        } else if (event.error === 'no-speech') {
+                            console.log('No se detectó voz. Reintentando...');
+                        } else {
+                            showToast(`Error de voz: ${event.error}. Intenta de nuevo.`, 'error');
+                            recognitionActive = false; 
+                        }
+                    });
+                }
+                
+                if (!recognitionActive) { 
+                    try {
+                        recognitionActive = true;
+                        recognition.start();
+                        console.log('Reconocimiento de voz iniciado.');
+                        showToast('Asistente de voz escuchando...', 'info');
+                    } catch (e) {
+                        console.error('Error al iniciar SpeechRecognition:', e);
+                        showToast('Error al iniciar el reconocimiento de voz. Intenta recargar.', 'error');
+                        recognitionActive = false;
+                    }
+                }
+            }
+
+            // Función para detener el reconocimiento de voz
+            function stopVoiceRecognition() {
+                if (recognition && recognitionActive) {
+                    recognitionActive = false;
+                    recognition.stop();
+                    console.log('Reconocimiento de voz detenido.');
+                }
+            }
+
+            // --- Funciones de control del asistente (extraídas para ser llamadas directamente) ---
+            function nextStepAction() { // Renombrada para evitar conflicto si "nextStep" ya existía
+                if (currentStep < currentRecipeSteps.length - 1) {
+                    currentStep++;
+                    updateCookingStep();
+                } else {
+                    speak("Has llegado al final de la receta. ¡Buen provecho!");
+                    exitCookingMode();
+                }
+            }
+
+            function prevStepAction() { // Renombrada
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateCookingStep();
+                } else {
+                    speak("Estás en el primer paso.");
+                }
+            }
+
+            function repeatStepAction() { // Renombrada
+                speak(currentRecipeSteps[currentStep]);
+            }
+            // La función `exitCookingMode` ya existe y se llama correctamente.
+
+
+            // Función para manejar los comandos de voz
+            function handleVoiceCommand(command) {
+                if (speaking) {
+                    console.log("Asistente hablando, ignorando comando:", command);
+                    return; 
+                }
+
+                const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); 
+
+                if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
+                    nextStepAction(); // Llama a la nueva función de acción
+                    speak('Pasando al siguiente paso.');
+                } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
+                    prevStepAction(); // Llama a la nueva función de acción
+                    speak('Volviendo al paso anterior.');
+                } else if (cleanedCommand.includes('repetir')) {
+                    repeatStepAction(); // Llama a la nueva función de acción
+                    speak('Repitiendo el paso actual.');
+                } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
+                    exitCookingMode(); 
+                    speak('Saliendo del modo de cocina.');
+                } else {
+                    speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
+                }
+            }
+
+
             const cookingModeView = document.getElementById('cooking-mode-view');
             const stepCounter = document.getElementById('step-counter');
             const stepText = document.getElementById('step-text');
@@ -931,6 +1530,11 @@
                 utterance.lang = 'es-ES'; 
                 utterance.rate = 0.9; 
                 utterance.pitch = 1; 
+
+                utterance.onstart = () => { speaking = true; };
+                utterance.onend = () => { speaking = false; };
+                utterance.onerror = (e) => { speaking = false; console.error("Error en SpeechSynthesis:", e);};
+
                 speechSynthesis.speak(utterance);
             }
 
@@ -948,40 +1552,42 @@
                 cookingModeView.classList.remove('hidden');
                 cookingModeView.classList.add('flex');
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
-                setTimeout(updateCookingStep, 1500); 
+                setTimeout(() => {
+                    updateCookingStep();
+                    startVoiceRecognition(); 
+                }, 1500); 
             }
 
             function exitCookingMode() {
                 console.log('Saliendo del modo de cocina.');
                 speechSynthesis.cancel();
+                stopVoiceRecognition(); 
                 cookingModeView.classList.add('hidden');
                 cookingModeView.classList.remove('flex');
             }
 
-            prevStepBtn.addEventListener('click', () => {
-                if (currentStep > 0) {
-                    currentStep--;
-                    updateCookingStep();
-                } else {
-                    speak("Estás en el primer paso.");
-                }
-            });
-
-            nextStepBtn.addEventListener('click', () => {
-                if (currentStep < currentRecipeSteps.length - 1) {
-                    currentStep++;
-                    updateCookingStep();
-                } else {
-                    speak("Has llegado al final de la receta. ¡Buen provecho!");
-                    exitCookingMode();
-                }
-            });
-
-            repeatStepBtn.addEventListener('click', () => {
-                speak(currentRecipeSteps[currentStep]);
-            });
-
+            // Los event listeners de los botones ahora llaman a las funciones de acción directamente
+            prevStepBtn.addEventListener('click', prevStepAction);
+            nextStepBtn.addEventListener('click', nextStepAction);
+            repeatStepBtn.addEventListener('click', repeatStepAction);
             exitCookingBtn.addEventListener('click', exitCookingMode);
+
+            // Cargar la lista de la compra al inicio
+            loadShoppingList();
+
+            // --- FUNCIÓN PARA NOTIFICACIONES TOAST ---
+            function showToast(message, type = 'info', duration = 3000) {
+                const toast = document.createElement('div');
+                toast.classList.add('toast-message', type);
+                toast.textContent = message;
+                dom.toastContainer.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, duration);
+            }
         }
 
         // Ejecuta la app cuando el DOM esté listo
