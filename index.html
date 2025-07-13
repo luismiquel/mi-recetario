@@ -1,131 +1,119 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recetario Delicioso</title>
-    <meta name="theme-color" content="#78350f" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Recetario" />
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R" />
+
+    <meta name="theme-color" content="#78350f"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Recetario">
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
+    
+    <link rel="manifest" href="data:application/manifest+json,{
+        &quot;name&quot;: &quot;Recetario Delicioso&quot;,
+        &quot;short_name&quot;: &quot;Recetario&quot;,
+        &quot;start_url&quot;: &quot;.&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;#f8f7f5&quot;,
+        &quot;theme_color&quot;: &quot;#78350f&quot;,
+        &quot;description&quot;: &quot;Tu app de recetas de cocina española.&quot;,
+        &quot;icons&quot;: [ {
+            &quot;src&quot;: &quot;https://placehold.co/192x192/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;192x192&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }, {
+            &quot;src&quot;: &quot;https://placehold.co/512x512/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;512x512&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        } ]
+    }">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' };</script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet"/>
+    <script> tailwind.config = { darkMode: 'class' } </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
-      body { font-family: 'Inter', sans-serif; background: #f8f7f5; }
-      .dark body { background: #1c1917; color: #e5e5e5; }
-      h1,h2,h3,h4 { font-family: 'Lora', serif; }
-      /* --- Pega aquí el CSS que ya tenías para botones, modales, skeletons, toast, carrito, etc. --- */
+      /* aquí van todos tus estilos CSS (los mismos que tenías) */
     </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
+
   <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Cabecera -->
     <header class="relative text-center mb-8">
       <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
       <p class="text-gray-600 dark:text-stone-400 mt-2">120 recetas para inspirar tu cocina.</p>
       <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
-      <button id="theme-toggle" class="absolute top-0 left-0 m-4 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700">
-        <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="currentColor"><path d="M17.293..."/></svg>
-        <svg id="theme-toggle-light-icon" class="hidden w-6 h-6" fill="currentColor"><path d="M10..."/></svg>
+      <button id="theme-toggle" class="absolute top-0 left-0 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
+        <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+        <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 …"/></svg>
       </button>
     </header>
 
-    <!-- CONTROLES -->
-    <div class="sticky top-4 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm mb-4">
-      <div class="flex flex-col sm:flex-row gap-4 px-4">
+    <!-- Búsqueda y filtros -->
+    <div class="sticky top-4 bg-f8f7f5/90 dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm">
+      <div class="flex flex-col sm:flex-row gap-4 mb-4 px-4">
         <div class="relative flex-grow">
-          <input id="searchInput" type="text" placeholder="Buscar por nombre o ingrediente..." class="w-full pl-10 pr-4 py-3 rounded-full border dark:border-stone-600 bg-white dark:bg-stone-800 focus:ring-2 focus:ring-amber-500"/>
-          <svg class="absolute left-3 top-1/2 w-5 h-5 -translate-y-1/2 text-gray-400"><path d="M21 21l-6-6..." /></svg>
+          <input type="text" id="searchInput" placeholder="Buscar por nombre o ingrediente..." class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-stone-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-stone-800">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path …/></svg>
         </div>
-        <div class="flex gap-2 bg-amber-100 dark:bg-stone-800 p-1 rounded-full">
-          <button id="filterAll" class="filter-btn active">Todas</button>
+        <div class="flex items-center justify-center shrink-0 gap-2 bg-amber-100 dark:bg-stone-800 p-1 rounded-full">
+          <button id="filterAll" class="filter-btn">Todas</button>
           <button id="filterFavorites" class="filter-btn">Favoritas</button>
         </div>
       </div>
-      <div id="categoryFilters" class="flex gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mt-4 overflow-x-auto">
+      <div id="categoryFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4">
         <button data-category="all" class="category-btn active">Todos</button>
         <button data-category="Aperitivo" class="category-btn">Aperitivos</button>
         <button data-category="Primero" class="category-btn">Primeros</button>
         <button data-category="Segundo" class="category-btn">Segundos</button>
         <button data-category="Postre" class="category-btn">Postres</button>
       </div>
-      <div id="timeFilters" class="flex gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mt-2 overflow-x-auto">
-        <span class="text-gray-600 dark:text-stone-400">Tiempo:</span>
+      <div id="timeFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4 mt-2">
+        <span class="text-sm text-gray-600 dark:text-stone-400">Tiempo:</span>
         <button data-time="all" class="time-filter-btn active">Cualquiera</button>
         <button data-time="short" class="time-filter-btn">Rápida (&lt;30 min)</button>
         <button data-time="medium" class="time-filter-btn">Media (30-60 min)</button>
         <button data-time="long" class="time-filter-btn">Larga (&gt;60 min)</button>
       </div>
-      <button id="viewShoppingListBtn" class="mt-4 ml-4 bg-amber-700 text-white px-4 py-2 rounded-full flex items-center gap-2">
-        Ver Lista de Compra (<span id="shopping-list-count">0</span>)
+      <button id="viewShoppingListBtn" class="mt-4 mx-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold py-2 px-4 rounded-full shadow-md flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path …/></svg>
+        Lista de Compra (<span id="shopping-list-count">0</span>)
       </button>
     </div>
 
-    <div id="no-results" class="hidden text-center py-12 text-gray-600 dark:text-stone-400">
-      No se encontraron recetas. ¡Intenta otro filtro!
+    <!-- Grid de recetas -->
+    <div id="no-results" class="hidden text-center py-12">
+      <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
     </div>
-
-    <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8"></div>
   </div>
 
-  <!-- MODALES Y MODO COCINA... -->
-  <!-- Pega aquí exactamente los <div id="recipeModal">, <div id="shoppingListModal">, <div id="cooking-mode-view"> y el footer tal como los tenías -->
+  <!-- Modales y cocina guiada (igual que antes) -->
+  <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4"> … </div>
+  <div id="shoppingListModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4"> … </div>
+  <div id="cooking-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-50 hidden flex-col"> … </div>
+  <div id="toast-container"></div>
+
+  <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
+    <p class="text-sm text-gray-500 dark:text-stone-400">&copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas.</p>
+  </footer>
 
   <script type="module">
-  // --- IMPORTS FIREBASE, ANALYTICS, AUTH, FIRESTORE ---
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-  import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
-
-  function runRecipeApp() {
-    // --- CONFIG FIREBASE (usa tu propia API key) ---
-    const firebaseConfig = { /* ... tu config ... */ };
-    const app = initializeApp(firebaseConfig);
-    getAnalytics(app);
-    const auth = getAuth(app), db = getFirestore(app);
-    let userId = null, userFavorites = [], shoppingList = [];
-    let currentFilter = 'all', currentCategory = 'all', currentTimeFilter = 'all';
-
-    // --- DOM refs ---
-    const dom = {
-      grid: document.getElementById('recipeGrid'),
-      search: document.getElementById('searchInput'),
-      filterAllBtn: document.getElementById('filterAll'),
-      filterFavBtn: document.getElementById('filterFavorites'),
-      categoryFilters: document.getElementById('categoryFilters'),
-      timeFilters: document.getElementById('timeFilters'),
-      noResults: document.getElementById('no-results'),
-      modal: document.getElementById('recipeModal'),
-      modalContent: document.getElementById('modalContent'),
-      shoppingListModal: document.getElementById('shoppingListModal'),
-      finalShoppingList: document.getElementById('finalShoppingList'),
-      viewShoppingListBtn: document.getElementById('viewShoppingListBtn'),
-      shoppingListCount: document.getElementById('shopping-list-count'),
-      themeToggle: document.getElementById('theme-toggle'),
-      darkIcon: document.getElementById('theme-toggle-dark-icon'),
-      lightIcon: document.getElementById('theme-toggle-light-icon'),
-      userInfo: document.getElementById('user-info'),
-      toastContainer: document.getElementById('toast-container')
-    };
-
-    // --- TUS 120 RECETAS aquí en el array allRecipes ---
-    const allRecipes = [
-      //… pega tus 120 objetos aquí …
-      { categoria:"Aperitivo", titulo:"Brochetas de aceituna y pimiento", raciones:4, tiempo:"15 min", imagen:"https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes:["Aceitunas verdes y negras","Pimiento rojo troceado","Hojas de albahaca","Aceite de oliva","Pimienta negra"], pasos:["Ensarta aceitunas...","Aliña...","Sirve."] },
-      { categoria:"Aperitivo", titulo:"Garbanzos crujientes al horno", raciones:2, tiempo:"45 min", imagen:"https://placehold.co/800x600/d1c4b5/4a2e0a?text=Garbanzos+Crujientes", ingredientes:["200 g garbanzos cocidos","1 cda. AOVE","1/2 cdita pimentón ahumado","1/4 cdita comino","Sal"], pasos:["Mezcla garbanzos...","Hornea...","Sirve."] },
-      // … resto de recetas …
-    ];
-
-    // --- FUNCIONES: renderRecipes, applyFilters, toggleFavorite, showRecipeDetail, listas, carrito, modo cocina, voz y toast ---
-    // Corta y pega las funciones EXACTAS de tu código original (renderRecipes, event listeners, parseIngredient, formatIngredient, shoppingList, Firebase, voice assistant, darkMode toggle, etc.)
-
-    // --- AL FINAL: inicializar app ---
-    runRecipeApp();
-  }
-
-  document.addEventListener('DOMContentLoaded', runRecipeApp);
+  // Todo tu JavaScript en un solo bloque, incluyendo:
+  // - Inicialización de Firebase
+  // - Array `allRecipes` con las 120 recetas
+  // - Renderizado, filtros, búsqueda
+  // - Gestión de favoritos con Firestore
+  // - Carrito inteligente (lista de compra)
+  // - Asistente de voz y cocina guiada
+  // - Toasts y tema oscuro
+  // (Copia aquí íntegramente todo el <script> que ya tenías)
   </script>
 </body>
 </html>
