@@ -92,16 +92,24 @@
   <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
   <script>
-    // === DATOS ===
-    // Pega aquí tu array original con las 120 recetas:
-    const allRecipes = [ /* ... tus 120 objetos de receta ... */ ];
+    // === AQUI PEGA TU ARRAY CON LAS 120 RECETAS ===
+    const allRecipes = [
+      /* {
+         categoria: "...", titulo: "...", tiempo: "...",
+         imagen: "...", raciones: X,
+         ingredientes: [...],
+         pasos: [...]
+        },
+        ... 120 objetos ...
+      */
+    ];
 
     // === ESTADO ===
-    let favs = new Set();
-    let cart = [];
-    let filtered = allRecipes.slice();
-    let currentRecipe = null;
-    let cookSteps = [], cookIndex = 0;
+    let favs = new Set(),
+        cart = [],
+        filtered = [...allRecipes],
+        currentRecipe = null,
+        cookSteps = [], cookIndex = 0;
 
     // === REFERENCIAS DOM ===
     const grid = document.getElementById('grid'),
@@ -137,17 +145,18 @@
           clearCart = document.getElementById('clear-cart'),
           toastC = document.getElementById('toast-container');
 
-    // === RENDER ===
+    // === RENDERIZAR TARJETAS ===
     function renderList(){
       grid.innerHTML = '';
-      const list = filtered;
-      if(!list.length){ noRes.classList.remove('hidden'); return }
+      if(!filtered.length){
+        noRes.classList.remove('hidden');
+        return;
+      }
       noRes.classList.add('hidden');
-
-      list.forEach(r=>{
-        const c = document.createElement('div');
-        c.className = 'bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col cursor-pointer';
-        c.innerHTML = `
+      filtered.forEach(r=>{
+        const c=document.createElement('div');
+        c.className='bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col cursor-pointer';
+        c.innerHTML=`
           <img src="${r.imagen}" alt="${r.titulo}"
                class="h-32 w-full object-cover rounded-t-xl">
           <div class="p-4 flex-grow flex flex-col">
@@ -158,10 +167,10 @@
               <button class="view-btn text-blue-500">Ver →</button>
             </div>
           </div>`;
-        c.onclick = ()=> openModal(r);
-        c.querySelector('.fav-btn').onclick = e=>{
+        c.onclick=()=>openModal(r);
+        c.querySelector('.fav-btn').onclick=e=>{
           e.stopPropagation();
-          if(favs.has(r.titulo)) favs.delete(r.titulo), toast('Eliminado de favoritos');
+          if(favs.has(r.titulo)) favs.delete(r.titulo), toast('Eliminado de favoritos','error');
           else favs.add(r.titulo), toast('Añadido a favoritos','success');
           renderList();
         };
@@ -169,110 +178,103 @@
       });
     }
 
-    // === FILTROS ===
+    // === FILTROS Y BÚSQUEDA ===
     function applyFilter(mode){
-      if(mode==='all') filtered = allRecipes.slice();
-      else filtered = allRecipes.filter(r=>favs.has(r.titulo));
-      const term = searchInput.value.toLowerCase();
+      filtered = mode==='fav'
+        ? allRecipes.filter(r=>favs.has(r.titulo))
+        : [...allRecipes];
+      const term=searchInput.value.toLowerCase();
       if(term) filtered = filtered.filter(r=>
         r.titulo.toLowerCase().includes(term) ||
         r.ingredientes.join(' ').toLowerCase().includes(term)
       );
       renderList();
     }
-    btnAll.onclick  = ()=>{ applyFilter('all'); };
-    btnFav.onclick  = ()=>{ applyFilter('fav'); };
-    searchInput.oninput = ()=>applyFilter();
+    btnAll.onclick  =()=>applyFilter('all');
+    btnFav.onclick  =()=>applyFilter('fav');
+    searchInput.oninput=()=>applyFilter();
 
-    // === MODAL RECETA ===
+    // === MODAL DETALLE RECETA ===
     function openModal(r){
-      currentRecipe = r;
-      mTitle.textContent = r.titulo;
-      mImg.src = r.imagen;
-      mTime.textContent = r.tiempo;
-      inpServ.value = r.raciones;
-      mServ.textContent = r.raciones;
-      // ingredientes
-      ingList.innerHTML = '';
-      r.ingredientes.forEach(i=>{
-        const li = document.createElement('li');
-        li.textContent = i; ingList.appendChild(li);
+      currentRecipe=r;
+      mTitle.textContent=r.titulo;
+      mImg.src=r.imagen;
+      mTime.textContent=r.tiempo;
+      inpServ.value=r.raciones;
+      mServ.textContent=r.raciones;
+      ingList.innerHTML=''; r.ingredientes.forEach(i=>{
+        const li=document.createElement('li'); li.textContent=i; ingList.appendChild(li);
       });
-      // pasos
-      stepList.innerHTML = '';
-      r.pasos.forEach(p=>{
-        const li=document.createElement('li');
-        li.textContent=p; stepList.appendChild(li);
+      stepList.innerHTML=''; r.pasos.forEach(p=>{
+        const li=document.createElement('li'); li.textContent=p; stepList.appendChild(li);
       });
       modal.classList.remove('hidden');
     }
-    closeModal.onclick = ()=>modal.classList.add('hidden');
-    decServ.onclick = ()=>{
-      let v = Math.max(1, parseInt(inpServ.value)-1);
-      inpServ.value = v; mServ.textContent = v;
+    closeModal.onclick=()=>modal.classList.add('hidden');
+    decServ.onclick=()=>{
+      let v=Math.max(1,parseInt(inpServ.value)-1);
+      inpServ.value=v; mServ.textContent=v;
     };
-    incServ.onclick = ()=>{
-      let v = parseInt(inpServ.value)+1;
-      inpServ.value = v; mServ.textContent = v;
+    incServ.onclick=()=>{
+      let v=parseInt(inpServ.value)+1;
+      inpServ.value=v; mServ.textContent=v;
     };
 
     // === CARRITO ===
-    addCart.onclick = ()=>{
-      const qty = parseInt(inpServ.value);
+    addCart.onclick=()=>{
+      const qty=parseInt(inpServ.value);
       cart.push({r:currentRecipe.titulo,n:qty});
-      cartCount.textContent = cart.length;
+      cartCount.textContent=cart.length;
       toast(`Añadido ${qty} raciones de "${currentRecipe.titulo}" al carrito`,'success');
     };
-    btnCart.onclick = ()=>cartModal.classList.remove('hidden');
-    closeCart.onclick = ()=>cartModal.classList.add('hidden');
-    clearCart.onclick = ()=>{
-      cart = []; cartCount.textContent=0; cartList.innerHTML='';
+    btnCart.onclick=()=>{ renderCart(); cartModal.classList.remove('hidden'); };
+    closeCart.onclick=()=>cartModal.classList.add('hidden');
+    clearCart.onclick=()=>{
+      cart=[]; cartCount.textContent=0; cartList.innerHTML='';
       toast('Carrito vaciado','info');
     };
     function renderCart(){
       cartList.innerHTML='';
       if(!cart.length) cartList.innerHTML='<li>Carrito vacío</li>';
-      else cart.forEach((it,i)=>{
+      else cart.forEach(it=>{
         const li=document.createElement('li');
         li.textContent=`${it.n} × ${it.r}`;
         cartList.appendChild(li);
       });
     }
-    cartModal.addEventListener('transitionend',renderCart);
 
-    // === MODO COCINA / VOZ ===
-    exitCook.onclick = ()=>{ cookMode.classList.add('hidden'); window.speechSynthesis.cancel(); };
+    // === MODO COCINA Y VOZ ===
     function startCooking(){
-      cookSteps = currentRecipe.pasos.slice();
-      cookIndex = 0;
+      cookSteps=[...currentRecipe.pasos];
+      cookIndex=0;
       cookMode.classList.remove('hidden');
       showStep();
       startVoice();
     }
-    startCook.onclick = startCooking;
+    startCook.onclick=startCooking;
+    exitCook.onclick=()=>{
+      cookMode.classList.add('hidden');
+      speechSynthesis.cancel();
+      if(recog) recog.stop();
+    };
     function showStep(){
-      stepCounter.textContent = `Paso ${cookIndex+1} de ${cookSteps.length}`;
-      stepText.textContent = cookSteps[cookIndex];
+      stepCounter.textContent=`Paso ${cookIndex+1} de ${cookSteps.length}`;
+      stepText.textContent=cookSteps[cookIndex];
       speak(cookSteps[cookIndex]);
     }
-    prevStep.onclick = ()=>{
-      if(cookIndex>0){ cookIndex--; showStep(); } else speak('Estás en el primer paso');
-    };
-    nextStep.onclick = ()=>{
-      if(cookIndex<cookSteps.length-1){ cookIndex++; showStep(); }
+    prevStep.onclick=()=>{ if(cookIndex>0){cookIndex--;showStep();} else speak('Primer paso'); };
+    nextStep.onclick=()=>{ 
+      if(cookIndex<cookSteps.length-1){cookIndex++;showStep();}
       else{ speak('Receta completada'); exitCook.onclick(); }
     };
-    repeatStep.onclick = ()=>showStep();
+    repeatStep.onclick=()=>showStep();
 
-    // voz
     const SpeechRecognition = window.SpeechRecognition||window.webkitSpeechRecognition;
-    let recog=null, listening=false, speaking=false;
+    let recog=null;
     function speak(txt){
       speechSynthesis.cancel();
       const u=new SpeechSynthesisUtterance(txt);
       u.lang='es-ES'; u.rate=0.9;
-      u.onend=()=>speaking=false;
-      u.onstart=()=>speaking=true;
       speechSynthesis.speak(u);
     }
     function startVoice(){
@@ -282,7 +284,6 @@
         recog.lang='es-ES'; recog.interimResults=false;
         recog.onresult=e=>{
           const cmd=e.results[0][0].transcript.toLowerCase();
-          if(speaking) return;
           if(cmd.includes('siguiente')) nextStep.onclick();
           else if(cmd.includes('anterior')) prevStep.onclick();
           else if(cmd.includes('repetir')) repeatStep.onclick();
@@ -291,22 +292,20 @@
         };
         recog.onend=()=>{ if(!cookMode.classList.contains('hidden')) recog.start(); };
       }
-      if(!listening){ recog.start(); listening=true; }
+      recog.start();
     }
 
     // === TOAST ===
     function toast(msg,type='info'){
       const d=document.createElement('div');
-      d.className=`px-4 py-2 rounded shadow text-white ${{
-        info:'bg-blue-500',success:'bg-green-500',error:'bg-red-500'
-      }[type]||'bg-gray-500'}`;
+      d.className=`px-4 py-2 rounded shadow text-white ${
+        type==='success'?'bg-green-500':type==='error'?'bg-red-500':'bg-blue-500'
+      }`;
       d.textContent=msg; toastC.appendChild(d);
-      setTimeout(()=>{
-        d.remove();
-      },3000);
+      setTimeout(()=>d.remove(),3000);
     }
 
-    // === INIT ===
+    // === INICIALIZAR ===
     renderList();
   </script>
 
