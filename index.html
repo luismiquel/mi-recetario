@@ -1,66 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recetario Delicioso (con debounce en búsqueda)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscador de Recetas</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* (mantén aquí todos tus estilos previos) */
+    /* Pequeño sombreado en tarjetas */
+    .card { transition: transform .2s, box-shadow .2s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
   </style>
 </head>
-<body class="dark:bg-stone-900 dark:text-stone-200">
-  <div id="app" class="max-w-7xl mx-auto px-4 py-8">
-    <!-- (todo tu HTML previo: header, filtros, grid...) -->
-    <input type="text" id="searchInput" placeholder="Buscar por nombre o ingrediente…" class="w-full mb-4 pl-10 pr-4 py-3 border rounded-full"/>
-    <div id="recipeGrid" class="grid grid-cols-2 gap-6 mt-8"></div>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-4">Recetario</h1>
+    <input id="search" type="text" placeholder="Buscar receta..." 
+           class="w-full p-3 rounded-lg border mb-6"
+    />
+
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    <p id="noresults" class="mt-6 text-center text-gray-500 hidden">
+      No se encontró ninguna receta.
+    </p>
   </div>
 
-  <script type="module">
-    // --- Debounce utility ---
-    function debounce(fn, delay) {
-      let timeout;
+  <script>
+    // — Debounce: retrasa la ejecución hasta que pasan `ms` ms sin nuevas llamadas
+    function debounce(fn, ms = 300) {
+      let timer;
       return (...args) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...args), delay);
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
       };
     }
 
-    // --- Datos de ejemplo simplificados ---
+    // Tus recetas
     const allRecipes = [
-      { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", ingredientes: ["Aceitunas", "Pimiento"], tiempo: "15 min", raciones: 4, imagen: "" },
-      { categoria: "Postre",    titulo: "Manzana asada con canela",    ingredientes: ["Manzana", "Canela"],   tiempo: "35 min", raciones: 1, imagen: "" },
-      // … (todas tus 120 recetas aquí)
+      {
+        titulo: "Brochetas de aceituna y pimiento",
+        tiempo: "15 min",
+        ingredientes: ["Aceitunas", "Pimiento rojo", "Albahaca", "Aceite de oliva"]
+      },
+      {
+        titulo: "Manzana asada con canela",
+        tiempo: "35 min",
+        ingredientes: ["Manzana", "Canela en polvo"]
+      }
     ];
 
-    const dom = {
-      grid: document.getElementById('recipeGrid'),
-      search: document.getElementById('searchInput'),
-    };
+    const grid = document.getElementById('grid');
+    const noresults = document.getElementById('noresults');
+    const searchInput = document.getElementById('search');
 
-    // --- Renderizado básico de tarjetas ---
-    function renderRecipes(recipes) {
-      dom.grid.innerHTML = recipes.map(r => `
-        <div class="p-4 bg-white dark:bg-stone-800 rounded-lg shadow cursor-pointer">
-          <h3 class="font-bold text-lg">${r.titulo}</h3>
-          <p class="text-sm text-gray-500">Tiempo: ${r.tiempo}</p>
+    // Renderiza las tarjetas
+    function render(recipes) {
+      grid.innerHTML = recipes.map(r => `
+        <div class="card bg-white p-4 rounded-lg shadow">
+          <h2 class="font-semibold text-lg mb-2">${r.titulo}</h2>
+          <p class="text-sm text-gray-600 mb-1">Tiempo: ${r.tiempo}</p>
+          <p class="text-xs text-gray-500">
+            Ingredientes: ${r.ingredientes.join(', ')}
+          </p>
         </div>
-      `).join('') || `<p class="col-span-full text-center text-gray-500">No hay resultados</p>`;
+      `).join('');
+      noresults.classList.toggle('hidden', recipes.length > 0);
     }
 
-    // --- Filtrado con debounce ---
+    // Filtra por título o ingredientes
     function applyFilters() {
-      const term = dom.search.value.trim().toLowerCase();
-      const filtered = allRecipes.filter(r =>
-        r.titulo.toLowerCase().includes(term) ||
-        r.ingredientes.join(' ').toLowerCase().includes(term)
-      );
-      renderRecipes(filtered);
+      const term = searchInput.value.trim().toLowerCase();
+      const filtered = allRecipes.filter(r => {
+        const haystack = (
+          r.titulo + ' ' + r.ingredientes.join(' ')
+        ).toLowerCase();
+        return haystack.includes(term);
+      });
+      render(filtered);
     }
 
-    // --- Inicialización ---
-    renderRecipes(allRecipes);
-    dom.search.addEventListener('input', debounce(applyFilters, 300));
+    // Inicial
+    render(allRecipes);
+
+    // Escucha con debounce para no filtrar en cada pulsación
+    searchInput.addEventListener('input', debounce(applyFilters, 300));
   </script>
 </body>
 </html>
