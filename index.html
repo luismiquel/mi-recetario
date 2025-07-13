@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Recetario Ligero</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
   <div class="max-w-7xl mx-auto p-6">
@@ -18,7 +14,7 @@
     </header>
 
     <div class="flex flex-col sm:flex-row gap-3 mb-4">
-      <input id="search" type="text" placeholder="Buscar receta..." 
+      <input id="search" type="text" placeholder="Buscar receta..."
         class="flex-1 p-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-amber-400">
       <button id="btn-all" class="px-4 py-2 bg-amber-500 text-white rounded-full">Todas</button>
       <button id="btn-fav" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full">Favoritas</button>
@@ -31,37 +27,33 @@
     <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
   </div>
 
-  <!-- JSON con tus 120 recetas -->
-  <script type="application/json" id="recipes-data">
-  [
-    {
-      "categoria": "Aperitivo",
-      "titulo": "Brochetas de aceituna y pimiento",
-      "raciones": 4,
-      "tiempo": "15 min",
-      "imagen": "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna",
-      "ingredientes": ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"],
-      "pasos": ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."]
-    },
-    {
-      "categoria": "Postre",
-      "titulo": "Manzana asada con canela",
-      "raciones": 1,
-      "tiempo": "35 min",
-      "imagen": "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Manzana+Asada+Canela",
-      "ingredientes": ["1 manzana", "Canela en polvo"],
-      "pasos": ["Quita el corazón de la manzana.", "Espolvorea canela y hornea 30 min a 180 °C."]
-    }
-    /* … pega aquí el resto de tus 120 objetos JSON tal cual los tenías … */
-  ]
-  </script>
-
-  <!-- Toasts -->
   <div id="toasts" class="fixed top-4 right-4 space-y-2"></div>
 
   <script>
-    // Carga JSON
-    const recipes = JSON.parse(document.getElementById('recipes-data').textContent);
+    // ——— AQUI PEGA TUS 120 RECETAS ———
+    // El array debe ser puro JavaScript, sin comentarios internos ni comas finales.
+    const recipes = [
+      {
+        categoria: "Aperitivo",
+        titulo: "Brochetas de aceituna y pimiento",
+        raciones: 4,
+        tiempo: "15 min",
+        imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna",
+        ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"],
+        pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."]
+      },
+      {
+        categoria: "Postre",
+        titulo: "Manzana asada con canela",
+        raciones: 1,
+        tiempo: "35 min",
+        imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Manzana+Asada+Canela",
+        ingredientes: ["1 manzana", "Canela en polvo"],
+        pasos: ["Quita el corazón de la manzana.", "Espolvorea canela y hornea 30 min a 180 °C."]
+      }
+      // … añade aquí las otras 118 recetas COMO OBJETOS SIN COMENTARIOS NI COMAS AL FINAL …
+    ];
+
     let favorites = new Set(JSON.parse(localStorage.getItem('favRecipes')||'[]'));
     let showOnlyFav = false;
 
@@ -99,11 +91,14 @@
         const card = document.createElement('div');
         card.className = 'bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col';
         card.innerHTML = `
-          <img src="${r.imagen}" alt="${r.titulo}" class="h-32 w-full object-cover rounded-t-xl">
+          <img src="${r.imagen}" alt="${r.titulo}"
+               class="h-32 w-full object-cover rounded-t-xl">
           <div class="p-4 flex-grow flex flex-col">
             <h2 class="font-semibold text-lg">${r.titulo}</h2>
-            <p class="text-sm text-gray-500 mt-1">Tiempo: ${r.tiempo} | Raciones: ${r.raciones}</p>
-            <button data-id="${r.titulo}" 
+            <p class="text-sm text-gray-500 mt-1">
+              Tiempo: ${r.tiempo} | Raciones: ${r.raciones}
+            </p>
+            <button data-id="${r.titulo}"
               class="mt-auto self-end focus:outline-none">
               <svg xmlns="http://www.w3.org/2000/svg"
                 class="h-6 w-6 ${favorites.has(r.titulo)?'text-red-500':'text-gray-300'}"
@@ -135,21 +130,17 @@
     }
 
     // Listeners
-    input.addEventListener('input', () => setTimeout(renderList, 200));
+    input.addEventListener('input', () => renderList());
     btnAll.onclick = () => {
       showOnlyFav = false;
-      btnAll.classList.replace('bg-gray-200','bg-amber-500');
-      btnAll.classList.replace('text-gray-700','text-white');
-      btnFav.classList.replace('bg-amber-500','bg-gray-200');
-      btnFav.classList.replace('text-white','text-gray-700');
+      btnAll.className = 'px-4 py-2 bg-amber-500 text-white rounded-full';
+      btnFav.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-full';
       renderList();
     };
     btnFav.onclick = () => {
       showOnlyFav = true;
-      btnFav.classList.replace('bg-gray-200','bg-amber-500');
-      btnFav.classList.replace('text-gray-700','text-white');
-      btnAll.classList.replace('bg-amber-500','bg-gray-200');
-      btnAll.classList.replace('text-white','text-gray-700');
+      btnFav.className = 'px-4 py-2 bg-amber-500 text-white rounded-full';
+      btnAll.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-full';
       renderList();
     };
 
