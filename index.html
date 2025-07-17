@@ -259,8 +259,8 @@
         }
 
         .toast-message.success { background-color: #10b981; } /* green-500 */
-        .toast-message.error { background-color: #ef4444; }   /* red-500 */
-        .toast-message.info { background-color: #3b82f6; }    /* blue-500 */
+        .toast-message.error { background-color: #ef4444; }    /* red-500 */
+        .toast-message.info { background-color: #3b82f6; }     /* blue-500 */
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
@@ -834,13 +834,13 @@
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
                     if (parsed.baseName || (parsed.value === 0 && parsed.original)) { 
-                         ingredientsToProcess.push({
-                            name: parsed.baseName || parsed.original.toLowerCase(), 
-                            unit: parsed.unit,
-                            value: parsed.value,
-                            originalFormatted: formatIngredient(parsed, factor), 
-                            checked: false 
-                        });
+                            ingredientsToProcess.push({
+                                name: parsed.baseName || parsed.original.toLowerCase(), 
+                                unit: parsed.unit,
+                                value: parsed.value,
+                                originalFormatted: formatIngredient(parsed, factor), 
+                                checked: false 
+                            });
                     } else if (parsed.original) {
                         ingredientsToProcess.push({
                             name: parsed.original.toLowerCase(),
@@ -1041,11 +1041,12 @@
                     "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
                     "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                    "brocheta": "brochetas", "espárrago": "espárragos", "loncha": "lonchas",
+                    "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                    "loncha": "lonchas",
                     "aceituna": "aceitunas", "nuez": "nueces", "pasa": "pasas", "espinaca": "espinacas",
-                    "judía": "judías", "tomate": "tomates", "seta": "setas",
+                    "judía verde": "judías verdes", "tomate cherry": "tomates cherry", "seta": "setas",
                     "gamba": "gambas", "pulpo": "pulpo", "compota": "compotas", "galleta": "galletas",
-                    "fruto": "frutos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
+                    "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
                     "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                     "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
                     "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
@@ -1062,7 +1063,7 @@
                 }
                 
                 if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
-                    return lowerName.slice(0, -1);
+                    return lowerName.slice(0, -1); 
                 }
 
                 return lowerName; 
@@ -1120,7 +1121,7 @@
                 if (newValue === 1) {
                     targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
                     if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
-                         targetNounForm = baseName.slice(0, -1); 
+                           targetNounForm = baseName.slice(0, -1); 
                     }
                 } else { 
                     targetNounForm = commonFormsMap[baseName] || baseName;
@@ -1256,6 +1257,7 @@
                 });
                 document.getElementById('increase-servings').addEventListener('click', () => {
                     let newServings = parseInt(servingsInput.value) + 1;
+                    if (newServings < 1) newServings = 1; // Asegura que no sea menos de 1
                     servingsInput.value = newServings;
                     currentServings = newServings;
                     updateIngredientsDisplay(currentServings);
@@ -1294,7 +1296,7 @@
                 } else {
                     document.documentElement.classList.remove('dark');
                     dom.darkIcon.classList.remove('hidden'); 
-                    dom.lightIcon.classList.add('hidden');   
+                    dom.lightIcon.classList.add('hidden');    
                     console.log("Tema: Claro (inicial)");
                 }
             }
@@ -1369,13 +1371,14 @@
             dom.printShoppingListBtn.addEventListener('click', () => {
                 const printContent = dom.shoppingListModal.querySelector('.bg-white.dark\\:bg-stone-800');
                 if (printContent) {
+                    // Para imprimir solo el contenido del modal de la lista de compra
                     const originalBody = document.body.innerHTML;
                     document.body.innerHTML = printContent.outerHTML;
                     window.print();
                     document.body.innerHTML = originalBody;
-                    runRecipeApp(); 
+                    runRecipeApp(); // Volver a inicializar la app después de imprimir
                 } else {
-                    window.print(); 
+                    window.print(); // Si falla la selección, imprime la página completa (fallback)
                 }
             });
 
@@ -1461,26 +1464,26 @@
             }
 
             // --- Funciones de control del asistente (extraídas para ser llamadas directamente) ---
-            function nextStepAction() { // Renombrada para evitar conflicto si "nextStep" ya existía
+            function nextStepAction() { 
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
-                    updateCookingStep();
+                    updateCookingStep(); // Esta función ya se encarga de hablar el paso
                 } else {
                     speak("Has llegado al final de la receta. ¡Buen provecho!");
                     exitCookingMode();
                 }
             }
 
-            function prevStepAction() { // Renombrada
+            function prevStepAction() { 
                 if (currentStep > 0) {
                     currentStep--;
-                    updateCookingStep();
+                    updateCookingStep(); // Esta función ya se encarga de hablar el paso
                 } else {
                     speak("Estás en el primer paso.");
                 }
             }
 
-            function repeatStepAction() { // Renombrada
+            function repeatStepAction() { 
                 speak(currentRecipeSteps[currentStep]);
             }
             // La función `exitCookingMode` ya existe y se llama correctamente.
@@ -1496,17 +1499,15 @@
                 const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); 
 
                 if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
-                    nextStepAction(); // Llama a la nueva función de acción
-                    speak('Pasando al siguiente paso.');
+                    nextStepAction(); // Llama a la función de acción, que ahora lee el paso
                 } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
-                    prevStepAction(); // Llama a la nueva función de acción
-                    speak('Volviendo al paso anterior.');
+                    prevStepAction(); // Llama a la función de acción, que ahora lee el paso
                 } else if (cleanedCommand.includes('repetir')) {
-                    repeatStepAction(); // Llama a la nueva función de acción
-                    speak('Repitiendo el paso actual.');
+                    repeatStepAction(); // Llama a la función de acción, que repite el paso
                 } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
                     exitCookingMode(); 
-                    speak('Saliendo del modo de cocina.');
+                    // No necesitas un speak() aquí si exitCookingMode() ya dice algo.
+                    // speak('Saliendo del modo de cocina.'); // Si lo dejas, lo dirá dos veces.
                 } else {
                     speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
                 }
@@ -1541,7 +1542,7 @@
             function updateCookingStep() {
                 stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
                 stepText.textContent = currentRecipeSteps[currentStep];
-                speak(currentRecipeSteps[currentStep]);
+                speak(currentRecipeSteps[currentStep]); // Lee el paso actual al actualizar
             }
 
             function startCookingMode(recipe) {
@@ -1553,7 +1554,7 @@
                 cookingModeView.classList.add('flex');
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
                 setTimeout(() => {
-                    updateCookingStep();
+                    updateCookingStep(); // Muestra y lee el primer paso
                     startVoiceRecognition(); 
                 }, 1500); 
             }
@@ -1564,6 +1565,7 @@
                 stopVoiceRecognition(); 
                 cookingModeView.classList.add('hidden');
                 cookingModeView.classList.remove('flex');
+                showToast('Modo de cocina finalizado.', 'info'); // Añadir un toast al salir
             }
 
             // Los event listeners de los botones ahora llaman a las funciones de acción directamente
