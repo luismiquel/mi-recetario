@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Recetario">
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
-    
+   
     <link rel="manifest" href="data:application/manifest+json,{
         &quot;name&quot;: &quot;Recetario Delicioso&quot;,
         &quot;short_name&quot;: &quot;Recetario&quot;,
@@ -102,14 +102,6 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
-        .recipe-card img.recipe-image {
-            width: 100%;
-            height: 192px; /* Altura fija para todas las imágenes de tarjeta */
-            object-fit: cover;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
 
         #searchInput {
             border-radius: 9999px;
@@ -123,7 +115,7 @@
         }
 
         /* ESTILOS DEL MODAL */
-        #recipeModal, #shoppingListModal { 
+        #recipeModal, #shoppingListModal {
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
@@ -132,23 +124,23 @@
             opacity: 1;
         }
 
-        #modalContent, #shoppingListModal > div { 
+        #modalContent, #shoppingListModal > div {
             background-color: white;
             border-radius: 1.5rem;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 42rem; 
+            max-width: 42rem;
             max-height: 90vh;
             overflow-y: auto;
-            
+           
             transform: scale(0.95);
             transition: transform 0.3s ease-in-out;
         }
         #recipeModal.modal-visible #modalContent, #shoppingListModal.modal-visible > div {
             transform: scale(1);
         }
-        #shoppingListModal > div { 
-            max-width: 36rem; 
+        #shoppingListModal > div {
+            max-width: 36rem;
         }
 
 
@@ -159,25 +151,25 @@
 
         /* ESTILOS DEL SKELETON LOADER */
         .skeleton-card {
-            background-color: #e0e0e0; 
+            background-color: #e0e0e0;
             border-radius: 1.25rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            animation: pulse-bg 1.5s infinite; 
+            animation: pulse-bg 1.5s infinite;
         }
         .dark .skeleton-card {
             background-color: #3b3735;
         }
 
         .skeleton-image {
-            height: 10rem; 
-            background-color: #cccccc; 
+            height: 10rem;
+            background-color: #cccccc;
         }
         .dark .skeleton-image {
             background-color: #2a2826;
         }
 
         .skeleton-text {
-            height: 0.875rem; 
+            height: 0.875rem;
             background-color: #cccccc;
             border-radius: 0.25rem;
             margin-bottom: 0.5rem;
@@ -188,7 +180,7 @@
         .skeleton-text.long { width: 90%; }
         .skeleton-text.medium { width: 70%; }
         .skeleton-text.short { width: 40%; }
-        .skeleton-text.small { height: 0.75rem; } 
+        .skeleton-text.small { height: 0.75rem; }
 
 
         @keyframes pulse-bg {
@@ -206,8 +198,8 @@
             display: flex;
             align-items: center;
             list-style: none; /* Eliminar el bullet point por defecto */
-            position: relative; 
-            padding-left: 1.5rem; 
+            position: relative;
+            padding-left: 1.5rem;
         }
         #finalShoppingList li:hover {
             background-color: #f0ead6;
@@ -281,66 +273,37 @@
         }
         /* Fin de estilos Toast */
 
-        /* Estilos de Temporizador */
-        .timer-card {
-            background-color: #f0ead6;
-            color: #78350f;
-            padding: 0.5rem 1rem;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 120px;
-            justify-content: space-between;
-        }
-        .dark .timer-card {
-            background-color: #4a2e0a;
-            color: #f59e0b;
-        }
-        .timer-card button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: inherit;
-            font-size: 1rem;
-            padding: 0 0.25rem;
-            line-height: 1;
-        }
-        /* Fin Estilos de Temporizador */
-
         @media print {
             body * { visibility: hidden; }
-            #recipeModal, #recipeModal * { display: none !important; } 
+            #recipeModal, #recipeModal * { display: none !important; }
             #shoppingListModal, #shoppingListModal * { visibility: visible; }
-            #shoppingListModal { 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                height: auto; 
-                background: none; 
-                display: block !important; 
+            #shoppingListModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                background: none;
+                display: block !important;
                 opacity: 1 !important;
                 visibility: visible !important;
             }
-            #shoppingListModal > div { 
-                box-shadow: none; 
-                border: none; 
-                max-width: 100%; 
-                max-height: none; 
-                overflow-y: visible; 
-                background-color: white !important; 
-                color: black !important; 
-                transform: scale(1) !important; 
+            #shoppingListModal > div {
+                box-shadow: none;
+                border: none;
+                max-width: 100%;
+                max-height: none;
+                overflow-y: visible;
+                background-color: white !important;
+                color: black !important;
+                transform: scale(1) !important;
             }
-            #closeShoppingListModalBtn, .modal-buttons-container, #toast-container, .timer-card { display: none !important; } 
+            #closeShoppingListModalBtn, .modal-buttons-container, #toast-container { display: none !important; }
             .dark #shoppingListModal > div, .dark #shoppingListModal * { background-color: white !important; color: black !important; }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
             img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #ingredient-list li, #steps-list li, #finalShoppingList li { 
+            #ingredient-list li, #steps-list li, #finalShoppingList li {
                 color: #333 !important;
             }
         }
@@ -354,15 +317,15 @@
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
             <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
-            
-            <div class="absolute top-0 left-0"> 
+           
+            <div class="absolute top-0 left-0">
                 <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
                     <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                     <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 101.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM13.536 16.364a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707z"></path></svg>
                 </button>
             </div>
         </header>
-        
+       
         <div class="sticky top-4 bg-f8f7f5/90 dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm">
             <div class="flex flex-col sm:flex-row gap-4 mb-4 px-4">
                 <div class="relative flex-grow">
@@ -407,7 +370,7 @@
     <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
         <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"></div>
     </div>
-    
+   
     <div id="shoppingListModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
         <div class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8">
             <div class="flex justify-between items-start mb-4">
@@ -429,7 +392,6 @@
         <div id="cooking-step-content" class="flex-grow flex flex-col justify-center items-center p-8 text-center">
             <p id="step-counter" class="text-lg text-amber-600 dark:text-amber-400 font-semibold mb-4"></p>
             <p id="step-text" class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100"></p>
-            <div id="active-timers-container" class="mt-8 flex flex-wrap justify-center gap-4"></div>
         </div>
         <div id="cooking-controls" class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
             <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Anterior</button>
@@ -449,14 +411,14 @@
             &copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.
         </p>
     </footer>
-    
+   
     <script type="module">
         // --- CONSOLIDACIÓN DE IMPORTACIONES Y CONFIGURACIÓN DE FIREBASE ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
+       
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
 
         function runRecipeApp() {
             const firebaseConfig = {
@@ -465,23 +427,23 @@
                 projectId: "lucid-copilot-454618-k7",
                 storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
                 messagingSenderId: "948763528254",
-                appId: "1:948763528254:web:3eba3d724edf844528956f", 
-                measurementId: "G-256GP1S7YX" 
+                appId: "1:948763528254:web:3eba3d724edf844528956f",
+                measurementId: "G-256GP1S7YX"
             };
 
             const appId = firebaseConfig.appId;
 
             const app = initializeApp(firebaseConfig);
-            const analytics = getAnalytics(app); 
+            const analytics = getAnalytics(app);
 
             const db = getFirestore(app);
             const auth = getAuth(app);
 
             let userFavorites = [], userId = null;
             let currentFilter = 'all', currentCategory = 'all';
-            let currentTimeFilter = 'all'; 
+            let currentTimeFilter = 'all';
 
-            let shoppingList = []; 
+            let shoppingList = [];
 
             const dom = {
                 grid: document.getElementById('recipeGrid'),
@@ -489,7 +451,7 @@
                 filterAllBtn: document.getElementById('filterAll'),
                 filterFavBtn: document.getElementById('filterFavorites'),
                 categoryFilters: document.getElementById('categoryFilters'),
-                timeFilters: document.getElementById('timeFilters'), 
+                timeFilters: document.getElementById('timeFilters'),
                 noResults: document.getElementById('no-results'),
                 modal: document.getElementById('recipeModal'),
                 modalContent: document.getElementById('modalContent'),
@@ -498,17 +460,16 @@
                 darkIcon: document.getElementById('theme-toggle-dark-icon'),
                 lightIcon: document.getElementById('theme-toggle-light-icon'),
                 copyrightYear: document.getElementById('copyright-year'),
-                viewShoppingListBtn: document.getElementById('viewShoppingListBtn'), 
-                shoppingListCount: document.getElementById('shopping-list-count'), 
-                shoppingListModal: document.getElementById('shoppingListModal'), 
+                viewShoppingListBtn: document.getElementById('viewShoppingListBtn'),
+                shoppingListCount: document.getElementById('shopping-list-count'),
+                shoppingListModal: document.getElementById('shoppingListModal'),
                 closeShoppingListModalBtn: document.getElementById('closeShoppingListModalBtn'),
                 finalShoppingList: document.getElementById('finalShoppingList'),
                 clearShoppingListBtn: document.getElementById('clearShoppingListBtn'),
                 printShoppingListBtn: document.getElementById('printShoppingListBtn'),
-                toastContainer: document.getElementById('toast-container'),
-                activeTimersContainer: document.getElementById('active-timers-container') // Nuevo elemento DOM
+                toastContainer: document.getElementById('toast-container')
             };
-            
+           
             const allRecipes = [
                 // 25 Aperitivos
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
@@ -538,24 +499,17 @@
                 { categoria: "Aperitivo", titulo: "Brochetas de pollo satay mini", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Pollo+Satay", ingredientes: ["150 g pechuga de pollo", "1 cda. salsa de cacahuete", "1/2 cdita. curry en polvo", "Palillos de brocheta"], pasos: ["Corta el pollo en dados y marina con la salsa de cacahuete y curry.", "Ensarta el pollo en mini brochetas y cocina a la plancha hasta que estén doradas."] },
                 // 5 Nuevos Aperitivos Típicos Españoles (previos)
                 { categoria: "Aperitivo", titulo: "Patatas Bravas Caseras", raciones: 4, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Patatas+Bravas", ingredientes: ["4 patatas medianas", "Aceite de oliva virgen extra", "Sal", "Para la salsa brava: 1 cebolla", "2 dientes de ajo", "1 lata tomate triturado (400g)", "1 cda. pimentón dulce", "1/2 cdita. pimentón picante", "Caldo de pollo o verdura (100ml)"], pasos: ["Pela y corta las patatas en dados, fríelas hasta que estén doradas y crujientes.", "Para la salsa: sofríe la cebolla y el ajo. Añade el tomate, pimentones y caldo. Cocina 15 min a fuego lento. Tritura.", "Sirve las patatas con la salsa por encima."] },
-                { categoria: "Aperitivo", titulo: "Gambas al Ajillo", raciones: 2, tiempo: "10 min", imagen: "http://googleusercontent.com/image_generation_content/0", ingredientes: ["250 g gambas peladas", "4 dientes de ajo", "1 guindilla (opcional)", "Aceite de oliva virgen extra", "Perejil fresco picado", "Sal"], pasos: ["En una cazuela de barro, calienta el aceite. Añade el ajo laminado y la guindilla.", "Cuando el ajo dore, incorpora las gambas y cocina 2-3 min hasta que cambien de color.", "Retira del fuego, añade perejil picado y sirve burbujeando."] },
+                { categoria: "Aperitivo", titulo: "Gambas al Ajillo", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gambas+Ajillo", ingredientes: ["250 g gambas peladas", "4 dientes de ajo", "1 guindilla (opcional)", "Aceite de oliva virgen extra", "Perejil fresco picado", "Sal"], pasos: ["En una cazuela de barro, calienta el aceite. Añade el ajo laminado y la guindilla.", "Cuando el ajo dore, incorpora las gambas y cocina 2-3 min hasta que cambien de color.", "Retira del fuego, añade perejil picado y sirve burbujeando."] },
                 { categoria: "Aperitivo", titulo: "Pan con Tomate y Jamón", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pan+Tomate+Jamon", ingredientes: ["2 rebanadas de pan de pueblo", "1 tomate maduro", "1 diente de ajo (opcional)", "Aceite de oliva virgen extra", "Sal", "4 lonchas de jamón serrano"], pasos: ["Tuesta el pan. Frota el tomate sobre el pan tostado (puedes frotar un diente de ajo antes).", "Rocía con aceite de oliva y un poco de sal.", "Coloca las lonchas de jamón serrano por encima y sirve."] },
                 { categoria: "Aperitivo", titulo: "Banderillas de Encurtidos", raciones: 4, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Banderillas+Encurtidos", ingredientes: ["10 aceitunas rellenas", "10 pepinillos en vinagre", "10 cebolletas en vinagre", "10 trozos de pimiento rojo asado (de bote)", "10 boquerones en vinagre (opcional)"], pasos: ["Ensarta los ingredientes en palillos de brocheta en el orden deseado.", "Sirve en un plato como aperitivo frío."] },
                 { categoria: "Aperitivo", titulo: "Pintxo de Gilda", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pintxo+Gilda", ingredientes: ["4 guindillas en vinagre", "4 aceitunas rellenas de anchoa", "2 filetes de anchoa en aceite"], pasos: ["Ensarta en un palillo una guindilla, una aceituna y dobla un filete de anchoa.", "Repite el proceso para hacer 2 pintxos por ración. Sirve inmediatamente."] },
-                // NUEVAS RECETAS APERITIVOS (6 para llegar a 37)
+                // NUEVAS RECETAS APERITIVOS (6)
                 { categoria: "Aperitivo", titulo: "Montadito de Sobrasada y Miel", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Montadito+Sobrasada+Miel", ingredientes: ["4 rebanadas de pan tostado", "50 g sobrasada", "1 cda. miel", "Opcional: un poco de queso fresco"], pasos: ["Unta la sobrasada sobre las rebanadas de pan tostado.", "Rocía con miel por encima.", "Si deseas, añade una pequeña cantidad de queso fresco antes de la miel y sirve al momento."] },
                 { categoria: "Aperitivo", titulo: "Croquetas de Jamón Caseras", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Croquetas+Jamon", ingredientes: ["100 g jamón serrano picado", "50 g harina de trigo", "50 g mantequilla", "500 ml leche entera", "Nuez moscada", "Sal", "1 huevo batido", "Pan rallado", "Aceite de oliva para freír"], pasos: ["Prepara una bechamel: derrite la mantequilla, añade la harina y cocina 2 min. Incorpora la leche caliente poco a poco sin dejar de remover hasta que espese. Añade el jamón y nuez moscada. Cocina 5 min más.", "Extiende la masa en una bandeja y deja enfriar completamente (mín. 4 horas o toda la noche en nevera).", "Forma las croquetas, pásalas por huevo batido y luego por pan rallado. Fríe en abundante aceite caliente hasta que estén doradas por todos lados. Escurre sobre papel absorbente y sirve calientes."] },
                 { categoria: "Aperitivo", titulo: "Boquerones en Vinagre Caseros", raciones: 4, tiempo: "20 min + 48h congelado", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Boquerones+Vinagre", ingredientes: ["500 g boquerones frescos", "250 ml vinagre de vino blanco", "150 ml agua", "Sal (abundante)", "4 dientes de ajo laminados", "Perejil fresco picado", "Aceite de oliva virgen extra"], pasos: ["Limpia los boquerones, retirando cabeza, tripas y espina central. Ábrelos en forma de mariposa. Lava bien bajo el grifo. CONGELA los boquerones limpios por al menos 48 horas (por seguridad parasitaria).", "Descongela los boquerones. Prepara la mezcla de marinado: mezcla vinagre, agua y sal en un recipiente. Sumerge los boquerones limpios y déjalos en la nevera unas 6-8 horas hasta que se blanqueen.", "Escurre bien los boquerones del marinado. Colócalos en un recipiente y cúbrelos con aceite de oliva, ajo laminado y perejil picado. Deja macerar en la nevera al menos 2 horas antes de servir. Pueden durar varios días en la nevera bien cubiertos de aceite."] },
                 { categoria: "Aperitivo", titulo: "Tabla de Embutidos y Quesos Españoles", raciones: 4, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tabla+Embutidos", ingredientes: ["100 g jamón ibérico", "100 g chorizo ibérico", "100 g salchichón ibérico", "150 g queso manchego semicurado", "100 g queso de cabra curado", "Picos de pan o tostadas", "Aceitunas"], pasos: ["Dispón el jamón en lonchas finas. Corta el chorizo, salchichón y quesos en rodajas o cuñas. Para el queso manchego, corta en cuñas o triángulos.", "Presenta todos los embutidos y quesos de forma atractiva en una tabla de madera o plato grande. Acompaña con picos de pan, tostadas y unas aceitunas para complementar.", "Sirve a temperatura ambiente para que los sabores se realcen. Puedes añadir un poco de membrillo junto al queso."] },
                 { categoria: "Aperitivo", titulo: "Ensaladilla Rusa Tradicional", raciones: 4, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensaladilla+Rusa", ingredientes: ["3 patatas medianas", "2 zanahorias", "100 g guisantes (frescos o congelados)", "2 latas de atún en aceite (escurrido)", "2 huevos duros", "Mayonesa (casera o comercial)", "Aceitunas rellenas (para decorar)", "Sal"], pasos: ["Cuece las patatas y zanahorias, peladas y troceadas, hasta que estén tiernas. Cuece los guisantes por separado. Escurre y deja enfriar todas las verduras.", "Pica finamente las patatas y zanahorias cocidas. En un bol grande, mezcla las verduras con los guisantes.", "Desmenuza el atún y añádelo a las verduras. Incorpora la mayonesa y mezcla bien hasta integrar todos los ingredientes. Ajusta de sal.", "Pica los huevos duros y decora la ensaladilla con ellos y las aceitunas rellenas. Refrigera al menos 1 hora antes de servir para que los sabores se asienten."] },
                 { categoria: "Aperitivo", titulo: "Pimientos de Padrón Fritos", raciones: 3, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pimientos+Padron", ingredientes: ["250 g pimientos de Padrón", "Aceite de oliva virgen extra (para freír)", "Sal gorda marina"], pasos: ["Lava y seca muy bien los pimientos de Padrón. Es crucial que estén secos para evitar salpicaduras al freír.", "En una sartén con base ancha, calienta abundante aceite de oliva a fuego medio-alto. Una vez caliente, añade los pimientos en una sola capa, sin amontonarlos para que se frían uniformemente.", "Fríe los pimientos, dándoles la vuelta ocasionalmente, hasta que estén tiernos, ligeramente arrugados y con la piel burbujeante y algunas zonas tostadas. Esto suele tardar unos 5-7 minutos.", "Retira los pimientos con una espumadera y colócalos sobre papel absorbente para eliminar el exceso de aceite. Inmediatamente después, espolvorea generosamente con sal gorda marina. Sirve calientes. Recuerda: unos pican y otros no!"] },
-                // NUEVAS RECETAS APERITIVOS (6 para llegar a 37)
-                { categoria: "Aperitivo", titulo: "Champiñones al Ajillo", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Champinones+Ajillo", ingredientes: ["300 g champiñones frescos", "4 dientes de ajo laminados", "1 guindilla (opcional)", "Perejil fresco picado", "Aceite de oliva virgen extra", "Sal"], pasos: ["Limpia los champiñones y córtalos por la mitad o en cuartos si son grandes.", "En una sartén con un buen chorro de aceite, dora los ajos laminados y la guindilla. Añade los champiñones y saltea a fuego fuerte hasta que suelten su agua y se doren.", "Salpimenta al gusto y añade el perejil picado. Cocina un par de minutos más y sirve caliente."] },
-                { categoria: "Aperitivo", titulo: "Cogollos con Anchoas", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Cogollos+Anchoas", ingredientes: ["2 cogollos de Tudela", "8 filetes de anchoa en aceite", "Aceite de oliva virgen extra", "Vinagre de Jerez (opcional)"], pasos: ["Lava y corta los cogollos por la mitad o en cuartos a lo largo.", "Colócalos en un plato y distribuye los filetes de anchoa por encima.", "Rocía con un buen chorro de aceite de oliva y, si te gusta, unas gotas de vinagre de Jerez. Sirve frío."] },
-                { categoria: "Aperitivo", titulo: "Espárragos con Mayonesa", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Esparragos+Mayonesa", ingredientes: ["1 bote de espárragos blancos gruesos (6-8 unidades)", "Mayonesa (al gusto)", "Opcional: pimiento rojo asado en tiras"], pasos: ["Escurre bien los espárragos del líquido de la conserva y colócalos en un plato.", "Cubre los espárragos con una generosa cantidad de mayonesa.", "Si deseas, decora con unas tiras de pimiento rojo asado. Sirve frío."] },
-                { categoria: "Aperitivo", titulo: "Pimientos Rellenos de Brandada de Bacalao", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pimientos+Brandada", ingredientes: ["1 lata de pimientos del piquillo enteros", "250 g bacalao desalado y desmigado", "100 ml nata líquida para cocinar", "2 dientes de ajo", "Aceite de oliva", "Perejil picado"], pasos: ["Sofríe los ajos en aceite. Añade el bacalao desmigado y cocina unos minutos. Incorpora la nata y cocina a fuego suave hasta que espese. Tritura ligeramente hasta obtener una brandada. Rellena los pimientos del piquillo con la brandada. Gratina en el horno unos minutos y decora con perejil."] },
-                { categoria: "Aperitivo", titulo: "Ensalada de Naranja y Bacalao (Remojón)", raciones: 2, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Remojon", ingredientes: ["2 naranjas", "200 g bacalao desalado desmigado", "1/2 cebolla morada", "Aceitunas negras sin hueso", "Aceite de oliva virgen extra", "Vinagre de vino (opcional)"], pasos: ["Pela las naranjas a vivo, retirando toda la parte blanca, y córtalas en rodajas o gajos. Desmiga el bacalao.", "Corta la cebolla morada en juliana fina. En un bol, mezcla la naranja, el bacalao, la cebolla y las aceitunas.", "Aliña con abundante aceite de oliva y, si lo deseas, un chorrito de vinagre. Mezcla suavemente y sirve frío."] },
-                { categoria: "Aperitivo", titulo: "Tostas de Escalivada", raciones: 3, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Escalivada", ingredientes: ["1 berenjena", "1 pimiento rojo", "1 cebolla", "Pan de hogaza (rebanadas)", "Aceite de oliva virgen extra", "Sal", "Opcional: anchoas"], pasos: ["Asa la berenjena, el pimiento y la cebolla enteros en el horno a 180°C hasta que estén muy tiernos y la piel se pueda retirar (aprox. 45-50 min). También puedes asar en el fuego o a la parrilla.", "Una vez asados, retira la piel de las verduras y córtalas en tiras. Mezcla las tiras de verdura en un bol y aliña con aceite de oliva y sal.", "Tuesta las rebanadas de pan. Monta la escalivada sobre el pan tostado. Si lo deseas, coloca un filete de anchoa encima. Sirve templado o frío."] },
 
 
                 // 25 Primeros
@@ -590,20 +544,14 @@
                 { categoria: "Primero", titulo: "Judiones de la Granja", raciones: 3, tiempo: "120 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Judiones+Granja", ingredientes: ["250 g judiones (alubias grandes, en remojo)", "100 g chorizo", "50 g panceta", "1 cebolla", "1 diente de ajo", "Pimentón dulce", "Agua", "Sal"], pasos: ["Cocer los judiones con chorizo y panceta hasta que estén tiernos (en olla a presión 30-40 min).", "Sofríe cebolla y ajo, añade pimentón y agrega a las judías.", "Cocinar a fuego lento 20 min más para que los sabores se mezclen. Ajustar de sal."] },
                 { categoria: "Primero", titulo: "Crema de Marisco (Suave)", raciones: 4, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Marisco", ingredientes: ["200 g langostinos o gambas", "1 cebolla", "1 puerro", "1 zanahoria", "2 cdas. arroz", "1 litro de caldo de pescado", "50 ml nata líquida para cocinar", "Aceite de oliva", "Sal y pimienta"], pasos: ["Sofríe las verduras picadas. Añade las cabezas y pieles de los langostinos (reservar cuerpos) y sofríe.", "Incorpora el arroz y el caldo. Cocina 20 min.", "Tritura y cuela. Vuelve al fuego, añade la nata y los cuerpos de langostino troceados. Calienta sin hervir. Sirve."] },
                 { categoria: "Primero", titulo: "Potaje de Garbanzos y Espinacas", raciones: 3, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Potaje+Garbanzos", ingredientes: ["400 g garbanzos cocidos", "200 g espinacas frescas", "1 cebolla", "2 dientes de ajo", "1 rebanada de pan frito", "1 huevo duro", "Pimentón dulce", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe cebolla y ajo. Añade las espinacas y cocina hasta que se reduzcan.", "Haz un majado con el pan frito y un poco de ajo. Incorpora al sofrito.", "Añade los garbanzos y el caldo. Cocina 15 min. Sirve con huevo duro troceado."] },
-                // NUEVAS RECETAS PRIMEROS (6 para llegar a 37)
+                // NUEVAS RECETAS PRIMEROS (6)
                 { categoria: "Primero", titulo: "Ensalada de Pasta Mediterránea", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Pasta", ingredientes: ["250 g pasta corta", "1 pimiento rojo", "1 pepino", "100 g queso feta", "50 g aceitunas negras", "Tomates cherry", "Aceite de oliva virgen extra", "Orégano", "Sal y pimienta"], pasos: ["Cuece la pasta al dente y enfría.", "Corta las verduras y el queso feta en dados.", "Mezcla la pasta con las verduras, el queso feta y las aceitunas.", "Aliña con aceite de oliva, orégano, sal y pimienta al gusto. Sirve fría."] },
                 { categoria: "Primero", titulo: "Lentejas Estofadas a la Española", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Lentejas+Estofadas", ingredientes: ["250 g lentejas pardinas", "100 g chorizo (troceado)", "50 g panceta (troceada)", "1 zanahoria", "1 patata pequeña", "1 cebolla", "2 dientes de ajo", "1 cdita. pimentón dulce", "1 hoja de laurel", "Caldo de carne o agua (1 litro)", "Aceite de oliva", "Sal"], pasos: ["Lava las lentejas y ponlas a remojo si no son pardinas (las pardinas no necesitan remojo).", "En una olla, sofríe en aceite la cebolla picada y el ajo. Añade el chorizo y la panceta y cocina unos minutos.", "Incorpora la zanahoria y patata troceadas, el pimentón y el laurel. Remueve.", "Añade las lentejas escurridas y el caldo (o agua). Lleva a ebullición, luego baja el fuego y cocina a fuego lento durante 45-60 minutos, o hasta que las lentejas estén tiernas. Ajusta de sal al final."] },
                 { categoria: "Primero", titulo: "Patatas a la Riojana", raciones: 3, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Patatas+Riojana", ingredientes: ["500 g patatas", "150 g chorizo fresco (para cocinar)", "1 pimiento verde", "1 cebolla", "2 dientes de ajo", "1 cda. pimentón dulce", "Caldo de carne o agua (aprox. 500 ml)", "1 hoja de laurel", "Aceite de oliva", "Sal"], pasos: ["En una cazuela con aceite, sofríe la cebolla y el pimiento verde picados. Añade el ajo laminado.", "Incorpora el chorizo en rodajas y cocina hasta que suelte su grasa. Retira el exceso de grasa si lo deseas.", "Añade el pimentón dulce y remueve rápidamente para que no se queme. Inmediatamente después, añade las patatas cascadas (rotas en lugar de cortadas para que suelten el almidón y espesen la salsa).", "Cubre con el caldo (o agua) hasta que las patatas estén casi cubiertas. Añade la hoja de laurel y sal. Cocina a fuego medio-bajo unos 20-25 minutos, o hasta que las patatas estén tiernas y el caldo haya espesado. Remueve de vez en cuando. Sirve caliente."] },
                 { categoria: "Primero", titulo: "Sopa de Cocido Casera", raciones: 4, tiempo: "15 min (si hay caldo)", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Cocido", ingredientes: ["1 litro de caldo de cocido (desgrasado)", "100 g fideos finos o arroz", "Opcional: trozos de garbanzos, carne o verdura del cocido"], pasos: ["Cuela el caldo del cocido para eliminar impurezas y desgrásalo (retira la capa de grasa superior una vez frío).", "Lleva el caldo a ebullición en una olla. Si deseas, añade algunos garbanzos o trozos pequeños de carne y verdura del cocido original.", "Incorpora los fideos finos (o arroz) y cocina según las instrucciones del paquete, hasta que estén en su punto. El tiempo suele ser de 3 a 5 minutos para fideos finos.", "Sirve la sopa bien caliente. Es un excelente primer plato para un cocido completo o como plato único ligero."] },
                 { categoria: "Primero", titulo: "Arroz a Banda (Versión Express)", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Arroz+a+Banda", ingredientes: ["150 g arroz bomba", "500 ml caldo de pescado (fume) caliente", "100 g gambas peladas", "100 g calamares limpios (en aros o trozos)", "1 tomate maduro rallado", "1 diente de ajo picado", "Unas hebras de azafrán o colorante alimentario", "Aceite de oliva virgen extra", "Sal"], pasos: ["En una paella o sartén ancha, calienta un poco de aceite. Sofríe las gambas y los calamares rápidamente hasta que cambien de color. Retira y reserva.", "En el mismo aceite, sofríe el ajo picado. Añade el tomate rallado y cocina hasta que el agua se evapore y el sofrito se dore un poco.", "Incorpora el arroz y rehógalo unos minutos para que absorba los sabores. Añade el azafrán (previamente disuelto en un poco de caldo caliente si usas hebras).", "Vierte el caldo de pescado muy caliente. Cocina a fuego medio-alto durante unos 10 minutos, luego baja el fuego a medio-bajo y cocina 8-10 minutos más, o hasta que el arroz haya absorbido el caldo y esté en su punto. No remuevas demasiado.", "Reparte por encima las gambas y calamares reservados en los últimos minutos de cocción. Deja reposar fuera del fuego 5 minutos tapado antes de servir. Tradicionalmente se acompaña con alioli."] },
                 { categoria: "Primero", titulo: "Pisto Manchego Casero", raciones: 4, tiempo: "50 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pisto+Manchego", ingredientes: ["1 cebolla grande", "2 pimientos verdes italianos", "1 pimiento rojo", "1 calabacín mediano", "1 berenjena mediana", "400 g tomate triturado (natural o de lata)", "Aceite de oliva virgen extra", "Sal", "Azúcar (una pizca, para el tomate)"], pasos: ["Lava y corta todas las verduras en dados de tamaño similar: cebolla, pimientos, calabacín y berenjena.", "En una sartén grande o cazuela con un buen chorro de aceite de oliva, empieza sofriendo la cebolla a fuego medio hasta que esté transparente. Añade los pimientos (verde y rojo) y cocina hasta que se ablanden (unos 10-15 minutos).", "Incorpora el calabacín y la berenjena. Sube un poco el fuego y cocina, removiendo ocasionalmente, hasta que las verduras empiecen a dorarse ligeramente (unos 10-15 minutos más).", "Finalmente, añade el tomate triturado, una pizca de azúcar para corregir la acidez del tomate y sal al gusto. Baja el fuego y cocina a fuego lento, removiendo de vez en cuando, durante al menos 20-30 minutos, o hasta que el pisto esté bien pochado y el tomate haya reducido su líquido. Las verduras deben quedar muy tiernas y sabrosas. Sirve caliente o templado, solo o como acompañamiento de huevos fritos, carnes o pescados."] },
-                // NUEVAS RECETAS PRIMEROS (6 para llegar a 37)
-                { categoria: "Primero", titulo: "Gazpacho de Sandía", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gazpacho+Sandia", ingredientes: ["500 g sandía sin pepitas", "2 tomates maduros", "1/4 pepino", "1/4 pimiento verde", "1/4 diente de ajo", "Aceite de oliva virgen extra", "Vinagre de vino", "Sal"], pasos: ["Trocea la sandía, los tomates, el pepino, el pimiento y el ajo. Tritura todos los ingredientes en una batidora hasta obtener una crema fina y homogénea.", "Pasa el gazpacho por un colador fino para eliminar posibles grumos o restos de pepitas. Ajusta de sal y vinagre al gusto.", "Refrigera el gazpacho en la nevera por al menos 1 hora antes de servir. Sirve muy frío, opcionalmente decorado con un trozo de sandía o unas hojas de menta."] },
-                { categoria: "Primero", titulo: "Sopa Fría de Melón con Jamón", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Melon+Jamon", ingredientes: ["500 g melón maduro", "50 ml nata líquida para cocinar (o yogur natural)", "Una pizca de sal", "Virutas de jamón serrano (para decorar)"], pasos: ["Corta el melón, retira las pepitas y la piel. Trocea la pulpa y tritúrala en una batidora hasta obtener una crema muy fina.", "Añade la nata líquida (o yogur) y una pizca de sal. Vuelve a triturar brevemente para integrar.", "Refrigera la sopa de melón por al menos 1 hora para que esté bien fría. Sirve en copas o cuencos pequeños, decorada con unas virutas de jamón serrano por encima."] },
-                { categoria: "Primero", titulo: "Alubias con Chorizo", raciones: 4, tiempo: "90 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Alubias+Chorizo", ingredientes: ["250 g alubias blancas (en remojo la noche anterior)", "150 g chorizo para cocinar", "50 g panceta fresca", "1 cebolla", "2 dientes de ajo", "1 hoja de laurel", "Pimentón dulce", "Caldo de carne o agua", "Aceite de oliva", "Sal"], pasos: ["Escurre las alubias de su remojo. En una olla, sofríe en aceite la cebolla y los ajos picados. Añade el chorizo y la panceta en trozos y sofríe unos minutos.", "Incorpora el pimentón y remueve rápidamente. Añade las alubias escurridas, la hoja de laurel y cubre con caldo o agua. Lleva a ebullición.", "Baja el fuego, tapa y cocina a fuego lento durante 1 hora y 15 minutos a 1 hora y 30 minutos, o hasta que las alubias estén tiernas. Remueve ocasionalmente y añade más líquido si es necesario. Ajusta de sal al final."] },
-                { categoria: "Primero", titulo: "Garbanzos con Bacalao", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Garbanzos+Bacalao", ingredientes: ["400 g garbanzos cocidos", "250 g bacalao desalado", "1 cebolla", "2 dientes de ajo", "1 pimiento verde", "400 g tomate triturado", "Pimentón dulce", "Caldo de pescado o agua", "Aceite de oliva", "Sal", "Huevo duro (opcional)"], pasos: ["Sofríe la cebolla, pimiento y ajos picados en aceite. Añade el tomate triturado y una pizca de pimentón, cocina el sofrito 10-15 minutos.", "Incorpora los garbanzos cocidos y el bacalao desalado y desmigado. Cubre con caldo de pescado o agua y cocina a fuego medio-bajo durante 15-20 minutos para que se mezclen los sabores.", "Sirve caliente, opcionalmente decorado con huevo duro picado."] },
-                { categoria: "Primero", titulo: "Fideuá de Marisco", raciones: 4, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fideua+Marisco", ingredientes: ["250 g fideos para fideuá (cabello de ángel o finos)", "200 g gambas peladas", "200 g calamares limpios", "1 cebolla", "2 tomates maduros", "1 diente de ajo", "1 litro caldo de pescado", "Aceite de oliva", "Sal"], pasos: ["En una paella o sartén ancha, tuesta los fideos en un poco de aceite hasta que estén dorados. Retira y reserva.", "En la misma paella, sofríe la cebolla y el ajo picados. Añade los calamares en trozos y cocina unos minutos. Incorpora el tomate rallado y cocina hasta que se reduzca.", "Añade las gambas y rehoga brevemente. Vierte el caldo de pescado muy caliente. Cuando hierva, añade los fideos tostados y extiéndelos uniformemente.", "Cocina a fuego medio-alto durante unos 10-15 minutos, o hasta que los fideos hayan absorbido el caldo y estén cocidos. Deja reposar unos minutos antes de servir."] },
-                { categoria: "Primero", titulo: "Crema de Coliflor Gratinada", raciones: 4, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Coliflor", ingredientes: ["1 coliflor mediana", "1 patata", "1 cebolla pequeña", "500 ml caldo de verduras", "50 ml nata líquida para cocinar", "Queso rallado para gratinar", "Aceite de oliva", "Sal", "Nuez moscada"], pasos: ["Limpia la coliflor y córtala en ramilletes. Pela y trocea la patata y la cebolla.", "En una olla, sofríe la cebolla en aceite. Añade la coliflor y la patata. Cubre con el caldo de verduras y cocina hasta que las verduras estén muy tiernas.", "Tritura la crema hasta obtener una textura suave. Añade la nata, un poco de nuez moscada y ajusta de sal. Calienta sin hervir.", "Vierte la crema en cuencos individuales aptos para horno, espolvorea queso rallado por encima y gratina en el horno hasta que el queso esté dorado. Sirve caliente."] },
+
 
                 // 25 Segundos
                 { categoria: "Segundo", titulo: "Pollo al horno con limón y hierbas", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Horno+Limon", ingredientes: ["2 pechugas de pollo", "1 limón", "Tomillo", "Romero", "Aceite de oliva", "Sal y pimienta"], pasos: ["Marina el pollo con zumo de limón, hierbas, aceite, sal y pimienta.", "Hornea 25 minutos a 200°C."] },
@@ -637,24 +585,64 @@
                 { categoria: "Segundo", titulo: "Bacalao a la Vizcaína", raciones: 2, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bacalao+Vizcaina", ingredientes: ["400 g lomos de bacalao desalado", "3 cebollas grandes", "2 dientes de ajo", "3 pimientos choriceros (previamente hidratados)", "100 ml caldo de pescado", "Aceite de oliva", "Sal"], pasos: ["Sofríe las cebollas cortadas en juliana hasta que estén muy pochadas. Añade el ajo laminado.", "Añade la pulpa de los pimientos choriceros y un poco de caldo. Cocina 10 min.", "Coloca los lomos de bacalao en la salsa y cocina a fuego lento unos 10-15 min, moviendo suavemente para que la salsa ligue. Rectifica de sal."] },
                 { categoria: "Segundo", titulo: "Pescado al Horno con Verduras Mediterráneas", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pescado+Verduras+Horno", ingredientes: ["2 rodajas de merluza o dorada", "1 calabacín", "1 berenjena", "1 pimiento rojo", "1 cebolla", "Tomates cherry", "Aceite de oliva", "Hierbas provenzales", "Sal y pimienta"], pasos: ["Corta las verduras en rodajas o dados. Colócalas en una bandeja de horno.", "Rocía con aceite, sal, pimienta y hierbas. Hornea 15 min a 180°C.", "Añade el pescado sobre las verduras y hornea 15-20 min más hasta que el pescado esté hecho."] },
                 { categoria: "Segundo", titulo: "Fabada Asturiana (Adaptada)", raciones: 4, tiempo: "120 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fabada+Asturiana", ingredientes: ["250 g fabes (alubias blancas, en remojo)", "100 g chorizo asturiano", "50 g morcilla asturiana", "50 g lacón o panceta curada", "1 cebolla", "Ajo", "Agua", "Sal"], pasos: ["Cocer las fabes con el chorizo, morcilla y lacón en agua fría. Llevar a ebullición y 'asustar' (añadir un chorro de agua fría tres veces).", "Cocinar a fuego lento durante 1.5 - 2 horas o hasta que las fabes estén muy tiernas. Puedes usar olla a presión (30-40 min).", "Sofríe un poco de cebolla y ajo, tritúralo y añádelo a la fabada para espesar. Ajustar de sal. Dejar reposar antes de servir."] },
-                // NUEVAS RECETAS SEGUNDOS (6) - Carnes Variadas (contando 5 anteriores + 1 nueva)
+                // NUEVAS RECETAS SEGUNDOS (6) - Carnes Variadas
                 { categoria: "Segundo", titulo: "Estofado de Ternera con Patatas", raciones: 4, tiempo: "90 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Estofado+Ternera", ingredientes: ["500 g ternera para estofado", "2 patatas grandes", "2 zanahorias", "1 cebolla", "200 ml caldo de carne", "100 ml vino tinto", "Harina para rebozar", "Aceite de oliva", "Sal y pimienta"], pasos: ["Corta la ternera en dados, salpimenta y pasa por harina. Dora en aceite.", "En la misma olla, sofríe cebolla y zanahorias. Añade la ternera, el vino y el caldo.", "Cocina a fuego lento por 1 hora. Añade las patatas troceadas y cocina 30 min más hasta que todo esté tierno."] },
                 { categoria: "Segundo", titulo: "Conejo al Ajillo con Romesco", raciones: 2, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Conejo+Ajillo", ingredientes: ["1 conejo troceado", "6 dientes de ajo", "Ramas de romero fresco", "100 ml vino blanco", "Aceite de oliva virgen extra", "Sal y pimienta", "Salsa Romesco para acompañar"], pasos: ["Salpimenta el conejo y dóralo en una sartén con aceite. Retira.", "En el mismo aceite, dora los ajos laminados y el romero. Añade el conejo, vierte el vino y cocina hasta que se evapore el alcohol.", "Cubre con un poco de agua o caldo y cocina a fuego lento hasta que el conejo esté tierno (unos 30 min). Sirve con salsa Romesco."] },
                 { categoria: "Segundo", titulo: "Chuletas de Cordero a la Parrilla", raciones: 2, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Chuletas+Cordero", ingredientes: ["4 chuletas de cordero", "Aceite de oliva", "Sal en escamas", "Pimienta negra recién molida", "Ajo granulado (opcional)"], pasos: ["Saca las chuletas de la nevera 15 min antes. Salpimenta y si quieres, añade ajo granulado.", "Calienta bien una sartén o parrilla con un poco de aceite.", "Cocina las chuletas 3-4 min por cada lado para un punto medio, o más si te gustan bien hechas.", "Deja reposar un par de minutos antes de servir."] },
                 { categoria: "Segundo", titulo: "Pinchos Morunos de Cerdo", raciones: 3, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pinchos+Morunos", ingredientes: ["300 g carne de cerdo (lomo o aguja)", "1 cebolla pequeña", "1 pimiento verde", "Palillos de brocheta", "Para la marinada: 2 cda. especias para pinchos morunos", "1 cda. aceite de oliva", "Zumo de 1/2 limón", "Sal"], pasos: ["Corta la carne en dados. Prepara la marinada con las especias, aceite, limón y sal. Marina la carne al menos 30 min (idealmente 2 horas).", "Corta la cebolla y el pimiento en trozos. Ensarta la carne alternando con cebolla y pimiento.", "Cocina los pinchos en una plancha o parrilla caliente hasta que la carne esté dorada y cocida por dentro. Sirve calientes."] },
                 { categoria: "Segundo", titulo: "Pollo Asado con Hierbas y Patatas", raciones: 4, tiempo: "75 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pollo+Asado", ingredientes: ["1 pollo entero (aprox. 1.2 kg)", "4 patatas medianas", "2 dientes de ajo", "Ramas de romero y tomillo", "Aceite de oliva", "Sal y pimienta"], pasos: ["Precalienta el horno a 190°C. Lava y seca bien el pollo.", "Frota el pollo por dentro y por fuera con aceite, sal, pimienta, ajos machacados, romero y tomillo.", "Corta las patatas en gajos y mézclalas con un poco de aceite, sal y pimienta.", "Coloca el pollo en una fuente de horno con las patatas alrededor. Hornea durante 60-70 minutos, volteando las patatas a mitad de cocción, hasta que el pollo esté dorado y cocido."] },
                 { categoria: "Segundo", titulo: "Marmitako (Atún con Patatas)", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Marmitako", ingredientes: ["500 g bonito o atún fresco", "500 g patatas", "1 cebolla", "1 pimiento verde", "2 tomates maduros", "Caldo de pescado", "Aceite de oliva", "Sal", "Perejil picado"], pasos: ["Sofríe la cebolla, el pimiento y el tomate picados hasta que estén blandos. Añade las patatas cascadas.", "Cubre con caldo de pescado y cocina hasta que las patatas estén casi tiernas.", "Incorpora el bonito o atún en dados y cocina unos minutos hasta que esté hecho. Sirve caliente con perejil."] },
-                { categoria: "Segundo", titulo: "Fricandó de Ternera", raciones: 4, tiempo: "90 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fricando+Ternera", ingredientes: ["500 g filetes finos de ternera (babilla o tapa)", "20 g setas deshidratadas (moixernons, senderuelas o setas variadas)", "1 cebolla grande", "1 tomate maduro", "30 g almendras tostadas", "1 cda. piñones", "Harina para rebozar", "200 ml vino blanco seco", "400 ml caldo de carne", "Aceite de oliva virgen extra", "Sal", "Pimienta negra"], pasos: ["Pon las setas deshidratadas en remojo en agua tibia durante al menos 30 minutos. Escurre y reserva el agua del remojo.", "Salpimenta los filetes de ternera y pásalos ligeramente por harina. Sella los filetes en una cazuela ancha con un poco de aceite hasta que estén dorados. Retira y reserva.", "En la misma cazuela, sofríe la cebolla picada hasta que esté bien pochada. Añade el tomate rallado y cocina hasta que se reduzca.", "Incorpora las setas escurridas al sofrito y cocina unos minutos. Vierte el vino blanco y deja reducir el alcohol.", "Vuelve a añadir la ternera a la cazuela y cubre con el caldo de carne y parte del agua de remojo de las setas (colada). Cocina a fuego lento durante 45-60 minutos, o hasta que la carne esté muy tierna.", "Mientras, prepara la picada: tritura las almendras tostadas y los piñones (puedes añadir un diente de ajo pequeño si quieres) con un poco de caldo hasta obtener una pasta. Añade esta picada a la cazuela en los últimos 10 minutos de cocción, removiendo para que la salsa espese. Sirve caliente."] },
-                { categoria: "Segundo", titulo: "Conejo a la Cazadora", raciones: 2, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Conejo+Cazadora", ingredientes: ["1 conejo troceado", "1 cebolla", "200 g champiñones laminados", "100 g bacon o panceta", "100 ml vino tinto", "200 ml caldo de pollo", "2 dientes de ajo", "Tomillo fresco", "Aceite de oliva", "Sal y pimienta"], pasos: ["Salpimenta el conejo. En una cazuela con aceite, dora el conejo por todos lados. Retira y reserva.", "En la misma cazuela, dora el bacon o panceta en trozos. Añade la cebolla picada y los ajos laminados, sofríe hasta que la cebolla esté transparente. Incorpora los champiñones y cocina hasta que suelten su agua.", "Vuelve a añadir el conejo a la cazuela. Vierte el vino tinto y deja que reduzca el alcohol. Añade el caldo de pollo y unas ramitas de tomillo.", "Cubre la cazuela y cocina a fuego lento durante unos 40-45 minutos, o hasta que el conejo esté tierno y la salsa haya espesado. Sirve caliente."] },
-                { categoria: "Segundo", titulo: "San Jacobos Caseros", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=San+Jacobos", ingredientes: ["4 lonchas de lomo de cerdo (finas)", "4 lonchas de jamón cocido", "4 lonchas de queso (tipo Havarti o similar)", "1 huevo batido", "Pan rallado", "Aceite de girasol para freír", "Sal"], pasos: ["Extiende una loncha de lomo de cerdo. Sobre ella, coloca una loncha de jamón cocido y una de queso. Cubre con otra loncha de lomo de cerdo, formando un sándwich. Presiona bien los bordes para sellar.", "Pasa cada 'San Jacobo' por huevo batido y luego por pan rallado, asegurándote de que quede bien cubierto por todos lados. Presiona suavemente para que el pan rallado se adhiera bien.", "Calienta abundante aceite de girasol en una sartén a fuego medio. Cuando esté caliente, fríe los San Jacobos por ambos lados hasta que estén dorados y el queso se haya fundido por dentro (unos 3-4 minutos por lado).", "Retira los San Jacobos con una espumadera y colócalos sobre papel absorbente para eliminar el exceso de grasa. Sirve inmediatamente, acompañados de patatas fritas o ensalada."}
+
+
+                // 25 Postres
+                { categoria: "Postre", titulo: "Brochetas de fruta fresca", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Fruta", ingredientes: ["Fresas", "Kiwi", "Melón", "Uvas"], pasos: ["Corta la fruta en trozos.", "Ensarta en palillos de brocheta."] },
+                { categoria: "Postre", titulo: "Yogur natural con miel y nueces", raciones: 1, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Miel+Nueces", ingredientes: ["1 yogur natural", "1 cdita de miel", "Un puñado de nueces"], pasos: ["Sirve el yogur en un bol.", "Añade la miel y las nueces por encima."] },
+                { categoria: "Postre", titulo: "Manzana asada con canela", raciones: 1, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Manzana+Asada+Canela", ingredientes: ["1 manzana", "Canela en polvo"], pasos: ["Quita el corazón de la manzana.", "Espolvorea canela y hornea 30 min a 180°C."] },
+                { categoria: "Postre", titulo: "Macedonia de frutas de temporada", raciones: 3, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Macedonia+Frutas", ingredientes: ["Naranja", "Plátano", "Manzana", "Kiwi", "Zumo de naranja"], pasos: ["Pela y corta la fruta en dados.", "Mezcla con el zumo de naranja."] },
+                { categoria: "Postre", titulo: "Plátano a la plancha con chocolate negro", raciones: 1, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Platano+Plancha+Chocolate", ingredientes: ["1 plátano", "1 onza de chocolate negro (>85%)"], pasos: ["Corta el plátano por la mitad a lo largo.", "Cocina a la plancha.", "Derrite el chocolate y sírvelo por encima."] },
+                { categoria: "Postre", titulo: "Mousse de aguacate y cacao", raciones: 2, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Mousse+Aguacate+Cacao", ingredientes: ["1 aguacate maduro", "2 cdas. cacao puro en polvo", "1 cda. sirope de agave"], pasos: ["Tritura todos los ingredientes hasta obtener una crema suave.", "Refrigera antes de servir."] },
+                { categoria: "Postre", titulo: "Carpaccio de piña con menta", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Carpaccio+Piña+Menta", ingredientes: ["1 rodaja de piña natural", "Hojas de menta fresca"], pasos: ["Corta la piña en láminas muy finas.", "Decora con hojas de menta."] },
+                { categoria: "Postre", titulo: "Helado de plátano congelado", raciones: 2, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Helado+Platano+Congelado", ingredientes: ["2 plátanos maduros congelados"], pasos: ["Tritura los plátanos congelados hasta obtener una textura cremosa.", "Sirve inmediatamente."] },
+                { categoria: "Postre", titulo: "Peras al vino tinto sin azúcar", raciones: 2, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Peras+Vino+Tinto", ingredientes: ["2 peras", "1 vaso de vino tinto", "Canela en rama", "Edulcorante (opcional)"], pasos: ["Pela las peras y cuécelas en el vino con la canela y edulcorante (si usas).", "Cocina a fuego lento hasta que estén tiernas y el líquido se reduzca."] },
+                { categoria: "Postre", titulo: "Trufas de aguacate y cacao", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Trufas+Aguacate+Cacao", ingredientes: ["1/2 aguacate", "2 cdas. cacao puro", "1 cda. miel", "Coco rallado (para rebozar)"], pasos: ["Mezcla aguacate, cacao y miel.", "Forma bolitas y rebózalas en coco rallado.", "Refrigera 30 minutos antes de servir."] },
+                { categoria: "Postre", titulo: "Compota de manzana casera", raciones: 4, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Compota+Manzana+Casera", ingredientes: ["3 manzanas", "Canela en rama o en polvo", "Agua (un chorrito)"], pasos: ["Pela y trocea las manzanas.", "Cuece con un poco de agua y canela hasta que estén blandas.", "Tritura al gusto o deja trozos."] },
+                { categoria: "Postre", titulo: "Fresas con yogur y chía", raciones: 1, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Fresas+Yogur+Chia", ingredientes: ["1 taza de fresas frescas", "1 yogur natural", "1 cdita. semillas de chía"], pasos: ["Corta las fresas y mézclalas con el yogur.", "Espolvorea las semillas de chía por encima."] },
+                { categoria: "Postre", titulo: "Naranja preparada con canela", raciones: 1, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Naranja+Canela", ingredientes: ["1 naranja grande", "Canela en polvo"], pasos: ["Pela la naranja y córtala en rodajas.", "Espolvorea canela por encima y sirve."] },
+                { categoria: "Postre", titulo: "Bombones de dátiles y almendras", raciones: 2, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bombones+Datiles+Almendras", ingredientes: ["4 dátiles Medjool", "8 almendras crudas", "Cacao puro en polvo (opcional)"], pasos: ["Deshuesa los dátiles.", "Rellena cada dátil con dos almendras.", "Puedes rebozarlos en cacao si quieres."] },
+                { categoria: "Postre", titulo: "Pudding de chía con frutos rojos", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pudding+Chia+Frutos+Rojos", ingredientes: ["2 cdas. semillas de chía", "1/2 taza de leche vegetal", "1/2 taza de frutos rojos frescos o congelados"], pasos: ["Mezcla la chía con la leche y deja reposar en la nevera al menos 2 horas (o toda la noche).", "Sirve con frutos rojos por encima."] },
+                { categoria: "Postre", titulo: "Melocotón a la plancha con helado", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Melocoton+Plancha+Helado", ingredientes: ["1 melocotón maduro", "Una pizca de canela", "Helado de vainilla light (opcional)"], pasos: ["Corta el melocotón por la mitad y retira el hueso.", "Cocina a la plancha por ambos lados hasta que esté tierno y ligeramente caramelizado.", "Espolvorea con canela y acompaña con una bola de helado si lo deseas."] },
+                { categoria: "Postre", titulo: "Sorbete de fresa natural", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sorbete+Fresa+Natural", ingredientes: ["250 g fresas congeladas", "Zumo de 1/2 limón", "1 cda. miel o sirope de agave"], pasos: ["Tritura las fresas con el zumo de limón y la miel hasta obtener una textura de sorbete.", "Sirve inmediatamente."] },
+                { categoria: "Postre", titulo: "Bol de açaí con granola", raciones: 1, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bol+Acai+Granola", ingredientes: ["100 g pulpa de açaí congelada", "1/2 plátano maduro", "30 ml leche vegetal", "Granola y frutas frescas para decorar"], pasos: ["Tritura la pulpa de açaí con el plátano y la leche vegetal hasta que esté cremoso.", "Vierte en un bol y decora con granola y frutas frescas."] },
+                { categoria: "Postre", titulo: "Galletas de avena y plátano", raciones: 3, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Galletas+Avena+Platano", ingredientes: ["1 plátano maduro", "1/2 taza de copos de avena", "Chispas de chocolate negro (opcional)"], pasos: ["Tritura el plátano y mézclalo con la avena (y chispas).", "Forma galletas en una bandeja de horno.", "Hornea 15 min a 180°C."] },
+                { categoria: "Postre", titulo: "Yogur con compota de manzana y frutos secos", raciones: 1, tiempo: "5 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Yogur+Compota+Frutos+Secos", ingredientes: ["1 yogur natural", "2 cdas. compota de manzana casera", "Frutos secos picados (almendras, nueces)"], pasos: ["Sirve el yogur en un vaso.", "Añade la compota de manzana por encima.", "Decora con frutos secos picados."] },
+                { categoria: "Postre", titulo: "Flan de huevo casero light", raciones: 4, tiempo: "50 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Flan+Huevo+Light", ingredientes: ["3 huevos", "500 ml leche desnatada", "Edulcorante al gusto", "Esencia de vainilla"], pasos: ["Prepara el caramelo con edulcorante y agua.", "Bate los huevos con la leche y la vainilla.", "Vierte la mezcla en moldes caramelizados y cocina al baño maría en el horno hasta que cuaje."] },
+                { categoria: "Postre", titulo: "Gelatina de frutas variadas", raciones: 4, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gelatina+Frutas", ingredientes: ["1 sobre de gelatina sin azúcar (sabor a elegir)", "Frutas frescas picadas (fresas, kiwi, melocotón)", "Agua"], pasos: ["Disuelve la gelatina en agua caliente y luego añade agua fría.", "Incorpora las frutas picadas en los moldes.", "Refrigera hasta que cuaje."] },
+                { categoria: "Postre", titulo: "Bizcocho de limón sin azúcar", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bizcocho+Limon+Sin+Azucar", ingredientes: ["3 huevos", "150 g harina integral", "Zumo y ralladura de 1 limón", "Edulcorante al gusto", "1 sobre de levadura", "50 ml aceite de oliva suave"], pasos: ["Bate los huevos con el edulcorante y ralladura.", "Incorpora el zumo, aceite, harina y levadura.", "Vierte en un molde y hornea 30 min a 180°C."] },
+                { categoria: "Postre", titulo: "Vasitos de yogur con granola y frutas", raciones: 2, tiempo: "10 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Vasitos+Yogur+Granola", ingredientes: ["2 yogures naturales", "Granola casera o sin azúcar", "Frutos rojos o plátano en rodajas"], pasos: ["En vasitos, alterna capas de yogur, granola y fruta.", "Sirve inmediatamente."] },
+                { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] },
+                // 5 Nuevos Postres Típicos Españoles (previos)
+                { categoria: "Postre", titulo: "Arroz con Leche Cremoso", raciones: 4, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Arroz+con+Leche", ingredientes: ["100 g arroz redondo", "1 litro de leche entera", "100 g azúcar", "1 rama de canela", "Piel de 1 limón"], pasos: ["Lava el arroz. En una olla, hierve la leche con la canela y la piel de limón.", "Cuando hierva, añade el arroz y cocina a fuego muy lento, removiendo constantemente, hasta que el arroz esté tierno y la mezcla cremosa (aprox. 45 min).", "Retira del fuego, añade el azúcar y remueve. Deja enfriar. Sirve espolvoreado con canela molida."] },
+                { categoria: "Postre", titulo: "Natillas Caseras", raciones: 4, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Natillas+Caseras", ingredientes: ["500 ml leche", "4 yemas de huevo", "75 g azúcar", "1 cda. maicena", "Piel de limón", "1 rama de canela", "Galletas María para decorar"], pasos: ["Calienta la leche con piel de limón y canela. Retira del fuego antes de que hierva y deja infusionar.", "En un bol, bate las yemas con el azúcar y la maicena. Cuela la leche e incorpórala poco a poco a las yemas, sin dejar de remover.", "Lleva la mezcla al fuego lento, removiendo constantemente hasta que espese. No dejes que hierva. Vierte en cuencos individuales.", "Deja enfriar y decora con una galleta María."] },
+                { categoria: "Postre", titulo: "Torrijas de Leche", raciones: 2, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Torrijas+Leche", ingredientes: ["4 rebanadas de pan de torrija (o pan del día anterior)", "250 ml leche", "50 g azúcar", "Piel de limón", "1 rama de canela", "1 huevo", "Aceite para freír", "Azúcar y canela para rebozar"], pasos: ["Hierve la leche con la mitad del azúcar, piel de limón y canela. Deja enfriar.", "Moja las rebanadas de pan en la leche infusionada. Pásalas por huevo batido.", "Fríe las torrijas en aceite caliente hasta que estén doradas por ambos lados. Escurre sobre papel absorbente.", "Reboza en una mezcla de azúcar y canela. Sirve templadas."] },
+                { categoria: "Postre", titulo: "Tarta de Santiago (Simple)", raciones: 6, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Santiago", ingredientes: ["250 g almendra molida", "200 g azúcar", "4 huevos grandes", "Ralladura de 1 limón", "Azúcar glas para decorar (opcional: Cruz de Santiago)"], pasos: ["Bate los huevos con el azúcar hasta que blanqueen. Añade la almendra molida y la ralladura de limón. Mezcla bien.", "Vierte la masa en un molde previamente engrasado y enharinado.", "Hornea a 180°C durante 30-35 min o hasta que al pinchar con un palillo salga limpio.", "Deja enfriar. Espolvorea con azúcar glas. Puedes usar una plantilla de la Cruz de Santiago para decorar."] },
+                { categoria: "Postre", titulo: "Churros Caseros con Chocolate", raciones: 2, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Churros+Chocolate", ingredientes: ["250 ml agua", "150 g harina de trigo", "1/2 cdita. sal", "Aceite de girasol para freír", "Para el chocolate: 100 g chocolate negro para postres", "200 ml leche"], pasos: ["Hierve el agua con la sal. Retira del fuego, añade la harina de golpe y remueve hasta formar una bola. Deja templar.", "Introduce la masa en una churrera o manga pastelera con boquilla de estrella. Fríe los churros en abundante aceite caliente hasta que estén doradas y crujientes. Escurre sobre papel absorbente.", "Para el chocolate: calienta la leche y disuelve el chocolate troceado, removiendo hasta que espese. Sirve los churros con el chocolate caliente."] },
+                // NUEVAS RECETAS POSTRES (7)
+                { categoria: "Postre", titulo: "Brochetas de Frutas con Chocolate", raciones: 3, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Frutas+Chocolate", ingredientes: ["100 g fresas", "1 kiwi", "1 plátano", "50 g chocolate negro para fundir", "Palillos de brocheta"], pasos: ["Lava y corta las frutas en trozos. Ensarta los trozos de fruta en los palillos, alternando colores.", "Funde el chocolate negro al baño de maría o en el microondas con cuidado.", "Rocía las brochetas con el chocolate fundido en forma de hilos.", "Deja enfriar en la nevera unos minutos para que el chocolate se endurezca. Sirve frías."] },
+                { categoria: "Postre", titulo: "Crema Catalana", raciones: 4, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Catalana", ingredientes: ["500 ml leche entera", "4 yemas de huevo", "100 g azúcar", "25 g maicena", "Piel de 1 limón", "1 rama de canela", "Azúcar para quemar"], pasos: ["Infusiona la leche con la piel de limón y la rama de canela. Calienta sin hervir y retira del fuego. Deja reposar 10 min y cuela.", "En un bol, bate las yemas con el azúcar y la maicena hasta obtener una mezcla homogénea.", "Vierte la leche infusionada y colada poco a poco sobre la mezcla de yemas, sin dejar de remover. Lleva la mezcla a fuego medio-bajo, removiendo constantemente con unas varillas hasta que espese (no debe hervir).", "Retira del fuego y vierte la crema en recipientes individuales o cazuelitas de barro. Deja enfriar a temperatura ambiente y luego refrigera por al menos 2 horas.", "Justo antes de servir, espolvorea una capa fina de azúcar por encima de cada crema y quémala con un soplete de cocina hasta obtener una capa caramelizada crujiente. Sirve inmediatamente."] },
+                { categoria: "Postre", titulo: "Leche Frita Tradicional", raciones: 4, tiempo: "45 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Leche+Frita", ingredientes: ["500 ml leche entera", "120 g azúcar", "50 g maicena", "Piel de 1 limón", "1 rama de canela", "1 huevo batido", "Harina de trigo (para rebozar)", "Aceite de girasol (para freír)", "Azúcar y canela en polvo (para rebozar)"], pasos: ["En una olla, calienta la leche con 100 g de azúcar, la piel de limón y la rama de canela. Lleva a ebullición suave y retira del fuego, dejando infusionar 10 minutos.", "En un bol, disuelve la maicena en un poco de leche fría. Añade el resto de la leche infusionada (colada) a la maicena y remueve bien.", "Vierte esta mezcla de nuevo a la olla y cocina a fuego medio-bajo, removiendo constantemente, hasta que espese y hierva suavemente (unos 5-7 minutos). Debe quedar una crema muy espesa.", "Vierte la crema en una fuente rectangular (previamente humedecida con agua o forrada con papel film) con unos 2 cm de grosor. Deja enfriar a temperatura ambiente y luego refrigera por al menos 4 horas (idealmente toda la noche) hasta que esté muy firme.", "Una vez firme, corta la leche frita en porciones (cuadrados o rectángulos). Pasa cada porción primero por harina y luego por huevo batido.", "Calienta abundante aceite de girasol en una sartén. Fríe las porciones de leche frita hasta que estén doradas por ambos lados. Retira y escurre sobre papel absorbente.", "Mezcla el azúcar restante con canela en polvo. Reboza cada trozo de leche frita caliente en esta mezcla. Sirve templado o frío."] },
+                { categoria: "Postre", titulo: "Tarta de Manzana Clásica", raciones: 6, tiempo: "60 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Manzana", ingredientes: ["1 lámina de masa quebrada o de hojaldre", "3 manzanas grandes (tipo Golden o Fuji)", "75 g azúcar", "1 cdita. canela en polvo", "20 g mantequilla sin sal (en trocitos)", "Opcional: 2 cdas. mermelada de albaricoque para abrillantar"], pasos: ["Precalienta el horno a 180°C. Extiende la masa quebrada o de hojaldre en un molde redondo y pincha la base con un tenedor. Recorta el exceso de masa de los bordes.", "Pela, descorazona y corta las manzanas en láminas muy finas. Colócalas de forma decorativa sobre la base de masa, solapando ligeramente las láminas.", "Espolvorea el azúcar y la canela por encima de las manzanas. Reparte los trocitos de mantequilla por la superficie.", "Hornea durante 40-45 minutos, o hasta que la masa esté dorada y las manzanas tiernas y ligeramente caramelizadas.", "Si deseas abrillantarla, calienta la mermelada de albaricoque con una cucharada de agua y pincela la superficie de la tarta recién sacada del horno. Deja enfriar antes de desmoldar y servir."] },
+                { categoria: "Postre", titulo: "Gofio Escalado con Miel de Palma (Canarias)", raciones: 2, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Gofio+Escalado", ingredientes: ["100 g gofio de trigo o millo (maíz)", "150 ml agua caliente (o caldo de pescado/verduras)", "Miel de palma (al gusto)"], pasos: ["En un bol, coloca el gofio. Añade el agua caliente (o caldo) poco a poco, removiendo con una cuchara de madera o un tenedor. La clave es amasar y remover vigorosamente hasta obtener una masa densa, homogénea y sin grumos, que se desprenda fácilmente del bol. Si queda muy seca, añade un poco más de agua; si queda muy blanda, incorpora más gofio. La textura ideal es similar a la de un puré espeso.", "Una vez conseguida la textura deseada, puedes formar 'pellas' (bolas) con las manos humedecidas o servirlo directamente en el bol.", "Sirve el gofio escalado templado, regado generosamente con miel de palma por encima. Es un postre o acompañamiento tradicional de Canarias, a menudo servido con queso fresco o como guarnición de platos salados también."] },
+                { categoria: "Postre", titulo: "Buñuelos de Viento Caseros", raciones: 4, tiempo: "30 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Bunuelos+Viento", ingredientes: ["250 ml agua", "60 g mantequilla", "150 g harina de trigo", "3 huevos grandes", "1 cdita. levadura en polvo", "1 pizca de sal", "Ralladura de 1 limón", "Aceite de girasol (para freír)", "Azúcar glas (para espolvorear)"], pasos: ["En una olla, calienta el agua con la mantequilla, la pizca de sal y la ralladura de limón hasta que hierva. Retira del fuego y añade la harina de golpe, removiendo vigorosamente con una cuchara de madera hasta obtener una masa homogénea que se despegue de las paredes de la olla.", "Vuelve la olla al fuego bajo durante 1-2 minutos, sin dejar de remover, para secar un poco la masa. Retira del fuego y deja templar la masa unos 5 minutos.", "Añade los huevos uno a uno, integrando completamente cada huevo antes de añadir el siguiente. Bate bien hasta que la masa esté lisa y brillante. Por último, incorpora la levadura en polvo y mezcla bien.", "Calienta abundante aceite de girasol en una sartén profunda a fuego medio (la temperatura ideal es de unos 170°C).", "Con la ayuda de dos cucharas (o una manga pastelera), ve cogiendo pequeñas porciones de masa y suéltalas en el aceite caliente. Los buñuelos se inflarán y flotarán. Fríelos, dándoles la vuelta ocasionalmente, hasta que estén dorados y cocidos por dentro (unos 3-5 minutos).", "Retira los buñuelos con una espumadera y colócalos sobre papel absorbente para eliminar el exceso de aceite. Espolvorea generosamente con azúcar glas antes de servir templados."] },
+                { categoria: "Postre", titulo: "Magdalenas Caseras de Limón", raciones: 12, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Magdalenas+Limon", ingredientes: ["3 huevos grandes", "150 g azúcar", "120 ml leche entera", "120 ml aceite de girasol", "200 g harina de trigo", "1 sobre de levadura química (16g)", "Ralladura de 1 limón", "Una pizca de sal", "Opcional: azúcar para espolvorear por encima"], pasos: ["Precalienta el horno a 200°C (arriba y abajo). Prepara un molde de magdalenas con cápsulas de papel.", "En un bol grande, bate los huevos con el azúcar y la pizca de sal hasta que la mezcla blanquee y esté espumosa (unos 5 minutos con batidora eléctrica).", "Sin dejar de batir a baja velocidad, añade la leche y el aceite de girasol. Bate hasta integrar.", "Incorpora la ralladura de limón. Tamiza la harina junto con la levadura y añádelas a la mezcla en dos o tres tandas, integrando suavemente con una espátula o varillas, con movimientos envolventes, justo hasta que no queden grumos de harina (no sobremezcles).", "Rellena las cápsulas de magdalena hasta 2/3 de su capacidad. Si lo deseas, espolvorea un poco de azúcar por encima para que formen la 'costra' característica.", "Hornea durante 15-20 minutos, o hasta que estén doradas y al insertar un palillo en el centro, este salga limpio. El tiempo puede variar según tu horno. Deja enfriar sobre una rejilla. Se conservan bien en un recipiente hermético."] },
+                { categoria: "Postre", titulo: "Pestiños Andaluces con Miel", raciones: 6, tiempo: "40 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Pestinos", ingredientes: ["250 g harina de trigo", "60 ml aceite de oliva virgen extra", "60 ml vino blanco seco", "30 ml zumo de naranja", "1 cdita. anís en grano", "1 cdita. sésamo (ajonjolí)", "Cáscara de 1/2 naranja", "100 g miel", "50 ml agua", "Aceite de girasol (para freír)"], pasos: ["En un cazo pequeño, calienta el aceite de oliva con la cáscara de naranja y el anís en grano. Retira del fuego justo antes de que la cáscara se dore (unos 2-3 minutos) y deja infusionar. Cuela el aceite para retirar la cáscara y el anís.", "En un bol, mezcla la harina, el sésamo, el vino blanco y el zumo de naranja. Añade el aceite infusionado tibio y una pizca de sal. Mezcla hasta formar una masa homogénea. Amasa unos minutos en la encimera hasta que esté elástica. Deja reposar la masa tapada 30 minutos.", "Estira la masa muy fina con un rodillo (idealmente con máquina de pasta, si tienes). Corta rectángulos de unos 8x5 cm. Une dos esquinas opuestas de cada rectángulo, presionando para formar el pestiño característico.", "Calienta abundante aceite de girasol en una sartén a fuego medio-alto. Fríe los pestiños por tandas hasta que estén dorados y crujientes por ambos lados. Retira y escurre sobre papel absorbente.", "En un cazo, calienta la miel con el agua hasta que se disuelva y hierva suavemente (unos 2 minutos). Sumerge los pestiños fritos uno a uno en la miel caliente, escúrrelos ligeramente y colócalos sobre una rejilla para que se enfríen y sequen un poco. Se pueden comer templados o fríos."] }
             ];
-            
+           
             // Función para renderizar las tarjetas de receta.
             function renderRecipes(recipesToRender) {
                 console.log('renderRecipes: Renderizando', recipesToRender.length, 'recetas.');
                 let recipeHTML = '';
                 // Mostrar skeletons mientras se carga
-                for (let i = 0; i < 8; i++) { 
+                for (let i = 0; i < 8; i++) {
                     recipeHTML += `
                         <div class="skeleton-card h-64 flex flex-col p-4 space-y-3">
                             <div class="skeleton-image w-full rounded-md"></div>
@@ -666,11 +654,11 @@
                         </div>
                     `;
                 }
-                dom.grid.innerHTML = recipeHTML; 
-                dom.noResults.style.display = 'none'; 
+                dom.grid.innerHTML = recipeHTML;
+                dom.noResults.style.display = 'none';
 
-                setTimeout(() => { 
-                    recipeHTML = ''; 
+                setTimeout(() => {
+                    recipeHTML = '';
                     if (recipesToRender.length === 0) {
                         dom.noResults.style.display = 'block';
                     } else {
@@ -695,25 +683,25 @@
                     }
                     dom.grid.innerHTML = recipeHTML;
                     updateFavoriteIcons();
-                }, 500); 
+                }, 500);
             }
-            
+           
             // Un solo event listener en el contenedor padre (delegación de eventos)
             dom.grid.addEventListener('click', (event) => {
                 console.log('Clic detectado en dom.grid.');
                 const card = event.target.closest('.recipe-card');
                 if (!card) {
                     console.log('Clic no fue en una tarjeta de receta.');
-                    return; 
+                    return;
                 }
 
                 console.log('Clic en tarjeta:', card.dataset.id);
 
-                if (event.target.closest('.favorite-btn')) { 
+                if (event.target.closest('.favorite-btn')) {
                     console.log('Clic en botón de favoritos.');
-                    event.stopPropagation(); 
+                    event.stopPropagation();
                     toggleFavorite(card.dataset.id);
-                } else { 
+                } else {
                     console.log('Clic para abrir detalles de receta.');
                     const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
                     if (recipe) {
@@ -723,9 +711,9 @@
                     }
                 }
             });
-            
+           
             // Inicializa la UI con todas las recetas al cargar la página
-            renderRecipes(allRecipes); 
+            renderRecipes(allRecipes);
 
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
@@ -734,7 +722,7 @@
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
                     await loadUserData();
                     updateFavoriteIcons();
-                    showToast('¡Bienvenido! Sesión iniciada.', 'success'); 
+                    showToast('¡Bienvenido! Sesión iniciada.', 'success');
                 } else {
                     console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
                     signInAnonymously(auth).then(() => {
@@ -742,7 +730,7 @@
                     }).catch((error) => {
                         console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
                         dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
-                        showToast('Error de autenticación. Favoritos no guardados.', 'error'); 
+                        showToast('Error de autenticación. Favoritos no guardados.', 'error');
                     });
                 }
             });
@@ -779,31 +767,31 @@
                     console.log("Firebase: Favoritos guardados con éxito.");
                 } catch (error) {
                     console.error("Firebase: Error guardando datos de usuario:", error.message);
-                    showToast(`Error al guardar: ${error.message}`, 'error'); 
+                    showToast(`Error al guardar: ${error.message}`, 'error');
                 }
             }
 
             async function toggleFavorite(recipeId) {
                 if (!userId) {
                     console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
-                    showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info'); 
+                    showToast('Debes iniciar sesión para guardar favoritos. Recargando...', 'info');
                     signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
                     return;
                 }
                 const isFavorite = userFavorites.includes(recipeId);
                 userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
-                
-                updateFavoriteIcons(); 
-                applyFilters(); 
+               
+                updateFavoriteIcons();
+                applyFilters();
 
                 await saveData({ favorites: userFavorites });
-                showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success'); 
+                showToast(isFavorite ? 'Receta eliminada de favoritos.' : 'Receta añadida a favoritos.', 'success');
             }
 
             function updateFavoriteIcons() {
                 document.querySelectorAll('.recipe-card').forEach(card => {
                     const heartIcon = card.querySelector('.favorite-btn svg');
-                    if (heartIcon) { 
+                    if (heartIcon) {
                         if (userFavorites.includes(card.dataset.id)) {
                             heartIcon.classList.add('text-red-500', 'fill-current');
                             heartIcon.classList.remove('text-gray-600', 'dark:text-gray-400');
@@ -823,16 +811,16 @@
                     const id = recipe.titulo;
                     const category = recipe.categoria;
                     const searchData = `${recipe.titulo.toLowerCase()} ${recipe.ingredientes.join(' ').toLowerCase()}`;
-                    
-                    const prepareTimeValue = parseInt(recipe.tiempo.replace(' min', '')); 
-                    const prepareTime = isNaN(prepareTimeValue) ? 0 : prepareTimeValue; 
+                   
+                    const prepareTimeValue = parseInt(recipe.tiempo.replace(' min', ''));
+                    const prepareTime = isNaN(prepareTimeValue) ? 0 : prepareTimeValue;
 
                     const isFavorite = userFavorites.includes(id);
-                    
+                   
                     const categoryMatch = currentCategory === 'all' || category === currentCategory;
                     const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
                     const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
-                    
+                   
                     let timeMatch = true;
                     if (currentTimeFilter === 'short') {
                         timeMatch = prepareTime < 30;
@@ -841,14 +829,14 @@
                     } else if (currentTimeFilter === 'long') {
                         timeMatch = prepareTime > 60;
                     }
-                    
+                   
                     return categoryMatch && searchMatch && favoriteMatch && timeMatch;
                 });
-                renderRecipes(filteredRecipes); 
+                renderRecipes(filteredRecipes);
             }
 
-            let currentRecipeDetail = null; 
-            let currentServings = 0; 
+            let currentRecipeDetail = null;
+            let currentServings = 0;
 
             // --- LISTA DE LA COMPRA ---
             function loadShoppingList() {
@@ -865,7 +853,7 @@
             }
 
             function updateShoppingListCount() {
-                const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length; 
+                const totalItems = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted)).length;
                 dom.shoppingListCount.textContent = totalItems;
             }
 
@@ -875,34 +863,34 @@
 
                 recipe.ingredientes.forEach(originalIng => {
                     const parsed = parseIngredient(originalIng);
-                    if (parsed.baseName || (parsed.value === 0 && parsed.original)) { 
+                    if (parsed.baseName || (parsed.value === 0 && parsed.original)) {
                             ingredientsToProcess.push({
-                                name: parsed.baseName || parsed.original.toLowerCase(), 
+                                name: parsed.baseName || parsed.original.toLowerCase(),
                                 unit: parsed.unit,
                                 value: parsed.value,
-                                originalFormatted: formatIngredient(parsed, factor), 
-                                checked: false 
+                                originalFormatted: formatIngredient(parsed, factor),
+                                checked: false
                             });
                     } else if (parsed.original) {
                         ingredientsToProcess.push({
                             name: parsed.original.toLowerCase(),
                             unit: '',
-                            value: 0, 
+                            value: 0,
                             originalFormatted: parsed.original,
-                            checked: false 
+                            checked: false
                         });
                     }
                 });
 
                 ingredientsToProcess.forEach(ing => {
-                    const existingItemIndex = shoppingList.findIndex(item => 
+                    const existingItemIndex = shoppingList.findIndex(item =>
                         item.name === ing.name && item.unit === ing.unit
                     );
 
                     if (existingItemIndex !== -1) {
-                        if (ing.value > 0) { 
-                            shoppingList[existingItemIndex].value += ing.value; 
-                             if (shoppingList[existingItemIndex].value > 0) { 
+                        if (ing.value > 0) {
+                            shoppingList[existingItemIndex].value += ing.value;
+                             if (shoppingList[existingItemIndex].value > 0) {
                                 const tempParsed = { value: shoppingList[existingItemIndex].value, unit: shoppingList[existingItemIndex].unit, name: shoppingList[existingItemIndex].name, baseName: shoppingList[existingItemIndex].name, original: '' };
                                 shoppingList[existingItemIndex].originalFormatted = formatIngredient(tempParsed, 1);
                              }
@@ -913,38 +901,38 @@
                             unit: ing.unit,
                             value: ing.value,
                             originalFormatted: ing.originalFormatted,
-                            checked: false 
+                            checked: false
                         });
                     }
                 });
 
-                saveShoppingList(); 
-                showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success'); 
-                closeModal(); 
+                saveShoppingList();
+                showToast(`¡Ingredientes de "${recipe.titulo}" (${servings} raciones) añadidos!`, 'success');
+                closeModal();
             }
 
             function showShoppingListModal() {
-                dom.finalShoppingList.innerHTML = ''; 
+                dom.finalShoppingList.innerHTML = '';
                 const itemsToDisplay = shoppingList.filter(item => item.value > 0 || (item.value === 0 && item.originalFormatted));
 
                 if (itemsToDisplay.length === 0) {
                     dom.finalShoppingList.innerHTML = '<li class="text-gray-500 dark:text-stone-400">Tu lista de compra está vacía.</li>';
                 } else {
                     const sortedList = [...itemsToDisplay].sort((a, b) => a.name.localeCompare(b.name));
-                    
-                    sortedList.forEach((item, index) => { 
+                   
+                    sortedList.forEach((item, index) => {
                         const li = document.createElement('li');
-                        li.dataset.itemIndex = shoppingList.indexOf(item); 
-                        
+                        li.dataset.itemIndex = shoppingList.indexOf(item);
+                       
                         if (item.checked) {
                             li.classList.add('checked');
                         }
 
                         if (item.value > 0) {
                             const tempParsed = { value: item.value, unit: item.unit, name: item.name, baseName: item.name, original: item.originalFormatted };
-                            li.textContent = formatIngredient(tempParsed, 1); 
+                            li.textContent = formatIngredient(tempParsed, 1);
                         } else {
-                            li.textContent = item.originalFormatted; 
+                            li.textContent = item.originalFormatted;
                         }
                         dom.finalShoppingList.appendChild(li);
                     });
@@ -957,7 +945,7 @@
 
             function closeShoppingListModal() {
                 dom.shoppingListModal.classList.remove('modal-visible');
-                dom.finalShoppingList.removeEventListener('click', toggleIngredientChecked); 
+                dom.finalShoppingList.removeEventListener('click', toggleIngredientChecked);
                 setTimeout(() => {
                     dom.shoppingListModal.classList.add('hidden');
                 }, 300);
@@ -965,12 +953,12 @@
 
             function toggleIngredientChecked(event) {
                 const listItem = event.target.closest('li');
-                if (listItem && listItem.dataset.itemIndex !== undefined) { 
+                if (listItem && listItem.dataset.itemIndex !== undefined) {
                     const index = parseInt(listItem.dataset.itemIndex);
                     if (shoppingList[index]) {
-                        shoppingList[index].checked = !shoppingList[index].checked; 
-                        saveShoppingList(); 
-                        showShoppingListModal(); 
+                        shoppingList[index].checked = !shoppingList[index].checked;
+                        saveShoppingList();
+                        showShoppingListModal();
                         showToast(shoppingList[index].checked ? 'Ingrediente marcado.' : 'Ingrediente desmarcado.', 'info');
                     }
                 }
@@ -981,7 +969,7 @@
                 if (confirm('¿Estás seguro de que quieres vaciar toda la lista de compra?')) {
                     shoppingList = [];
                     saveShoppingList();
-                    showShoppingListModal(); 
+                    showShoppingListModal();
                     showToast('Lista de compra vaciada.', 'info');
                 }
             }
@@ -989,36 +977,36 @@
             function parseIngredient(ingredient) {
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 let match = ingredient.match(regex);
-                
+               
                 let value = 0;
                 let unit = '';
-                let name = ingredient.trim(); 
-                let baseName = ''; 
+                let name = ingredient.trim();
+                let baseName = '';
 
                 if (match) {
-                    if (match[1]) { 
+                    if (match[1]) {
                         value = match[1].includes('/') ? parseFloat(match[1].split('/')[0]) / parseFloat(match[1].split('/')[1]) : parseFloat(match[1].replace(',', '.'));
-                    } else if (match[2]) { 
+                    } else if (match[2]) {
                         const quantWord = match[2].toLowerCase();
                         if (quantWord === 'medio' || quantWord === 'media') value = 0.5;
                         else if (['un', 'una', 'puñado', 'chorrito'].includes(quantWord)) value = 1;
                     }
 
                     unit = match[3] ? match[3].toLowerCase() : '';
-                    name = match[4] ? match[4].trim() : ''; 
-                    
+                    name = match[4] ? match[4].trim() : '';
+                   
                     if (match[2] && !match[3] && ['un', 'una', 'medio', 'media', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(match[2].toLowerCase())) {
                         name = (match[2] + ' ' + name).trim();
-                        unit = ''; 
+                        unit = '';
                     }
                 } else {
                     // Si no hay ningún match con la regex, es un ingrediente "al gusto" o sin cantidad explícita.
                     // Su `value` seguirá siendo 0 y `name` será el `ingredient` original.
                     // Esto se manejará en `formatIngredient` para mostrar el string original.
                 }
-                
-                baseName = getBaseName(name || ingredient); 
-                
+               
+                baseName = getBaseName(name || ingredient);
+               
                 return { value, unit, name, baseName: baseName.trim(), original: ingredient };
             }
 
@@ -1054,12 +1042,12 @@
                     "queso de cabra": "queso de cabra", "setas variadas": "seta variada",
                     "langostinos cocidos": "langostino cocido", "pollo picado": "pollo picado",
                     "arroz integral": "arroz integral", "maicena": "maicena",
-                    "champiñones": "champiñón", 
-                    "patatas": "patata", 
-                    "garbanzos": "garbanzo", 
-                    "espinacas": "espinaca", 
-                    "judiones": "judión", 
-                    "fabes": "fabes", 
+                    "champiñones": "champiñón",
+                    "patatas": "patata",
+                    "garbanzos": "garbanzo",
+                    "espinacas": "espinaca",
+                    "judiones": "judión",
+                    "fabes": "fabes",
                     "cebolletas": "cebolleta",
                     "boquerones": "boquerón", "guindillas": "guindilla", "pepinillos": "pepinillo",
                     "morcilla": "morcilla", "chorizo": "chorizo", "lacón": "lacón", "fideos": "fideo",
@@ -1072,15 +1060,7 @@
                     "salsa romesco": "salsa romesco", "chuletas de cordero": "chuleta de cordero",
                     "ajo granulado": "ajo granulado", "carne de cerdo": "carne de cerdo",
                     "especias para pinchos morunos": "especias para pinchos morunos", "pollo entero": "pollo entero",
-                    "gajos": "gajo", "pollo asado": "pollo asado", "bacalao desmigado": "bacalao desmigado",
-                    "pimientos del piquillo": "pimiento del piquillo", "brandada de bacalao": "brandada de bacalao",
-                    "almendras tostadas": "almendra tostada", "piñones": "piñón", "escalivada": "escalivada",
-                    "sandía": "sandía", "melón": "melón", "jamón serrano": "jamón serrano",
-                    "alubias blancas": "alubia blanca", "chorizo para cocinar": "chorizo para cocinar",
-                    "panceta fresca": "panceta fresca", "hoja de laurel": "hoja de laurel",
-                    "bacalao desalado": "bacalao desalado", "fideos para fideuá": "fideo para fideuá",
-                    "conejo a la cazadora": "conejo a la cazadora", "san jacobos": "san jacobo",
-                    "miel sobre hojuelas": "miel sobre hojuelas"
+                    "gajos": "gajo", "pollo asado": "pollo asado"
                 };
 
                 for (const compound in specificCompoundsMap) {
@@ -1106,56 +1086,53 @@
                     "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
                     "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                     "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
-                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces",
                     "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                     "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                     "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos",
                     "sobrasada": "sobrasadas", "miel": "mieles", "queso feta": "quesos feta", "pasta corta": "pastas cortas",
                     "ternera": "terneras", "vino": "vinos", "conejo": "conejos", "romero": "romeros",
                     "chuleta": "chuletas", "cordero": "corderos", "cerdo": "cerdos", "pollo": "pollos",
-                    "gajo": "gajos", "bacalao": "bacalaos", "pimiento": "pimientos", "brandada": "brandadas",
-                    "almendra": "almendras", "piñón": "piñones", "escalivada": "escalivadas",
-                    "sandía": "sandías", "alubia": "alubias", "panceta": "pancetas", "conejo": "conejos",
-                    "san jacobo": "san jacobos", "miel sobre hojuelas": "miel sobre hojuelas"
+                    "gajo": "gajos"
                 };
-                
-                const words = lowerName.split(' ').map(w => w.replace(/[^a-záéíóúüñ]/g, '')); 
+               
+                const words = lowerName.split(' ').map(w => w.replace(/[^a-záéíóúüñ]/g, ''));
                 for (const word of words) {
-                    if (commonSingularPluralMap[word]) return word; 
-                    const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word); 
-                    if (singularForm) return singularForm; 
+                    if (commonSingularPluralMap[word]) return word;
+                    const singularForm = Object.keys(commonSingularPluralMap).find(key => commonSingularPluralMap[key] === word);
+                    if (singularForm) return singularForm;
                 }
-                
-                if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes', 'pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes', 'patatas', 'gambas', 'alubias', 'champiñones', 'boquerones', 'pimientos', 'cigalas', 'piñones'].includes(lowerName)) {
-                    return lowerName.slice(0, -1); 
+               
+                if (lowerName.endsWith('s') && lowerName.length > 3 && !['hummus', 'cuscús', 'miso', 'açaí', 'fabes'].includes(lowerName)) {
+                    return lowerName.slice(0, -1);
                 }
 
-                return lowerName; 
+                return lowerName;
             }
 
             function formatIngredient(parsedIng, factor) {
-                if (parsedIng.value === 0) { 
-                    return parsedIng.original; 
+                if (parsedIng.value === 0) {
+                    return parsedIng.original;
                 }
-                
+               
                 let newValue = parsedIng.value * factor;
                 let unit = parsedIng.unit;
                 let name = parsedIng.name;
-                let baseName = parsedIng.baseName; 
+                let baseName = parsedIng.baseName;
 
-                if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
-                else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
-                else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
+                if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; }
+                else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; }
+                else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; }
                 else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
-                
-                if (Math.abs(newValue % 1) < 0.0001) { 
+               
+                if (Math.abs(newValue % 1) < 0.0001) {
                     newValue = Math.round(newValue);
-                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
+                } else if (Math.abs((newValue * 10) % 1) < 0.0001) {
                     newValue = Math.round(newValue * 10) / 10;
-                } else { 
-                    newValue = Math.round(newValue * 100) / 100; 
+                } else {
+                    newValue = Math.round(newValue * 100) / 100;
                 }
-                
+               
                 let formattedName = name;
                 const commonFormsMap = {
                     "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
@@ -1174,39 +1151,37 @@
                     "fruto rojo": "frutos rojos", "zumo": "zumos", "plátano": "plátanos", "dátil": "dátiles",
                     "almendra": "almendras", "pera": "peras", "naranja": "naranjas", "fresa": "fresas",
                     "kiwi": "kiwis", "melón": "melones", "uva": "uvas", "churro": "churros",
-                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces", 
+                    "natilla": "natillas", "torrija": "torrijas", "arroz": "arroces",
                     "morcilla": "morcillas", "chorizo": "chorizos", "lacón": "lacones", "judión": "judiones",
                     "fideo": "fideos", "guindilla": "guindillas", "pepinillo": "pepinillos",
                     "cebolleta": "cebolletas", "boquerón": "boquerones", "coco": "cocos",
                     "sobrasada": "sobrasadas", "miel": "mieles", "queso feta": "quesos feta", "pasta corta": "pastas cortas",
                     "ternera": "terneras", "vino": "vinos", "conejo": "conejos", "romero": "romeros",
                     "chuleta": "chuletas", "cordero": "corderos", "cerdo": "cerdos", "pollo": "pollos",
-                    "gajo": "gajos", "bacalao": "bacalaos", "brandada": "brandadas", "piñón": "piñones",
-                    "escalivada": "escalivadas", "sandía": "sandías", "alubia": "alubias", "panceta": "pancetas",
-                    "san jacobo": "san jacobos", "miel sobre hojuelas": "miel sobre hojuelas"
+                    "gajo": "gajos"
                 };
 
                 let targetNounForm = baseName;
 
                 if (newValue === 1) {
                     targetNounForm = Object.keys(commonFormsMap).find(key => commonFormsMap[key] === baseName) || baseName;
-                    if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes', 'patatas', 'gambas', 'alubias', 'champiñones', 'boquerones', 'pimientos', 'cigalas', 'piñones'].includes(baseName)) {
-                           targetNounForm = baseName.slice(0, -1); 
+                    if (targetNounForm === baseName && baseName.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas', 'aceitunas', 'fabes'].includes(baseName)) {
+                           targetNounForm = baseName.slice(0, -1);
                     }
-                } else { 
+                } else {
                     targetNounForm = commonFormsMap[baseName] || baseName;
                     if (targetNounForm === baseName && !baseName.endsWith('s')) {
-                        targetNounForm = baseName + 's'; 
+                        targetNounForm = baseName + 's';
                     }
                 }
-                
+               
                 formattedName = name.replace(new RegExp(`\\b${parsedIng.baseName.replace(/s\b/, '')}(s)?\\b`, 'i'), targetNounForm);
-                
+               
                 formattedName = formattedName.trim();
 
                 const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
                 formattedName = formattedName.replace(unitInNameRegex, '').trim();
-                
+               
                 formattedName = formattedName.split(' ').filter((word, index, arr) => {
                     return index === 0 || word.toLowerCase() !== arr[index - 1].toLowerCase();
                 }).join(' ').trim();
@@ -1215,7 +1190,7 @@
                     return `${newValue} ${unit}. ${formattedName}`.trim();
                 }
                 if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(parsedIng.unit))) {
-                    return formattedName; 
+                    return formattedName;
                 }
                 if (unit !== '') {
                     return `${newValue} ${unit} ${formattedName}`.trim();
@@ -1239,11 +1214,11 @@
                     ingredientList.appendChild(li);
                 });
             }
-            
+           
             function showRecipeDetail(recipe) {
                 console.log('showRecipeDetail: Abriendo modal para', recipe.titulo);
-                currentRecipeDetail = recipe; 
-                currentServings = recipe.raciones; 
+                currentRecipeDetail = recipe;
+                currentServings = recipe.raciones;
 
                 dom.modalContent.innerHTML = `
                     <div class="p-6 md:p-8">
@@ -1283,18 +1258,18 @@
                             </div>
                         </div>
                     </div>`;
-                
+               
                 const stepsList = document.getElementById('steps-list');
                 stepsList.innerHTML = recipe.pasos.map(step => `<li>${step}</li>`).join('');
 
                 updateIngredientsDisplay(currentServings);
 
                 dom.modal.classList.remove('hidden');
-                dom.modal.classList.add('modal-visible'); 
-                
+                dom.modal.classList.add('modal-visible');
+               
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
                 document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
-                
+               
                 const shareBtn = document.getElementById('shareRecipeBtn');
                 if (navigator.share) {
                     shareBtn.addEventListener('click', async () => {
@@ -1311,7 +1286,7 @@
                 } else {
                     shareBtn.style.display = 'none';
                 }
-                
+               
                 document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
                 document.getElementById('add-to-shopping-list-btn').addEventListener('click', () => {
                     addToShoppingList(currentRecipeDetail, currentServings);
@@ -1340,17 +1315,17 @@
                     updateIngredientsDisplay(currentServings);
                 });
             }
-            
+           
             function closeModal() {
                 console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); 
-                setTimeout(() => { 
-                    dom.modal.classList.add('hidden'); 
-                    dom.modalContent.innerHTML = ''; 
+                dom.modal.classList.remove('modal-visible');
+                setTimeout(() => {
+                    dom.modal.classList.add('hidden');
+                    dom.modalContent.innerHTML = '';
                     console.log('Modal completamente cerrado y contenido limpiado.');
-                }, 300); 
-                currentRecipeDetail = null; 
-                currentServings = 0; 
+                }, 300);
+                currentRecipeDetail = null;
+                currentServings = 0;
             }
 
             // --- MODO OSCURO ---
@@ -1360,12 +1335,12 @@
 
                 if (currentTheme === 'dark' || (!currentTheme && systemPrefersDark)) {
                     document.documentElement.classList.add('dark');
-                    dom.lightIcon.classList.remove('hidden'); 
+                    dom.lightIcon.classList.remove('hidden');
                     dom.darkIcon.classList.add('hidden');    
                     console.log("Tema: Oscuro (inicial)");
                 } else {
                     document.documentElement.classList.remove('dark');
-                    dom.darkIcon.classList.remove('hidden'); 
+                    dom.darkIcon.classList.remove('hidden');
                     dom.lightIcon.classList.add('hidden');    
                     console.log("Tema: Claro (inicial)");
                 }
@@ -1373,7 +1348,7 @@
 
             dom.themeToggle.addEventListener('click', function() {
                 document.documentElement.classList.toggle('dark');
-                
+               
                 if (document.documentElement.classList.contains('dark')) {
                     localStorage.setItem('color-theme', 'dark');
                     dom.lightIcon.classList.remove('hidden');
@@ -1387,7 +1362,7 @@
                 }
             });
 
-            setupTheme(); 
+            setupTheme();
 
             // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
             dom.search.addEventListener('input', applyFilters);
@@ -1404,7 +1379,7 @@
                 dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
                 applyFilters();
             });
-            
+           
             dom.categoryFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.category-btn')) {
                     currentCategory = e.target.dataset.category;
@@ -1425,12 +1400,12 @@
                     applyFilters();
                 }
             });
-            
+           
             // Listener para cerrar el modal al hacer clic fuera
-            dom.modal.addEventListener('click', (event) => { 
-                if (event.target === dom.modal) { 
+            dom.modal.addEventListener('click', (event) => {
+                if (event.target === dom.modal) {
                     console.log('Clic en fondo del modal, cerrando.');
-                    closeModal(); 
+                    closeModal();
                 }
             });
 
@@ -1456,7 +1431,7 @@
             // Asegura que los filtros "Todas" y "Cualquiera" estén activos al cargar
             dom.filterAllBtn.classList.add('active');
             document.querySelector('.time-filter-btn[data-time="all"]').classList.add('active');
-            
+           
             // --- COPYRIGHT YEAR ---
             dom.copyrightYear.textContent = new Date().getFullYear();
 
@@ -1464,123 +1439,8 @@
             // Variable para el objeto SpeechRecognition
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             let recognition = null;
-            let speaking = false; 
-            let recognitionActive = false; 
-
-            // Funciones de temporizador
-            let activeTimers = [];
-            let timerIdCounter = 0;
-
-            function formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = seconds % 60;
-                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-            }
-
-            function updateTimerDisplay() {
-                dom.activeTimersContainer.innerHTML = '';
-                if (activeTimers.length === 0) {
-                    // dom.activeTimersContainer.style.display = 'none'; // Podrías ocultarlo si no hay temporizadores
-                    return;
-                }
-                // dom.activeTimersContainer.style.display = 'flex'; // Mostrarlo si hay temporizadores
-
-                activeTimers.forEach(timer => {
-                    const timerCard = document.createElement('div');
-                    timerCard.classList.add('timer-card');
-                    timerCard.dataset.timerId = timer.id;
-
-                    const timerName = timer.name ? `${timer.name}: ` : '';
-                    timerCard.innerHTML = `
-                        <span>${timerName}<span data-timer-time="${timer.id}">${formatTime(timer.remaining)}</span></span>
-                        <button data-timer-action="stop" data-timer-id="${timer.id}" aria-label="Cancelar temporizador ${timer.name || timer.id}">&times;</button>
-                    `;
-                    dom.activeTimersContainer.appendChild(timerCard);
-
-                    // Event listener para el botón de cancelar
-                    timerCard.querySelector('[data-timer-action="stop"]').addEventListener('click', (e) => {
-                        stopCookingTimer(parseInt(e.target.dataset.timerId));
-                        showToast(`Temporizador ${timer.name || ''} cancelado.`, 'info');
-                    });
-                });
-            }
-
-            function startCookingTimer(minutes, timerName = 'temporizador') {
-                const durationSeconds = minutes * 60;
-                if (durationSeconds <= 0) {
-                    speak("El tiempo del temporizador debe ser un número positivo.");
-                    return;
-                }
-
-                const timerId = timerIdCounter++;
-                const newTimer = {
-                    id: timerId,
-                    duration: durationSeconds,
-                    remaining: durationSeconds,
-                    intervalId: null,
-                    name: timerName
-                };
-                activeTimers.push(newTimer);
-                updateTimerDisplay();
-
-                speak(`Temporizador ${timerName} iniciado para ${minutes} minutos.`);
-                console.log(`Temporizador ${timerName} (${timerId}) iniciado para ${minutes} minutos.`);
-
-                newTimer.intervalId = setInterval(() => {
-                    newTimer.remaining--;
-                    const timerSpan = dom.activeTimersContainer.querySelector(`[data-timer-time="${newTimer.id}"]`);
-                    if (timerSpan) {
-                        timerSpan.textContent = formatTime(newTimer.remaining);
-                    }
-
-                    if (newTimer.remaining <= 0) {
-                        clearInterval(newTimer.intervalId);
-                        speak(`¡El temporizador ${newTimer.name} ha terminado!`);
-                        showToast(`¡Temporizador "${newTimer.name}" ha terminado!`, 'success', 5000);
-                        stopCookingTimer(newTimer.id); // Eliminar del array
-                    } else if (newTimer.remaining === 60) {
-                        speak(`Queda un minuto para el temporizador ${newTimer.name}.`);
-                    } else if (newTimer.remaining === 30) {
-                        speak(`Quedan 30 segundos para el temporizador ${newTimer.name}.`);
-                    } else if (newTimer.remaining === 10) {
-                        speak(`Quedan 10 segundos para el temporizador ${newTimer.name}.`);
-                    }
-                }, 1000);
-            }
-
-            function stopCookingTimer(timerId) {
-                const timerIndex = activeTimers.findIndex(t => t.id === timerId);
-                if (timerIndex !== -1) {
-                    clearInterval(activeTimers[timerIndex].intervalId);
-                    activeTimers.splice(timerIndex, 1);
-                    updateTimerDisplay();
-                }
-            }
-
-            function getRemainingTime(timerName = null) {
-                let timer = null;
-                if (timerName) {
-                    timer = activeTimers.find(t => t.name.toLowerCase().includes(timerName.toLowerCase()));
-                } else if (activeTimers.length > 0) {
-                    timer = activeTimers[activeTimers.length - 1]; // Último temporizador
-                }
-
-                if (timer) {
-                    const minutes = Math.floor(timer.remaining / 60);
-                    const seconds = timer.remaining % 60;
-                    if (minutes > 0 && seconds > 0) {
-                        speak(`Para el temporizador ${timer.name || ''} quedan ${minutes} minutos y ${seconds} segundos.`);
-                    } else if (minutes > 0) {
-                        speak(`Para el temporizador ${timer.name || ''} quedan ${minutes} minutos.`);
-                    } else if (seconds > 0) {
-                        speak(`Para el temporizador ${timer.name || ''} quedan ${seconds} segundos.`);
-                    } else {
-                        speak(`El temporizador ${timer.name || ''} ya ha terminado.`);
-                    }
-                } else {
-                    speak("No hay temporizadores activos.");
-                }
-            }
+            let speaking = false;
+            let recognitionActive = false;
 
             // Función para iniciar el reconocimiento de voz
             function startVoiceRecognition() {
@@ -1589,12 +1449,12 @@
                     showToast('Tu navegador no soporta el control por voz.', 'error');
                     return;
                 }
-                
+               
                 if (!recognition) {
                     recognition = new SpeechRecognition();
                     recognition.lang = 'es-ES';
-                    recognition.interimResults = false; 
-                    recognition.maxAlternatives = 1; 
+                    recognition.interimResults = false;
+                    recognition.maxAlternatives = 1;
 
                     recognition.addEventListener('result', (event) => {
                         const command = event.results[0][0].transcript.toLowerCase();
@@ -1605,7 +1465,7 @@
                     recognition.addEventListener('end', () => {
                         if (cookingModeView.classList.contains('flex') && recognitionActive) {
                             console.log('Reconocimiento de voz terminado, reiniciando...');
-                            recognition.start(); 
+                            recognition.start();
                         } else {
                             console.log('Reconocimiento de voz detenido permanentemente.');
                         }
@@ -1615,17 +1475,17 @@
                         console.error('Error en reconocimiento de voz:', event.error);
                         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                             showToast('Necesito permiso de micrófono para el asistente de voz. Por favor, actívalo.', 'error');
-                            recognitionActive = false; 
+                            recognitionActive = false;
                         } else if (event.error === 'no-speech') {
                             console.log('No se detectó voz. Reintentando...');
                         } else {
                             showToast(`Error de voz: ${event.error}. Intenta de nuevo.`, 'error');
-                            recognitionActive = false; 
+                            recognitionActive = false;
                         }
                     });
                 }
-                
-                if (!recognitionActive) { 
+               
+                if (!recognitionActive) {
                     try {
                         recognitionActive = true;
                         recognition.start();
@@ -1649,7 +1509,7 @@
             }
 
             // --- Funciones de control del asistente (extraídas para ser llamadas directamente) ---
-            function nextStepAction() { 
+            function nextStepAction() {
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
                     updateCookingStep(); // Esta función ya se encarga de hablar el paso
@@ -1659,7 +1519,7 @@
                 }
             }
 
-            function prevStepAction() { 
+            function prevStepAction() {
                 if (currentStep > 0) {
                     currentStep--;
                     updateCookingStep(); // Esta función ya se encarga de hablar el paso
@@ -1668,7 +1528,7 @@
                 }
             }
 
-            function repeatStepAction() { 
+            function repeatStepAction() {
                 speak(currentRecipeSteps[currentStep]);
             }
             // La función `exitCookingMode` ya existe y se llama correctamente.
@@ -1678,60 +1538,23 @@
             function handleVoiceCommand(command) {
                 if (speaking) {
                     console.log("Asistente hablando, ignorando comando:", command);
-                    return; 
+                    return;
                 }
 
-                const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase(); 
+                const cleanedCommand = command.replace(/[^\w\sáéíóúüñ]/g, '').toLowerCase();
 
-                // Comandos de temporizador
-                const setTimerMatch = cleanedCommand.match(/(pon|inicia|crea) (un )?temporizador de (\d+)( minutos)?( para (la|el)? (.+))?/);
-                const queryTimerMatch = cleanedCommand.match(/(cuanto|cuánto) (queda|quedan)( del)?( temporizador)?( (.+))?/);
-                const cancelTimerMatch = cleanedCommand.match(/(cancela|elimina|quita) (el )?temporizador( (.+))?/);
-                const cancelAllTimersMatch = cleanedCommand.match(/(cancela|elimina|quita) (todos )?(los )?temporizadores/);
-
-                if (setTimerMatch) {
-                    const minutes = parseInt(setTimerMatch[3]);
-                    let timerName = setTimerMatch[7] ? setTimerMatch[7].trim() : '';
-                    if (!timerName || timerName === 'la' || timerName === 'el') timerName = 'temporizador';
-                    startCookingTimer(minutes, timerName);
-                } else if (queryTimerMatch) {
-                    let timerName = queryTimerMatch[6] ? queryTimerMatch[6].trim() : null;
-                    getRemainingTime(timerName);
-                } else if (cancelAllTimersMatch) {
-                    activeTimers.forEach(timer => clearInterval(timer.intervalId));
-                    activeTimers = [];
-                    updateTimerDisplay();
-                    speak("Todos los temporizadores han sido cancelados.");
-                    showToast('Todos los temporizadores cancelados.', 'info');
-                }
-                 else if (cancelTimerMatch) {
-                    let timerName = cancelTimerMatch[4] ? cancelTimerMatch[4].trim() : null;
-                    let timerToStop = null;
-
-                    if (timerName) {
-                        timerToStop = activeTimers.find(t => t.name.toLowerCase().includes(timerName.toLowerCase()));
-                    } else if (activeTimers.length > 0) {
-                        timerToStop = activeTimers[activeTimers.length - 1]; // El último temporizador
-                    }
-
-                    if (timerToStop) {
-                        stopCookingTimer(timerToStop.id);
-                        speak(`Temporizador ${timerToStop.name || ''} cancelado.`);
-                        showToast(`Temporizador "${timerToStop.name || ''}" cancelado.`, 'info');
-                    } else {
-                        speak("No se encontró ningún temporizador con ese nombre o no hay temporizadores para cancelar.");
-                    }
-                }
-                else if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
+                if (cleanedCommand.includes('siguiente') || cleanedCommand.includes('sigue')) {
                     nextStepAction(); // Llama a la función de acción, que ahora lee el paso
                 } else if (cleanedCommand.includes('anterior') || cleanedCommand.includes('atras')) {
                     prevStepAction(); // Llama a la función de acción, que ahora lee el paso
                 } else if (cleanedCommand.includes('repetir')) {
                     repeatStepAction(); // Llama a la función de acción, que repite el paso
                 } else if (cleanedCommand.includes('salir') || cleanedCommand.includes('detener') || cleanedCommand.includes('terminar')) {
-                    exitCookingMode(); 
+                    exitCookingMode();
+                    // No necesitas un speak() aquí si exitCookingMode() ya dice algo.
+                    // speak('Saliendo del modo de cocina.'); // Si lo dejas, lo dirá dos veces.
                 } else {
-                    speak('No entendí. Por favor, di "siguiente", "anterior", "repetir", "salir", o un comando de temporizador.');
+                    speak('No entendí. Por favor, di "siguiente", "anterior", "repetir" o "salir".');
                 }
             }
 
@@ -1748,11 +1571,11 @@
             let currentRecipeSteps = [];
 
             function speak(text) {
-                speechSynthesis.cancel(); 
+                speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES'; 
-                utterance.rate = 0.9; 
-                utterance.pitch = 1; 
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
 
                 utterance.onstart = () => { speaking = true; };
                 utterance.onend = () => { speaking = false; };
@@ -1771,28 +1594,23 @@
                 console.log('Iniciando modo de cocina para:', recipe.titulo);
                 currentRecipeSteps = recipe.pasos;
                 currentStep = 0;
-                closeModal(); 
+                closeModal();
                 cookingModeView.classList.remove('hidden');
                 cookingModeView.classList.add('flex');
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
                 setTimeout(() => {
                     updateCookingStep(); // Muestra y lee el primer paso
-                    startVoiceRecognition(); 
-                }, 1500); 
+                    startVoiceRecognition();
+                }, 1500);
             }
 
             function exitCookingMode() {
                 console.log('Saliendo del modo de cocina.');
                 speechSynthesis.cancel();
-                stopVoiceRecognition(); 
-                // Limpiar todos los temporizadores al salir del modo de cocina
-                activeTimers.forEach(timer => clearInterval(timer.intervalId));
-                activeTimers = [];
-                updateTimerDisplay(); // Limpiar la interfaz de temporizadores
-                
+                stopVoiceRecognition();
                 cookingModeView.classList.add('hidden');
                 cookingModeView.classList.remove('flex');
-                showToast('Modo de cocina finalizado.', 'info'); 
+                showToast('Modo de cocina finalizado.', 'info'); // Añadir un toast al salir
             }
 
             // Los event listeners de los botones ahora llaman a las funciones de acción directamente
