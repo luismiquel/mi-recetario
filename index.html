@@ -4,100 +4,321 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recetario Delicioso</title>
+
     <meta name="theme-color" content="#78350f"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Recetario">
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
-    <link rel="manifest" href="/manifest.json">
+    
+    <link rel="manifest" href="data:application/manifest+json,{
+        &quot;name&quot;: &quot;Recetario Delicioso&quot;,
+        &quot;short_name&quot;: &quot;Recetario&quot;,
+        &quot;start_url&quot;: &quot;.&quot;,
+        &quot;display&quot;: &quot;standalone&quot;,
+        &quot;background_color&quot;: &quot;#f8f7f5&quot;,
+        &quot;theme_color&quot;: &quot;#78350f&quot;,
+        &quot;description&quot;: &quot;Tu app de recetas de cocina española.&quot;,
+        &quot;icons&quot;: [{
+            &quot;src&quot;: &quot;https://placehold.co/192x192/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;192x192&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }, {
+            &quot;src&quot;: &quot;https://placehold.co/512x512/78350f/ffffff?text=R&quot;,
+            &quot;sizes&quot;: &quot;512x512&quot;,
+            &quot;type&quot;: &quot;image/png&quot;
+        }]
+    }">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config={darkMode:'class'}</script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
-        body{font-family:'Inter',sans-serif;background-color:#f8f7f5}
-        body.dark{background-color:#1c1917}
-        h1,h2,h3,h4{font-family:'Lora',serif}
-        .category-btn.active,.filter-btn.active,.time-filter-btn.active{background-color:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2)}
-        .dark .category-btn.active,.dark .filter-btn.active,.dark .time-filter-btn.active{background-color:#f59e0b;color:#1c1917}
-        .category-btn,.filter-btn,.time-filter-btn{transition:all .3s ease-in-out;padding:.6rem 1rem;border-radius:9999px;border:1px solid transparent;font-size:.875rem}
-        .category-btn:hover:not(.active),.filter-btn:hover:not(.active),.time-filter-btn:hover:not(.active){background-color:#f0ead6;box-shadow:0 1px 3px 0 rgb(0 0 0 /.05)}
-        .dark .category-btn:hover:not(.active),.dark .filter-btn:hover:not(.active),.time-filter-btn:hover:not(.active){background-color:#3b3735}
-        #categoryFilters,#timeFilters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.5rem}
-        #categoryFilters::-webkit-scrollbar,#timeFilters::-webkit-scrollbar{display:none}
-        #categoryFilters .category-btn,#timeFilters .time-filter-btn{flex-shrink:0;white-space:nowrap}
-        .recipe-card>div{border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.08);transition:all .3s ease-in-out}
-        .recipe-card>div:hover{transform:translateY(-5px);box-shadow:0 8px 15px rgba(0,0,0,.15)}
-        .recipe-card img.recipe-image{width:100%;height:192px;object-fit:cover;border-radius:.5rem;margin-bottom:1rem}
-        #searchInput{border-radius:9999px;box-shadow:0 2px 4px rgba(0,0,0,.06);padding-top:.75rem;padding-bottom:.75rem}
-        /* ---------- PEQUEÑO PANEL DIAGNÓSTICO ---------- */
-        #missing-img-panel{position:fixed;bottom:1rem;right:1rem;z-index:9999;width:280px;max-height:60vh;overflow:auto;border-radius:1rem;background:#fff;color:#000;border:2px solid #78350f;box-shadow:0 4px 12px rgba(0,0,0,.15);font-family:Inter,sans-serif;font-size:.8rem;padding:.75rem;line-height:1.2}
-        body.dark #missing-img-panel{background:#1c1917;color:#f0ead6;border-color:#f59e0b}
-        #missing-img-panel h3{font-family:Lora,serif;font-size:1rem;margin-bottom:.5rem;color:#78350f}
-        body.dark #missing-img-panel h3{color:#f59e0b}
-        #missing-img-panel ul{margin:0;padding-left:1rem;list-style:disc}
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f5;
+        }
+        .dark body {
+            background-color: #1c1917;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Lora', serif;
+        }
+        .category-btn.active, .filter-btn.active, .time-filter-btn.active {
+            background-color: #78350f;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .dark .category-btn.active, .dark .filter-btn.active, .dark .time-filter-btn.active {
+            background-color: #f59e0b;
+            color: #1c1917;
+        }
+        .category-btn, .filter-btn, .time-filter-btn {
+            transition: all 0.3s ease-in-out;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+        .category-btn:hover:not(.active), .filter-btn:hover:not(.active), .time-filter-btn:hover:not(.active) {
+            background-color: #f0ead6;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+        }
+        .dark .category-btn:hover:not(.active), .dark .filter-btn:hover:not(.active), .dark .time-filter-btn:hover:not(.active) {
+            background-color: #3b3735;
+        }
+
+        #categoryFilters, #timeFilters {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 0.5rem;
+        }
+        #categoryFilters::-webkit-scrollbar, #timeFilters::-webkit-scrollbar {
+            display: none;
+        }
+        #categoryFilters .category-btn, #timeFilters .time-filter-btn {
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .recipe-card > div {
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease-in-out;
+        }
+        .recipe-card > div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        #searchInput {
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+        #searchInput:focus {
+            ring-width: 3px;
+            ring-offset-width: 1px;
+        }
+
+        /* ESTILOS DEL MODAL */
+        #recipeModal, #shoppingListModal { 
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #recipeModal.modal-visible, #shoppingListModal.modal-visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #modalContent, #shoppingListModal > div { 
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 42rem; 
+            max-height: 90vh;
+            overflow-y: auto;
+            
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+        #recipeModal.modal-visible #modalContent, #shoppingListModal.modal-visible > div {
+            transform: scale(1);
+        }
+        #shoppingListModal > div { 
+            max-width: 36rem; 
+        }
+
+
+        .dark #modalContent, .dark #shoppingListModal > div {
+            background-color: #292524;
+        }
+        /* FIN ESTILOS DEL MODAL */
+
+        /* ESTILOS DEL SKELETON LOADER */
+        .skeleton-card {
+            background-color: #e0e0e0; 
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: pulse-bg 1.5s infinite; 
+        }
+        .dark .skeleton-card {
+            background-color: #3b3735;
+        }
+
+        .skeleton-image {
+            height: 10rem; 
+            background-color: #cccccc; 
+        }
+        .dark .skeleton-image {
+            background-color: #2a2826;
+        }
+
+        .skeleton-text {
+            height: 0.875rem; 
+            background-color: #cccccc;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .dark .skeleton-text {
+            background-color: #2a2826;
+        }
+        .skeleton-text.long { width: 90%; }
+        .skeleton-text.medium { width: 70%; }
+        .skeleton-text.short { width: 40%; }
+        .skeleton-text.small { height: 0.75rem; } 
+
+
+        @keyframes pulse-bg {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* FIN ESTILOS DEL SKELETON LOADER */
+
+        /* NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+        #finalShoppingList li {
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            list-style: none; /* Eliminar el bullet point por defecto */
+            position: relative; 
+            padding-left: 1.5rem; 
+        }
+        #finalShoppingList li:hover {
+            background-color: #f0ead6;
+            border-radius: 0.25rem;
+        }
+        .dark #finalShoppingList li:hover {
+            background-color: #3b3735;
+        }
+
+        /* Estilo para los ítems marcados */
+        #finalShoppingList li.checked {
+            text-decoration: line-through;
+            color: #9ca3af; /* gray-400 */
+            opacity: 0.7;
+        }
+        .dark #finalShoppingList li.checked {
+            color: #6b7280; /* gray-500 */
+        }
+
+        /* Pseudo-elementos para el icono de check/bullet */
+        #finalShoppingList li::before {
+            content: '•'; /* Un bullet simple */
+            color: #78350f; /* Color del bullet */
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+        #finalShoppingList li.checked::before {
+            content: '✓'; /* Un checkmark */
+            color: #10b981; /* green-500 */
+        }
+        /* FIN NUEVOS ESTILOS PARA LA LISTA DE COMPRA INTERACTIVA */
+
+        /* Estilos para las notificaciones Toast */
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 20rem; /* Ancho máximo para que no sea demasiado largo */
+        }
+
+        .toast-message {
+            background-color: #333;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeIn 0.3s forwards, fadeOut 0.5s 2.5s forwards; /* Entra, se queda 2.5s, sale */
+            transition: background-color 0.2s ease;
+        }
+
+        .toast-message.success { background-color: #10b981; } /* green-500 */
+        .toast-message.error { background-color: #ef4444; }   /* red-500 */
+        .toast-message.info { background-color: #3b82f6; }    /* blue-500 */
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        /* Fin de estilos Toast */
+
+        @media print {
+            body * { visibility: hidden; }
+            #recipeModal, #recipeModal * { display: none !important; } 
+            #shoppingListModal, #shoppingListModal * { visibility: visible; }
+            #shoppingListModal { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                height: auto; 
+                background: none; 
+                display: block !important; 
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            #shoppingListModal > div { 
+                box-shadow: none; 
+                border: none; 
+                max-width: 100%; 
+                max-height: none; 
+                overflow-y: visible; 
+                background-color: white !important; 
+                color: black !important; 
+                transform: scale(1) !important; 
+            }
+            #closeShoppingListModalBtn, .modal-buttons-container, #toast-container { display: none !important; } 
+            .dark #shoppingListModal > div, .dark #shoppingListModal * { background-color: white !important; color: black !important; }
+            h2, h4 { color: black !important; }
+            ul, ol { color: #333 !important; }
+            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            #ingredient-list li, #steps-list li, #finalShoppingList li { 
+                color: #333 !important;
+            }
+        }
     </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
+
     <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
             <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
             <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
-            <div class="absolute top-0 left-0">
-                <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none"></button>
-            </div>
-        </header>
-        <!-- barra de búsqueda y filtros (idéntica) -->
-        <div id="no-results" class="hidden text-center py-12">
-            <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
-        </div>
-        <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8"></div>
-    </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
-
-const firebaseConfig={
-  apiKey:"AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
-  authDomain:"lucid-copilot-454618-k7.firebaseapp.com",
-  projectId:"lucid-copilot-454618-k7",
-  storageBucket:"lucid-copilot-454618-k7.appspot.com",
-  messagingSenderId:"948763528254",
-  appId:"1:948763528254:web:3eba3d724edf844528956f",
-  measurementId:"G-256GP1S7YX"};
-const app=initializeApp(firebaseConfig);
-getAnalytics(app);
-const db=getFirestore(app);
-getAuth(app);
-
-/* ---------- DATA ---------- */
-const allRecipes=[
-{ categoria:"Aperitivo", titulo:"Brochetas de aceituna y pimiento", raciones:4, tiempo:"15 min", imagen:"https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes:["Aceitunas verdes y negras","Pimiento rojo troceado","Hojas de albahaca","Aceite de oliva","Pimienta negra"], pasos:["Ensarta aceitunas, pimiento y albahaca en palillos.","Aliña con aceite y pimienta.","Sirve frío."] },
-/* -------------- PEGA AQUÍ EL RESTO DE LAS 149 RECETAS -------------- */
-];
-
-// Exponer globalmente para que otras herramientas puedan inspeccionar
-window.allRecipes = allRecipes;
-
-/* ---------- PANEL DIAGNÓSTICO DE IMÁGENES FALTANTES ---------- */
-document.addEventListener('DOMContentLoaded',()=>{
-  const missing = allRecipes.filter(r=>!r.imagen || /placehold\.co/.test(r.imagen));
-  if(!missing.length) return;
-  const panel = document.createElement('div');
-  panel.id = 'missing-img-panel';
-  panel.innerHTML = `<h3>Imágenes faltantes: ${missing.length}</h3><ul>${missing.map(r=>`<li>${r.titulo}</li>`).join('')}</ul>`;
-  document.body.appendChild(panel);
-});
-
-/* ---------- AQUÍ IRÍA EL RESTO DE TU JS ORIGINAL (búsqueda, filtros, UI…) ---------- */
-</script>
-</body>
-</html>
+            
+            <div class="absolute top-0 left-0"> 
+                <button id="theme-toggle" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">
+                    <svg id="theme-toggle-dark-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden h-6 w-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 101.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.464 16.364l-.707.707a1 1 0 001.414 1.414l.707-.707a1
