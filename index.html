@@ -11,11 +11,9 @@
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
     <link rel="manifest" href="/manifest.json">
 
-    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={darkMode:'class'}</script>
 
-    <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
@@ -24,78 +22,119 @@
         body{font-family:'Inter',sans-serif;background-color:#f8f7f5}
         body.dark{background-color:#1c1917}
         h1,h2,h3,h4{font-family:'Lora',serif}
-        .category-btn.active,.filter-btn.active{background-color:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2)}
-        .dark .category-btn.active,.dark .filter-btn.active{background-color:#f59e0b;color:#1c1917}
+        .category-btn.active{background-color:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+        .dark .category-btn.active{background-color:#f59e0b;color:#1c1917}
         .category-btn{transition:all .3s ease-in-out;padding:.45rem 1rem;border-radius:9999px;border:1px solid transparent;font-size:.8rem}
         .category-btn:hover:not(.active){background-color:#f0ead6;box-shadow:0 1px 3px 0 rgb(0 0 0 /.05)}
         .dark .category-btn:hover:not(.active){background-color:#3b3735}
-        #categoryFilters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-        #categoryFilters::-webkit-scrollbar{display:none}
-        #categoryFilters .category-btn{flex-shrink:0;white-space:nowrap}
         .recipe-card>div{border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.08);transition:all .3s ease-in-out}
         .recipe-card>div:hover{transform:translateY(-5px);box-shadow:0 8px 15px rgba(0,0,0,.15)}
         .recipe-card img{width:100%;height:192px;object-fit:cover;border-radius:.5rem;margin-bottom:1rem}
-        #searchInput{border-radius:9999px;box-shadow:0 2px 4px rgba(0,0,0,.06);padding-top:.7rem;padding-bottom:.7rem;padding-left:1.1rem;padding-right:1.1rem;width:100%}
-        #missing-img-panel{position:fixed;bottom:1rem;right:1rem;z-index:9999;width:280px;max-height:60vh;overflow:auto;border-radius:1rem;background:#fff;color:#000;border:2px solid #78350f;box-shadow:0 4px 12px rgba(0,0,0,.15);font-family:Inter,sans-serif;font-size:.8rem;padding:.75rem;line-height:1.25}
-        body.dark #missing-img-panel{background:#1c1917;color:#f0ead6;border-color:#f59e0b}
-        #missing-img-panel h3{font-size:1rem;margin-bottom:.4rem;color:#78350f}
-        body.dark #missing-img-panel h3{color:#f59e0b}
-        #missing-img-panel ul{margin:0;padding-left:1rem;list-style:disc}
-        .toast{animation:fadein .3s ease-out,fadeout .3s ease-in 4.7s forwards}
-        @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes fadeout{to{opacity:0;transform:translateY(10px)}}
+        #searchInput{border-radius:9999px;box-shadow:0 2px 4px rgba(0,0,0,.06);padding:.75rem 1rem;width:100%}
         #mic-btn { font-weight: bold; background: #facc15; color: #1c1917; padding: 0.5rem 1rem; border-radius: 9999px; position: fixed; top: 1rem; left: 1rem; z-index: 1001; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
         #mic-btn:hover { background: #fbbf24; }
+        #voice-help-box { position: fixed; top: 5rem; left: 1rem; z-index: 1002; background: #fff; color: #000; padding: 1rem; border-radius: 1rem; box-shadow: 0 2px 12px rgba(0,0,0,0.15); width: 280px; font-size: 0.85rem; }
+        body.dark #voice-help-box { background: #1c1917; color: #f0ead6; }
     </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
-    <button id="mic-btn" aria-label="Activar reconocimiento de voz" onclick="openVoiceHelp()">🎤 Ayuda voz</button>
-    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <header class="relative text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
-            <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
-        </header>
+    <button id="mic-btn" onclick="toggleVoiceHelp()">🎤 Ayuda voz</button>
+    <div id="voice-help-box" class="hidden">
+      <h2 class="font-bold mb-2">Comandos de voz:</h2>
+      <ul class="list-disc list-inside">
+        <li>“buscar crema de calabaza”</li>
+        <li>“filtrar aperitivo”</li>
+        <li>“leer paso”</li>
+        <li>“ayuda”</li>
+      </ul>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500 text-center">Recetario Delicioso</h1>
+        <p class="text-center text-gray-600 dark:text-stone-400 mt-2">Recetas para inspirar tu cocina.</p>
 
-        <div class="flex justify-center">
-            <input id="searchInput" type="search" placeholder="Buscar receta…" class="max-w-md" />
+        <div class="flex justify-center mt-6">
+            <input id="searchInput" type="search" placeholder="Buscar receta..." class="max-w-md" />
         </div>
 
-        <div id="categoryFilters" class="flex gap-2 mt-6"></div>
+        <div id="categoryFilters" class="flex gap-2 mt-6 overflow-x-auto"></div>
 
         <div id="no-results" class="hidden text-center py-12">
             <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
         </div>
-        <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8"></div>
+
+        <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-8"></div>
     </div>
 
-    <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
-
-    <template id="voice-help">
-      <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]">
-        <div class="bg-white dark:bg-stone-800 rounded-2xl p-6 max-w-sm text-sm">
-          <h2 class="text-lg font-bold mb-4">Ejemplos de comandos de voz</h2>
-          <ul class="list-disc pl-5 space-y-1">
-            <li>“buscar crema de calabaza”</li>
-            <li>“filtrar aperitivo”</li>
-            <li>“leer paso”</li>
-            <li>“ayuda”</li>
-          </ul>
-          <button class="mt-4 px-4 py-2 rounded bg-amber-600 text-white w-full" onclick="this.closest('.fixed').remove()">Cerrar</button>
-        </div>
-      </div>
-    </template>
-
     <script>
-    function openVoiceHelp() {
-      const template = document.getElementById('voice-help');
-      if (template) {
-        const content = template.content.cloneNode(true);
-        document.body.appendChild(content);
+      const allRecipes = [
+        {
+          categoria: "Aperitivo",
+          titulo: "Brochetas de aceituna y pimiento",
+          raciones: 4,
+          tiempo: "15 min",
+          imagen: "https://placehold.co/600x400?text=Aperitivo",
+          ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo", "Albahaca", "Aceite de oliva", "Pimienta negra"],
+          pasos: ["Ensarta en palillos.", "Aliña.", "Sirve frío."]
+        }
+      ];
+
+      const recipeGrid = document.getElementById("recipeGrid");
+      const categoryFilters = document.getElementById("categoryFilters");
+      const searchInput = document.getElementById("searchInput");
+      const noResults = document.getElementById("no-results");
+      const helpBox = document.getElementById("voice-help-box");
+
+      function mostrarRecetas(filtradas) {
+        recipeGrid.innerHTML = "";
+        if (filtradas.length === 0) {
+          noResults.classList.remove("hidden");
+          return;
+        }
+        noResults.classList.add("hidden");
+        filtradas.forEach(r => {
+          const card = document.createElement("div");
+          card.className = "recipe-card";
+          card.innerHTML = `
+            <div class="bg-white dark:bg-stone-800 p-4">
+              <img src="${r.imagen}" alt="${r.titulo}">
+              <h3 class="text-lg font-semibold mb-1">${r.titulo}</h3>
+              <p class="text-sm text-gray-600 dark:text-stone-400">${r.categoria} – ${r.tiempo}</p>
+            </div>
+          `;
+          recipeGrid.appendChild(card);
+        });
       }
-    }
-    
-    // Mostrar ayuda al cargar
-    document.addEventListener('DOMContentLoaded', openVoiceHelp);
+
+      const categorias = [...new Set(allRecipes.map(r => r.categoria))];
+      categorias.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.className = "category-btn";
+        btn.onclick = () => {
+          const filtradas = allRecipes.filter(r => r.categoria === cat);
+          mostrarRecetas(filtradas);
+        };
+        categoryFilters.appendChild(btn);
+      });
+
+      mostrarRecetas(allRecipes);
+
+      searchInput.addEventListener("input", () => {
+        const texto = searchInput.value.toLowerCase();
+        const filtradas = allRecipes.filter(r =>
+          r.titulo.toLowerCase().includes(texto) ||
+          r.ingredientes.some(i => i.toLowerCase().includes(texto))
+        );
+        mostrarRecetas(filtradas);
+      });
+
+      function toggleVoiceHelp() {
+        helpBox.classList.toggle("hidden");
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        helpBox.classList.remove("hidden");
+      });
     </script>
 </body>
 </html>
