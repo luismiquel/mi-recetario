@@ -44,6 +44,8 @@
         .toast{animation:fadein .3s ease-out,fadeout .3s ease-in 4.7s forwards}
         @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeout{to{opacity:0;transform:translateY(10px)}}
+        #mic-btn { font-weight: bold; background: #facc15; color: #1c1917; padding: 0.5rem 1rem; border-radius: 9999px; margin-left: 0.5rem; }
+        #mic-btn:hover { background: #fbbf24; }
     </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -53,7 +55,7 @@
             <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
             <div class="absolute top-0 left-0 flex gap-2">
                 <button id="theme-toggle" aria-label="Cambiar tema" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none"></button>
-                <button id="mic-btn" aria-label="Activar reconocimiento de voz" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none" onclick="openVoiceHelp()">🎤 Ayuda voz</button>
+                <button id="mic-btn" aria-label="Activar reconocimiento de voz" onclick="openVoiceHelp()">🎤 Ayuda voz</button>
             </div>
         </header>
 
@@ -95,7 +97,6 @@
       }
     }
 
-    // Mostrar automáticamente la ayuda al cargar por primera vez
     window.addEventListener('DOMContentLoaded', () => {
       if (!localStorage.getItem('voiceHelpShown')) {
         openVoiceHelp();
