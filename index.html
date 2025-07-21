@@ -85,5 +85,23 @@
         </div>
       </div>
     </template>
+
+    <script>
+    function openVoiceHelp() {
+      const template = document.getElementById('voice-help');
+      if (template) {
+        const content = template.content.cloneNode(true);
+        document.body.appendChild(content);
+      }
+    }
+
+    // Mostrar automáticamente la ayuda al cargar por primera vez
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!localStorage.getItem('voiceHelpShown')) {
+        openVoiceHelp();
+        localStorage.setItem('voiceHelpShown', 'true');
+      }
+    });
+    </script>
 </body>
 </html>
