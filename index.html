@@ -53,7 +53,7 @@
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
             <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
-            <div class="absolute top-0 left-0 flex gap-2">
+            <div class="absolute top-0 left-0 flex gap-2 items-center">
                 <button id="theme-toggle" aria-label="Cambiar tema" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none"></button>
                 <button id="mic-btn" aria-label="Activar reconocimiento de voz" onclick="openVoiceHelp()">🎤 Ayuda voz</button>
             </div>
@@ -96,13 +96,6 @@
         document.body.appendChild(content);
       }
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!localStorage.getItem('voiceHelpShown')) {
-        openVoiceHelp();
-        localStorage.setItem('voiceHelpShown', 'true');
-      }
-    });
     </script>
 </body>
 </html>
