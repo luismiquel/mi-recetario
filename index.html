@@ -42,7 +42,7 @@
         body.dark #missing-img-panel h3{color:#f59e0b}
         #missing-img-panel ul{margin:0;padding-left:1rem;list-style:disc}
         .toast{animation:fadein .3s ease-out,fadeout .3s ease-in 4.7s forwards}
-        @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}
         @keyframes fadeout{to{opacity:0;transform:translateY(10px)}}
         #mic-btn { font-weight: bold; background: #facc15; color: #1c1917; padding: 0.5rem 1rem; border-radius: 9999px; margin-left: 0.5rem; }
         #mic-btn:hover { background: #fbbf24; }
@@ -53,7 +53,7 @@
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
             <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
-            <div class="absolute top-0 left-0 flex gap-2 items-center">
+            <div class="absolute top-0 left-0 flex gap-2 items-center z-50">
                 <button id="theme-toggle" aria-label="Cambiar tema" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none"></button>
                 <button id="mic-btn" aria-label="Activar reconocimiento de voz" onclick="openVoiceHelp()">🎤 Ayuda voz</button>
             </div>
@@ -74,7 +74,7 @@
     <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
     <template id="voice-help">
-      <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]">
         <div class="bg-white dark:bg-stone-800 rounded-2xl p-6 max-w-sm text-sm">
           <h2 class="text-lg font-bold mb-4">Ejemplos de comandos de voz</h2>
           <ul class="list-disc pl-5 space-y-1">
@@ -96,6 +96,11 @@
         document.body.appendChild(content);
       }
     }
+
+    // Mostrar la ayuda de voz siempre al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      openVoiceHelp();
+    });
     </script>
 </body>
 </html>
