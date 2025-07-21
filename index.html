@@ -11,9 +11,11 @@
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R">
     <link rel="manifest" href="/manifest.json">
 
+    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={darkMode:'class'}</script>
 
+    <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
@@ -22,25 +24,23 @@
         body{font-family:'Inter',sans-serif;background-color:#f8f7f5}
         body.dark{background-color:#1c1917}
         h1,h2,h3,h4{font-family:'Lora',serif}
-        .category-btn.active,.filter-btn.active,.time-filter-btn.active{background-color:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2)}
-        .dark .category-btn.active,.dark .filter-btn.active,.dark .time-filter-btn.active{background-color:#f59e0b;color:#1c1917}
-        .category-btn,.filter-btn,.time-filter-btn{transition:all .3s ease-in-out;padding:.6rem 1rem;border-radius:9999px;border:1px solid transparent;font-size:.875rem}
-        .category-btn:hover:not(.active),.filter-btn:hover:not(.active),.time-filter-btn:hover:not(.active){background-color:#f0ead6;box-shadow:0 1px 3px 0 rgb(0 0 0 /.05)}
-        .dark .category-btn:hover:not(.active),.dark .filter-btn:hover:not(.active),.time-filter-btn:hover:not(.active){background-color:#3b3735}
-        #categoryFilters,#timeFilters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.5rem}
-        #categoryFilters::-webkit-scrollbar,#timeFilters::-webkit-scrollbar{display:none}
-        #categoryFilters .category-btn,#timeFilters .time-filter-btn{flex-shrink:0;white-space:nowrap}
+        .category-btn.active,.filter-btn.active{background-color:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+        .dark .category-btn.active,.dark .filter-btn.active{background-color:#f59e0b;color:#1c1917}
+        .category-btn{transition:all .3s ease-in-out;padding:.45rem 1rem;border-radius:9999px;border:1px solid transparent;font-size:.8rem}
+        .category-btn:hover:not(.active){background-color:#f0ead6;box-shadow:0 1px 3px 0 rgb(0 0 0 /.05)}
+        .dark .category-btn:hover:not(.active){background-color:#3b3735}
+        #categoryFilters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        #categoryFilters::-webkit-scrollbar{display:none}
+        #categoryFilters .category-btn{flex-shrink:0;white-space:nowrap}
         .recipe-card>div{border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.08);transition:all .3s ease-in-out}
         .recipe-card>div:hover{transform:translateY(-5px);box-shadow:0 8px 15px rgba(0,0,0,.15)}
-        .recipe-card img.recipe-image{width:100%;height:192px;object-fit:cover;border-radius:.5rem;margin-bottom:1rem}
-        #searchInput{border-radius:9999px;box-shadow:0 2px 4px rgba(0,0,0,.06);padding-top:.75rem;padding-bottom:.75rem}
-        /* ---------- PEQUEÑO PANEL DIAGNÓSTICO ---------- */
-        #missing-img-panel{position:fixed;bottom:1rem;right:1rem;z-index:9999;width:280px;max-height:60vh;overflow:auto;border-radius:1rem;background:#fff;color:#000;border:2px solid #78350f;box-shadow:0 4px 12px rgba(0,0,0,.15);font-family:Inter,sans-serif;font-size:.8rem;padding:.75rem;line-height:1.2}
+        .recipe-card img{width:100%;height:192px;object-fit:cover;border-radius:.5rem;margin-bottom:1rem}
+        #searchInput{border-radius:9999px;box-shadow:0 2px 4px rgba(0,0,0,.06);padding-top:.7rem;padding-bottom:.7rem;padding-left:1.1rem;padding-right:1.1rem;width:100%}
+        #missing-img-panel{position:fixed;bottom:1rem;right:1rem;z-index:9999;width:280px;max-height:60vh;overflow:auto;border-radius:1rem;background:#fff;color:#000;border:2px solid #78350f;box-shadow:0 4px 12px rgba(0,0,0,.15);font-family:Inter,sans-serif;font-size:.8rem;padding:.75rem;line-height:1.25}
         body.dark #missing-img-panel{background:#1c1917;color:#f0ead6;border-color:#f59e0b}
-        #missing-img-panel h3{font-family:Lora,serif;font-size:1rem;margin-bottom:.5rem;color:#78350f}
+        #missing-img-panel h3{font-size:1rem;margin-bottom:.4rem;color:#78350f}
         body.dark #missing-img-panel h3{color:#f59e0b}
         #missing-img-panel ul{margin:0;padding-left:1rem;list-style:disc}
-        /* ---------- Toast ---------- */
         .toast{animation:fadein .3s ease-out,fadeout .3s ease-in 4.7s forwards}
         @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fadeout{to{opacity:0;transform:translateY(10px)}}
@@ -51,22 +51,26 @@
         <header class="relative text-center mb-8">
             <h1 class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
             <p class="text-gray-600 dark:text-stone-400 mt-2">150 recetas para inspirar tu cocina.</p>
-            <div id="user-info" class="text-xs text-gray-400 mt-2"></div>
             <div class="absolute top-0 left-0 flex gap-2">
                 <button id="theme-toggle" aria-label="Cambiar tema" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none"></button>
-                <button id="mic-btn" aria-label="Activar reconocimiento de voz" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none">🎤</button>
+                <button id="mic-btn" aria-label="Activar reconocimiento de voz" class="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-stone-700 focus:outline-none" onclick="openVoiceHelp()">🎤 Ayuda voz</button>
             </div>
         </header>
+
+        <div class="flex justify-center">
+            <input id="searchInput" type="search" placeholder="Buscar receta…" class="max-w-md" />
+        </div>
+
+        <div id="categoryFilters" class="flex gap-2 mt-6"></div>
+
         <div id="no-results" class="hidden text-center py-12">
             <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Intenta otra búsqueda o filtro!</p>
         </div>
         <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8"></div>
     </div>
 
-    <!-- Toast container -->
     <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
 
-    <!-- Plantilla ayuda de voz -->
     <template id="voice-help">
       <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div class="bg-white dark:bg-stone-800 rounded-2xl p-6 max-w-sm text-sm">
@@ -81,100 +85,5 @@
         </div>
       </div>
     </template>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
-
-const firebaseConfig={
-  apiKey:"AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
-  authDomain:"lucid-copilot-454618-k7.firebaseapp.com",
-  projectId:"lucid-copilot-454618-k7",
-  storageBucket:"lucid-copilot-454618-k7.appspot.com",
-  messagingSenderId:"948763528254",
-  appId:"1:948763528254:web:3eba3d724edf844528956f",
-  measurementId:"G-256GP1S7YX"};
-const app=initializeApp(firebaseConfig);
-getAnalytics(app);
-const db=getFirestore(app);
-getAuth(app);
-
-/* ---------- DATA ---------- */
-const allRecipes=[
-{ categoria:"Aperitivo", titulo:"Brochetas de aceituna y pimiento", raciones:4, tiempo:"15 min", imagen:"https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes:["Aceitunas verdes y negras","Pimiento rojo troceado","Hojas de albahaca","Aceite de oliva","Pimienta negra"], pasos:["Ensarta aceitunas, pimiento y albahaca en palillos.","Aliña con aceite y pimienta.","Sirve frío."] },
-/* -------------- PEGA AQUÍ EL RESTO DE LAS 149 RECETAS -------------- */
-];
-window.allRecipes = allRecipes;
-
-/* ---------- PANEL DIAGNÓSTICO DE IMÁGENES FALTANTES ---------- */
-window.addEventListener('DOMContentLoaded',()=>{
-  const missing = allRecipes.filter(r=>!r.imagen || /placehold\.co/.test(r.imagen));
-  if(missing.length){
-    const panel = document.createElement('div');
-    panel.id = 'missing-img-panel';
-    panel.innerHTML = `<h3>Imágenes faltantes: ${missing.length}</h3><ul>${missing.map(r=>`<li>${r.titulo}</li>`).join('')}</ul>`;
-    document.body.appendChild(panel);
-  }
-});
-
-/* ---------- UTILIDADES BÁSICAS ---------- */
-function toast(msg){
-  const c=document.getElementById('toast-container');
-  const t=document.createElement('div');
-  t.className='toast bg-amber-600 text-white px-4 py-2 rounded shadow';
-  t.textContent=msg;
-  c.appendChild(t);
-  setTimeout(()=>t.remove(),5000);
-}
-function openVoiceHelp(){
-  document.body.append(document.getElementById('voice-help').content.cloneNode(true));
-}
-
-/* ---------- COMANDOS DE VOZ ---------- */
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if(SpeechRecognition){
-  const sr = new SpeechRecognition();
-  sr.lang='es-ES';
-  sr.continuous=false;
-  sr.interimResults=false;
-
-  const commands = [
-    {regex:/^buscar (.+)/i, action:(q)=>{
-      const input=document.getElementById('searchInput');
-      if(input){input.value=q.trim();input.dispatchEvent(new Event('input'));toast(`Buscando "${q}"`);} }
-    },
-    {regex:/^filtrar (.+)/i, action:(cat)=>{
-      applyCategory(cat.trim()); }
-    },
-    {regex:/^(leer|mostrar) paso/i, action:()=>{readCurrentStep();}},
-    {regex:/^ayuda/i, action:openVoiceHelp}
-  ];
-
-  sr.onresult=e=>{
-    const text=e.results[0][0].transcript.trim();
-    for(const {regex,action} of commands){
-      const m=text.match(regex);
-      if(m){ action(...m.slice(1)); return; }
-    }
-    toast('No entendí, di "ayuda".');
-  };
-  sr.onerror=()=>toast('Error de reconocimiento');
-
-  document.getElementById('mic-btn').addEventListener('click',()=>{
-    try{ sr.start(); toast('Escuchando...'); }
-    catch{ toast('Ya estoy escuchando'); }
-  });
-}else{
-  document.getElementById('mic-btn').style.display='none';
-}
-
-/* ---------- PLACEHOLDERS (impleméntalos con tu lógica existente) ---------- */
-function applyCategory(cat){console.log('Filtrar categoría:',cat);/* tu código aquí */}
-function readCurrentStep(){console.log('Leer paso actual');/* tu código aquí */}
-
-/* ---------- AQUÍ IRÍA EL RESTO DE TU JS ORIGINAL (búsqueda, filtros, UI…) ---------- */
-</script>
 </body>
 </html>
