@@ -115,13 +115,10 @@
         }
 
         /* ESTILOS DEL MODAL */
-        /* Lo mantenemos hidden por defecto de Tailwind */
         #recipeModal {
-            /* flex para centrar, opacidad y transición controladas por JS */
             opacity: 0;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
-        /* Clase añadida/quitada por JS para mostrar/ocultar con transición */
         #recipeModal.modal-visible {
             visibility: visible;
             opacity: 1;
@@ -148,7 +145,7 @@
         }
         /* FIN ESTILOS DEL MODAL */
 
-        /* Estilos para el botón de repetir en modo cocina */
+        /* Estilos para el botón de repetir en modo cocina (feedback de voz) */
         #repeat-step-btn.speaking {
             animation: pulse-speak 1s infinite;
         }
@@ -164,22 +161,42 @@
             margin-right: 0.5rem; /* Espacio entre icono y texto */
             transition: transform 0.2s ease-in-out;
         }
-
-        /* Estilo para el icono en tema oscuro */
         .dark .start-cooking-btn-icon svg path {
             fill: #ffffff; /* Asegura que el icono sea blanco en oscuro */
         }
         
+        /* Estilos para impresión */
         @media print {
-            body * { visibility: hidden; }
-            #recipeModal, #recipeModal * { visibility: visible; }
-            #recipeModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
-            #modalContent { box-shadow: none; border: none; max-width: 100%; max-h: none; overflow-y: visible; background-color: white !important; color: black !important; }
-            #closeModalBtn, .modal-buttons-container, #cooking-mode-view, #portion-adjuster { display: none !important; }
-            .dark #modalContent, .dark #modalContent * { background-color: white !important; color: black !important; }
+            body * { visibility: hidden; } /* Oculta todo por defecto */
+            #recipeModal, #recipeModal * { visibility: visible; } /* Hace visible el modal y su contenido */
+            #recipeModal { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
+                height: auto; 
+                background: none; /* Elimina el fondo oscuro para impresión */
+                box-shadow: none;
+            }
+            #modalContent { 
+                box-shadow: none; 
+                border: none; 
+                max-width: 100%; 
+                max-height: none; 
+                overflow-y: visible; 
+                background-color: white !important; /* Fuerza fondo blanco */
+                color: black !important; /* Fuerza texto negro */
+            }
+            #closeModalBtn, .modal-buttons-container, #cooking-mode-view, #portion-adjuster { 
+                display: none !important; /* Oculta botones y elementos interactivos */
+            }
+            .dark #modalContent, .dark #modalContent * { 
+                background-color: white !important; 
+                color: black !important; 
+            }
             h2, h4 { color: black !important; }
             ul, ol { color: #333 !important; }
-            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; } /* Asegura que las imágenes se impriman correctamente */
             #ingredient-list li, #steps-list li {
                 color: #333 !important;
             }
@@ -232,7 +249,8 @@
     </div>
 
     <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4">
-        <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"></div>
+        <div id="modalContent" class="bg-white dark:bg-stone-800 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            </div>
     </div>
     
     <div id="cooking-mode-view" class="fixed inset-0 bg-white dark:bg-stone-900 z-50 hidden flex-col">
@@ -250,7 +268,6 @@
         </button>
     </div>
 
-
     <footer class="text-center mt-12 py-4 border-t border-gray-200 dark:border-stone-700">
         <p class="text-sm text-gray-500 dark:text-stone-400">
             &copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.
@@ -259,41 +276,38 @@
     
     <script type="module">
         // --- CONSOLIDACIÓN DE IMPORTACIONES Y CONFIGURACIÓN DE FIREBASE ---
-        // Estas importaciones son necesarias para Firebase App, Authentication y Firestore
-        // ¡Usando la versión 11.10.0 que me proporcionaste, para que todo sea consistente!
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-        
-        // Importación opcional para Analytics, si la quieres usar.
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js"; 
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
 
+        // Envuelve toda la lógica de la aplicación en una función para asegurar que el DOM esté cargado.
         function runRecipeApp() {
-            // --- TU CONFIGURACIÓN REAL DE FIREBASE ---
+            // --- Tu Configuración REAL de Firebase (no la cambies) ---
             const firebaseConfig = {
                 apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
                 authDomain: "lucid-copilot-454618-k7.firebaseapp.com",
                 projectId: "lucid-copilot-454618-k7",
                 storageBucket: "lucid-copilot-454618-k7.firebasestorage.app",
                 messagingSenderId: "948763528254",
-                appId: "1:948763528254:web:3eba3d724edf844528956f", // Este es tu App ID real
-                measurementId: "G-256GP1S7YX" // Este es tu Measurement ID real
+                appId: "1:948763528254:web:3eba3d724edf844528956f", 
+                measurementId: "G-256GP1S7YX" 
             };
 
             const appId = firebaseConfig.appId;
 
-            // Inicializa la app de Firebase
+            // Inicializa la app y los servicios de Firebase
             const app = initializeApp(firebaseConfig);
-            // Inicializa Analytics solo si lo vas a usar, si no, puedes comentarlo o borrarlo.
             const analytics = getAnalytics(app); 
-
-            // Inicializa los servicios de Firestore y Authentication
             const db = getFirestore(app);
             const auth = getAuth(app);
 
-            let userFavorites = [], userId = null;
-            let currentFilter = 'all', currentCategory = 'all';
+            let userFavorites = [];
+            let userId = null;
+            let currentFilter = 'all';
+            let currentCategory = 'all';
 
+            // Referencias a los elementos del DOM para un acceso más fácil
             const dom = {
                 grid: document.getElementById('recipeGrid'),
                 search: document.getElementById('searchInput'),
@@ -308,9 +322,16 @@
                 darkIcon: document.getElementById('theme-toggle-dark-icon'),
                 lightIcon: document.getElementById('theme-toggle-light-icon'),
                 copyrightYear: document.getElementById('copyright-year'),
+                cookingModeView: document.getElementById('cooking-mode-view'),
+                stepCounter: document.getElementById('step-counter'),
+                stepText: document.getElementById('step-text'),
+                prevStepBtn: document.getElementById('prev-step-btn'),
+                repeatStepBtn: document.getElementById('repeat-step-btn'),
+                nextStepBtn: document.getElementById('next-step-btn'),
+                exitCookingBtn: document.getElementById('exit-cooking-btn')
             };
             
-            // Recetas con tiempo de preparación actualizado y con 25 por categoría
+            // --- Datos de Recetas (tus 100 recetas) ---
             const allRecipes = [
                 // 25 Aperitivos
                 { categoria: "Aperitivo", titulo: "Brochetas de aceituna y pimiento", raciones: 4, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Brochetas+Aceituna", ingredientes: ["Aceitunas verdes y negras", "Pimiento rojo troceado", "Hojas de albahaca", "Aceite de oliva", "Pimienta negra"], pasos: ["Ensarta aceitunas, pimiento y albahaca en palillos.", "Aliña con aceite y pimienta.", "Sirve frío."] },
@@ -421,9 +442,13 @@
                 { categoria: "Postre", titulo: "Tarta de queso individual (sin horno)", raciones: 1, tiempo: "15 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Tarta+Queso+Individual", ingredientes: ["100 g queso crema light", "2 cdas. yogur griego", "1 cda. miel o edulcorante", "Base de galleta integral triturada", "Frutos rojos para decorar"], pasos: ["Mezcla el queso, yogur y miel.", "Coloca una base de galleta en un vaso.", "Añade la mezcla de queso y refrigera.", "Decora con frutos rojos antes de servir."] }
             ];
             
-            // Función para renderizar las tarjetas de receta.
+            // --- Funciones Principales ---
+
+            /**
+             * Renderiza las tarjetas de recetas en la cuadrícula principal.
+             * @param {Array} recipesToRender - Array de objetos de receta a mostrar.
+             */
             function renderRecipes(recipesToRender) {
-                console.log('renderRecipes: Renderizando', recipesToRender.length, 'recetas.');
                 let recipeHTML = '';
                 if (recipesToRender.length === 0) {
                     dom.noResults.style.display = 'block';
@@ -434,7 +459,7 @@
                         recipeHTML += `
                             <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
                                 <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer h-full flex flex-col">
-                                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="console.error('Error cargando imagen para:', this.alt); this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
                                     <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
                                     <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
@@ -448,26 +473,18 @@
                     });
                 }
                 dom.grid.innerHTML = recipeHTML;
-                updateFavoriteIcons();
+                updateFavoriteIcons(); // Asegura que los iconos de favoritos estén correctos después de renderizar.
             }
             
-            // Un solo event listener en el contenedor padre (delegación de eventos)
+            // Delegación de eventos para las tarjetas de receta y botones de favoritos
             dom.grid.addEventListener('click', (event) => {
-                console.log('Clic detectado en dom.grid.');
                 const card = event.target.closest('.recipe-card');
-                if (!card) {
-                    console.log('Clic no fue en una tarjeta de receta.');
-                    return; 
-                }
-
-                console.log('Clic en tarjeta:', card.dataset.id);
+                if (!card) return; 
 
                 if (event.target.closest('.favorite-btn')) { 
-                    console.log('Clic en botón de favoritos.');
-                    event.stopPropagation(); 
+                    event.stopPropagation(); // Evita que el clic abra el modal si se pulsa el favorito
                     toggleFavorite(card.dataset.id);
                 } else { 
-                    console.log('Clic para abrir detalles de receta.');
                     const recipe = allRecipes.find(r => r.titulo === card.dataset.id);
                     if (recipe) {
                         showRecipeDetail(recipe);
@@ -477,48 +494,54 @@
                 }
             });
             
-            // Inicializa la UI con todas las recetas al cargar la página
-            renderRecipes(allRecipes); 
+            // --- Funciones de Firebase y Favoritos ---
 
+            /**
+             * Escucha los cambios de estado de autenticación de Firebase y carga los favoritos del usuario.
+             */
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     userId = user.uid;
-                    console.log("Firebase: Usuario autenticado con ID:", userId);
                     dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
-                    await loadUserData();
-                    updateFavoriteIcons();
+                    await loadUserData(); // Carga los favoritos una vez autenticado el usuario.
+                    updateFavoriteIcons(); // Actualiza los iconos de favoritos en la UI.
                 } else {
-                    console.log("Firebase: No hay usuario, intentando iniciar sesión anónimamente...");
-                    signInAnonymously(auth).then(() => {
-                        console.log("Firebase: Sesión anónima iniciada con éxito.");
-                    }).catch((error) => {
+                    // Si no hay usuario, intenta iniciar sesión anónimamente.
+                    signInAnonymously(auth).catch((error) => {
                         console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
                         dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
                     });
                 }
             });
 
+            /**
+             * Carga los datos de usuario (favoritos) desde Firestore.
+             */
             async function loadUserData() {
                 if (!userId) {
                     console.warn("loadUserData: No hay userId para cargar datos.");
                     return;
                 }
                 try {
+                    // Ruta al documento de perfil del usuario en Firestore.
                     const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
                     const userDoc = await getDoc(userDocRef);
                     if (userDoc.exists()) {
                         const data = userDoc.data();
                         userFavorites = data.favorites || [];
-                        console.log("Firebase: Favoritos cargados:", userFavorites);
                     } else {
-                        console.log("Firebase: Documento de favoritos no existe para este usuario.");
                         userFavorites = [];
                     }
                 } catch (error) {
                     console.error("Firebase: Error cargando datos de usuario:", error.message);
+                    alert(`Error al cargar favoritos. Por favor, verifica las reglas de seguridad de Firestore. Error: ${error.message}`);
                 }
             }
 
+            /**
+             * Guarda los datos de usuario (favoritos) en Firestore.
+             * @param {object} data - Objeto de datos a guardar.
+             */
             async function saveData(data) {
                 if (!userId) {
                     console.warn("saveData: No hay userId para guardar datos.");
@@ -526,30 +549,36 @@
                 }
                 try {
                     const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                    await setDoc(userDocRef, data, { merge: true });
-                    console.log("Firebase: Favoritos guardados con éxito.");
+                    await setDoc(userDocRef, data, { merge: true }); // `merge: true` para no sobrescribir otros campos.
                 } catch (error) {
                     console.error("Firebase: Error guardando datos de usuario:", error.message);
                     alert(`Error al guardar favoritos. Verifica las reglas de seguridad de Firestore. Error: ${error.message}`);
                 }
             }
 
+            /**
+             * Alterna el estado de favorito de una receta y actualiza Firestore.
+             * @param {string} recipeId - El ID (título) de la receta a marcar/desmarcar como favorita.
+             */
             async function toggleFavorite(recipeId) {
                 if (!userId) {
-                    console.warn("toggleFavorite: Usuario no autenticado para favoritos.");
-                    alert('No se pudo guardar el favorito. Intenta recargar la página o verifica tu conexión.');
-                    signInAnonymously(auth).catch((error) => console.error("Error login anónimo para favoritos:", error));
+                    alert('Necesitas estar autenticado para guardar favoritos. Recargando para iniciar sesión anónima...');
+                    // Intentar iniciar sesión anónimamente si no lo está (ya se maneja con onAuthStateChanged)
+                    signInAnonymously(auth).catch((error) => console.error("Error al re-intentar login anónimo para favoritos:", error));
                     return;
                 }
                 const isFavorite = userFavorites.includes(recipeId);
                 userFavorites = isFavorite ? userFavorites.filter(id => id !== recipeId) : [...userFavorites, recipeId];
                 
-                updateFavoriteIcons(); 
-                applyFilters(); 
+                updateFavoriteIcons(); // Actualiza visualmente el corazón en la tarjeta
+                applyFilters(); // Re-aplica filtros para que la sección de "Favoritos" se actualice.
 
-                await saveData({ favorites: userFavorites });
+                await saveData({ favorites: userFavorites }); // Guarda el nuevo estado de favoritos.
             }
 
+            /**
+             * Actualiza los iconos de corazón en las tarjetas de receta según el estado de favoritos del usuario.
+             */
             function updateFavoriteIcons() {
                 document.querySelectorAll('.recipe-card').forEach(card => {
                     const heartIcon = card.querySelector('.favorite-btn svg');
@@ -565,6 +594,11 @@
                 });
             }
 
+            // --- Funciones de Filtrado y Búsqueda ---
+
+            /**
+             * Aplica los filtros de búsqueda y categoría, y re-renderiza las recetas.
+             */
             function applyFilters() {
                 const searchTerm = dom.search.value.toLowerCase();
                 const filteredRecipes = allRecipes.filter(recipe => {
@@ -576,25 +610,31 @@
                     
                     const categoryMatch = currentCategory === 'all' || category === currentCategory;
                     const searchMatch = searchTerm === '' || searchData.includes(searchTerm);
-                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite;
+                    const favoriteMatch = currentFilter !== 'favorites' || isFavorite; // Solo muestra favoritos si el filtro está activo.
                     
                     return categoryMatch && searchMatch && favoriteMatch;
                 });
                 renderRecipes(filteredRecipes); 
             }
 
+            // --- Lógica del Modal de Recetas y Ajuste de Raciones ---
+
             let currentRecipeDetail = null; 
             let currentServings = 0; 
 
+            /**
+             * Analiza una cadena de ingrediente para extraer cantidad, unidad y nombre.
+             * @param {string} ingredient - La cadena del ingrediente (ej. "200 g garbanzos cocidos").
+             * @returns {object} Un objeto con value, unit, name y original.
+             */
             function parseIngredient(ingredient) {
-                // Regex mejorada para capturar cantidades (incluyendo fracciones), cuantificadores (un, medio) y la unidad.
-                // También intenta ser más indulgente con el resto del nombre.
+                // Regex para capturar: cantidad (decimal/fracción), cuantificador (un, medio), unidad (g, taza), y nombre.
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 const match = ingredient.match(regex);
                 
                 if (match) {
                     let value = 0;
-                    if (match[1]) { // Si hay un número o fracción al principio
+                    if (match[1]) { 
                         if (match[1].includes('/')) { // Para fracciones como "1/2"
                             const parts = match[1].split('/');
                             value = parseFloat(parts[0]) / parseFloat(parts[1]);
@@ -605,10 +645,10 @@
                         const quantWord = match[2].toLowerCase();
                         if (quantWord === 'medio' || quantWord === 'media') {
                             value = 0.5;
-                        } else if (quantWord === 'un' || quantWord === 'una' || quantWord === 'puñado' || quantWord === 'chorrito') {
-                            value = 1; // Asume 1 unidad para estos cuantificadores si no hay número
+                        } else if (['un', 'una', 'gran', 'pequeña', 'puñado', 'chorrito'].includes(quantWord)) {
+                            value = 1; 
                         }
-                    } else if (match[4]) { // Si no hay cantidad explícita ni cuantificador, pero sí un nombre (ej. "Aceite de oliva")
+                    } else if (match[4]) { // Si no hay cantidad explícita ni cuantificador, pero sí un nombre
                         value = 1; // Asume 1 unidad para que pueda ser escalado, aunque no se mostrará "1"
                     }
                     
@@ -627,10 +667,15 @@
                 return { value: 0, unit: '', name: ingredient, original: ingredient };
             }
 
+            /**
+             * Formatea un ingrediente ajustando su cantidad y pluralización según un factor.
+             * @param {object} parsedIng - El objeto de ingrediente parseado por `parseIngredient`.
+             * @param {number} factor - El factor de escalado (newServings / originalServings).
+             * @returns {string} La cadena de ingrediente formateada.
+             */
             function formatIngredient(parsedIng, factor) {
-                // Si el ingrediente no tenía una cantidad numérica original significativa,
-                // o si es un ingrediente como "sal" que no se debe multiplicar,
-                // simplemente devuelve el original.
+                // Si el ingrediente no tenía una cantidad numérica original significativa (ej. "Sal"),
+                // simplemente devuelve el original para no intentar escalarlo.
                 if (parsedIng.value === 0 && parsedIng.unit === '' && parsedIng.name !== '') { 
                     return parsedIng.original; 
                 }
@@ -639,22 +684,23 @@
                 let unit = parsedIng.unit;
                 let name = parsedIng.name;
 
-                // Ajustes de unidades para mayor claridad y precisión (kg <-> g, litro <-> ml)
+                // Ajustes de unidades para mayor claridad (ej. 500g -> 0.5kg si > 1000g)
                 if (unit === 'kg' && newValue < 1) { newValue *= 1000; unit = 'g'; } 
                 else if (unit === 'litro' && newValue < 1) { newValue *= 1000; unit = 'ml'; } 
                 else if (unit === 'g' && newValue >= 1000) { newValue /= 1000; unit = 'kg'; } 
                 else if (unit === 'ml' && newValue >= 1000) { newValue /= 1000; unit = 'litro'; }
                 
-                // Redondear para evitar decimales muy largos.
-                if (Math.abs(newValue % 1) < 0.0001) { // Es un entero o muy cercano
+                // Redondeo para evitar decimales muy largos.
+                if (Math.abs(newValue % 1) < 0.0001) { 
                     newValue = Math.round(newValue);
-                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { // Es un decimal con una cifra
+                } else if (Math.abs((newValue * 10) % 1) < 0.0001) { 
                     newValue = Math.round(newValue * 10) / 10;
-                } else { // Más de un decimal, redondear a dos
+                } else { 
                     newValue = Math.round(newValue * 100) / 100;
                 }
                 
                 let formattedName = name;
+                // Diccionario de formas singulares y plurales comunes en español
                 const commonForms = {
                     "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
                     "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
@@ -665,16 +711,16 @@
                     "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
                     "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
                     "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
-                    "loncha": "lonchas", // Para "lonchas de jamón"
-                    "s": "s" // Forma genérica para pluralizar si no se encuentra mejor
+                    "loncha": "lonchas", "s": "s", "judía verde": "judías verdes", "tomate cherry": "tomates cherry"
                 };
 
-                // Lógica de singularización/pluralización del nombre
                 let nameWords = name.split(' ');
                 let primaryNounIndex = -1;
-                // Intentar encontrar la primera palabra que sea un sustantivo común o su plural
+
+                // Intenta encontrar el sustantivo principal en el nombre para pluralizarlo/singularizarlo.
                 for (let i = 0; i < nameWords.length; i++) {
                     const word = nameWords[i].toLowerCase();
+                    // Comprueba si la palabra es una forma singular o plural en commonForms
                     if (commonForms[word] || Object.values(commonForms).includes(word)) {
                         primaryNounIndex = i;
                         break;
@@ -685,19 +731,25 @@
                     let baseForm = nameWords[primaryNounIndex].toLowerCase();
                     let targetForm = '';
                     if (newValue === 1) {
+                        // Si la cantidad es 1, busca la forma singular
                         targetForm = Object.keys(commonForms).find(key => commonForms[key] === baseForm) || baseForm;
-                        if (targetForm === baseForm && baseForm.endsWith('s') && baseForm.length > 3 && !['pasas', 'nueces', 'espinacas'].includes(baseForm)) {
+                        // Regla general para singularizar si termina en 's' y no es una excepción (como 'pasas')
+                        if (targetForm === baseForm && baseForm.endsWith('s') && baseForm.length > 3 && !['pasas', 'nueces', 'espinacas', 'setas', 'judías verdes', 'tomates cherry'].includes(baseForm)) {
                             targetForm = baseForm.slice(0, -1);
                         }
                     } else { // newValue > 1
+                        // Si la cantidad es > 1, busca la forma plural
                         targetForm = commonForms[baseForm] || baseForm;
+                        // Regla general para pluralizar si no termina en 's'
                         if (targetForm === baseForm && !baseForm.endsWith('s')) {
                             targetForm = baseForm + 's';
                         }
                     }
                     nameWords[primaryNounIndex] = targetForm;
                     formattedName = nameWords.join(' ').trim();
-                } else if (newValue > 1 && !name.endsWith('s') && name.length > 0 && !['sal', 'pimienta', 'aceite', 'agua', 'miel', 'curry', 'jengibre', 'eneldo', 'orégano', 'albahaca', 'hierbabuena', 'menta'].includes(name.toLowerCase())) {
+                } 
+                // Casos especiales donde el nombre no tiene una cantidad explícita o la pluralización es simple
+                else if (newValue > 1 && !name.endsWith('s') && name.length > 0 && !['sal', 'pimienta', 'aceite', 'agua', 'miel', 'curry', 'jengibre', 'eneldo', 'orégano', 'albahaca', 'hierbabuena', 'menta'].includes(name.toLowerCase())) {
                     formattedName = name + 's';
                 } else if (newValue === 1 && name.endsWith('s') && !['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'].includes(name.toLowerCase())) {
                     formattedName = name.slice(0, -1);
@@ -705,7 +757,7 @@
                 
                 formattedName = formattedName.trim();
 
-                // Eliminar la unidad del nombre si ya está en la parte de la unidad (ej. "gramos de gramos")
+                // Eliminar la unidad del nombre si ya está en la parte de la unidad (ej. "gramos de gramos" -> "de gramos")
                 const unitInNameRegex = new RegExp(`\\b${unit}(es)?\\b`, 'i');
                 formattedName = formattedName.replace(unitInNameRegex, '').trim();
                 
@@ -718,20 +770,19 @@
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${newValue} ${unit}. ${formattedName}`.trim();
                 }
-                // Si la unidad es un "cuantificador" ("un", "una", "unidad", "puñado") o está vacía,
-                // y el valor es 1, solo mostramos el nombre formateado.
                 if (newValue === 1 && (unit === '' || ['un', 'una', 'unidad', 'unidades', 'puñado', 'chorrito'].includes(unit))) {
-                    return formattedName; // Ej: "Aceite de oliva", "Puñado de nueces"
+                    return formattedName; 
                 }
-                // Para el resto, incluye el valor y la unidad.
                 if (unit !== '') {
                     return `${newValue} ${unit} ${formattedName}`.trim();
                 }
-                // Si no hay unidad explícita y no es un caso especial de "1", muestra solo el valor y el nombre.
                 return `${newValue} ${formattedName}`.trim();
             }
 
-
+            /**
+             * Actualiza la lista de ingredientes en el modal según el número de raciones actual.
+             * @param {number} servings - El número de raciones para el cual ajustar los ingredientes.
+             */
             function updateIngredientsDisplay(servings) {
                 if (!currentRecipeDetail) return;
 
@@ -748,8 +799,11 @@
                 });
             }
             
+            /**
+             * Muestra el modal de detalles de una receta específica.
+             * @param {object} recipe - El objeto de la receta a mostrar.
+             */
             function showRecipeDetail(recipe) {
-                console.log('showRecipeDetail: Abriendo modal para', recipe.titulo);
                 currentRecipeDetail = recipe; 
                 currentServings = recipe.raciones; 
 
@@ -761,7 +815,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </div>
-                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="console.error('Error cargando imagen en modal para:', this.alt); this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
                         <div id="recipe-content-normal">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
                                 <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo de preparación: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
@@ -796,19 +850,20 @@
                         </div>
                     </div>`;
                 
-                const stepsList = document.getElementById('steps-list');
+                const stepsList = dom.modalContent.querySelector('#steps-list');
                 stepsList.innerHTML = recipe.pasos.map(step => `<li>${step}</li>`).join('');
 
                 updateIngredientsDisplay(currentServings);
 
-                // CONTROL DEL MODAL: Quitamos 'hidden' y añadimos 'modal-visible'
-                dom.modal.classList.remove('hidden'); // Esto cambia display: none a display: flex
-                dom.modal.classList.add('modal-visible'); // Esto activa la opacidad y la escala
+                // Muestra el modal con transiciones
+                dom.modal.classList.remove('hidden'); 
+                dom.modal.classList.add('modal-visible'); 
                 
-                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-                document.getElementById('printRecipeBtn').addEventListener('click', () => window.print());
+                // Asigna event listeners para los botones del modal
+                dom.modalContent.querySelector('#closeModalBtn').addEventListener('click', closeModal);
+                dom.modalContent.querySelector('#printRecipeBtn').addEventListener('click', () => window.print());
                 
-                const shareBtn = document.getElementById('shareRecipeBtn');
+                const shareBtn = dom.modalContent.querySelector('#shareRecipeBtn');
                 if (navigator.share) {
                     shareBtn.addEventListener('click', async () => {
                         try {
@@ -822,20 +877,21 @@
                         }
                     });
                 } else {
-                    shareBtn.style.display = 'none';
+                    shareBtn.style.display = 'none'; // Oculta el botón si la API de compartir no está disponible
                 }
                 
-                document.getElementById('start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
+                dom.modalContent.querySelector('#start-cooking-btn').addEventListener('click', () => startCookingMode(recipe));
 
-                const servingsInput = document.getElementById('servings-input');
-                document.getElementById('decrease-servings').addEventListener('click', () => {
+                // Lógica de ajuste de raciones en el modal
+                const servingsInput = dom.modalContent.querySelector('#servings-input');
+                dom.modalContent.querySelector('#decrease-servings').addEventListener('click', () => {
                     let newServings = parseInt(servingsInput.value) - 1;
                     if (newServings < 1) newServings = 1;
                     servingsInput.value = newServings;
                     currentServings = newServings;
                     updateIngredientsDisplay(currentServings);
                 });
-                document.getElementById('increase-servings').addEventListener('click', () => {
+                dom.modalContent.querySelector('#increase-servings').addEventListener('click', () => {
                     let newServings = parseInt(servingsInput.value) + 1;
                     servingsInput.value = newServings;
                     currentServings = newServings;
@@ -850,20 +906,24 @@
                 });
             }
             
+            /**
+             * Cierra el modal de detalles de receta con una transición.
+             */
             function closeModal() {
-                console.log('closeModal: Cerrando modal.');
-                dom.modal.classList.remove('modal-visible'); // Inicia la transición de salida
-                // Espera a que termine la transición antes de ocultar completamente
+                dom.modal.classList.remove('modal-visible'); 
                 setTimeout(() => { 
-                    dom.modal.classList.add('hidden'); // Vuelve a añadir 'hidden' para display: none
-                    dom.modalContent.innerHTML = ''; // Limpia el contenido después de que esté oculto
-                    console.log('Modal completamente cerrado y contenido limpiado.');
-                }, 300); // Coincide con la duración de la transición en CSS
+                    dom.modal.classList.add('hidden'); 
+                    dom.modalContent.innerHTML = ''; 
+                }, 300); 
                 currentRecipeDetail = null; 
                 currentServings = 0; 
             }
 
-            // --- MODO OSCURO ---
+            // --- Funcionalidad de Modo Oscuro ---
+
+            /**
+             * Configura el tema inicial (claro/oscuro) al cargar la página.
+             */
             function setupTheme() {
                 if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
@@ -876,105 +936,114 @@
                 }
             }
 
+            /**
+             * Alterna entre el tema claro y oscuro al hacer clic en el botón.
+             * Guarda la preferencia en localStorage.
+             */
             dom.themeToggle.addEventListener('click', function() {
                 dom.darkIcon.classList.toggle('hidden');
                 dom.lightIcon.classList.toggle('hidden');
                 
                 if (document.documentElement.classList.contains('dark')) {
-                    // Si está en modo oscuro, cambiar a claro
                     document.documentElement.classList.remove('dark');
                     localStorage.setItem('color-theme', 'light');
                 } else {
-                    // Si está en modo claro, cambiar a oscuro
                     document.documentElement.classList.add('dark');
                     localStorage.setItem('color-theme', 'dark');
                 }
             });
 
+            // Llama a la configuración de tema al inicio
             setupTheme();
 
-            // --- EVENT LISTENERS DE FILTROS Y BÚSQUEDA ---
+            // --- Event Listeners Globales ---
             dom.search.addEventListener('input', applyFilters);
 
             dom.filterAllBtn.addEventListener('click', () => {
-                console.log('Filtro: Todas');
                 currentFilter = 'all';
-                dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+                dom.filterAllBtn.classList.add('active'); 
+                dom.filterFavBtn.classList.remove('active');
                 applyFilters();
             });
             dom.filterFavBtn.addEventListener('click', () => {
-                console.log('Filtro: Favoritas');
                 currentFilter = 'favorites';
-                dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+                dom.filterFavBtn.classList.add('active'); 
+                dom.filterAllBtn.classList.remove('active');
                 applyFilters();
             });
             
             dom.categoryFilters.addEventListener('click', (e) => {
                 if (e.target.matches('.category-btn')) {
                     currentCategory = e.target.dataset.category;
-                    console.log('Filtro por categoría:', currentCategory);
                     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
                     e.target.classList.add('active');
                     applyFilters();
                 }
             });
             
-            // Listener para cerrar el modal al hacer clic fuera
+            // Listener para cerrar el modal al hacer clic fuera del contenido
             dom.modal.addEventListener('click', (event) => { 
                 if (event.target === dom.modal) { 
-                    console.log('Clic en fondo del modal, cerrando.');
                     closeModal(); 
                 }
             });
             
+            // Inicializa la UI con todas las recetas al cargar la página
+            renderRecipes(allRecipes); 
             // Asegura que el filtro "Todas" esté activo al cargar
             dom.filterAllBtn.classList.add('active');
             
-            // --- COPYRIGHT YEAR ---
+            // Establece el año actual en el copyright del footer
             dom.copyrightYear.textContent = new Date().getFullYear();
 
-            // --- ASISTENTE DE VOZ ---
-            const cookingModeView = document.getElementById('cooking-mode-view');
-            const stepCounter = document.getElementById('step-counter');
-            const stepText = document.getElementById('step-text');
-            const prevStepBtn = document.getElementById('prev-step-btn');
-            const repeatStepBtn = document.getElementById('repeat-step-btn');
-            const nextStepBtn = document.getElementById('next-step-btn');
-            const exitCookingBtn = document.getElementById('exit-cooking-btn');
-
+            // --- ASISTENTE DE VOZ (SpeechSynthesis) ---
             let currentStep = 0;
             let currentRecipeSteps = [];
+            let speechUtterance = null; // Para mantener una referencia a la utterance actual
 
             /**
              * Función para que el asistente de voz hable el texto proporcionado.
-             * Detiene cualquier discurso anterior antes de iniciar uno nuevo.
-             * Añade y remueve una clase CSS al botón "Repetir" para feedback visual.
-             * @param {string} text El texto que el asistente debe pronunciar.
+             * Detiene cualquier discurso anterior, configura las propiedades y añade feedback visual.
+             * @param {string} text - El texto que el asistente debe pronunciar.
              */
             function speak(text) {
-                // Cancela cualquier síntesis de voz que esté en curso para evitar superposiciones.
-                speechSynthesis.cancel(); 
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES'; // Configura el idioma a español
-                utterance.rate = 0.9; // Ajusta la velocidad de habla
-                utterance.pitch = 1; // Ajusta el tono de voz
+                // Cancela cualquier síntesis de voz que esté en curso.
+                if (speechSynthesis.speaking && speechUtterance) {
+                    speechSynthesis.cancel();
+                }
+                
+                speechUtterance = new SpeechSynthesisUtterance(text);
+                speechUtterance.lang = 'es-ES'; // Configura el idioma a español
+                speechUtterance.rate = 0.9; // Ajusta la velocidad de habla
+                speechUtterance.pitch = 1; // Ajusta el tono de voz
+
+                // Busca una voz en español si está disponible y la asigna.
+                // Esto es importante porque 'es-ES' solo indica el idioma, no la voz específica.
+                const voices = speechSynthesis.getVoices();
+                const spanishVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_')) || voices.find(voice => voice.lang.startsWith('en-')); // Intenta encontrar español, si no, inglés por fallback.
+                if (spanishVoice) {
+                    speechUtterance.voice = spanishVoice;
+                } else {
+                    console.warn("No se encontró una voz en español. Usando la voz por defecto del navegador.");
+                }
 
                 // Añade la clase 'speaking' al botón 'repeat-step-btn' cuando el asistente comienza a hablar.
-                repeatStepBtn.classList.add('speaking');
+                dom.repeatStepBtn.classList.add('speaking');
 
                 // Remueve la clase 'speaking' cuando el asistente termina de hablar.
-                utterance.onend = () => {
-                    repeatStepBtn.classList.remove('speaking');
+                speechUtterance.onend = () => {
+                    dom.repeatStepBtn.classList.remove('speaking');
                 };
 
-                // Si ocurre un error, también se debe remover la clase.
-                utterance.onerror = (event) => {
+                // Si ocurre un error, también se debe remover la clase y notificar al usuario.
+                speechUtterance.onerror = (event) => {
                     console.error('SpeechSynthesisUtterance.onerror', event);
-                    repeatStepBtn.classList.remove('speaking');
+                    dom.repeatStepBtn.classList.remove('speaking');
+                    alert("Error en el asistente de voz. Puede que tu navegador no tenga voces en español disponibles o haya un problema. Intenta recargar la página.");
                 };
                 
                 // Inicia la síntesis de voz.
-                speechSynthesis.speak(utterance);
+                speechSynthesis.speak(speechUtterance);
             }
 
             /**
@@ -982,8 +1051,8 @@
              * y hace que el asistente pronuncie el paso.
              */
             function updateCookingStep() {
-                stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
-                stepText.textContent = currentRecipeSteps[currentStep];
+                dom.stepCounter.textContent = `Paso ${currentStep + 1} de ${currentRecipeSteps.length}`;
+                dom.stepText.textContent = currentRecipeSteps[currentStep];
                 speak(currentRecipeSteps[currentStep]);
             }
 
@@ -991,24 +1060,23 @@
              * Inicia el modo de cocina guiada para una receta específica.
              * Oculta el modal de detalle de receta y muestra la vista de cocina.
              * Comienza leyendo el primer paso después de un breve mensaje de bienvenida.
-             * @param {object} recipe El objeto de la receta a cocinar.
+             * @param {object} recipe - El objeto de la receta a cocinar.
              */
             function startCookingMode(recipe) {
-                console.log('Iniciando modo de cocina para:', recipe.titulo);
                 currentRecipeSteps = recipe.pasos;
                 currentStep = 0;
                 closeModal(); // Cierra el modal de la receta antes de entrar en el modo de cocina.
                 
-                cookingModeView.classList.remove('hidden');
-                cookingModeView.classList.add('flex'); // Cambia display: none a display: flex para que sea visible.
+                dom.cookingModeView.classList.remove('hidden');
+                dom.cookingModeView.classList.add('flex'); // Muestra la vista de cocina.
 
                 // Mensaje de preparación para el usuario
-                stepCounter.textContent = "¡Bienvenido al modo de cocina guiada!";
-                stepText.textContent = "Preparando asistente de voz...";
+                dom.stepCounter.textContent = "¡Bienvenido al modo de cocina guiada!";
+                dom.stepText.textContent = "Preparando asistente de voz...";
                 speak(`Comenzamos la receta de ${recipe.titulo}.`);
                 
                 // Espera un momento antes de leer el primer paso para dar tiempo al mensaje de bienvenida.
-                setTimeout(updateCookingStep, 2500); 
+                setTimeout(updateCookingStep, 2500); // Retraso para el mensaje inicial.
             }
 
             /**
@@ -1016,15 +1084,14 @@
              * Detiene el asistente de voz y oculta la vista de cocina.
              */
             function exitCookingMode() {
-                console.log('Saliendo del modo de cocina.');
                 speechSynthesis.cancel(); // Detiene cualquier discurso en curso.
-                cookingModeView.classList.add('hidden'); // Oculta la vista de cocina.
-                cookingModeView.classList.remove('flex'); // Remueve display: flex.
+                dom.cookingModeView.classList.add('hidden'); // Oculta la vista de cocina.
+                dom.cookingModeView.classList.remove('flex'); // Remueve display: flex.
                 speak("Has salido del modo de cocina guiada. ¡Esperamos que hayas disfrutado!"); // Mensaje de despedida.
             }
 
-            // Event listener para el botón "Anterior" en el modo de cocina.
-            prevStepBtn.addEventListener('click', () => {
+            // --- Event listeners para los controles del Modo de Cocina ---
+            dom.prevStepBtn.addEventListener('click', () => {
                 if (currentStep > 0) {
                     currentStep--;
                     updateCookingStep();
@@ -1033,8 +1100,7 @@
                 }
             });
 
-            // Event listener para el botón "Siguiente" en el modo de cocina.
-            nextStepBtn.addEventListener('click', () => {
+            dom.nextStepBtn.addEventListener('click', () => {
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
                     updateCookingStep();
@@ -1044,17 +1110,25 @@
                 }
             });
 
-            // Event listener para el botón "Repetir" en el modo de cocina.
-            repeatStepBtn.addEventListener('click', () => {
-                speak(currentRecipeSteps[currentStep]);
+            dom.repeatStepBtn.addEventListener('click', () => {
+                speak(currentRecipeSteps[currentStep]); // Repite el paso actual.
             });
 
-            // Event listener para el botón "Salir" del modo de cocina.
-            exitCookingBtn.addEventListener('click', exitCookingMode);
-        }
+            dom.exitCookingBtn.addEventListener('click', exitCookingMode);
+            
+            // --- Carga inicial de voces para SpeechSynthesis (puede ser necesario) ---
+            // Asegura que las voces estén disponibles antes de que se intente usarlas.
+            // Esto es crucial para navegadores que cargan las voces de forma asíncrona.
+            speechSynthesis.onvoiceschanged = () => {
+                console.log("Voces de SpeechSynthesis cargadas.");
+                // Si tienes alguna lógica que dependa de las voces cargadas, la pondrías aquí.
+            };
 
-        // Ejecuta la app cuando el DOM esté listo
-        runRecipeApp();
+        } // Fin de runRecipeApp()
+
+        // Ejecuta la aplicación cuando el DOM esté completamente cargado.
+        document.addEventListener('DOMContentLoaded', runRecipeApp);
+
     </script>
 </body>
 </html>
