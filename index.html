@@ -382,7 +382,7 @@
                 { categoria: "Primero", titulo: "Crema de guisantes con menta", raciones: 3, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Guisantes+Menta", ingredientes: ["300 g guisantes (frescos o congelados)", "1 cebolleta", "Menta fresca", "Caldo de verduras", "Aceite de oliva"], pasos: ["Sofríe la cebolleta, añade los guisantes y el caldo.", "Cocina unos minutos y tritura con unas hojas de menta."] },
                 { categoria: "Primero", titulo: "Ensalada de remolacha y queso de cabra", raciones: 2, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Remolacha+Queso", ingredientes: ["2 remolachas cocidas", "100 g queso de cabra", "Nueces", "Rúcula", "Vinagreta de miel y mostaza"], pasos: ["Corta la remolacha en cubos y el queso en medallones.", "Combina con rúcula y nueces.", "Aliña con una vinagreta de miel y mostaza."] },
                 { categoria: "Primero", titulo: "Crema de espárragos verdes", raciones: 4, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Esparragos", ingredientes: ["500 g espárragos verdes", "1 patata", "1 cebolla", "Caldo de verduras", "Nata líquida ligera (opcional)", "Sal y pimienta"], pasos: ["Sofríe la cebolla, añade los espárragos troceados y la patata.", "Cubre con caldo y cuece hasta que estén tiernos.", "Tritura y pasa por un colador para una crema fina. Añade nata si quieres una textura más cremosa."] },
-                { categoria: "Primero", titulo: "Sopa de ajo castellana", raciones: 2, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Ajo+Castellana", ingredientes: ["4 dientes de ajo", "4 rebanadas de pan duro", "1 cdita. pimentón dulce", "Caldo de pollo o verduras", "Aceite de oliva", "Huevo (opcional)"], pasos: ["Lamina los ajos y sofríelos en aceite. Añade el pan troceado y el pimentón.", "Cubre con caldo y cuece unos 10-15 minutos.", "Sirve caliente, opcionalmente con un huevo escalfado."] },
+                { categoria: "Primero", titulo: "Sopa de ajo castellana", raciones: 2, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Sopa+Ajo+Castellana", ingredientes: ["4 dientes de ajo", "4 rebanadas de pan duro", "1 cdita. pimentón dulce", "Caldo de pollo o verduras", "Aceite de oliva", "Huevo (opcional)"], pasos: ["Lamina los ajos y sofríelos en aceite. Añade el pan troceado y el pimentón.", "Cubre con caldo y cuece unos 10-15 minutos.", "Sirve caliente, opcionalmente con un huevo escalfado."] },
                 { categoria: "Primero", titulo: "Ensalada de cuscús con pasas y piñones", raciones: 3, tiempo: "20 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Ensalada+Cuscús", ingredientes: ["1 taza de cuscús", "1.5 tazas de agua o caldo", "1/4 taza de pasas", "2 cdas. piñones tostados", "Pepino y tomate picado", "Aceite de oliva", "Zumo de limón", "Menta fresca"], pasos: ["Hidrata el cuscús con el agua caliente.", "Mezcla con pasas, piñones, pepino, tomate, aceite, limón y menta picada.", "Deja reposar antes de servir."] },
                 { categoria: "Primero", titulo: "Crema de calabacín y manzana", raciones: 4, tiempo: "35 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Crema+Calabacin+Manzana", ingredientes: ["2 calabacines", "1 manzana verde", "1/2 cebolla", "Caldo de verduras", "Aceite de oliva", "Sal"], pasos: ["Sofríe la cebolla, añade el calabacín y la manzana troceados.", "Cubre con caldo y cuece hasta que estén tiernos.", "Tritura hasta obtener una crema suave."] },
                 { categoria: "Primero", titulo: "Salpicón de marisco ligero", raciones: 2, tiempo: "25 min", imagen: "https://placehold.co/800x600/d1c4b5/4a2e0a?text=Salpicon+Marisco", ingredientes: ["100 g gambas cocidas y peladas", "100 g pulpo cocido", "1/2 cebolla morada", "1/2 pimiento rojo", "Perejil fresco", "Aceite de oliva", "Vinagre de vino", "Sal"], pasos: ["Corta el marisco y las verduras en trozos pequeños.", "Mezcla todo en un bol.", "Aliña con aceite, vinagre y sal. Sirve frío."] },
@@ -1019,12 +1019,20 @@
 
                 // Busca una voz en español si está disponible y la asigna.
                 // Esto es importante porque 'es-ES' solo indica el idioma, no la voz específica.
+                // Priorizamos "es-ES", luego cualquier "es-", luego un fallback a "en-" si no hay nada en español.
                 const voices = speechSynthesis.getVoices();
-                const spanishVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_')) || voices.find(voice => voice.lang.startsWith('en-')); // Intenta encontrar español, si no, inglés por fallback.
-                if (spanishVoice) {
-                    speechUtterance.voice = spanishVoice;
+                let selectedVoice = voices.find(voice => voice.lang === 'es-ES');
+                if (!selectedVoice) { // Si no encontramos es-ES específico
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_'));
+                }
+                if (!selectedVoice) { // Si aún no encontramos ninguna en español, buscamos en inglés como último recurso.
+                    selectedVoice = voices.find(voice => voice.lang.startsWith('en-'));
+                }
+
+                if (selectedVoice) {
+                    speechUtterance.voice = selectedVoice;
                 } else {
-                    console.warn("No se encontró una voz en español. Usando la voz por defecto del navegador.");
+                    console.warn("No se encontró una voz en español. Se utilizará la voz por defecto del navegador.");
                 }
 
                 // Añade la clase 'speaking' al botón 'repeat-step-btn' cuando el asistente comienza a hablar.
