@@ -1,7 +1,8 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 
-// As per guidelines, the API key is expected to be in the environment variables.
-const API_KEY = process.env.API_KEY;
+// Safely access the API key, preventing crashes in browser environments.
+const API_KEY = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
 const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 // Declare external libraries loaded via CDN
