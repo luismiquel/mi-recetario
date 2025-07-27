@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Recetario Delicioso (150 recetas) – Accesible</title>
+
+<!-- PDF Generation Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<!-- Manifest simple inline (opcional) -->
+<link rel="manifest" href='data:application/manifest+json,{"name":"Recetario Delicioso","short_name":"Recetario","start_url":".","display":"standalone","background_color":"#f8f7f5","theme_color":"#5A2708","icons":[{"src":"https://placehold.co/192x192/5A2708/fff?text=R","sizes":"192x192","type":"image/png"},{"src":"https://placehold.co/512x512/5A2708/fff?text=R","sizes":"512x512","type":"image/png"}]}' />
+
+<style>
+:root{
+  --bg:#f8f7f5; --fg:#1c1917; --accent:#5A2708; --accent2:#f59e0b; --muted:#6b7280;
+  --card:#ffffff; --card-dark:#2b2b2b; --radius:20px;
+  --font-base:18px;
+}
+html{font-size:var(--font-base);}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--fg);transition: background-color .3s, color .3s;}
+.dark body{background:#111;color:#e5e5e5;}
+a{color:var(--accent);}
+h1,h2,h3,h4{font-family:Georgia, 'Times New Roman', serif;margin:0;}
+header{padding:1.5rem 1rem 1rem;text-align:center;position:relative;}
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+#skip{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+#skip:focus{position:static;width:auto;height:auto;background:#fff;padding:.5rem;z-index:1000;}
+
+#top-controls-nav{position:sticky;top:0;background:rgba(248,247,245,.9);backdrop-filter:blur(6px);z-index:10;padding:.5rem 0;border-bottom:1px solid #ddd;}
+.dark #top-controls-nav{background:rgba(28,25,23,.9);border-color:#333;}
+
+.btn{cursor:pointer;border:none;border-radius:9999px;padding:.6rem 1rem;font-size:.85rem;transition:.2s;line-height:1;}
+.btn:hover{opacity:.9;}
+.btn[disabled] { cursor: not-allowed; opacity: 0.6; }
+.btn-ghost{background:transparent;border:1px solid transparent;}
+.btn-chip{background:#eee;color:#333;margin:.2rem;}
+.dark .btn-chip{background:#3b3735;color:#ddd;}
+.btn-chip.active{background:var(--accent);color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+.dark .btn-chip.active{background:var(--accent2);color:#111;}
+
+#searchInput{width:100%;padding:.8rem 2.5rem .8rem 2.5rem;border:1px solid #ccc;border-radius:9999px;}
+.dark #searchInput{background:#222;border-color:#444;color:#eee;}
+
+#recipeGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;padding:1rem;}
+.recipe-card{outline:none;}
+.recipe-card>div{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.08);display:flex;flex-direction:column;height:100%;transition:.2s;}
+.dark .recipe-card>div{background:var(--card-dark);}
+.recipe-card>div:hover, .recipe-card>div:focus-within {transform:translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,.12);}
+
+/* Accessibility: Visible Focus */
+:focus-visible { outline: 3px solid var(--accent2); outline-offset: 2px; border-radius: 4px; }
+.modal-panel :focus-visible { outline-offset: 4px; }
+.recipe-card:focus-visible { outline: 3px solid var(--accent2); outline-offset: 4px; border-radius: var(--radius); }
+
+.img-container {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  background-color: #e0e0e0;
+}
+.dark .img-container { background-color: #333; }
+
+.img-container.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+.dark .img-container.loading::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.recipe-card .img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge{position:absolute;top:.5rem;left:.5rem;background:var(--accent);color:#fff;font-size:.7rem;padding:.25rem .5rem;border-radius:9999px; z-index: 1;}
+.dark .badge{background:var(--accent2);color:#111;}
+.favorite-btn{position:absolute;top:.5rem;right:.5rem;background:rgba(255,255,255,.85);border-radius:50%;padding:.3rem;border:none;cursor:pointer; z-index: 1;}
+.dark .favorite-btn{background:rgba(0,0,0,.5);}
+.favorite-btn svg{width:22px;height:22px;stroke-width:2;}
+.card-body{padding:0.8rem;flex:1;display:flex;flex-direction:column;}
+.card-title{font-size:1rem;font-weight:700;margin-bottom:.3rem;color:var(--accent);}
+.dark .card-title{color:var(--accent2);}
+.card-meta{font-size:.8rem;color:var(--muted);margin-top:auto;}
+#no-results{text-align:center;padding:2rem;color:var(--muted);display:none;}
+
+#recipeModal,#cookingMode{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);z-index:100;}
+.modal-visible{display:flex;}
+.modal-panel{background:var(--card);color:var(--fg);width:95%;max-width:760px;max-height:92vh;overflow-y:auto;border-radius:24px;padding:1.2rem 1.4rem 2rem;position:relative;box-shadow:0 20px 40px rgba(0,0,0,.35);transform:scale(.96);transition:.25s;}
+.dark .modal-panel{background:#1f1f1f;color:#eee;}
+.modal-visible .modal-panel{transform:scale(1);}
+.close-btn{position:absolute;top:.6rem;right:.6rem;background:#eee;border:none;border-radius:50%;padding:.4rem;cursor:pointer;}
+.dark .close-btn{background:#333;color:#eee;}
+h2.modal-title{margin:0 2.5rem 1rem 0;font-size:1.6rem;line-height:1.2;}
+.modal-img-container { height: 280px; border-radius: 16px; margin-bottom: 1rem; overflow: hidden; }
+.modal-img{width:100%; height: 100%; object-fit:cover; background-color: #e0e0e0;}
+.dark .modal-img { background-color: #333; }
+.section-title{font-size:1.2rem;border-bottom:2px solid #f0d9b5;margin:1.2rem 0 .6rem;padding-bottom:.3rem;}
+.dark .section-title{border-color:#5c3b14;}
+ul,ol{margin:0;padding-left:1.1rem;}
+#portionBox{display:flex;align-items:center;gap:.5rem;margin:.5rem 0 1rem;font-size:.9rem;}
+.adjust-btn{padding:.3rem .7rem;border-radius:8px;border:1px solid #ccc;background:#fafafa;cursor:pointer;}
+.dark .adjust-btn{background:#333;border-color:#555;color:#eee;}
+#servingsInput{width:60px;text-align:center;padding:.2rem .3rem;border:1px solid #ccc;border-radius:8px;}
+.dark #servingsInput{background:#333;border-color:#555;color:#eee;}
+
+#nutrition-info { font-size: 0.9rem; background-color: rgba(120, 53, 15, 0.05); padding: 0.8rem; border-radius: 12px; margin-top: 1rem; }
+.dark #nutrition-info { background-color: rgba(245, 158, 11, 0.1); }
+#nutrition-info-content { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-around; margin-top: 0.5rem; }
+#nutrition-info-content div { text-align: center; }
+#nutrition-info-content span { display: block; }
+#nutrition-info-content .value { font-weight: 600; font-size: 1rem; }
+#nutrition-info .spinner { width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 1rem auto; }
+.dark #nutrition-info .spinner { border-top-color: var(--accent2); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.modal-actions{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.2rem;}
+.modal-actions .btn{box-shadow:0 2px 5px rgba(0,0,0,.15);font-weight:600;}
+#shoppingDrawer{position:fixed;right:0;top:0;bottom:0;width:320px;background:var(--card);box-shadow:-3px 0 15px rgba(0,0,0,.25);transform:translateX(100%);transition:.3s;padding:1rem 1.2rem 2rem;z-index:90;overflow-y:auto;}
+.dark #shoppingDrawer{background:#1f1f1f;color:#eee;}
+#shoppingDrawer.open{transform:translateX(0);}
+#shoppingList{font-size:.9rem;margin-bottom:1rem;list-style:none;padding:0;}
+#shoppingList li{margin:.3rem 0;display:flex;align-items:center;gap:.4rem;}
+#shoppingList input[type="checkbox"]{transform:scale(1.2);flex-shrink:0;}
+.drawer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;}
+.drawer-title{margin:0;font-size:1.1rem;}
+#aria-live{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+/* Cooking mode */
+#cookingMode{flex-direction:column;background:var(--bg);color:var(--fg);}
+#cookingStepText{font-size:2rem;max-width:90%;text-align:center;line-height:1.35;}
+#cookControls{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;padding:1rem;width:100%;max-width:600px;margin:0 auto;}
+#cookControls button{padding:1rem;border-radius:14px;border:none;font-size:1rem;font-weight:600;cursor:pointer;}
+.print-only{display:none;}
+@media print{
+  body *{visibility:hidden;}
+  #recipeModal .modal-panel,#recipeModal .modal-panel *{visibility:visible;}
+  #recipeModal{position:absolute;inset:0;background:none;}
+  .close-btn,.modal-actions,#portionBox{display:none!important;}
+  .print-only{display:block;}
+}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.11.0"
+  }
+}
+</script>
+</head>
+<body>
+<a href="#main" id="skip">Saltar al contenido principal</a>
+
+<div id="aria-live" aria-live="polite"></div>
+
+<header>
+  <h1>Recetario Delicioso</h1>
+  <p id="subtitle">150 recetas para inspirar tu cocina</p>
+</header>
+
+<nav id="top-controls-nav" aria-label="Controles principales">
+  <div style="max-width:1100px;margin:0 auto;padding:0 .8rem;">
+    <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;">
+      <div style="position:relative;flex:1;">
+        <input id="searchInput" type="search" aria-label="Buscar por nombre o ingrediente" placeholder="Buscar por nombre o ingrediente…" />
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:1.1rem;opacity:.5;" aria-hidden="true">🔍</span>
+      </div>
+       <div id="main-filters" role="group" aria-label="Filtros principales">
+        <button id="filterAll" class="btn btn-chip active" aria-pressed="true">Todas</button>
+        <button id="filterFav" class="btn btn-chip" aria-pressed="false">Favoritas</button>
+      </div>
+      <button id="openShopping" class="btn btn-chip" aria-haspopup="true" aria-controls="shoppingDrawer">
+        <span aria-hidden="true">🛒 </span>Lista
+      </button>
+    </div>
+    <div id="catFilters" role="group" aria-label="Filtrar por categoría" style="margin-top:.6rem;overflow-x:auto;white-space:nowrap;padding-bottom:.3rem;">
+      <button class="btn btn-chip active" data-cat="all">Todos</button>
+      <button class="btn btn-chip" data-cat="Aperitivo">Aperitivos</button>
+      <button class="btn btn-chip" data-cat="Primero">Primeros</button>
+      <button class="btn btn-chip" data-cat="Segundo">Segundos</button>
+      <button class="btn btn-chip" data-cat="Postre">Postres</button>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <div id="no-results">No se encontraron recetas.</div>
+  <section id="recipeGrid" aria-label="Listado de recetas"></section>
+</main>
+
+<!-- Modal Receta -->
+<div id="recipeModal" role="dialog" aria-modal="true" aria-labelledby="recipeTitle" tabindex="-1">
+  <div class="modal-panel" role="document">
+    <button class="close-btn" id="closeModal" aria-label="Cerrar ventana de receta">✖</button>
+    <h2 id="recipeTitle" class="modal-title"></h2>
+    <div class="img-container modal-img-container">
+      <img id="recipeImg" class="modal-img" alt="">
+    </div>
+    <p id="recipeTime" style="font-weight:600;margin:.3rem 0;"></p>
+    
+    <div id="portionBox">
+      <span>Raciones:</span>
+      <button class="adjust-btn" id="decServ" aria-label="Reducir raciones">-</button>
+      <input id="servingsInput" type="number" min="1" aria-label="Número de raciones" />
+      <button class="adjust-btn" id="incServ" aria-label="Aumentar raciones">+</button>
+    </div>
+    
+    <div id="nutrition-info" style="display: none;">
+      <h3 class="section-title" style="margin-top:0;">Información Nutricional (Estimación)</h3>
+      <p id="nutrition-error" style="color: red; display: none;"></p>
+      <div id="nutrition-info-content"></div>
+    </div>
+
+    <h3 class="section-title">Ingredientes</h3>
+    <ul id="ingredientList"></ul>
+
+    <h3 class="section-title">Pasos</h3>
+    <ol id="stepsList"></ul>
+
+    <div class="modal-actions">
+      <button class="btn" id="generateNutrition">Info Nutricional ✨</button>
+      <button class="btn" id="addToShopping">Añadir a la lista 🛒</button>
+      <button class="btn" id="startCooking">Modo cocina ▶️</button>
+      <button class="btn" id="savePdf">Guardar como PDF 📄</button>
+      <button class="btn" id="printRecipe">Imprimir</button>
+      <button class="btn" id="shareRecipe">Compartir</button>
+    </div>
+    <div class="print-only">
+      <p><strong>www.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer Lista Compra -->
+<aside id="shoppingDrawer" aria-label="Lista de la compra" class="inactive" tabindex="-1">
+  <div class="drawer-header">
+    <h4 class="drawer-title">Lista de la compra</h4>
+    <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista de la compra">✖</button>
+  </div>
+  <ul id="shoppingList"></ul>
+  <div style="display:flex;gap:.4rem;flex-wrap:wrap; margin-top: 1rem;">
+    <button id="copyShopping" class="btn">Copiar</button>
+    <button id="clearChecked" class="btn">Borrar marcados</button>
+    <button id="clearAll" class="btn">Vaciar</button>
+    <button id="printShopping" class="btn">Imprimir</button>
+  </div>
+</aside>
+
+<!-- Cooking Mode -->
+<div id="cookingMode" role="dialog" aria-modal="true" aria-labelledby="cookingStepText" tabindex="-1">
+  <button id="exitCooking" class="btn btn-chip" style="position:absolute;top:10px;right:10px;">Salir ✖</button>
+  <p id="cookCounter" style="margin-top:70px;font-weight:600;" aria-live="polite"></p>
+  <div id="cookingStepText" style="font-size: clamp(1.5rem, 4vw, 2.5rem); max-width: 90%; text-align: center; line-height: 1.35;"></div>
+  <div id="cookControls">
+    <button id="cookPrev">Anterior</button>
+    <button id="cookRepeat">Repetir</button>
+    <button id="cookNext">Siguiente</button>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:1rem;border-top:1px solid #ddd;margin-top:2rem;">
+  <nav aria-label="Controles de accesibilidad">
+      <button id="themeToggle" class="btn btn-chip" title="Cambiar tema oscuro/claro">☀️</button>
+      <button id="contrastToggle" class="btn btn-chip" title="Activar/desactivar alto contraste">Alto contraste</button>
+      <button id="fontDec" class="btn btn-chip" title="Reducir tamaño de letra">A-</button>
+      <button id="fontInc" class="btn btn-chip" title="Aumentar tamaño de letra">A+</button>
+      <button id="ttsToggle" class="btn btn-chip" title="Activar/desactivar lectura en voz alta">🔈 Voz</button>
+  </nav>
+  <p style="margin:.3rem 0;font-size:.8rem;">© <span id="year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.</p>
+</footer>
+
+<script type="module" src="index.tsx"></script>
+</body>
+</html>
