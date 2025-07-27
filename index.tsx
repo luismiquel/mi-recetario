@@ -397,14 +397,16 @@ function manageImageCache(title: string, imageUrl: string) {
     } catch (e: any) {
         if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
             console.warn('Storage quota exceeded. Evicting oldest cache entries.');
-            // Eviction strategy: remove the oldest 25% of entries
+            // Eviction strategy: remove a quarter of the entries to make space
             const keys = Object.keys(imageCache);
             const keysToRemove = keys.slice(0, Math.floor(keys.length * 0.25));
-            keysToRemove.forEach(key => delete imageCache[key]);
+            keysToRemove.forEach(key => {
+                delete imageCache[key];
+            });
             
-            // Retry saving
+            // Retry saving, ensuring the new item is included
             try {
-                imageCache[title] = imageUrl; // re-add the new item
+                imageCache[title] = imageUrl;
                 localStorage.setItem('imageCache', JSON.stringify(imageCache));
             } catch (e2) {
                 console.error('Failed to save image cache even after eviction.', e2);
@@ -497,7 +499,9 @@ async function generateNutritionInfo() {
 /* ========= RENDER ========= */
 function renderRecipes(list: Recipe[]){
   grid.innerHTML = "";
-  if (imageObserver) imageObserver.disconnect();
+  if (imageObserver) {
+    imageObserver.disconnect();
+  }
 
   if(list.length===0){
       noResults.style.display="block";
@@ -530,7 +534,6 @@ function renderRecipes(list: Recipe[]){
         </div>
       </div>`;
     
-    // Check cache first for immediate display
     const cachedSrc = imageCache[r.titulo];
     const imgContainer = card.querySelector('.img-container') as HTMLDivElement;
     const img = card.querySelector('img') as HTMLImageElement;
@@ -538,7 +541,7 @@ function renderRecipes(list: Recipe[]){
         img.src = cachedSrc;
         imgContainer.classList.remove('loading');
     } else {
-        img.dataset.title = r.titulo; // Store title to fetch image when visible
+        img.dataset.title = r.titulo;
         if (imageObserver) {
             imageObserver.observe(card);
         }
@@ -572,9 +575,12 @@ function openRecipe(title: string){
   const imgContainer = modalPanel.querySelector('.modal-img-container');
   imgContainer?.classList.add('loading');
   
+  recipeImg.src = ''; // Clear previous image
   generateAndCacheImage(r.titulo).then(src => {
-    recipeImg.src = src;
-    imgContainer?.classList.remove('loading');
+    if (currentRecipe?.titulo === r.titulo) { // Ensure the modal hasn't changed
+      recipeImg.src = src;
+      imgContainer?.classList.remove('loading');
+    }
   });
   
   recipeImg.alt = "Imagen de "+r.titulo;
