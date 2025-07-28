@@ -1,1631 +1,1114 @@
 <!DOCTYPE html>
-
 <html lang="es" dir="ltr">
-
 <head>
-
-  <meta charset="UTF-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>Recetario Delicioso – 150 recetas accesibles</title>
-
-
-
-  <!-- PWA básico en un solo archivo -->
-
-  <meta name="theme-color" content="#78350f" />
-
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <meta name="apple-mobile-web-app-title" content="Recetario" />
-
-  <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R" />
-
-  <link rel="manifest" href='data:application/manifest+json,{"name":"Recetario Delicioso","short_name":"Recetario","start_url":".","display":"standalone","background_color":"#f8f7f5","theme_color":"#78350f","icons":[{"src":"https://placehold.co/192x192/78350f/ffffff?text=R","sizes":"192x192","type":"image/png"},{"src":"https://placehold.co/512x512/78350f/ffffff?text=R","sizes":"512x512","type":"image/png"}]}' />
-
-
-
-  <!-- Tailwind -->
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>tailwind.config = { darkMode: 'class' };</script>
-
-
-
-  <!-- Fuentes -->
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
-
-
-
-  <style>
-
-    :root{ --base-font-size:16px; }
-
-    html{ font-size:var(--base-font-size); }
-
-    body{ font-family:'Inter',sans-serif; background:#f8f7f5; color:#1c1917; }
-
-    .dark body{ background:#1c1917; color:#e7e5e4; }
-
-    h1,h2,h3,h4{ font-family:'Lora',serif; }
-
-
-
-    /* Alto contraste */
-
-    .high-contrast body, .high-contrast body *{
-
-      background:#000 !important; color:#fff !important; border-color:#fff !important;
-
-    }
-
-    .high-contrast a{ color:#0ff !important; }
-
-
-
-    :focus-visible{ outline:3px solid #f59e0b; outline-offset:2px; }
-
-
-
-    .category-btn.active,.filter-btn.active{ background:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2);}
-
-    .dark .category-btn.active,.dark .filter-btn.active{ background:#f59e0b;color:#1c1917;}
-
-    .category-btn,.filter-btn{transition:.3s;padding:.6rem 1rem;border-radius:9999px;border:1px solid transparent;font-size:.875rem;}
-
-
-
-    #categoryFilters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.5rem;}
-
-    #categoryFilters::-webkit-scrollbar{display:none;}
-
-    #categoryFilters .category-btn{flex-shrink:0;white-space:nowrap;}
-
-
-
-    .recipe-card>div{border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.08);transition:.3s;}
-
-    .recipe-card>div:hover{transform:translateY(-4px);box-shadow:0 8px 15px rgba(0,0,0,.15);}
-
-
-
-    #recipeModal{opacity:0;transition:opacity .3s,visibility .3s;}
-
-    #recipeModal.modal-visible{visibility:visible;opacity:1;}
-
-    #modalContent{background:#fff;border-radius:1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:100%;max-width:44rem;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .3s;}
-
-    #recipeModal.modal-visible #modalContent{transform:scale(1);}
-
-    .dark #modalContent{background:#292524;}
-
-
-
-    #cooking-mode-view{background:#fff;}
-
-    .dark #cooking-mode-view{background:#0c0a09;}
-
-
-
-    #shoppingPanel{right:-100%;transition:right .35s;}
-
-    #shoppingPanel.open{right:0;}
-
-
-
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
-
-    .skip-link:focus{position:static;width:auto;height:auto;padding:.5rem 1rem;background:#f59e0b;color:#000;z-index:1000;}
-
-
-
-    @media print{
-
-      body *{visibility:hidden;}
-
-      #recipeModal,#recipeModal *{visibility:visible;}
-
-      #recipeModal{position:absolute;left:0;top:0;width:100%;height:auto;background:none;}
-
-      #modalContent{box-shadow:none;border:none;max-width:100%;overflow:visible;background:#fff!important;color:#000!important;}
-
-      #closeModalBtn,.modal-buttons-container,#cooking-mode-view,#portion-adjuster{display:none!important;}
-
-    }
-
-  </style>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recetario Delicioso – 150 recetas accesibles</title>
+
+    <meta name="theme-color" content="#78350f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Recetario" />
+    <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' };</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{ --base-font-size:16px; }
+        html{ font-size:var(--base-font-size); }
+        body{ font-family:'Inter',sans-serif; background:#f8f7f5; color:#1c1917; }
+        .dark body{ background:#1c1917; color:#e7e5e4; }
+        h1,h2,h3,h4{ font-family:'Lora',serif; }
+
+        /* Alto contraste */
+        .high-contrast body, .high-contrast body *{
+            background:#000 !important; color:#fff !important; border-color:#fff !important;
+        }
+        .high-contrast a{ color:#0ff !important; }
+
+        :focus-visible{ outline:3px solid #f59e0b; outline-offset:2px; }
+
+        .category-btn.active,.filter-btn.active{ background:#78350f;color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+        .dark .category-btn.active,.dark .filter-btn.active{ background:#f59e0b;color:#1c1917;}
+        .category-btn,.filter-btn{transition:.3s;padding:.6rem 1rem;border-radius:9999px;border:1px solid transparent;font-size:.875rem;}
+
+        #categoryFilters{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.5rem;}
+        #categoryFilters::-webkit-scrollbar{display:none;}
+        #categoryFilters .category-btn{flex-shrink:0;white-space:nowrap;}
+
+        .recipe-card>div{border-radius:1.25rem;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.08);transition:.3s;}
+        .recipe-card>div:hover{transform:translateY(-4px);box-shadow:0 8px 15px rgba(0,0,0,.15);}
+
+        #recipeModal{opacity:0;transition:opacity .3s,visibility .3s;}
+        #recipeModal.modal-visible{visibility:visible;opacity:1;}
+        #modalContent{background:#fff;border-radius:1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:100%;max-width:44rem;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .3s;}
+        #recipeModal.modal-visible #modalContent{transform:scale(1);}
+        .dark #modalContent{background:#292524;}
+
+        #cooking-mode-view{background:#fff;}
+        .dark #cooking-mode-view{background:#0c0a09;}
+
+        #shoppingPanel{right:-100%;transition:right .35s;}
+        #shoppingPanel.open{right:0;}
+
+        .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
+        .skip-link:focus{position:static;width:auto;height:auto;padding:.5rem 1rem;background:#f59e0b;color:#000;z-index:1000;}
+
+        /* Para el botón repetir del asistente de voz */
+        #repeat-step-btn.speaking {
+            animation: pulse-speak 1s infinite;
+        }
+
+        @keyframes pulse-speak {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        @media print{
+            body *{visibility:hidden;}
+            #recipeModal,#recipeModal *{visibility:visible;}
+            #recipeModal{position:absolute;left:0;top:0;width:100%;height:auto;background:none;}
+            #modalContent{box-shadow:none;border:none;max-width:100%;overflow:visible;background:#fff!important;color:#000!important;}
+            #closeModalBtn,.modal-buttons-container,#cooking-mode-view,#portion-adjuster{display:none!important;}
+        }
+    </style>
 </head>
-
 <body class="dark:bg-stone-900 dark:text-stone-200">
-
-  <a href="#main" class="skip-link">Saltar al contenido principal</a>
-
-
-
-  <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" role="application">
-
-    <header class="relative text-center mb-8" aria-labelledby="app-title">
-
-      <h1 id="app-title" class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
-
-      <p class="text-gray-600 dark:text-stone-400 mt-2" id="recipe-count">150 recetas para inspirar tu cocina.</p>
-
-      <div id="user-info" class="text-xs text-gray-400 mt-2" aria-live="polite"></div>
-
-
-
-      <!-- Controles de accesibilidad -->
-
-      <div class="flex flex-wrap gap-2 items-center justify-center mt-4" aria-label="Controles de accesibilidad">
-
-        <button id="theme-toggle" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-pressed="false">🌙/☀️ Tema</button>
-
-        <button id="contrast-toggle" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-pressed="false">Alto contraste</button>
-
-        <div class="flex items-center gap-1" aria-label="Tamaño de letra">
-
-          <button id="font-dec" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-label="Reducir tamaño de letra">A-</button>
-
-          <button id="font-inc" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-label="Aumentar tamaño de letra">A+</button>
-
-        </div>
-
-      </div>
-
-
-
-      <div class="absolute top-0 right-0">
-
-        <span class="sr-only" aria-live="polite">Atajos: / buscar, F favoritos, L lista, Esc cerrar.</span>
-
-      </div>
-
-    </header>
-
-
-
-    <!-- Barra búsqueda + filtros -->
-
-    <div class="sticky top-2 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm" role="region" aria-label="Búsqueda y filtros">
-
-      <div class="flex flex-col sm:flex-row gap-4 mb-4 px-4">
-
-        <div class="relative flex-grow">
-
-          <input type="text" id="searchInput" placeholder="Buscar por nombre o ingrediente..." class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-stone-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-stone-800" aria-label="Buscar recetas" />
-
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-
-        </div>
-
-        <div class="flex items-center justify-center shrink-0 gap-2 bg-amber-100 dark:bg-stone-800 p-1 rounded-full" role="group" aria-label="Filtrar por favoritas o todas">
-
-          <button id="filterAll" class="filter-btn px-4 py-2 rounded-full text-sm font-medium" aria-pressed="true">Todas</button>
-
-          <button id="filterFavorites" class="filter-btn px-4 py-2 rounded-full text-sm font-medium" aria-pressed="false">Favoritas</button>
-
-        </div>
-
-      </div>
-
-      <div id="categoryFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4" role="tablist" aria-label="Categorías">
-
-        <button data-category="all" class="category-btn active px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="true">Todos</button>
-
-        <button data-category="Aperitivo" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Aperitivos</button>
-
-        <button data-category="Primero" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Primeros</button>
-
-        <button data-category="Segundo" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Segundos</button>
-
-        <button data-category="Postre" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Postres</button>
-
-      </div>
-
-    </div>
-
-
-
-    <div id="no-results" class="hidden text-center py-12" role="alert" aria-live="assertive">
-
-      <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Prueba otra búsqueda!</p>
-
-    </div>
-
-
-
-    <main id="main" tabindex="-1" role="main" aria-label="Listado de recetas">
-
-      <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8" aria-live="polite"></div>
-
-    </main>
-
-  </div>
-
-
-
-  <!-- Modal detalle -->
-
-  <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="recipe-title" aria-describedby="recipe-content-normal">
-
-    <div id="modalContent"></div>
-
-  </div>
-
-
-
-  <!-- Cooking mode -->
-
-  <div id="cooking-mode-view" class="fixed inset-0 z-50 hidden flex-col" role="dialog" aria-modal="true" aria-labelledby="step-counter" aria-describedby="step-text">
-
-    <div id="cooking-step-content" class="flex-grow flex flex-col justify-center items-center p-8 text-center">
-
-      <p id="step-counter" class="text-lg text-amber-600 dark:text-amber-400 font-semibold mb-4"></p>
-
-      <p id="step-text" class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100"></p>
-
-    </div>
-
-    <div id="cooking-controls" class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
-
-      <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Anterior</button>
-
-      <button id="repeat-step-btn" class="p-4 rounded-lg bg-amber-500 text-white font-bold">Repetir</button>
-
-      <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Siguiente</button>
-
-    </div>
-
-    <button id="exit-cooking-btn" class="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full" aria-label="Salir del modo cocina">✖</button>
-
-  </div>
-
-
-
-  <!-- Panel lista compra -->
-
-  <aside id="shoppingPanel" class="fixed top-0 bottom-0 w-full sm:w-96 bg-white dark:bg-stone-800 shadow-xl z-40 p-6 overflow-y-auto" role="complementary" aria-label="Lista de la compra" aria-live="polite">
-
-    <div class="flex justify-between items-center mb-4">
-
-      <h2 class="text-2xl font-bold text-amber-900 dark:text-amber-400">Lista de la compra</h2>
-
-      <button id="closeShopping" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700" aria-label="Cerrar lista de la compra">✖</button>
-
-    </div>
-
-    <ul id="shoppingList" class="space-y-2"></ul>
-
-    <div class="mt-6 flex gap-2 flex-wrap">
-
-      <button id="clearShopping" class="bg-red-600 text-white px-4 py-2 rounded-full">Vaciar</button>
-
-      <button id="exportShopping" class="bg-blue-600 text-white px-4 py-2 rounded-full">Copiar texto</button>
-
-      <button id="whatsappShopping" class="bg-green-600 text-white px-4 py-2 rounded-full" aria-label="Enviar lista por WhatsApp">WhatsApp</button>
-
-      <button id="printShopping" class="bg-gray-600 text-white px-4 py-2 rounded-full">Imprimir</button>
-
-    </div>
-
-  </aside>
-
-
-
-  <button id="openShopping" class="fixed bottom-6 right-6 bg-amber-600 text-white px-5 py-3 rounded-full shadow-lg z-30" aria-haspopup="true" aria-expanded="false" aria-label="Abrir lista de la compra (tecla L)">🛒 Lista</button>
-
-
-
-  <footer class="text-center mt-12 py-6 border-t border-gray-200 dark:border-stone-700">
-
-    <p class="text-sm text-gray-500 dark:text-stone-400">&copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.</p>
-
-  </footer>
-
-
-
-  <div id="sr-live" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-
-
-  <script>
-
-  /* ---------- UTILIDADES ACCESIBILIDAD ---------- */
-
-  const srLive = (msg)=>{
-
-    const live=document.getElementById('sr-live');
-
-    live.textContent='';
-
-    setTimeout(()=>{live.textContent=msg;},50);
-
-  };
-
-
-
-  const focusTrap = {
-
-    trapEl:null, prevFocus:null,
-
-    handleKey(e){
-
-      if(e.key!=='Tab')return;
-
-      const f=this.trapEl.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),textarea,select,[tabindex]:not([tabindex="-1"])');
-
-      const first=f[0]; const last=f[f.length-1];
-
-      if(e.shiftKey){
-
-        if(document.activeElement===first){e.preventDefault();last.focus();}
-
-      }else{
-
-        if(document.activeElement===last){e.preventDefault();first.focus();}
-
-      }
-
-    },
-
-    enable(el){
-
-      this.trapEl=el; this.prevFocus=document.activeElement;
-
-      el.addEventListener('keydown',this.handleKey.bind(this));
-
-      const f=el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),textarea,select,[tabindex]:not([tabindex="-1"])');
-
-      if(f.length) f[0].focus();
-
-    },
-
-    disable(){
-
-      if(!this.trapEl)return;
-
-      this.trapEl.removeEventListener('keydown',this.handleKey.bind(this));
-
-      if(this.prevFocus) this.prevFocus.focus();
-
-      this.trapEl=null; this.prevFocus=null;
-
-    }
-
-  };
-
-
-
-  const IMG = t => `https://placehold.co/800x600/d1c4b5/4a2e0a?text=${encodeURIComponent(t)}`;
-
-
-
-  /* ---------- RECETAS (150) ---------- */
-
-  const recipes = [
-
-    /* ----------------- APERITIVOS (25 originales) ----------------- */
-
-    { categoria:"Aperitivo", titulo:"Brochetas de aceituna y pimiento", raciones:4, tiempo:"15 min", imagen:IMG("Brochetas Aceituna"), ingredientes:["Aceitunas verdes y negras","Pimiento rojo troceado","Hojas de albahaca","Aceite de oliva","Pimienta negra"], pasos:["Ensarta aceitunas, pimiento y albahaca en palillos.","Aliña con aceite y pimienta.","Sirve frío."] },
-
-    { categoria:"Aperitivo", titulo:"Garbanzos crujientes al horno", raciones:2, tiempo:"45 min", imagen:IMG("Garbanzos Crujientes"), ingredientes:["200 g garbanzos cocidos","1 cda. AOVE","1/2 cdita pimentón ahumado","1/4 cdita comino","Sal"], pasos:["Mezcla garbanzos con aceite y especias.","Hornea 35 min a 180 °C.","Enfría y sirve."] },
-
-    { categoria:"Aperitivo", titulo:"Hummus clásico con crudités", raciones:4, tiempo:"20 min", imagen:IMG("Hummus Crudites"), ingredientes:["400 g garbanzos cocidos","2 cdas. tahini","1 diente de ajo","Zumo de 1 limón","Aceite de oliva","Palitos de zanahoria y apio"], pasos:["Tritura garbanzos con tahini, ajo, limón y aceite.","Sirve con crudités."] },
-
-    { categoria:"Aperitivo", titulo:"Guacamole rápido", raciones:3, tiempo:"10 min", imagen:IMG("Guacamole"), ingredientes:["2 aguacates maduros","1/2 cebolla morada","1 tomate pequeño","Zumo de 1 lima","Sal","Nachos"], pasos:["Tritura el aguacate con la cebolla, tomate y lima.","Sirve con nachos."] },
-
-    { categoria:"Aperitivo", titulo:"Rollitos de jamón y espárragos", raciones:2, tiempo:"15 min", imagen:IMG("Rollitos Jamon"), ingredientes:["5 lonchas de jamón serrano","5 espárragos verdes cocidos","Aceite de oliva"], pasos:["Enrolla cada espárrago con jamón.","Rocía aceite y sirve."] },
-
-    { categoria:"Aperitivo", titulo:"Chips de kale al horno", raciones:2, tiempo:"25 min", imagen:IMG("Chips Kale"), ingredientes:["Hojas de kale","1 cda. aceite de oliva","Sal marina"], pasos:["Lava y seca las hojas.","Rocía con aceite y sal.","Hornea 15 min a 150 °C."] },
-
-    { categoria:"Aperitivo", titulo:"Dip de yogur y pepino", raciones:4, tiempo:"10 min", imagen:IMG("Dip Yogur"), ingredientes:["1 yogur natural","1/2 pepino rallado","1 diente de ajo","Hierbabuena","Sal y pimienta"], pasos:["Mezcla todo y sirve frío."] },
-
-    { categoria:"Aperitivo", titulo:"Tomates cherry rellenos de queso", raciones:3, tiempo:"15 min", imagen:IMG("Tomates Rellenos"), ingredientes:["Tomates cherry","Queso crema light","Cebollino picado"], pasos:["Corta tapa a los tomates.","Rellena con queso y cebollino."] },
-
-    { categoria:"Aperitivo", titulo:"Tostadas integrales con aguacate", raciones:2, tiempo:"10 min", imagen:IMG("Tostadas Aguacate"), ingredientes:["2 rebanadas pan integral","1 aguacate","Zumo de limón","Pimienta y sal"], pasos:["Tritura aguacate con limón y sal.","Unta y añade pimienta."] },
-
-    { categoria:"Aperitivo", titulo:"Mini tortillas de espinaca", raciones:2, tiempo:"20 min", imagen:IMG("Mini Tortillas"), ingredientes:["2 huevos","Espinacas frescas","1 cda. queso rallado light","Sal"], pasos:["Bate huevos con espinaca y queso.","Cuaja en sartén pequeña."] },
-
-    { categoria:"Aperitivo", titulo:"Palitos de zanahoria al horno", raciones:3, tiempo:"35 min", imagen:IMG("Zanahoria Horno"), ingredientes:["2 zanahorias grandes","1 cda. aceite de oliva","Pimienta","Pimentón dulce"], pasos:["Corta zanahorias en tiras.","Condimenta y hornea 25 min a 180 °C."] },
-
-    { categoria:"Aperitivo", titulo:"Edamame con sal y limón", raciones:2, tiempo:"10 min", imagen:IMG("Edamame"), ingredientes:["200 g edamame congelado","Sal marina","Zumo de limón"], pasos:["Hierve 5 min.","Escurre, limón y sal."] },
-
-    { categoria:"Aperitivo", titulo:"Tostas de hummus y tomate seco", raciones:2, tiempo:"10 min", imagen:IMG("Tostas Hummus"), ingredientes:["2 tostadas integrales","2 cdas. hummus","Tomate seco"], pasos:["Unta hummus y decora con tomate seco."] },
-
-    { categoria:"Aperitivo", titulo:"Aceitunas marinadas caseras", raciones:4, tiempo:"15 min", imagen:IMG("Aceitunas Marinadas"), ingredientes:["Aceitunas verdes","Aceite de oliva","Ajo picado","Orégano"], pasos:["Mezcla todo y deja reposar 1 h."] },
-
-    { categoria:"Aperitivo", titulo:"Gazpacho ligero de remolacha", raciones:4, tiempo:"20 min", imagen:IMG("Gazpacho Remolacha"), ingredientes:["3 tomates","1 remolacha cocida","1/2 pepino","Ajo, sal, aceite, vinagre"], pasos:["Tritura todo fino.","Sirve frío."] },
-
-    { categoria:"Aperitivo", titulo:"Canapés de salmón y queso crema", raciones:4, tiempo:"15 min", imagen:IMG("Canapes Salmon"), ingredientes:["Pan tostado","Salmón ahumado","Queso crema light","Eneldo"], pasos:["Unta queso, pon salmón y eneldo."] },
-
-    { categoria:"Aperitivo", titulo:"Crema fría de aguacate", raciones:3, tiempo:"15 min", imagen:IMG("Crema Aguacate"), ingredientes:["2 aguacates","Zumo de 1 lima","Caldo de verduras frío","Cilantro","Sal"], pasos:["Tritura aguacate con lima y caldo.","Añade cilantro y sal."] },
-
-    { categoria:"Aperitivo", titulo:"Bastones de pepino con hummus", raciones:2, tiempo:"10 min", imagen:IMG("Pepino Hummus"), ingredientes:["1 pepino","Hummus"], pasos:["Corta pepino y sirve con hummus."] },
-
-    { categoria:"Aperitivo", titulo:"Chips de batata al horno", raciones:3, tiempo:"35 min", imagen:IMG("Chips Batata"), ingredientes:["1 batata","1 cda. aceite","Pimentón dulce","Sal"], pasos:["Lamina batata, condimenta y hornea."] },
-
-    { categoria:"Aperitivo", titulo:"Brochetas Caprese mini", raciones:4, tiempo:"15 min", imagen:IMG("Caprese"), ingredientes:["Tomates cherry","Mozzarella mini","Albahaca","Aceite de oliva","Vinagre balsámico"], pasos:["Ensarta tomate, queso y albahaca.","Aliña con aceite y vinagre."] },
-
-    { categoria:"Aperitivo", titulo:"Paté de berenjena (Baba Ghanoush)", raciones:4, tiempo:"45 min", imagen:IMG("Baba Ghanoush"), ingredientes:["1 berenjena","2 cdas. tahini","Zumo 1/2 limón","1 ajo","Aceite de oliva","Comino","Sal","Perejil"], pasos:["Asa berenjena y saca pulpa.","Tritura con resto y sirve."] },
-
-    { categoria:"Aperitivo", titulo:"Rollitos de calabacín y queso", raciones:3, tiempo:"20 min", imagen:IMG("Rollitos Calabacin"), ingredientes:["1 calabacín","100 g queso fresco batido","Menta","Sal y pimienta"], pasos:["Láminas de calabacín a la plancha.","Rellena y enrolla."] },
-
-    { categoria:"Aperitivo", titulo:"Pincho de tortilla de patatas", raciones:2, tiempo:"30 min", imagen:IMG("Pincho Tortilla"), ingredientes:["2 huevos","1 patata","1/4 cebolla","Aceite de oliva","Sal"], pasos:["Sofríe patata/cebolla.","Bate huevos y cuaja.","Corta en pinchos."] },
-
-    { categoria:"Aperitivo", titulo:"Vasitos de gazpacho con langostinos", raciones:4, tiempo:"25 min", imagen:IMG("Vasitos Gazpacho"), ingredientes:["2 tomates","1/4 pepino","1/4 pimiento verde","Ajo","Aceite","Vinagre","Sal","8 langostinos"], pasos:["Haz gazpacho, sirve en vasitos.","Corona con langostino."] },
-
-    { categoria:"Aperitivo", titulo:"Brochetas de pollo satay mini", raciones:3, tiempo:"20 min", imagen:IMG("Pollo Satay"), ingredientes:["150 g pollo","1 cda. salsa de cacahuete","1/2 cdita curry","Palillos"], pasos:["Marina pollo, ensarta y plancha."] },
-
-
-
-    /* ----------------- PRIMEROS (25 originales) ----------------- */
-
-    { categoria:"Primero", titulo:"Ensalada de quinoa con verduras", raciones:2, tiempo:"30 min", imagen:IMG("Ensalada Quinoa"), ingredientes:["1 taza quinoa cocida","Pimiento rojo y verde","Tomates cherry","Cebolla morada","Aceite de oliva","Zumo de limón"], pasos:["Mezcla quinoa con verduras.","Aliña y sirve."] },
-
-    { categoria:"Primero", titulo:"Sopa de lentejas rojas", raciones:4, tiempo:"35 min", imagen:IMG("Sopa Lentejas Rojas"), ingredientes:["1 taza lentejas rojas","1 zanahoria","1 cebolla","1 ajo","1 cdita comino","Sal y pimienta"], pasos:["Sofríe verduras.","Agrega lentejas y agua, cocina 20 min.","Tritura si quieres."] },
-
-    { categoria:"Primero", titulo:"Crema de calabaza", raciones:4, tiempo:"40 min", imagen:IMG("Crema Calabaza"), ingredientes:["500 g calabaza","1 puerro","1 patata","Aceite de oliva","Sal","Nuez moscada"], pasos:["Cuece calabaza, patata y puerro.","Tritura con aceite y nuez."] },
-
-    { categoria:"Primero", titulo:"Ensalada de garbanzos mediterránea", raciones:3, tiempo:"20 min", imagen:IMG("Ensalada Garbanzos"), ingredientes:["400 g garbanzos","Pepino","Tomate","Cebolla morada","Aceitunas negras","Limón y aceite"], pasos:["Mezcla todo picado.","Aliña con limón y aceite."] },
-
-    { categoria:"Primero", titulo:"Gazpacho andaluz tradicional", raciones:4, tiempo:"20 min", imagen:IMG("Gazpacho Andaluz"), ingredientes:["1 kg tomates","1 pepino","1/2 pimiento verde","1 ajo","Aceite de oliva","Vinagre de jerez","Sal"], pasos:["Tritura todo.","Sirve frío."] },
-
-    { categoria:"Primero", titulo:"Tabulé de bulgur con hierbas", raciones:2, tiempo:"25 min", imagen:IMG("Tabule Bulgur"), ingredientes:["1 taza bulgur cocido","1 tomate","1/2 pepino","1/2 cebolla","Limón","Menta","Perejil","Aceite","Sal"], pasos:["Pica verduras y hierbas.","Mezcla con bulgur y aliño."] },
-
-    { categoria:"Primero", titulo:"Crema de zanahoria y jengibre", raciones:4, tiempo:"35 min", imagen:IMG("Crema Zanahoria"), ingredientes:["4 zanahorias","1 patata","Jengibre fresco","Aceite de oliva","Sal y pimienta"], pasos:["Hierve todo y tritura.","Ajusta sal."] },
-
-    { categoria:"Primero", titulo:"Ensalada de lentejas con vinagreta", raciones:3, tiempo:"20 min", imagen:IMG("Ensalada Lentejas"), ingredientes:["1 taza lentejas","Pimiento rojo","Zanahoria","Cebolla","1 cda mostaza","Aceite","Vinagre"], pasos:["Pica verduras, mezcla con lentejas.","Vinagreta y listo."] },
-
-    { categoria:"Primero", titulo:"Sopa miso con tofu y algas", raciones:2, tiempo:"15 min", imagen:IMG("Sopa Miso"), ingredientes:["750 ml agua","1 cda pasta miso","Tofu en cubos","Alga wakame","Cebolleta"], pasos:["Disuelve miso sin hervir.","Añade tofu y alga."] },
-
-    { categoria:"Primero", titulo:"Crema de espinacas cremosa", raciones:4, tiempo:"30 min", imagen:IMG("Crema Espinacas"), ingredientes:["200 g espinacas","1 patata","1 puerro","500 ml caldo","Aceite","Sal"], pasos:["Sofríe puerro, añade espinacas y patata.","Cubre con caldo y tritura."] },
-
-    { categoria:"Primero", titulo:"Ensalada de arroz integral y atún", raciones:2, tiempo:"20 min", imagen:IMG("Arroz Atun"), ingredientes:["1 taza arroz integral","1 lata atún","Maíz dulce","Tomates cherry","Pepino","Aceite","Vinagre"], pasos:["Mezcla arroz con ingredientes.","Aliña."] },
-
-    { categoria:"Primero", titulo:"Sopa de pollo y fideos", raciones:4, tiempo:"25 min", imagen:IMG("Sopa Pollo"), ingredientes:["1 l caldo pollo","100 g fideos","Pollo cocido","Zanahoria","Apio"], pasos:["Hierve caldo con verduras.","Añade pollo y fideos."] },
-
-    { categoria:"Primero", titulo:"Puré de patata y calabacín", raciones:3, tiempo:"30 min", imagen:IMG("Pure Patata Calabacin"), ingredientes:["2 patatas","1 calabacín","50 ml leche","Sal","Nuez moscada"], pasos:["Hierve patatas y calabacín.","Tritura con leche."] },
-
-    { categoria:"Primero", titulo:"Ensalada César ligera", raciones:2, tiempo:"15 min", imagen:IMG("Cesar Ligera"), ingredientes:["Lechuga romana","Pollo a la plancha","Picatostes integrales","Parmesano light","Salsa César light"], pasos:["Mezcla todo con salsa."] },
-
-    { categoria:"Primero", titulo:"Crema de champiñones", raciones:4, tiempo:"30 min", imagen:IMG("Crema Champiñones"), ingredientes:["300 g champiñones","1 cebolla","500 ml caldo","1 cda maicena","Aceite","Perejil"], pasos:["Sofríe, añade caldo y maicena.","Tritura."] },
-
-    { categoria:"Primero", titulo:"Salmorejo cordobés tradicional", raciones:4, tiempo:"20 min", imagen:IMG("Salmorejo"), ingredientes:["1 kg tomates","200 g pan duro","1 ajo","100 ml AOVE","Sal","Huevo duro y jamón (opc.)"], pasos:["Remoja pan.","Tritura todo y emulsiona con aceite.","Sirve frío."] },
-
-    { categoria:"Primero", titulo:"Ensalada de pasta integral con verduras", raciones:3, tiempo:"25 min", imagen:IMG("Pasta Integral"), ingredientes:["200 g pasta integral","Pimiento rojo","Maíz","Aceitunas","Tomates cherry","Aceite","Orégano"], pasos:["Cuece pasta y mezcla con verduras.","Aliña."] },
-
-    { categoria:"Primero", titulo:"Sopa de verduras casera", raciones:4, tiempo:"30 min", imagen:IMG("Sopa Verduras"), ingredientes:["Zanahoria","Puerro","Patata","Judías verdes","Caldo verduras","Sal"], pasos:["Corta y cuece en caldo.","Ajusta sal."] },
-
-    { categoria:"Primero", titulo:"Crema de guisantes con menta", raciones:3, tiempo:"25 min", imagen:IMG("Crema Guisantes"), ingredientes:["300 g guisantes","1 cebolleta","Menta","Caldo","Aceite"], pasos:["Sofríe, añade caldo y tritura con menta."] },
-
-    { categoria:"Primero", titulo:"Ensalada de remolacha y queso de cabra", raciones:2, tiempo:"20 min", imagen:IMG("Remolacha Cabra"), ingredientes:["2 remolachas cocidas","100 g queso de cabra","Nueces","Rúcula","Vinagreta miel/mostaza"], pasos:["Combina todo y aliña."] },
-
-    { categoria:"Primero", titulo:"Crema de espárragos verdes", raciones:4, tiempo:"35 min", imagen:IMG("Crema Esparragos"), ingredientes:["500 g espárragos","1 patata","1 cebolla","Caldo","Nata ligera (opc.)","Sal y pimienta"], pasos:["Sofríe, cuece, tritura y cuela.","Añade nata si deseas."] },
-
-    { categoria:"Primero", titulo:"Sopa de ajo castellana", raciones:2, tiempo:"25 min", imagen:IMG("Sopa Ajo"), ingredientes:["4 ajos","4 rebanadas pan duro","1 cdita pimentón","Caldo","AOVE","Huevo (opc.)"], pasos:["Dora ajos y pan con pimentón.","Añade caldo y cuece.","Escalfa huevo si quieres."] },
-
-    { categoria:"Primero", titulo:"Ensalada de cuscús con pasas y piñones", raciones:3, tiempo:"20 min", imagen:IMG("Cuscus"), ingredientes:["1 taza cuscús","1.5 tazas agua","1/4 taza pasas","2 cdas. piñones","Pepino","Tomate","Aceite","Limón","Menta"], pasos:["Hidrata cuscús y mezcla con todo."] },
-
-    { categoria:"Primero", titulo:"Crema de calabacín y manzana", raciones:4, tiempo:"35 min", imagen:IMG("Calabacin Manzana"), ingredientes:["2 calabacines","1 manzana","1/2 cebolla","Caldo","Aceite","Sal"], pasos:["Sofríe, cuece y tritura."] },
-
-    { categoria:"Primero", titulo:"Salpicón de marisco ligero", raciones:2, tiempo:"25 min", imagen:IMG("Salpicon"), ingredientes:["100 g gambas","100 g pulpo","1/2 cebolla morada","1/2 pimiento rojo","Perejil","Aceite","Vinagre","Sal"], pasos:["Pica todo y aliña."] },
-
-
-
-    /* ----------------- SEGUNDOS (25 originales) ----------------- */
-
-    { categoria:"Segundo", titulo:"Pollo al horno con limón y hierbas", raciones:2, tiempo:"45 min", imagen:IMG("Pollo Limon"), ingredientes:["2 pechugas de pollo","1 limón","Tomillo","Romero","Aceite","Sal y pimienta"], pasos:["Marina y hornea 25 min a 200°C."] },
-
-    { categoria:"Segundo", titulo:"Salmón a la plancha con espárragos", raciones:2, tiempo:"20 min", imagen:IMG("Salmon Esparragos"), ingredientes:["2 lomos de salmón","1 manojo espárragos","Aceite","Sal en escamas","Pimienta"], pasos:["Plancha salmón y espárragos.","Sazona."] },
-
-    { categoria:"Segundo", titulo:"Wok de ternera y brócoli", raciones:2, tiempo:"25 min", imagen:IMG("Ternera Brocoli"), ingredientes:["200 g ternera","1 brócoli","Soja baja en sodio","Jengibre","Aceite de sésamo"], pasos:["Saltea ternera y brócoli.","Añade salsa."] },
-
-    { categoria:"Segundo", titulo:"Pavo a la plancha con puré de manzana", raciones:2, tiempo:"30 min", imagen:IMG("Pavo Pure"), ingredientes:["2 filetes pavo","2 manzanas","Canela","Sal"], pasos:["Plancha pavo.","Asa manzanas y tritura."] },
-
-    { categoria:"Segundo", titulo:"Merluza en salsa verde", raciones:2, tiempo:"25 min", imagen:IMG("Merluza Verde"), ingredientes:["2 lomos merluza","1 ajo","Perejil","1/2 vaso vino blanco","Caldo pescado","Guisantes"], pasos:["Sofríe ajo/perejil.","Cocina merluza con vino/caldo y guisantes."] },
-
-    { categoria:"Segundo", titulo:"Berenjenas rellenas de carne picada", raciones:2, tiempo:"50 min", imagen:IMG("Berenjena Rellena"), ingredientes:["2 berenjenas","200 g carne picada pavo","Cebolla","Tomate triturado","Queso rallado light"], pasos:["Asa berenjenas y vacía.","Rellena con carne y gratina."] },
-
-    { categoria:"Segundo", titulo:"Tofu salteado con verduras", raciones:2, tiempo:"20 min", imagen:IMG("Tofu Verduras"), ingredientes:["200 g tofu firme","Pimiento","Calabacín","Cebolla","Salsa de soja"], pasos:["Saltea todo en wok con soja."] },
-
-    { categoria:"Segundo", titulo:"Pechuga de pollo a la naranja", raciones:2, tiempo:"30 min", imagen:IMG("Pollo Naranja"), ingredientes:["2 pechugas pollo","Zumo de 2 naranjas","1 cdita maicena","Sal y pimienta"], pasos:["Dora pollo.","Añade zumo con maicena y espesa."] },
-
-    { categoria:"Segundo", titulo:"Atún a la plancha con ensalada", raciones:2, tiempo:"15 min", imagen:IMG("Atun Ensalada"), ingredientes:["2 filetes atún","Tomates cherry","Rúcula","Vinagre balsámico"], pasos:["Plancha atún.","Sirve con ensalada."] },
-
-    { categoria:"Segundo", titulo:"Solomillo de cerdo con champiñones", raciones:2, tiempo:"35 min", imagen:IMG("Solomillo Champ"), ingredientes:["1 solomillo cerdo","200 g champiñones","1/2 cebolla","Nata light","Sal y pimienta"], pasos:["Sella solomillo.","Haz salsa y sirve."] },
-
-    { categoria:"Segundo", titulo:"Lasaña de verduras ligera", raciones:4, tiempo:"60 min", imagen:IMG("Lasana Verduras"), ingredientes:["Láminas lasaña integral","Calabacín","Berenjena","Pimiento","Tomate triturado","Queso light"], pasos:["Saltea verduras.","Monta y hornea."] },
-
-    { categoria:"Segundo", titulo:"Bacalao con sofrito de tomate", raciones:2, tiempo:"30 min", imagen:IMG("Bacalao Tomate"), ingredientes:["2 lomos bacalao","1 cebolla","400 g tomate triturado","Aceite","Sal"], pasos:["Sofríe cebolla y tomate.","Añade bacalao y cocina."] },
-
-    { categoria:"Segundo", titulo:"Curry de garbanzos y espinacas", raciones:3, tiempo:"25 min", imagen:IMG("Curry Garbanzos"), ingredientes:["400 g garbanzos","200 g espinacas","1 cebolla","Leche de coco light","Curry en polvo"], pasos:["Sofríe cebolla y curry.","Añade garbanzos, coco y espinacas."] },
-
-    { categoria:"Segundo", titulo:"Sepia a la plancha con alioli suave", raciones:2, tiempo:"20 min", imagen:IMG("Sepia Alioli"), ingredientes:["1 sepia","2 ajos","Perejil","Aceite","Limón","Alioli ligero (opc.)"], pasos:["Plancha sepia.","Sirve con majado o alioli."] },
-
-    { categoria:"Segundo", titulo:"Hamburguesas de pollo caseras", raciones:2, tiempo:"25 min", imagen:IMG("Hamburguesa Pollo"), ingredientes:["300 g pollo picado","1/2 cebolla","Huevo","Pan rallado","Sal y especias"], pasos:["Mezcla, forma hamburguesas y plancha."] },
-
-    { categoria:"Segundo", titulo:"Dorada al papillote con verduras", raciones:1, tiempo:"30 min", imagen:IMG("Dorada Papillote"), ingredientes:["1 dorada","Verduras variadas","Aceite","Hierbas","Sal y pimienta"], pasos:["Haz papillote y hornea 20-25 min."] },
-
-    { categoria:"Segundo", titulo:"Muslos de pollo con arroz integral", raciones:2, tiempo:"45 min", imagen:IMG("Muslos Arroz"), ingredientes:["2 muslos pollo","1 taza arroz integral","Caldo pollo","Cebolla","Pimiento","Aceite"], pasos:["Dora pollo, sofríe verdura, añade arroz y caldo."] },
-
-    { categoria:"Segundo", titulo:"Calabacines rellenos de arroz y verduras", raciones:2, tiempo:"40 min", imagen:IMG("Calabacin Arroz"), ingredientes:["2 calabacines","1 taza arroz","Champiñones","Tomate triturado","Queso light"], pasos:["Vacía calabacín, rellena y hornea."] },
-
-    { categoria:"Segundo", titulo:"Pinchos de gambas y piña a la plancha", raciones:2, tiempo:"15 min", imagen:IMG("Gambas Pina"), ingredientes:["200 g gambas","Piña","Aceite","Pimentón","Limón"], pasos:["Ensarta y plancha.","Espolvorea pimentón."] },
-
-    { categoria:"Segundo", titulo:"Huevos revueltos con espárragos y setas", raciones:2, tiempo:"20 min", imagen:IMG("Huevos Revueltos"), ingredientes:["3 huevos","Espárragos trigueros","Setas","Aceite","Sal y pimienta"], pasos:["Saltea verdura y añade huevos."] },
-
-    { categoria:"Segundo", titulo:"Albóndigas de pollo en salsa de tomate", raciones:3, tiempo:"40 min", imagen:IMG("Albóndigas"), ingredientes:["300 g pollo picado","1/2 cebolla","Pan rallado","1 huevo","400 g tomate triturado","Orégano"], pasos:["Forma albóndigas, dora y cocina con tomate."] },
-
-    { categoria:"Segundo", titulo:"Pescado al horno con patatas panaderas", raciones:2, tiempo:"45 min", imagen:IMG("Pescado Patatas"), ingredientes:["2 filetes pescado blanco","2 patatas","1 cebolla","Aceite","Sal","Perejil"], pasos:["Hornea patata/cebolla 20 min, añade pescado 15 min."] },
-
-    { categoria:"Segundo", titulo:"Champiñones rellenos de verduras", raciones:2, tiempo:"30 min", imagen:IMG("Champ Rellenos"), ingredientes:["8 champiñones grandes","1/2 pimiento","1/2 cebolla","Pulpa champiñón","Queso light"], pasos:["Rellena y gratina."] },
-
-    { categoria:"Segundo", titulo:"Brochetas de verduras a la parrilla", raciones:2, tiempo:"20 min", imagen:IMG("Verduras Parrilla"), ingredientes:["Calabacín","Berenjena","Pimiento","Cebolla","Tomates cherry","Aceite","Hierbas"], pasos:["Ensarta, aliña y asa."] },
-
-    { categoria:"Segundo", titulo:"Pollo estilo oriental con arroz basmati", raciones:2, tiempo:"30 min", imagen:IMG("Pollo Oriental"), ingredientes:["200 g pollo","1/2 pimiento rojo","1/2 cebolla","Soja","Jengibre","Arroz basmati"], pasos:["Saltea con soja/jengibre, sirve con arroz."] },
-
-
-
-    /* ----------------- POSTRES (25 originales) ----------------- */
-
-    { categoria:"Postre", titulo:"Brochetas de fruta fresca", raciones:4, tiempo:"15 min", imagen:IMG("Brochetas Fruta"), ingredientes:["Fresas","Kiwi","Melón","Uvas"], pasos:["Corta y ensarta fruta."] },
-
-    { categoria:"Postre", titulo:"Yogur natural con miel y nueces", raciones:1, tiempo:"5 min", imagen:IMG("Yogur Miel"), ingredientes:["1 yogur natural","1 cdita miel","Nueces"], pasos:["Sirve yogur con miel y nueces."] },
-
-    { categoria:"Postre", titulo:"Manzana asada con canela", raciones:1, tiempo:"35 min", imagen:IMG("Manzana Asada"), ingredientes:["1 manzana","Canela"], pasos:["Hornea 30 min a 180°C con canela."] },
-
-    { categoria:"Postre", titulo:"Macedonia de frutas de temporada", raciones:3, tiempo:"15 min", imagen:IMG("Macedonia"), ingredientes:["Naranja","Plátano","Manzana","Kiwi","Zumo naranja"], pasos:["Pela, corta y mezcla con zumo."] },
-
-    { categoria:"Postre", titulo:"Plátano a la plancha con chocolate negro", raciones:1, tiempo:"10 min", imagen:IMG("Platano Choc"), ingredientes:["1 plátano","1 onza chocolate 85%"], pasos:["Plancha plátano, derrite chocolate encima."] },
-
-    { categoria:"Postre", titulo:"Mousse de aguacate y cacao", raciones:2, tiempo:"15 min", imagen:IMG("Mousse Aguacate"), ingredientes:["1 aguacate","2 cdas cacao puro","1 cda sirope agave"], pasos:["Tritura y refrigera."] },
-
-    { categoria:"Postre", titulo:"Carpaccio de piña con menta", raciones:2, tiempo:"10 min", imagen:IMG("Carpaccio Pina"), ingredientes:["Piña","Menta"], pasos:["Lamina muy fino y decora."] },
-
-    { categoria:"Postre", titulo:"Helado de plátano congelado", raciones:2, tiempo:"5 min", imagen:IMG("Helado Platano"), ingredientes:["2 plátanos congelados"], pasos:["Tritura hasta textura helado."] },
-
-    { categoria:"Postre", titulo:"Peras al vino tinto sin azúcar", raciones:2, tiempo:"40 min", imagen:IMG("Peras Vino"), ingredientes:["2 peras","1 vaso vino tinto","Canela","Edulcorante (opc.)"], pasos:["Cuece peras en vino con canela."] },
-
-    { categoria:"Postre", titulo:"Trufas de aguacate y cacao", raciones:3, tiempo:"20 min", imagen:IMG("Trufas Aguacate"), ingredientes:["1/2 aguacate","2 cdas cacao","1 cda miel","Coco rallado"], pasos:["Mezcla, haz bolitas y reboza en coco."] },
-
-    { categoria:"Postre", titulo:"Compota de manzana casera", raciones:4, tiempo:"30 min", imagen:IMG("Compota Manzana"), ingredientes:["3 manzanas","Canela","Agua"], pasos:["Cuece y tritura al gusto."] },
-
-    { categoria:"Postre", titulo:"Fresas con yogur y chía", raciones:1, tiempo:"10 min", imagen:IMG("Fresas Yogur"), ingredientes:["Fresas","1 yogur natural","1 cdita chía"], pasos:["Corta fresas, mezcla con yogur y chía."] },
-
-    { categoria:"Postre", titulo:"Naranja con canela", raciones:1, tiempo:"5 min", imagen:IMG("Naranja Canela"), ingredientes:["1 naranja","Canela"], pasos:["Corta y espolvorea canela."] },
-
-    { categoria:"Postre", titulo:"Bombones de dátiles y almendras", raciones:2, tiempo:"15 min", imagen:IMG("Datiles Almendra"), ingredientes:["4 dátiles","8 almendras","Cacao (opc.)"], pasos:["Rellena dátiles con almendras.","Reboza en cacao."] },
-
-    { categoria:"Postre", titulo:"Pudding de chía con frutos rojos", raciones:2, tiempo:"10 min (+2h)", imagen:IMG("Pudding Chia"), ingredientes:["2 cdas chía","1/2 taza leche vegetal","1/2 taza frutos rojos"], pasos:["Mezcla chía y leche, reposa 2h.","Sirve con frutos rojos."] },
-
-    { categoria:"Postre", titulo:"Melocotón a la plancha con helado", raciones:1, tiempo:"15 min", imagen:IMG("Melocoton Helado"), ingredientes:["1 melocotón","Canela","Helado vainilla light (opc.)"], pasos:["Plancha melocotón.","Sirve con canela y helado."] },
-
-    { categoria:"Postre", titulo:"Sorbete de fresa natural", raciones:2, tiempo:"10 min", imagen:IMG("Sorbete Fresa"), ingredientes:["250 g fresas congeladas","Zumo 1/2 limón","1 cda miel"], pasos:["Tritura todo y sirve."] },
-
-    { categoria:"Postre", titulo:"Bol de açaí con granola", raciones:1, tiempo:"10 min", imagen:IMG("Acai"), ingredientes:["100 g pulpa açaí","1/2 plátano","30 ml leche vegetal","Granola","Fruta"], pasos:["Tritura base y decora."] },
-
-    { categoria:"Postre", titulo:"Galletas de avena y plátano", raciones:3, tiempo:"25 min", imagen:IMG("Galletas Avena"), ingredientes:["1 plátano","1/2 taza avena","Chispas chocolate (opc.)"], pasos:["Mezcla, forma y hornea 15 min 180°C."] },
-
-    { categoria:"Postre", titulo:"Yogur con compota y frutos secos", raciones:1, tiempo:"5 min", imagen:IMG("Yogur Compota"), ingredientes:["1 yogur","2 cdas compota manzana","Frutos secos"], pasos:["Monta en vaso y sirve."] },
-
-    { categoria:"Postre", titulo:"Flan de huevo light", raciones:4, tiempo:"50 min", imagen:IMG("Flan Light"), ingredientes:["3 huevos","500 ml leche desnatada","Edulcorante","Vainilla"], pasos:["Bate todo, baño maría hasta cuajar."] },
-
-    { categoria:"Postre", titulo:"Gelatina de frutas variadas", raciones:4, tiempo:"20 min (+frío)", imagen:IMG("Gelatina"), ingredientes:["1 sobre gelatina sin azúcar","Frutas picadas","Agua"], pasos:["Disuelve gelatina, añade frutas y enfría."] },
-
-    { categoria:"Postre", titulo:"Bizcocho de limón sin azúcar", raciones:6, tiempo:"45 min", imagen:IMG("Bizcocho Limon"), ingredientes:["3 huevos","150 g harina integral","Zumo y ralladura de limón","Edulcorante","1 sobre levadura","50 ml aceite"], pasos:["Mezcla, hornea 30 min 180°C."] },
-
-    { categoria:"Postre", titulo:"Vasitos de yogur con granola y frutas", raciones:2, tiempo:"10 min", imagen:IMG("Vasitos Yogur"), ingredientes:["2 yogures","Granola","Fruta roja"], pasos:["Capas de yogur, granola y fruta."] },
-
-    { categoria:"Postre", titulo:"Tarta de queso individual (sin horno)", raciones:1, tiempo:"15 min (+frío)", imagen:IMG("Tarta Queso"), ingredientes:["100 g queso crema light","2 cdas yogur griego","1 cda miel","Galleta integral triturada","Frutos rojos"], pasos:["Base galleta, mezcla queso y refrigera.","Decora con frutos rojos."] },
-
-
-
-    /* ----------------- EXTRAS (50 nuevas) ----------------- */
-
-
-
-    /* Aperitivos extra (13) */
-
-    { categoria:"Aperitivo", titulo:"Pan con tomate y aceite", raciones:2, tiempo:"10 min", imagen:IMG("Pan Tomate"), ingredientes:["2 rebanadas pan","1 tomate maduro","Aceite de oliva","Sal"], pasos:["Ralla tomate, unta pan, aceite y sal."] },
-
-    { categoria:"Aperitivo", titulo:"Tartar de tomate y aguacate", raciones:2, tiempo:"15 min", imagen:IMG("Tartar Tomate"), ingredientes:["2 tomates","1 aguacate","Cebollino","Aceite","Limón","Sal"], pasos:["Pica fino tomate y aguacate.","Aliña y moldea."] },
-
-    { categoria:"Aperitivo", titulo:"Crema fría de pepino y yogur", raciones:3, tiempo:"10 min", imagen:IMG("Crema Pepino"), ingredientes:["1 pepino","1 yogur","Menta","Sal","Aceite"], pasos:["Tritura y sirve frío."] },
-
-    { categoria:"Aperitivo", titulo:"Montaditos de tortilla y pimientos", raciones:4, tiempo:"25 min", imagen:IMG("Montaditos"), ingredientes:["Tortilla de patata","Pimientos asados","Pan","Aceite"], pasos:["Monta sobre pan y sirve."] },
-
-    { categoria:"Aperitivo", titulo:"Boquerones en vinagre caseros", raciones:4, tiempo:"24 h", imagen:IMG("Boquerones"), ingredientes:["200 g boquerones","Vinagre","Ajo","Perejil","Aceite","Sal"], pasos:["Marina en vinagre 12h, escurre, aceite/ajo/perejil."] },
-
-    { categoria:"Aperitivo", titulo:"Aceitunas aliñadas con cítricos", raciones:4, tiempo:"20 min", imagen:IMG("Aceitunas Cítricos"), ingredientes:["Aceitunas verdes","Piel de naranja y limón","Ajo","Romero","Aceite"], pasos:["Mezcla y deja reposar."] },
-
-    { categoria:"Aperitivo", titulo:"Tostas de queso de cabra y cebolla caramelizada", raciones:2, tiempo:"25 min", imagen:IMG("Queso Cabra"), ingredientes:["Pan tostado","Queso cabra","Cebolla","Edulcorante o azúcar","Balsámico"], pasos:["Carameliza cebolla, monta sobre pan y hornea ligero."] },
-
-    { categoria:"Aperitivo", titulo:"Ensaladilla rusa ligera", raciones:4, tiempo:"35 min", imagen:IMG("Ensaladilla"), ingredientes:["Patata","Zanahoria","Guisantes","Atún","Mayonesa light"], pasos:["Cuece verduras, mezcla con atún y mayo."] },
-
-    { categoria:"Aperitivo", titulo:"Sardinas marinadas rápidas", raciones:2, tiempo:"30 min", imagen:IMG("Sardinas"), ingredientes:["Sardinas limpias","Limón","Ajo","Perejil","Aceite","Sal"], pasos:["Marina sardinas 30 min con limón y aliño."] },
-
-    { categoria:"Aperitivo", titulo:"Pimientos del piquillo rellenos de atún", raciones:3, tiempo:"20 min", imagen:IMG("Piquillo Atun"), ingredientes:["Pimientos piquillo","Atún","Queso crema light"], pasos:["Rellena pimientos y sirve frío."] },
-
-    { categoria:"Aperitivo", titulo:"Gazpachuelo malagueño ligero", raciones:3, tiempo:"30 min", imagen:IMG("Gazpachuelo"), ingredientes:["Caldo pescado","Mayonesa light","Patata","Clara de huevo"], pasos:["Cuece patata en caldo, liga con mayonesa, agrega clara."] },
-
-    { categoria:"Aperitivo", titulo:"Crema de tomate asado", raciones:4, tiempo:"35 min", imagen:IMG("Tomate Asado"), ingredientes:["Tomates","Ajo","Cebolla","Aceite","Sal"], pasos:["Asa y tritura."] },
-
-    { categoria:"Aperitivo", titulo:"Tapenade de aceitunas negras", raciones:4, tiempo:"10 min", imagen:IMG("Tapenade"), ingredientes:["Aceitunas negras","Alcaparras","Ajo","Aceite"], pasos:["Tritura todo hasta pasta."] },
-
-
-
-    /* Primeros extra (13) */
-
-    { categoria:"Primero", titulo:"Crema de coliflor y queso ligero", raciones:4, tiempo:"30 min", imagen:IMG("Crema Coliflor"), ingredientes:["1 coliflor","1 patata","Queso rallado light","Caldo","Sal"], pasos:["Cuece y tritura con queso."] },
-
-    { categoria:"Primero", titulo:"Sopa de tomate y albahaca", raciones:4, tiempo:"25 min", imagen:IMG("Sopa Tomate"), ingredientes:["Tomates maduros","Cebolla","Ajo","Albahaca","Caldo"], pasos:["Sofríe, añade caldo, tritura y albahaca."] },
-
-    { categoria:"Primero", titulo:"Ensalada de espelta con verduras", raciones:3, tiempo:"30 min", imagen:IMG("Espelta"), ingredientes:["Espelta cocida","Pepino","Tomate","Pimiento","Aceite","Limón"], pasos:["Mezcla todo y aliña."] },
-
-    { categoria:"Primero", titulo:"Vichyssoise tradicional", raciones:4, tiempo:"35 min", imagen:IMG("Vichyssoise"), ingredientes:["Puerro","Patata","Caldo","Leche evaporada light","Sal"], pasos:["Cuece y tritura, sirve fría."] },
-
-    { categoria:"Primero", titulo:"Crema de col rizada (kale) y patata", raciones:4, tiempo:"30 min", imagen:IMG("Crema Kale"), ingredientes:["Kale","Patata","Cebolla","Caldo"], pasos:["Cuece y tritura."] },
-
-    { categoria:"Primero", titulo:"Sopa minestrone ligera", raciones:4, tiempo:"40 min", imagen:IMG("Minestrone"), ingredientes:["Zanahoria","Apio","Judía verde","Tomate","Pasta pequeña","Caldo"], pasos:["Cuece verduras, añade pasta."] },
-
-    { categoria:"Primero", titulo:"Ensalada griega light", raciones:2, tiempo:"15 min", imagen:IMG("Griega"), ingredientes:["Pepino","Tomate","Aceitunas negras","Queso feta light","Orégano","Aceite"], pasos:["Corta, mezcla y aliña."] },
-
-    { categoria:"Primero", titulo:"Crema de puerros y manzana", raciones:4, tiempo:"30 min", imagen:IMG("Puerro Manzana"), ingredientes:["Puerros","Manzana","Patata","Caldo"], pasos:["Cuece y tritura suave."] },
-
-    { categoria:"Primero", titulo:"Sopa de marisco rápida", raciones:3, tiempo:"25 min", imagen:IMG("Sopa Marisco"), ingredientes:["Mezcla marisco congelado","Caldo pescado","Tomate triturado","Ajo"], pasos:["Cuece todo y sirve caliente."] },
-
-    { categoria:"Primero", titulo:"Ensalada de judías blancas y atún", raciones:3, tiempo:"15 min", imagen:IMG("Judias Blancas"), ingredientes:["Judías blancas cocidas","Atún","Cebolla","Pimiento","Aceite","Vinagre"], pasos:["Mezcla todo y aliña."] },
-
-    { categoria:"Primero", titulo:"Crema de nabo y pera", raciones:4, tiempo:"30 min", imagen:IMG("Nabo Pera"), ingredientes:["Nabos","Pera","Patata","Caldo"], pasos:["Cuece y tritura, cremosa."] },
-
-    { categoria:"Primero", titulo:"Sopa thai de coco y verduras", raciones:3, tiempo:"25 min", imagen:IMG("Thai Coco"), ingredientes:["Leche de coco light","Caldo verduras","Setas","Zanahoria","Curry rojo"], pasos:["Hierve todo sin pasar de cocción."] },
-
-    { categoria:"Primero", titulo:"Ensalada de espinacas con fresas", raciones:2, tiempo:"10 min", imagen:IMG("Espinacas Fresas"), ingredientes:["Espinacas frescas","Fresas","Nueces","Queso fresco","Vinagre balsámico"], pasos:["Mezcla y aliña."] },
-
-
-
-    /* Segundos extra (12) */
-
-    { categoria:"Segundo", titulo:"Paella mixta sencilla", raciones:4, tiempo:"45 min", imagen:IMG("Paella"), ingredientes:["Arroz","Pollo","Gambas","Caldo","Pimiento","Guisantes","Azafrán"], pasos:["Sofríe, añade arroz y caldo, cocina."] },
-
-    { categoria:"Segundo", titulo:"Fajitas de pollo y verduras", raciones:3, tiempo:"25 min", imagen:IMG("Fajitas"), ingredientes:["Pollo en tiras","Pimiento","Cebolla","Tortillas integrales","Especias mexicanas"], pasos:["Saltea y rellena tortillas."] },
-
-    { categoria:"Segundo", titulo:"Tacos de pescado con col", raciones:2, tiempo:"20 min", imagen:IMG("Tacos Pescado"), ingredientes:["Filetes pescado blanco","Tortillas maíz","Col rallada","Yogur","Lima"], pasos:["Plancha pescado y sirve en tacos con col y salsa."] },
-
-    { categoria:"Segundo", titulo:"Albóndigas de soja texturizada", raciones:3, tiempo:"35 min", imagen:IMG("Soja Texturizada"), ingredientes:["Soja texturizada","Pan rallado","Huevo","Tomate triturado","Ajo"], pasos:["Hidrata soja, forma albóndigas y cocina en salsa."] },
-
-    { categoria:"Segundo", titulo:"Pollo al curry verde", raciones:3, tiempo:"30 min", imagen:IMG("Curry Verde"), ingredientes:["Pollo","Pasta curry verde","Leche coco light","Verduras variadas"], pasos:["Saltea, añade pasta, leche y cuece."] },
-
-    { categoria:"Segundo", titulo:"Tortilla de calabacín al horno", raciones:3, tiempo:"35 min", imagen:IMG("Tortilla Calabacin"), ingredientes:["Huevos","Calabacín","Cebolla","Aceite","Sal"], pasos:["Mezcla y hornea en molde."] },
-
-    { categoria:"Segundo", titulo:"Lomo de cerdo a la mostaza", raciones:2, tiempo:"30 min", imagen:IMG("Lomo Mostaza"), ingredientes:["Lomo cerdo","Mostaza Dijon","Miel","Vino blanco"], pasos:["Sella lomo y cubre con salsa, hornea."] },
-
-    { categoria:"Segundo", titulo:"Guiso de alubias con verduras", raciones:4, tiempo:"40 min", imagen:IMG("Alubias Verduras"), ingredientes:["Alubias cocidas","Pimiento","Zanahoria","Tomate","Pimentón"], pasos:["Sofríe verdura, añade alubias y cuece."] },
-
-    { categoria:"Segundo", titulo:"Salmón al papillote con cítricos", raciones:2, tiempo:"25 min", imagen:IMG("Salmon Papillote"), ingredientes:["Salmón","Rodajas de naranja y limón","Eneldo","Aceite"], pasos:["Envuelve y hornea 15-18 min."] },
-
-    { categoria:"Segundo", titulo:"Quiche ligera de verduras", raciones:4, tiempo:"45 min", imagen:IMG("Quiche"), ingredientes:["Masa integral","Huevo","Leche evaporada light","Verduras","Queso light"], pasos:["Mezcla relleno, vierte y hornea."] },
-
-    { categoria:"Segundo", titulo:"Pollo tikka masala ligero", raciones:3, tiempo:"35 min", imagen:IMG("Tikka Masala"), ingredientes:["Pollo","Yogur","Especias tikka","Tomate triturado","Coco light"], pasos:["Marina pollo, cocina en salsa."] },
-
-    { categoria:"Segundo", titulo:"Filetes de ternera a la plancha con salsa chimichurri", raciones:2, tiempo:"20 min", imagen:IMG("Ternera Chimichurri"), ingredientes:["Ternera","Perejil","Ajo","Orégano","Aceite","Vinagre"], pasos:["Plancha carne y sirve con chimichurri."] },
-
-
-
-    /* Postres extra (12) */
-
-    { categoria:"Postre", titulo:"Crema catalana light", raciones:4, tiempo:"30 min (+caramelizar)", imagen:IMG("Crema Catalana"), ingredientes:["Leche desnatada","Yemas","Edulcorante","Maicena","Canela","Limón"], pasos:["Cuece crema, enfría y carameliza edulcorante."] },
-
-    { categoria:"Postre", titulo:"Arroz con leche desnatada", raciones:4, tiempo:"40 min", imagen:IMG("Arroz Leche"), ingredientes:["Arroz","Leche desnatada","Canela","Cáscara limón","Edulcorante"], pasos:["Cuece lentamente removiendo."] },
-
-    { categoria:"Postre", titulo:"Tarta de manzana rápida", raciones:6, tiempo:"35 min", imagen:IMG("Tarta Manzana"), ingredientes:["Lámina hojaldre light","Manzanas","Compota","Canela"], pasos:["Extiende hojaldre, rellena y hornea."] },
-
-    { categoria:"Postre", titulo:"Natillas ligeras de vainilla", raciones:4, tiempo:"25 min", imagen:IMG("Natillas"), ingredientes:["Leche desnatada","Yemas","Maicena","Vainilla","Edulcorante"], pasos:["Cuece hasta espesar."] },
-
-    { categoria:"Postre", titulo:"Brownie de cacao y calabacín", raciones:6, tiempo:"40 min", imagen:IMG("Brownie Calabacin"), ingredientes:["Calabacín rallado","Cacao puro","Harina integral","Huevo","Edulcorante"], pasos:["Mezcla, hornea 25-30 min."] },
-
-    { categoria:"Postre", titulo:"Granizado de limón casero", raciones:3, tiempo:"10 min (+congelar)", imagen:IMG("Granizado"), ingredientes:["Zumo de limón","Agua","Edulcorante"], pasos:["Congela y raspa para granizado."] },
-
-    { categoria:"Postre", titulo:"Mousse de mango y yogur", raciones:2, tiempo:"15 min", imagen:IMG("Mousse Mango"), ingredientes:["Mango maduro","Yogur griego light","Edulcorante"], pasos:["Tritura y enfría."] },
-
-    { categoria:"Postre", titulo:"Peras con chocolate negro", raciones:2, tiempo:"20 min", imagen:IMG("Peras Chocolate"), ingredientes:["Peras","Chocolate 85%","Canela"], pasos:["Cuece peras y baña en chocolate."] },
-
-    { categoria:"Postre", titulo:"Panna cotta ligera de coco", raciones:4, tiempo:"15 min (+frío)", imagen:IMG("Panna Cotta"), ingredientes:["Leche coco light","Gelatina","Edulcorante","Vainilla"], pasos:["Calienta, disuelve gelatina y enfría."] },
-
-    { categoria:"Postre", titulo:"Bolitas energéticas de dátil y avena", raciones:4, tiempo:"15 min", imagen:IMG("Bolitas Energéticas"), ingredientes:["Dátiles","Avena","Cacao","Coco rallado"], pasos:["Tritura, forma bolas y reboza."] },
-
-    { categoria:"Postre", titulo:"Bizcochitos de zanahoria y nuez", raciones:6, tiempo:"35 min", imagen:IMG("Bizcocho Zanahoria"), ingredientes:["Zanahoria rallada","Harina integral","Huevo","Nueces","Edulcorante","Canela"], pasos:["Mezcla y hornea 25-30 min."] },
-
-    { categoria:"Postre", titulo:"Tostadas francesas light", raciones:2, tiempo:"15 min", imagen:IMG("Tostadas Francesas"), ingredientes:["Pan integral","Huevo","Leche","Canela","Edulcorante"], pasos:["Empapa y dora en sartén."] }
-
-  ];
-
-
-
-  /* ---------- ESTADO Y DOM ---------- */
-
-  const dom = {
-
-    grid: document.getElementById('recipeGrid'),
-
-    search: document.getElementById('searchInput'),
-
-    filterAllBtn: document.getElementById('filterAll'),
-
-    filterFavBtn: document.getElementById('filterFavorites'),
-
-    categoryFilters: document.getElementById('categoryFilters'),
-
-    noResults: document.getElementById('no-results'),
-
-    modal: document.getElementById('recipeModal'),
-
-    modalContent: document.getElementById('modalContent'),
-
-    copyrightYear: document.getElementById('copyright-year'),
-
-    openShopping: document.getElementById('openShopping'),
-
-    shoppingPanel: document.getElementById('shoppingPanel'),
-
-    closeShopping: document.getElementById('closeShopping'),
-
-    shoppingList: document.getElementById('shoppingList'),
-
-    clearShopping: document.getElementById('clearShopping'),
-
-    exportShopping: document.getElementById('exportShopping'),
-
-    whatsappShopping: document.getElementById('whatsappShopping'),
-
-    printShopping: document.getElementById('printShopping'),
-
-    themeToggle: document.getElementById('theme-toggle'),
-
-    contrastToggle: document.getElementById('contrast-toggle'),
-
-    fontInc: document.getElementById('font-inc'),
-
-    fontDec: document.getElementById('font-dec')
-
-  };
-
-
-
-  let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
-
-  let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
-
-  let currentCategory = 'all';
-
-  let currentFilter = 'all';
-
-  let currentRecipeDetail = null;
-
-  let currentServings = 0;
-
-  let currentRecipeSteps = [];
-
-  let currentStep = 0;
-
-
-
-  /* ---------- RENDER ---------- */
-
-  function renderRecipes(list){
-
-    if(list.length===0){
-
-      dom.noResults.classList.remove('hidden');
-
-      dom.grid.innerHTML='';
-
-      return;
-
-    }
-
-    dom.noResults.classList.add('hidden');
-
-    dom.grid.innerHTML = list.map(recipe=>{
-
-      const searchTerms = `${recipe.titulo.toLowerCase()} ${(recipe.ingredientes||[]).join(' ').toLowerCase()}`;
-
-      const fav = userFavorites.includes(recipe.titulo);
-
-      return `
-
-      <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
-
-        <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform transition duration-300 cursor-pointer h-full flex flex-col" tabindex="0" aria-label="${recipe.titulo}">
-
-          <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
-
-          <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
-
-          <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition" aria-label="Marcar como favorita">
-
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${fav?'text-red-500 fill-current':'text-gray-600 dark:text-gray-400'} pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
-
-          </button>
-
-          <div class="p-4 flex-grow flex flex-col">
-
-            <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
-
-            <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
-
-          </div>
-
-        </div>
-
-      </div>`;
-
-    }).join('');
-
-  }
-
-
-
-  function applyFilters(){
-
-    const searchTerm = dom.search.value.toLowerCase();
-
-    const filtered = recipes.filter(r=>{
-
-      const id = r.titulo;
-
-      const categoryMatch = currentCategory==='all' || r.categoria===currentCategory;
-
-      const isFav = userFavorites.includes(id);
-
-      const favMatch = currentFilter!=='favorites' || isFav;
-
-      const searchData = `${r.titulo.toLowerCase()} ${r.ingredientes.join(' ').toLowerCase()}`;
-
-      const searchMatch = searchTerm==='' || searchData.includes(searchTerm);
-
-      return categoryMatch && favMatch && searchMatch;
-
-    });
-
-    renderRecipes(filtered);
-
-  }
-
-
-
-  /* ---------- FAVORITOS ---------- */
-
-  function toggleFavorite(title){
-
-    const isFav = userFavorites.includes(title);
-
-    if(isFav){
-
-      userFavorites = userFavorites.filter(t=>t!==title);
-
-      srLive(`Quitado de favoritas: ${title}`);
-
-    }else{
-
-      userFavorites = [...userFavorites, title];
-
-      srLive(`Añadido a favoritas: ${title}`);
-
-    }
-
-    localStorage.setItem('favorites',JSON.stringify(userFavorites));
-
-    applyFilters();
-
-  }
-
-
-
-  /* ---------- LISTA COMPRA ---------- */
-
-  function renderShopping(){
-
-    dom.shoppingList.innerHTML = shoppingItems.map((it,i)=>`
-
-      <li class="flex justify-between items-center">
-
-        <span>${it}</span>
-
-        <button aria-label="Eliminar" data-index="${i}" class="text-red-600 font-bold">✖</button>
-
-      </li>`).join('');
-
-    localStorage.setItem('shopping',JSON.stringify(shoppingItems));
-
-  }
-
-
-
-  function addIngredientsToShopping(list){
-
-    list.forEach(ing=>{
-
-      if(!shoppingItems.includes(ing)) shoppingItems.push(ing);
-
-    });
-
-    renderShopping();
-
-    srLive("Ingredientes añadidos a la lista de la compra.");
-
-  }
-
-
-
-  /* ---------- PARSE / SCALE INGREDIENTS ---------- */
-
-  function parseIngredient(ingredient){
-
-    const regex=/^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
-
-    const m=ingredient.match(regex);
-
-    if(m){
-
-      let value=0;
-
-      if(m[1]){
-
-        if(m[1].includes('/')){
-
-          const p=m[1].split('/');
-
-          value=parseFloat(p[0])/parseFloat(p[1]);
-
-        }else value=parseFloat(m[1].replace(',', '.'));
-
-      }else if(m[2]){
-
-        const w=m[2].toLowerCase();
-
-        if(w==='medio'||w==='media') value=0.5;
-
-        else value=1;
-
-      }else if(m[4]) value=1;
-
-      let unit=m[3]?m[3].toLowerCase():'';
-
-      let name=m[4]?m[4].trim():'';
-
-      if(m[2]&&!m[3]&&['un','una','medio','media','gran','pequeña','puñado','chorrito'].includes(m[2].toLowerCase())){
-
-        name=(m[2]+' '+name).trim();
-
-        unit='';
-
-      }
-
-      return {value,unit,name,original:ingredient};
-
-    }
-
-    return {value:0,unit:'',name:ingredient,original:ingredient};
-
-  }
-
-
-
-  function formatIngredient(parsed,factor){
-
-    if(parsed.value===0 && parsed.unit==='' && parsed.name!=='') return parsed.original;
-
-    let newValue = parsed.value*factor;
-
-    let unit = parsed.unit;
-
-    let name = parsed.name;
-
-    if(unit==='kg'&&newValue<1){newValue*=1000;unit='g';}
-
-    else if(unit==='litro'&&newValue<1){newValue*=1000;unit='ml';}
-
-    else if(unit==='g'&&newValue>=1000){newValue/=1000;unit='kg';}
-
-    else if(unit==='ml'&&newValue>=1000){newValue/=1000;unit='litro';}
-
-
-
-    if(Math.abs(newValue%1)<0.0001)newValue=Math.round(newValue);
-
-    else if(Math.abs((newValue*10)%1)<0.0001)newValue=Math.round(newValue*10)/10;
-
-    else newValue=Math.round(newValue*100)/100;
-
-
-
-    if(newValue===1 && (unit===''||['un','una','unidad','unidades','puñado','chorrito'].includes(unit))) return name.trim();
-
-    if(unit!=='') return `${newValue} ${unit} ${name}`.trim();
-
-    return `${newValue} ${name}`.trim();
-
-  }
-
-
-
-  function updateIngredientsDisplay(servings){
-
-    if(!currentRecipeDetail) return;
-
-    const ingredientList=document.getElementById('ingredient-list');
-
-    ingredientList.innerHTML='';
-
-    const factor = servings / currentRecipeDetail.raciones;
-
-    currentRecipeDetail.ingredientes.forEach(ing=>{
-
-      const p=parseIngredient(ing);
-
-      const f=formatIngredient(p,factor);
-
-      const li=document.createElement('li');
-
-      li.textContent=f;
-
-      ingredientList.appendChild(li);
-
-    });
-
-  }
-
-
-
-  /* ---------- MODAL RECETA ---------- */
-
-  function showRecipeDetail(recipe){
-
-    currentRecipeDetail=recipe;
-
-    currentServings=recipe.raciones;
-
-    dom.modalContent.innerHTML=`
-
-      <div class="p-6 md:p-8">
-
-        <div class="flex justify-between items-start">
-
-          <h2 id="recipe-title" class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
-
-          <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition" aria-label="Cerrar">✖</button>
-
-        </div>
-
-        <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
-
-        <div id="recipe-content-normal">
-
-          <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
-
-            <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
-
-            <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
-
-              <span>Raciones:</span>
-
-              <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Reducir raciones">-</button>
-
-              <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1" aria-label="Número de raciones">
-
-              <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Aumentar raciones">+</button>
-
-            </div>
-
-          </div>
-
-
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-            <div>
-
-              <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
-
-              <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
-
-            </div>
-
-            <div>
-
-              <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
-
-              <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
-
-            </div>
-
-          </div>
-
-           <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
-
-              <button id="addToShoppingBtn" class="bg-amber-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-700 transition shadow-lg">Añadir a lista</button>
-
-              <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Modo cocina guiada</button>
-
-              <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
-
-              <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
-
-           </div>
-
-        </div>
-
-      </div>`;
-
-    const stepsList=document.getElementById('steps-list');
-
-    stepsList.innerHTML=recipe.pasos.map(s=>`<li>${s}</li>`).join('');
-
-    updateIngredientsDisplay(currentServings);
-
-
-
-    dom.modal.classList.remove('hidden');
-
-    dom.modal.classList.add('modal-visible');
-
-    focusTrap.enable(dom.modal);
-
-
-
-    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-
-    document.getElementById('printRecipeBtn').addEventListener('click', ()=>window.print());
-
-    const shareBtn=document.getElementById('shareRecipeBtn');
-
-    if(navigator.share){
-
-      shareBtn.addEventListener('click',async ()=>{
-
-        try{
-
-          await navigator.share({title:recipe.titulo,text:`Mira esta receta: ${recipe.titulo}`,url:location.href});
-
-        }catch(e){}
-
-      });
-
-    }else shareBtn.style.display='none';
-
-
-
-    document.getElementById('addToShoppingBtn').addEventListener('click',()=>{
-
-      addIngredientsToShopping(Array.from(document.querySelectorAll('#ingredient-list li')).map(li=>li.textContent));
-
-      openShoppingPanel();
-
-    });
-
-
-
-    document.getElementById('start-cooking-btn').addEventListener('click',()=>startCookingMode(recipe));
-
-
-
-    const servingsInput=document.getElementById('servings-input');
-
-    document.getElementById('decrease-servings').addEventListener('click',()=>{
-
-      let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-
-    });
-
-    document.getElementById('increase-servings').addEventListener('click',()=>{
-
-      let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-
-    });
-
-    servingsInput.addEventListener('change',e=>{
-
-      let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
-
-    });
-
-  }
-
-
-
-  function closeModal(){
-
-    dom.modal.classList.remove('modal-visible');
-
-    setTimeout(()=>{
-
-      dom.modal.classList.add('hidden');
-
-      dom.modalContent.innerHTML='';
-
-    },300);
-
-    focusTrap.disable();
-
-    currentRecipeDetail=null; currentServings=0;
-
-  }
-
-
-
-  /* ---------- COOKING MODE ---------- */
-
-  const cookingView=document.getElementById('cooking-mode-view');
-
-  const stepCounter=document.getElementById('step-counter');
-
-  const stepText=document.getElementById('step-text');
-
-  const prevStepBtn=document.getElementById('prev-step-btn');
-
-  const repeatStepBtn=document.getElementById('repeat-step-btn');
-
-  const nextStepBtn=document.getElementById('next-step-btn');
-
-  const exitCookingBtn=document.getElementById('exit-cooking-btn');
-
-
-
-  function speak(text){
-
-    if(!('speechSynthesis' in window))return;
-
-    speechSynthesis.cancel();
-
-    const u=new SpeechSynthesisUtterance(text);
-
-    u.lang='es-ES'; u.rate=0.9; u.pitch=1;
-
-    speechSynthesis.speak(u);
-
-  }
-
-  function updateCookingStep(){
-
-    stepCounter.textContent=`Paso ${currentStep+1} de ${currentRecipeSteps.length}`;
-
-    stepText.textContent=currentRecipeSteps[currentStep];
-
-    speak(currentRecipeSteps[currentStep]);
-
-  }
-
-  function startCookingMode(recipe){
-
-    currentRecipeSteps=recipe.pasos;
-
-    currentStep=0;
-
-    closeModal();
-
-    cookingView.classList.remove('hidden');
-
-    cookingView.classList.add('flex');
-
-    speak(`Comenzamos la receta de ${recipe.titulo}.`);
-
-    setTimeout(updateCookingStep,1200);
-
-  }
-
-  function exitCookingMode(){
-
-    speechSynthesis.cancel();
-
-    cookingView.classList.add('hidden');
-
-    cookingView.classList.remove('flex');
-
-  }
-
-  prevStepBtn.addEventListener('click',()=>{
-
-    if(currentStep>0){ currentStep--; updateCookingStep(); }
-
-    else speak("Estás en el primer paso.");
-
-  });
-
-  nextStepBtn.addEventListener('click',()=>{
-
-    if(currentStep<currentRecipeSteps.length-1){ currentStep++; updateCookingStep(); }
-
-    else{ speak("Has terminado. ¡Buen provecho!"); exitCookingMode(); }
-
-  });
-
-  repeatStepBtn.addEventListener('click',()=>speak(currentRecipeSteps[currentStep]));
-
-  exitCookingBtn.addEventListener('click',exitCookingMode);
-
-
-
-  /* ---------- SHOPPING PANEL ---------- */
-
-  function openShoppingPanel(){
-
-    dom.shoppingPanel.classList.add('open');
-
-    dom.openShopping.setAttribute('aria-expanded','true');
-
-    focusTrap.enable(dom.shoppingPanel);
-
-  }
-
-  function closeShoppingPanel(){
-
-    dom.shoppingPanel.classList.remove('open');
-
-    dom.openShopping.setAttribute('aria-expanded','false');
-
-    focusTrap.disable();
-
-  }
-
-  dom.openShopping.addEventListener('click',openShoppingPanel);
-
-  dom.closeShopping.addEventListener('click',closeShoppingPanel);
-
-  dom.clearShopping.addEventListener('click',()=>{
-
-    shoppingItems=[]; renderShopping(); srLive("Lista vaciada.");
-
-  });
-
-  dom.shoppingList.addEventListener('click',e=>{
-
-    if(e.target.tagName==='BUTTON'){
-
-      const i=e.target.dataset.index;
-
-      shoppingItems.splice(i,1);
-
-      renderShopping();
-
-    }
-
-  });
-
-  dom.exportShopping.addEventListener('click',()=>{
-
-    const text=shoppingItems.join("\\n");
-
-    navigator.clipboard.writeText(text).then(()=>srLive("Lista copiada al portapapeles."));
-
-  });
-
-  dom.whatsappShopping.addEventListener('click',()=>{
-
-    const text=encodeURIComponent("Mi lista de la compra:\\n"+shoppingItems.join("\\n"));
-
-    window.open(`https://wa.me/?text=${text}`,'_blank');
-
-  });
-
-  dom.printShopping.addEventListener('click',()=>window.print());
-
-
-
-  /* ---------- TEMA / CONTRASTE / FUENTE ---------- */
-
-  function setupTheme(){
-
-    const saved=localStorage.getItem('color-theme');
-
-    if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
-
-      document.documentElement.classList.add('dark');
-
-    }
-
-  }
-
-  setupTheme();
-
-  dom.themeToggle.addEventListener('click',()=>{
-
-    document.documentElement.classList.toggle('dark');
-
-    const isDark=document.documentElement.classList.contains('dark');
-
-    localStorage.setItem('color-theme',isDark?'dark':'light');
-
-    dom.themeToggle.setAttribute('aria-pressed',isDark);
-
-  });
-
-
-
-  dom.contrastToggle.addEventListener('click',()=>{
-
-    document.documentElement.classList.toggle('high-contrast');
-
-    const pressed=document.documentElement.classList.contains('high-contrast');
-
-    dom.contrastToggle.setAttribute('aria-pressed',pressed);
-
-  });
-
-
-
-  dom.fontInc.addEventListener('click',()=>{
-
-    const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
-
-    const n=Math.min(parseInt(r)+2,26);
-
-    document.documentElement.style.setProperty('--base-font-size',n+'px');
-
-  });
-
-  dom.fontDec.addEventListener('click',()=>{
-
-    const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
-
-    const n=Math.max(parseInt(r)-2,12);
-
-    document.documentElement.style.setProperty('--base-font-size',n+'px');
-
-  });
-
-
-
-  /* ---------- EVENTOS ---------- */
-
-  dom.grid.addEventListener('click',e=>{
-
-    const card=e.target.closest('.recipe-card');
-
-    if(!card) return;
-
-    if(e.target.closest('.favorite-btn')){
-
-      e.stopPropagation();
-
-      toggleFavorite(card.dataset.id);
-
-    }else{
-
-      const recipe=recipes.find(r=>r.titulo===card.dataset.id);
-
-      if(recipe) showRecipeDetail(recipe);
-
-    }
-
-  });
-
-  dom.grid.addEventListener('keydown',e=>{
-
-    if(e.key==='Enter'){
-
-      const card=e.target.closest('.recipe-card');
-
-      if(card){
-
-        const recipe=recipes.find(r=>r.titulo===card.dataset.id);
-
-        if(recipe) showRecipeDetail(recipe);
-
-      }
-
-    }
-
-  });
-
-
-
-  dom.modal.addEventListener('click',e=>{if(e.target===dom.modal) closeModal();});
-
-  document.addEventListener('keydown',e=>{
-
-    if(e.key==='Escape'){
-
-      if(!dom.modal.classList.contains('hidden')) closeModal();
-
-      if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
-
-      if(!cookingView.classList.contains('hidden')) exitCookingMode();
-
-    }
-
-    if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); }
-
-    if(e.key.toLowerCase()==='l'){ openShoppingPanel(); }
-
-    if(e.key.toLowerCase()==='f'){
-
-      currentFilter=currentFilter==='favorites'?'all':'favorites';
-
-      dom.filterFavBtn.setAttribute('aria-pressed',currentFilter==='favorites');
-
-      dom.filterAllBtn.setAttribute('aria-pressed',currentFilter!=='favorites');
-
-      dom.filterFavBtn.classList.toggle('active',currentFilter==='favorites');
-
-      dom.filterAllBtn.classList.toggle('active',currentFilter!=='favorites');
-
-      applyFilters();
-
-    }
-
-  });
-
-
-
-  dom.search.addEventListener('input',applyFilters);
-
-  dom.filterAllBtn.addEventListener('click',()=>{
-
-    currentFilter='all';
-
-    dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
-
-    dom.filterAllBtn.setAttribute('aria-pressed','true'); dom.filterFavBtn.setAttribute('aria-pressed','false');
-
-    applyFilters();
-
-  });
-
-  dom.filterFavBtn.addEventListener('click',()=>{
-
-    currentFilter='favorites';
-
-    dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
-
-    dom.filterFavBtn.setAttribute('aria-pressed','true'); dom.filterAllBtn.setAttribute('aria-pressed','false');
-
-    applyFilters();
-
-  });
-
-  dom.categoryFilters.addEventListener('click',e=>{
-
-    if(e.target.matches('.category-btn')){
-
-      currentCategory=e.target.dataset.category;
-
-      document.querySelectorAll('.category-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-selected','false');});
-
-      e.target.classList.add('active'); e.target.setAttribute('aria-selected','true');
-
-      applyFilters();
-
-    }
-
-  });
-
-
-
-  /* ---------- INIT ---------- */
-
-  dom.filterAllBtn.classList.add('active');
-
-  dom.filterAllBtn.setAttribute('aria-pressed','true');
-
-  dom.copyrightYear.textContent=new Date().getFullYear();
-
-  renderRecipes(recipes);
-
-  renderShopping();
-
-  </script>
-
+    <a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" role="application">
+        <header class="relative text-center mb-8" aria-labelledby="app-title">
+            <h1 id="app-title" class="text-4xl md:text-5xl font-bold text-amber-900 dark:text-amber-500">Recetario Delicioso</h1>
+            <p class="text-gray-600 dark:text-stone-400 mt-2" id="recipe-count">150 recetas para inspirar tu cocina.</p>
+            <div id="user-info" class="text-xs text-gray-400 mt-2" aria-live="polite"></div>
+
+            <div class="flex flex-wrap gap-2 items-center justify-center mt-4" aria-label="Controles de accesibilidad">
+                <button id="theme-toggle" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-pressed="false" aria-label="Alternar tema claro y oscuro">☀️/🌙 Tema</button>
+                <button id="contrast-toggle" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-pressed="false" aria-label="Alternar alto contraste">Alto contraste</button>
+                <div class="flex items-center gap-1" aria-label="Ajustar tamaño de letra">
+                    <button id="font-dec" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-label="Reducir tamaño de letra">A-</button>
+                    <button id="font-inc" class="px-3 py-2 rounded-full bg-stone-200 dark:bg-stone-700" aria-label="Aumentar tamaño de letra">A+</button>
+                </div>
+            </div>
+
+            <div class="absolute top-0 right-0">
+                <span class="sr-only" aria-live="polite">Atajos de teclado: / para buscar, L para lista de la compra, Esc para cerrar modales.</span>
+            </div>
+        </header>
+
+        <div class="sticky top-2 bg-white/90 dark:bg-stone-900/90 backdrop-blur-sm z-10 py-4 rounded-xl shadow-sm" role="region" aria-label="Búsqueda y filtros">
+            <div class="flex flex-col sm:flex-row gap-4 mb-4 px-4">
+                <div class="relative flex-grow">
+                    <input type="text" id="searchInput" placeholder="Buscar por nombre o ingrediente..." class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-stone-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-stone-800" aria-label="Campo de búsqueda de recetas" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                </div>
+                <div class="flex items-center justify-center shrink-0 gap-2 bg-amber-100 dark:bg-stone-800 p-1 rounded-full" role="group" aria-label="Filtrar por favoritas o todas">
+                    <button id="filterAll" class="filter-btn px-4 py-2 rounded-full text-sm font-medium" aria-pressed="true">Todas</button>
+                    <button id="filterFavorites" class="filter-btn px-4 py-2 rounded-full text-sm font-medium" aria-pressed="false">Favoritas</button>
+                </div>
+            </div>
+            <div id="categoryFilters" class="flex items-center justify-start sm:justify-center gap-2 bg-amber-50 dark:bg-stone-800 p-2 rounded-full mx-4" role="tablist" aria-label="Categorías">
+                <button data-category="all" class="category-btn active px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="true">Todos</button>
+                <button data-category="Aperitivo" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Aperitivos</button>
+                <button data-category="Primero" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Primeros</button>
+                <button data-category="Segundo" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Segundos</button>
+                <button data-category="Postre" class="category-btn px-3 py-1.5 rounded-full text-sm" role="tab" aria-selected="false">Postres</button>
+            </div>
+        </div>
+
+        <div id="no-results" class="hidden text-center py-12" role="alert" aria-live="assertive">
+            <p class="text-gray-600 dark:text-stone-400">No se encontraron recetas. ¡Prueba otra búsqueda!</p>
+        </div>
+
+        <main id="main" tabindex="-1" role="main" aria-label="Listado de recetas">
+            <div id="recipeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6 mt-8" aria-live="polite"></div>
+        </main>
+    </div>
+
+    <div id="recipeModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="recipe-title" aria-describedby="recipe-content-normal">
+        <div id="modalContent"></div>
+    </div>
+
+    <div id="cooking-mode-view" class="fixed inset-0 z-50 hidden flex-col" role="dialog" aria-modal="true" aria-labelledby="step-counter" aria-describedby="step-text">
+        <div id="cooking-step-content" class="flex-grow flex flex-col justify-center items-center p-8 text-center">
+            <p id="step-counter" class="text-lg text-amber-600 dark:text-amber-400 font-semibold mb-4"></p>
+            <p id="step-text" class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100"></p>
+        </div>
+        <div class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
+            <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Anterior</button>
+            <button id="repeat-step-btn" class="p-4 rounded-lg bg-amber-500 text-white font-bold">Repetir</button>
+            <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Siguiente</button>
+        </div>
+        <button id="exit-cooking-btn" class="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full" aria-label="Salir del modo cocina">✖</button>
+    </div>
+
+    <aside id="shoppingPanel" class="fixed top-0 bottom-0 w-full sm:w-96 bg-white dark:bg-stone-800 shadow-xl z-40 p-6 overflow-y-auto" role="complementary" aria-label="Lista de la compra" aria-live="polite">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-amber-900 dark:text-amber-400">Lista de la compra</h2>
+            <button id="closeShopping" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700" aria-label="Cerrar lista de la compra">✖</button>
+        </div>
+        <ul id="shoppingList" class="space-y-2"></ul>
+        <div class="mt-6 flex gap-2 flex-wrap">
+            <button id="clearShopping" class="bg-red-600 text-white px-4 py-2 rounded-full">Vaciar</button>
+            <button id="exportShopping" class="bg-blue-600 text-white px-4 py-2 rounded-full">Copiar texto</button>
+            <button id="whatsappShopping" class="bg-green-600 text-white px-4 py-2 rounded-full" aria-label="Enviar lista por WhatsApp">WhatsApp</button>
+            <button id="printShopping" class="bg-gray-600 text-white px-4 py-2 rounded-full">Imprimir</button>
+        </div>
+    </aside>
+
+    <button id="openShopping" class="fixed bottom-6 right-6 bg-amber-600 text-white px-5 py-3 rounded-full shadow-lg z-30" aria-haspopup="true" aria-expanded="false" aria-label="Abrir lista de la compra (tecla L)">🛒 Lista</button>
+
+    <footer class="text-center mt-12 py-6 border-t border-gray-200 dark:border-stone-700">
+        <p class="text-sm text-gray-500 dark:text-stone-400">&copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.</p>
+    </footer>
+
+    <div id="sr-live" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+    <script type="module">
+    /* ---------- UTILIDADES ACCESIBILIDAD ---------- */
+    const srLive = (msg)=>{
+        const live=document.getElementById('sr-live');
+        live.textContent='';
+        setTimeout(()=>{live.textContent=msg;},50);
+    };
+
+    const focusTrap = {
+        trapEl:null, prevFocus:null,
+        handleKey(e){
+            if(e.key!=='Tab')return;
+            const f=this.trapEl.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),textarea,select,[tabindex]:not([tabindex="-1"])');
+            const first=f[0]; const last=f[f.length-1];
+            if(e.shiftKey){
+                if(document.activeElement===first){e.preventDefault();last.focus();}
+            }else{
+                if(document.activeElement===last){e.preventDefault();first.focus();}
+            }
+        },
+        enable(el){
+            this.trapEl=el; this.prevFocus=document.activeElement;
+            el.addEventListener('keydown',this.handleKey.bind(this));
+            const f=el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),textarea,select,[tabindex]:not([tabindex="-1"])');
+            if(f.length) f[0].focus();
+        },
+        disable(){
+            if(!this.trapEl)return;
+            this.trapEl.removeEventListener('keydown',this.handleKey.bind(this));
+            if(this.prevFocus) this.prevFocus.focus();
+            this.trapEl=null; this.prevFocus=null;
+        }
+    };
+
+    const IMG = t => `https://placehold.co/800x600/d1c4b5/4a2e0a?text=${encodeURIComponent(t)}`;
+
+    /* ---------- RECETAS (150) ---------- */
+    const recipes = [
+        /* ----------------- APERITIVOS (25 originales) ----------------- */
+        { categoria:"Aperitivo", titulo:"Brochetas de aceituna y pimiento", raciones:4, tiempo:"15 min", imagen:IMG("Brochetas Aceituna"), ingredientes:["Aceitunas verdes y negras","Pimiento rojo troceado","Hojas de albahaca","Aceite de oliva","Pimienta negra"], pasos:["Ensarta aceitunas, pimiento y albahaca en palillos.","Aliña con aceite y pimienta.","Sirve frío."] },
+        { categoria:"Aperitivo", titulo:"Garbanzos crujientes al horno", raciones:2, tiempo:"45 min", imagen:IMG("Garbanzos Crujientes"), ingredientes:["200 g garbanzos cocidos","1 cda. AOVE","1/2 cdita pimentón ahumado","1/4 cdita comino","Sal"], pasos:["Mezcla garbanzos con aceite y especias.","Hornea 35 min a 180 °C.","Enfría y sirve."] },
+        { categoria:"Aperitivo", titulo:"Hummus clásico con crudités", raciones:4, tiempo:"20 min", imagen:IMG("Hummus Crudites"), ingredientes:["400 g garbanzos cocidos","2 cdas. tahini","1 diente de ajo","Zumo de 1 limón","Aceite de oliva","Palitos de zanahoria y apio"], pasos:["Tritura garbanzos con tahini, ajo, limón y aceite.","Sirve con crudités."] },
+        { categoria:"Aperitivo", titulo:"Guacamole rápido", raciones:3, tiempo:"10 min", imagen:IMG("Guacamole"), ingredientes:["2 aguacates maduros","1/2 cebolla morada","1 tomate pequeño","Zumo de 1 lima","Sal","Nachos"], pasos:["Tritura el aguacate con la cebolla, tomate y lima.","Sirve con nachos."] },
+        { categoria:"Aperitivo", titulo:"Rollitos de jamón y espárragos", raciones:2, tiempo:"15 min", imagen:IMG("Rollitos Jamon"), ingredientes:["5 lonchas de jamón serrano","5 espárragos verdes cocidos","Aceite de oliva"], pasos:["Enrolla cada espárrago con jamón.","Rocía aceite y sirve."] },
+        { categoria:"Aperitivo", titulo:"Chips de kale al horno", raciones:2, tiempo:"25 min", imagen:IMG("Chips Kale"), ingredientes:["Hojas de kale","1 cda. aceite de oliva","Sal marina"], pasos:["Lava y seca las hojas.","Rocía con aceite y sal.","Hornea 15 min a 150 °C."] },
+        { categoria:"Aperitivo", titulo:"Dip de yogur y pepino", raciones:4, tiempo:"10 min", imagen:IMG("Dip Yogur"), ingredientes:["1 yogur natural","1/2 pepino rallado","1 diente de ajo","Hierbabuena","Sal y pimienta"], pasos:["Mezcla todo y sirve frío."] },
+        { categoria:"Aperitivo", titulo:"Tomates cherry rellenos de queso", raciones:3, tiempo:"15 min", imagen:IMG("Tomates Rellenos"), ingredientes:["Tomates cherry","Queso crema light","Cebollino picado"], pasos:["Corta tapa a los tomates.","Rellena con queso y cebollino."] },
+        { categoria:"Aperitivo", titulo:"Tostadas integrales con aguacate", raciones:2, tiempo:"10 min", imagen:IMG("Tostadas Aguacate"), ingredientes:["2 rebanadas pan integral","1 aguacate","Zumo de limón","Pimienta y sal"], pasos:["Tritura aguacate con limón y sal.","Unta y añade pimienta."] },
+        { categoria:"Aperitivo", titulo:"Mini tortillas de espinaca", raciones:2, tiempo:"20 min", imagen:IMG("Mini Tortillas"), ingredientes:["2 huevos","Espinacas frescas","1 cda. queso rallado light","Sal"], pasos:["Bate huevos con espinaca y queso.","Cuaja en sartén pequeña."] },
+        { categoria:"Aperitivo", titulo:"Palitos de zanahoria al horno", raciones:3, tiempo:"35 min", imagen:IMG("Zanahoria Horno"), ingredientes:["2 zanahorias grandes","1 cda. aceite de oliva","Pimienta","Pimentón dulce"], pasos:["Corta zanahorias en tiras.","Condimenta y hornea 25 min a 180 °C."] },
+        { categoria:"Aperitivo", titulo:"Edamame con sal y limón", raciones:2, tiempo:"10 min", imagen:IMG("Edamame"), ingredientes:["200 g edamame congelado","Sal marina","Zumo de limón"], pasos:["Hierve 5 min.","Escurre, limón y sal."] },
+        { categoria:"Aperitivo", titulo:"Tostas de hummus y tomate seco", raciones:2, tiempo:"10 min", imagen:IMG("Tostas Hummus"), ingredientes:["2 tostadas integrales","2 cdas. hummus","Tomate seco"], pasos:["Unta hummus y decora con tomate seco."] },
+        { categoria:"Aperitivo", titulo:"Aceitunas marinadas caseras", raciones:4, tiempo:"15 min", imagen:IMG("Aceitunas Marinadas"), ingredientes:["Aceitunas verdes","Aceite de oliva","Ajo picado","Orégano"], pasos:["Mezcla todo y deja reposar 1 h."] },
+        { categoria:"Aperitivo", titulo:"Gazpacho ligero de remolacha", raciones:4, tiempo:"20 min", imagen:IMG("Gazpacho Remolacha"), ingredientes:["3 tomates","1 remolacha cocida","1/2 pepino","Ajo, sal, aceite, vinagre"], pasos:["Tritura todo fino.","Sirve frío."] },
+        { categoria:"Aperitivo", titulo:"Canapés de salmón y queso crema", raciones:4, tiempo:"15 min", imagen:IMG("Canapes Salmon"), ingredientes:["Pan tostado","Salmón ahumado","Queso crema light","Eneldo"], pasos:["Unta queso, pon salmón y eneldo."] },
+        { categoria:"Aperitivo", titulo:"Crema fría de aguacate", raciones:3, tiempo:"15 min", imagen:IMG("Crema Aguacate"), ingredientes:["2 aguacates","Zumo de 1 lima","Caldo de verduras frío","Cilantro","Sal"], pasos:["Tritura aguacate con lima y caldo.","Añade cilantro y sal."] },
+        { categoria:"Aperitivo", titulo:"Bastones de pepino con hummus", raciones:2, tiempo:"10 min", imagen:IMG("Pepino Hummus"), ingredientes:["1 pepino","Hummus"], pasos:["Corta pepino y sirve con hummus."] },
+        { categoria:"Aperitivo", titulo:"Chips de batata al horno", raciones:3, tiempo:"35 min", imagen:IMG("Chips Batata"), ingredientes:["1 batata","1 cda. aceite","Pimentón dulce","Sal"], pasos:["Lamina batata, condimenta y hornea."] },
+        { categoria:"Aperitivo", titulo:"Brochetas Caprese mini", raciones:4, tiempo:"15 min", imagen:IMG("Caprese"), ingredientes:["Tomates cherry","Mozzarella mini","Albahaca","Aceite de oliva","Vinagre balsámico"], pasos:["Ensarta tomate, queso y albahaca.","Aliña con aceite y vinagre."] },
+        { categoria:"Aperitivo", titulo:"Paté de berenjena (Baba Ghanoush)", raciones:4, tiempo:"45 min", imagen:IMG("Baba Ghanoush"), ingredientes:["1 berenjena","2 cdas. tahini","Zumo 1/2 limón","1 ajo","Aceite de oliva","Comino","Sal","Perejil"], pasos:["Asa berenjena y saca pulpa.","Tritura con resto y sirve."] },
+        { categoria:"Aperitivo", titulo:"Rollitos de calabacín y queso", raciones:3, tiempo:"20 min", imagen:IMG("Rollitos Calabacin"), ingredientes:["1 calabacín","100 g queso fresco batido","Menta","Sal y pimienta"], pasos:["Láminas de calabacín a la plancha.","Rellena y enrolla."] },
+        { categoria:"Aperitivo", titulo:"Pincho de tortilla de patatas", raciones:2, tiempo:"30 min", imagen:IMG("Pincho Tortilla"), ingredientes:["2 huevos","1 patata","1/4 cebolla","Aceite de oliva","Sal"], pasos:["Sofríe patata/cebolla.","Bate huevos y cuaja.","Corta en pinchos."] },
+        { categoria:"Aperitivo", titulo:"Vasitos de gazpacho con langostinos", raciones:4, tiempo:"25 min", imagen:IMG("Vasitos Gazpacho"), ingredientes:["2 tomates","1/4 pepino","1/4 pimiento verde","Ajo","Aceite","Vinagre","Sal","8 langostinos"], pasos:["Haz gazpacho, sirve en vasitos.","Corona con langostino."] },
+        { categoria:"Aperitivo", titulo:"Brochetas de pollo satay mini", raciones:3, tiempo:"20 min", imagen:IMG("Pollo Satay"), ingredientes:["150 g pollo","1 cda. salsa de cacahuete","1/2 cdita curry","Palillos"], pasos:["Marina pollo, ensarta y plancha."] },
+
+        /* ----------------- PRIMEROS (25 originales) ----------------- */
+        { categoria:"Primero", titulo:"Ensalada de quinoa con verduras", raciones:2, tiempo:"30 min", imagen:IMG("Ensalada Quinoa"), ingredientes:["1 taza quinoa cocida","Pimiento rojo y verde","Tomates cherry","Cebolla morada","Aceite de oliva","Zumo de limón"], pasos:["Mezcla quinoa con verduras.","Aliña y sirve."] },
+        { categoria:"Primero", titulo:"Sopa de lentejas rojas", raciones:4, tiempo:"35 min", imagen:IMG("Sopa Lentejas Rojas"), ingredientes:["1 taza lentejas rojas","1 zanahoria","1 cebolla","1 ajo","1 cdita comino","Sal y pimienta"], pasos:["Sofríe verduras.","Agrega lentejas y agua, cocina 20 min.","Tritura si quieres."] },
+        { categoria:"Primero", titulo:"Crema de calabaza", raciones:4, tiempo:"40 min", imagen:IMG("Crema Calabaza"), ingredientes:["500 g calabaza","1 puerro","1 patata","Aceite de oliva","Sal","Nuez moscada"], pasos:["Cuece calabaza, patata y puerro.","Tritura con aceite y nuez."] },
+        { categoria:"Primero", titulo:"Ensalada de garbanzos mediterránea", raciones:3, tiempo:"20 min", imagen:IMG("Ensalada Garbanzos"), ingredientes:["400 g garbanzos","Pepino","Tomate","Cebolla morada","Aceitunas negras","Limón y aceite"], pasos:["Mezcla todo picado.","Aliña con limón y aceite."] },
+        { categoria:"Primero", titulo:"Gazpacho andaluz tradicional", raciones:4, tiempo:"20 min", imagen:IMG("Gazpacho Andaluz"), ingredientes:["1 kg tomates","1 pepino","1/2 pimiento verde","1 ajo","Aceite de oliva","Vinagre de jerez","Sal"], pasos:["Tritura todo.","Sirve frío."] },
+        { categoria:"Primero", titulo:"Tabulé de bulgur con hierbas", raciones:2, tiempo:"25 min", imagen:IMG("Tabule Bulgur"), ingredientes:["1 taza bulgur cocido","1 tomate","1/2 pepino","1/2 cebolla","Limón","Menta","Perejil","Aceite","Sal"], pasos:["Pica verduras y hierbas.","Mezcla con bulgur y aliño."] },
+        { categoria:"Primero", titulo:"Crema de zanahoria y jengibre", raciones:4, tiempo:"35 min", imagen:IMG("Crema Zanahoria"), ingredientes:["4 zanahorias","1 patata","Jengibre fresco","Aceite de oliva","Sal y pimienta"], pasos:["Hierve todo y tritura.","Ajusta sal."] },
+        { categoria:"Primero", titulo:"Ensalada de lentejas con vinagreta", raciones:3, tiempo:"20 min", imagen:IMG("Ensalada Lentejas"), ingredientes:["1 taza lentejas","Pimiento rojo","Zanahoria","Cebolla","1 cda mostaza","Aceite","Vinagre"], pasos:["Pica verduras, mezcla con lentejas.","Vinagreta y listo."] },
+        { categoria:"Primero", titulo:"Sopa miso con tofu y algas", raciones:2, tiempo:"15 min", imagen:IMG("Sopa Miso"), ingredientes:["750 ml agua","1 cda pasta miso","Tofu en cubos","Alga wakame","Cebolleta"], pasos:["Disuelve miso sin hervir.","Añade tofu y alga."] },
+        { categoria:"Primero", titulo:"Crema de espinacas cremosa", raciones:4, tiempo:"30 min", imagen:IMG("Crema Espinacas"), ingredientes:["200 g espinacas","1 patata","1 puerro","500 ml caldo","Aceite","Sal"], pasos:["Sofríe puerro, añade espinacas y patata.","Cubre con caldo y tritura."] },
+        { categoria:"Primero", titulo:"Ensalada de arroz integral y atún", raciones:2, tiempo:"20 min", imagen:IMG("Arroz Atun"), ingredientes:["1 taza arroz integral","1 lata atún","Maíz dulce","Tomates cherry","Pepino","Aceite","Vinagre"], pasos:["Mezcla arroz con ingredientes.","Aliña."] },
+        { categoria:"Primero", titulo:"Sopa de pollo y fideos", raciones:4, tiempo:"25 min", imagen:IMG("Sopa Pollo"), ingredientes:["1 l caldo pollo","100 g fideos","Pollo cocido","Zanahoria","Apio"], pasos:["Hierve caldo con verduras.","Añade pollo y fideos."] },
+        { categoria:"Primero", titulo:"Puré de patata y calabacín", raciones:3, tiempo:"30 min", imagen:IMG("Pure Patata Calabacin"), ingredientes:["2 patatas","1 calabacín","50 ml leche","Sal","Nuez moscada"], pasos:["Hierve patatas y calabacín.","Tritura con leche."] },
+        { categoria:"Primero", titulo:"Ensalada César ligera", raciones:2, tiempo:"15 min", imagen:IMG("Cesar Ligera"), ingredientes:["Lechuga romana","Pollo a la plancha","Picatostes integrales","Parmesano light","Salsa César light"], pasos:["Mezcla todo con salsa."] },
+        { categoria:"Primero", titulo:"Crema de champiñones", raciones:4, tiempo:"30 min", imagen:IMG("Crema Champiñones"), ingredientes:["300 g champiñones","1 cebolla","500 ml caldo","1 cda maicena","Aceite","Perejil"], pasos:["Sofríe, añade caldo y maicena.","Tritura."] },
+        { categoria:"Primero", titulo:"Salmorejo cordobés tradicional", raciones:4, tiempo:"20 min", imagen:IMG("Salmorejo"), ingredientes:["1 kg tomates","200 g pan duro","1 ajo","100 ml AOVE","Sal","Huevo duro y jamón (opc.)"], pasos:["Remoja pan.","Tritura todo y emulsiona con aceite.","Sirve frío."] },
+        { categoria:"Primero", titulo:"Ensalada de pasta integral con verduras", raciones:3, tiempo:"25 min", imagen:IMG("Pasta Integral"), ingredientes:["200 g pasta integral","Pimiento rojo","Maíz","Aceitunas","Tomates cherry","Aceite","Orégano"], pasos:["Cuece pasta y mezcla con verduras.","Aliña."] },
+        { categoria:"Primero", titulo:"Sopa de verduras casera", raciones:4, tiempo:"30 min", imagen:IMG("Sopa Verduras"), ingredientes:["Zanahoria","Puerro","Patata","Judías verdes","Caldo verduras","Sal"], pasos:["Corta y cuece en caldo.","Ajusta sal."] },
+        { categoria:"Primero", titulo:"Crema de guisantes con menta", raciones:3, tiempo:"25 min", imagen:IMG("Crema Guisantes"), ingredientes:["300 g guisantes","1 cebolleta","Menta","Caldo","Aceite"], pasos:["Sofríe, añade caldo y tritura con menta."] },
+        { categoria:"Primero", titulo:"Ensalada de remolacha y queso de cabra", raciones:2, tiempo:"20 min", imagen:IMG("Remolacha Cabra"), ingredientes:["2 remolachas cocidas","100 g queso de cabra","Nueces","Rúcula","Vinagreta miel/mostaza"], pasos:["Combina todo y aliña."] },
+        { categoria:"Primero", titulo:"Crema de espárragos verdes", raciones:4, tiempo:"35 min", imagen:IMG("Crema Esparragos"), ingredientes:["500 g espárragos","1 patata","1 cebolla","Caldo","Nata ligera (opc.)","Sal y pimienta"], pasos:["Sofríe, cuece, tritura y cuela.","Añade nata si deseas."] },
+        { categoria:"Primero", titulo:"Sopa de ajo castellana", raciones:2, tiempo:"25 min", imagen:IMG("Sopa Ajo"), ingredientes:["4 ajos","4 rebanadas pan duro","1 cdita pimentón","Caldo","AOVE","Huevo (opc.)"], pasos:["Dora ajos y pan con pimentón.","Añade caldo y cuece.","Escalfa huevo si quieres."] },
+        { categoria:"Primero", titulo:"Ensalada de cuscús con pasas y piñones", raciones:3, tiempo:"20 min", imagen:IMG("Cuscus"), ingredientes:["1 taza cuscús","1.5 tazas agua","1/4 taza pasas","2 cdas. piñones","Pepino","Tomate","Aceite","Limón","Menta"], pasos:["Hidrata cuscús y mezcla con todo."] },
+        { categoria:"Primero", titulo:"Crema de calabacín y manzana", raciones:4, tiempo:"35 min", imagen:IMG("Calabacin Manzana"), ingredientes:["2 calabacines","1 manzana","1/2 cebolla","Caldo","Aceite","Sal"], pasos:["Sofríe, cuece y tritura."] },
+        { categoria:"Primero", titulo:"Salpicón de marisco ligero", raciones:2, tiempo:"25 min", imagen:IMG("Salpicon"), ingredientes:["100 g gambas","100 g pulpo","1/2 cebolla morada","1/2 pimiento rojo","Perejil","Aceite","Vinagre","Sal"], pasos:["Pica todo y aliña."] },
+
+        /* ----------------- SEGUNDOS (25 originales) ----------------- */
+        { categoria:"Segundo", titulo:"Pollo al horno con limón y hierbas", raciones:2, tiempo:"45 min", imagen:IMG("Pollo Limon"), ingredientes:["2 pechugas de pollo","1 limón","Tomillo","Romero","Aceite","Sal y pimienta"], pasos:["Marina y hornea 25 min a 200°C."] },
+        { categoria:"Segundo", titulo:"Salmón a la plancha con espárragos", raciones:2, tiempo:"20 min", imagen:IMG("Salmon Esparragos"), ingredientes:["2 lomos de salmón","1 manojo espárragos","Aceite","Sal en escamas","Pimienta"], pasos:["Plancha salmón y espárragos.","Sazona."] },
+        { categoria:"Segundo", titulo:"Wok de ternera y brócoli", raciones:2, tiempo:"25 min", imagen:IMG("Ternera Brocoli"), ingredientes:["200 g ternera","1 brócoli","Soja baja en sodio","Jengibre","Aceite de sésamo"], pasos:["Saltea ternera y brócoli.","Añade salsa."] },
+        { categoria:"Segundo", titulo:"Pavo a la plancha con puré de manzana", raciones:2, tiempo:"30 min", imagen:IMG("Pavo Pure"), ingredientes:["2 filetes pavo","2 manzanas","Canela","Sal"], pasos:["Plancha pavo.","Asa manzanas y tritura."] },
+        { categoria:"Segundo", titulo:"Merluza en salsa verde", raciones:2, tiempo:"25 min", imagen:IMG("Merluza Verde"), ingredientes:["2 lomos merluza","1 ajo","Perejil","1/2 vaso vino blanco","Caldo pescado","Guisantes"], pasos:["Sofríe ajo/perejil.","Cocina merluza con vino/caldo y guisantes."] },
+        { categoria:"Segundo", titulo:"Berenjenas rellenas de carne picada", raciones:2, tiempo:"50 min", imagen:IMG("Berenjena Rellena"), ingredientes:["2 berenjenas","200 g carne picada pavo","Cebolla","Tomate triturado","Queso rallado light"], pasos:["Asa berenjenas y vacía.","Rellena con carne y gratina."] },
+        { categoria:"Segundo", titulo:"Tofu salteado con verduras", raciones:2, tiempo:"20 min", imagen:IMG("Tofu Verduras"), ingredientes:["200 g tofu firme","Pimiento","Calabacín","Cebolla","Salsa de soja"], pasos:["Saltea todo en wok con soja."] },
+        { categoria:"Segundo", titulo:"Pechuga de pollo a la naranja", raciones:2, tiempo:"30 min", imagen:IMG("Pollo Naranja"), ingredientes:["2 pechugas pollo","Zumo de 2 naranjas","1 cdita maicena","Sal y pimienta"], pasos:["Dora pollo.","Añade zumo con maicena y espesa."] },
+        { categoria:"Segundo", titulo:"Atún a la plancha con ensalada", raciones:2, tiempo:"15 min", imagen:IMG("Atun Ensalada"), ingredientes:["2 filetes atún","Tomates cherry","Rúcula","Vinagre balsámico"], pasos:["Plancha atún.","Sirve con ensalada."] },
+        { categoria:"Segundo", titulo:"Solomillo de cerdo con champiñones", raciones:2, tiempo:"35 min", imagen:IMG("Solomillo Champ"), ingredientes:["1 solomillo cerdo","200 g champiñones","1/2 cebolla","Nata light","Sal y pimienta"], pasos:["Sella solomillo.","Haz salsa y sirve."] },
+        { categoria:"Segundo", titulo:"Lasaña de verduras ligera", raciones:4, tiempo:"60 min", imagen:IMG("Lasana Verduras"), ingredientes:["Láminas lasaña integral","Calabacín","Berenjena","Pimiento","Tomate triturado","Queso light"], pasos:["Saltea verduras.","Monta y hornea."] },
+        { categoria:"Segundo", titulo:"Bacalao con sofrito de tomate", raciones:2, tiempo:"30 min", imagen:IMG("Bacalao Tomate"), ingredientes:["2 lomos bacalao","1 cebolla","400 g tomate triturado","Aceite","Sal"], pasos:["Sofríe cebolla y tomate.","Añade bacalao y cocina."] },
+        { categoria:"Segundo", titulo:"Curry de garbanzos y espinacas", raciones:3, tiempo:"25 min", imagen:IMG("Curry Garbanzos"), ingredientes:["400 g garbanzos","200 g espinacas","1 cebolla","Leche de coco light","Curry en polvo"], pasos:["Sofríe cebolla y curry.","Añade garbanzos, coco y espinacas."] },
+        { categoria:"Segundo", titulo:"Sepia a la plancha con alioli suave", raciones:2, tiempo:"20 min", imagen:IMG("Sepia Alioli"), ingredientes:["1 sepia","2 ajos","Perejil","Aceite","Limón","Alioli ligero (opc.)"], pasos:["Plancha sepia.","Sirve con majado o alioli."] },
+        { categoria:"Segundo", titulo:"Hamburguesas de pollo caseras", raciones:2, tiempo:"25 min", imagen:IMG("Hamburguesa Pollo"), ingredientes:["300 g pollo picado","1/2 cebolla","Huevo","Pan rallado","Sal y especias"], pasos:["Mezcla, forma hamburguesas y plancha."] },
+        { categoria:"Segundo", titulo:"Dorada al papillote con verduras", raciones:1, tiempo:"30 min", imagen:IMG("Dorada Papillote"), ingredientes:["1 dorada","Verduras variadas","Aceite","Hierbas","Sal y pimienta"], pasos:["Haz papillote y hornea 20-25 min."] },
+        { categoria:"Segundo", titulo:"Muslos de pollo con arroz integral", raciones:2, tiempo:"45 min", imagen:IMG("Muslos Arroz"), ingredientes:["2 muslos pollo","1 taza arroz integral","Caldo pollo","Cebolla","Pimiento","Aceite"], pasos:["Dora pollo, sofríe verdura, añade arroz y caldo."] },
+        { categoria:"Segundo", titulo:"Calabacines rellenos de arroz y verduras", raciones:2, tiempo:"40 min", imagen:IMG("Calabacin Arroz"), ingredientes:["2 calabacines","1 taza arroz","Champiñones","Tomate triturado","Queso light"], pasos:["Vacía calabacín, rellena y hornea."] },
+        { categoria:"Segundo", titulo:"Pinchos de gambas y piña a la plancha", raciones:2, tiempo:"15 min", imagen:IMG("Gambas Pina"), ingredientes:["200 g gambas","Piña","Aceite","Pimentón","Limón"], pasos:["Ensarta y plancha.","Espolvorea pimentón."] },
+        { categoria:"Segundo", titulo:"Huevos revueltos con espárragos y setas", raciones:2, tiempo:"20 min", imagen:IMG("Huevos Revueltos"), ingredientes:["3 huevos","Espárragos trigueros","Setas","Aceite","Sal y pimienta"], pasos:["Saltea verdura y añade huevos."] },
+        { categoria:"Segundo", titulo:"Albóndigas de pollo en salsa de tomate", raciones:3, tiempo:"40 min", imagen:IMG("Albóndigas"), ingredientes:["300 g pollo picado","1/2 cebolla","Pan rallado","1 huevo","400 g tomate triturado","Orégano"], pasos:["Forma albóndigas, dora y cocina con tomate."] },
+        { categoria:"Segundo", titulo:"Pescado al horno con patatas panaderas", raciones:2, tiempo:"45 min", imagen:IMG("Pescado Patatas"), ingredientes:["2 filetes pescado blanco","2 patatas","1 cebolla","Aceite","Sal","Perejil"], pasos:["Hornea patata/cebolla 20 min, añade pescado 15 min."] },
+        { categoria:"Segundo", titulo:"Champiñones rellenos de verduras", raciones:2, tiempo:"30 min", imagen:IMG("Champ Rellenos"), ingredientes:["8 champiñones grandes","1/2 pimiento","1/2 cebolla","Pulpa champiñón","Queso light"], pasos:["Rellena y gratina."] },
+        { categoria:"Segundo", titulo:"Brochetas de verduras a la parrilla", raciones:2, tiempo:"20 min", imagen:IMG("Verduras Parrilla"), ingredientes:["Calabacín","Berenjena","Pimiento","Cebolla","Tomates cherry","Aceite","Hierbas"], pasos:["Ensarta y asa."] },
+        { categoria:"Segundo", titulo:"Pollo estilo oriental con arroz basmati", raciones:2, tiempo:"30 min", imagen:IMG("Pollo Oriental"), ingredientes:["200 g pollo","1/2 pimiento rojo","1/2 cebolla","Soja","Jengibre","Arroz basmati"], pasos:["Saltea con soja/jengibre, sirve con arroz."] },
+
+        /* ----------------- POSTRES (25 originales) ----------------- */
+        { categoria:"Postre", titulo:"Brochetas de fruta fresca", raciones:4, tiempo:"15 min", imagen:IMG("Brochetas Fruta"), ingredientes:["Fresas","Kiwi","Melón","Uvas"], pasos:["Corta y ensarta fruta."] },
+        { categoria:"Postre", titulo:"Yogur natural con miel y nueces", raciones:1, tiempo:"5 min", imagen:IMG("Yogur Miel"), ingredientes:["1 yogur natural","1 cdita miel","Nueces"], pasos:["Sirve yogur con miel y nueces."] },
+        { categoria:"Postre", titulo:"Manzana asada con canela", raciones:1, tiempo:"35 min", imagen:IMG("Manzana Asada"), ingredientes:["1 manzana","Canela"], pasos:["Hornea 30 min a 180°C con canela."] },
+        { categoria:"Postre", titulo:"Macedonia de frutas de temporada", raciones:3, tiempo:"15 min", imagen:IMG("Macedonia"), ingredientes:["Naranja","Plátano","Manzana","Kiwi","Zumo naranja"], pasos:["Pela, corta y mezcla con zumo."] },
+        { categoria:"Postre", titulo:"Plátano a la plancha con chocolate negro", raciones:1, tiempo:"10 min", imagen:IMG("Platano Choc"), ingredientes:["1 plátano","1 onza chocolate 85%"], pasos:["Plancha plátano, derrite chocolate encima."] },
+        { categoria:"Postre", titulo:"Mousse de aguacate y cacao", raciones:2, tiempo:"15 min", imagen:IMG("Mousse Aguacate"), ingredientes:["1 aguacate","2 cdas cacao puro","1 cda sirope agave"], pasos:["Tritura y refrigera."] },
+        { categoria:"Postre", titulo:"Carpaccio de piña con menta", raciones:2, tiempo:"10 min", imagen:IMG("Carpaccio Pina"), ingredientes:["Piña","Menta"], pasos:["Lamina muy fino y decora."] },
+        { categoria:"Postre", titulo:"Helado de plátano congelado", raciones:2, tiempo:"5 min", imagen:IMG("Helado Platano"), ingredientes:["2 plátanos congelados"], pasos:["Tritura hasta textura helado."] },
+        { categoria:"Postre", titulo:"Peras al vino tinto sin azúcar", raciones:2, tiempo:"40 min", imagen:IMG("Peras Vino"), ingredientes:["2 peras","1 vaso vino tinto","Canela","Edulcorante (opc.)"], pasos:["Cuece peras en vino con canela."] },
+        { categoria:"Postre", titulo:"Trufas de aguacate y cacao", raciones:3, tiempo:"20 min", imagen:IMG("Trufas Aguacate"), ingredientes:["1/2 aguacate","2 cdas cacao","1 cda miel","Coco rallado"], pasos:["Mezcla, haz bolitas y reboza en coco."] },
+        { categoria:"Postre", titulo:"Compota de manzana casera", raciones:4, tiempo:"30 min", imagen:IMG("Compota Manzana"), ingredientes:["3 manzanas","Canela","Agua"], pasos:["Cuece y tritura al gusto."] },
+        { categoria:"Postre", titulo:"Fresas con yogur y chía", raciones:1, tiempo:"10 min", imagen:IMG("Fresas Yogur"), ingredientes:["Fresas","1 yogur natural","1 cdita chía"], pasos:["Corta fresas, mezcla con yogur y chía."] },
+        { categoria:"Postre", titulo:"Naranja con canela", raciones:1, tiempo:"5 min", imagen:IMG("Naranja Canela"), ingredientes:["1 naranja","Canela"], pasos:["Corta y espolvorea canela."] },
+        { categoria:"Postre", titulo:"Bombones de dátiles y almendras", raciones:2, tiempo:"15 min", imagen:IMG("Datiles Almendra"), ingredientes:["4 dátiles","8 almendras","Cacao (opc.)"], pasos:["Rellena dátiles con almendras.","Reboza en cacao."] },
+        { categoria:"Postre", titulo:"Pudding de chía con frutos rojos", raciones:2, tiempo:"10 min (+2h)", imagen:IMG("Pudding Chia"), ingredientes:["2 cdas chía","1/2 taza leche vegetal","1/2 taza frutos rojos"], pasos:["Mezcla chía y leche, reposa 2h.","Sirve con frutos rojos."] },
+        { categoria:"Postre", titulo:"Melocotón a la plancha con helado", raciones:1, tiempo:"15 min", imagen:IMG("Melocoton Helado"), ingredientes:["1 melocotón","Canela","Helado vainilla light (opc.)"], pasos:["Plancha melocotón, derrite chocolate encima."] },
+        { categoria:"Postre", titulo:"Sorbete de fresa natural", raciones:2, tiempo:"10 min", imagen:IMG("Sorbete Fresa"), ingredientes:["250 g fresas congeladas","Zumo 1/2 limón","1 cda miel"], pasos:["Tritura todo y sirve."] },
+        { categoria:"Postre", titulo:"Bol de açaí con granola", raciones:1, tiempo:"10 min", imagen:IMG("Acai"), ingredientes:["100 g pulpa açaí","1/2 plátano","30 ml leche vegetal","Granola","Fruta"], pasos:["Tritura base y decora."] },
+        { categoria:"Postre", titulo:"Galletas de avena y plátano", raciones:3, tiempo:"25 min", imagen:IMG("Galletas Avena"), ingredientes:["1 plátano","1/2 taza avena","Chispas chocolate (opc.)"], pasos:["Mezcla, forma y hornea 15 min 180°C."] },
+        { categoria:"Postre", titulo:"Yogur con compota y frutos secos", raciones:1, tiempo:"5 min", imagen:IMG("Yogur Compota"), ingredientes:["1 yogur","2 cdas compota manzana","Frutos secos"], pasos:["Monta en vaso y sirve."] },
+        { categoria:"Postre", titulo:"Flan de huevo light", raciones:4, tiempo:"50 min", imagen:IMG("Flan Light"), ingredientes:["3 huevos","500 ml leche desnatada","Edulcorante","Vainilla"], pasos:["Bate todo, baño maría hasta cuajar."] },
+        { categoria:"Postre", titulo:"Gelatina de frutas variadas", raciones:4, tiempo:"20 min (+frío)", imagen:IMG("Gelatina"), ingredientes:["1 sobre gelatina sin azúcar","Frutas picadas","Agua"], pasos:["Disuelve gelatina, añade frutas y enfría."] },
+        { categoria:"Postre", titulo:"Bizcocho de limón sin azúcar", raciones:6, tiempo:"45 min", imagen:IMG("Bizcocho Limon"), ingredientes:["3 huevos","150 g harina integral","Zumo y ralladura de limón","Edulcorante","1 sobre levadura","50 ml aceite"], pasos:["Mezcla, hornea 30 min 180°C."] },
+        { categoria:"Postre", titulo:"Vasitos de yogur con granola y frutas", raciones:2, tiempo:"10 min", imagen:IMG("Vasitos Yogur"), ingredientes:["2 yogures","Granola","Fruta roja"], pasos:["Capas de yogur, granola y fruta."] },
+        { categoria:"Postre", titulo:"Tarta de queso individual (sin horno)", raciones:1, tiempo:"15 min (+frío)", imagen:IMG("Tarta Queso"), ingredientes:["100 g queso crema light","2 cdas yogur griego","1 cda miel","Galleta integral triturada","Frutos rojos"], pasos:["Base galleta, mezcla queso y refrigera.","Decora con frutos rojos."] },
+
+        /* ----------------- EXTRAS (50 nuevas) ----------------- */
+
+        /* Aperitivos extra (13) */
+        { categoria:"Aperitivo", titulo:"Pan con tomate y aceite", raciones:2, tiempo:"10 min", imagen:IMG("Pan Tomate"), ingredientes:["2 rebanadas pan","1 tomate maduro","Aceite de oliva","Sal"], pasos:["Ralla tomate, unta pan, aceite y sal."] },
+        { categoria:"Aperitivo", titulo:"Tartar de tomate y aguacate", raciones:2, tiempo:"15 min", imagen:IMG("Tartar Tomate"), ingredientes:["2 tomates","1 aguacate","Cebollino","Aceite","Limón","Sal"], pasos:["Pica fino tomate y aguacate.","Aliña y moldea."] },
+        { categoria:"Aperitivo", titulo:"Crema fría de pepino y yogur", raciones:3, tiempo:"10 min", imagen:IMG("Crema Pepino"), ingredientes:["1 pepino","1 yogur","Menta","Sal","Aceite"], pasos:["Tritura y sirve frío."] },
+        { categoria:"Aperitivo", titulo:"Montaditos de tortilla y pimientos", raciones:4, tiempo:"25 min", imagen:IMG("Montaditos"), ingredientes:["Tortilla de patata","Pimientos asados","Pan","Aceite"], pasos:["Monta sobre pan y sirve."] },
+        { categoria:"Aperitivo", titulo:"Boquerones en vinagre caseros", raciones:4, tiempo:"24 h", imagen:IMG("Boquerones"), ingredientes:["200 g boquerones","Vinagre","Ajo","Perejil","Aceite","Sal"], pasos:["Marina en vinagre 12h, escurre, aceite/ajo/perejil."] },
+        { categoria:"Aperitivo", titulo:"Aceitunas aliñadas con cítricos", raciones:4, tiempo:"20 min", imagen:IMG("Aceitunas Cítricos"), ingredientes:["Aceitunas verdes","Piel de naranja y limón","Ajo","Romero","Aceite"], pasos:["Mezcla y deja reposar."] },
+        { categoria:"Aperitivo", titulo:"Tostas de queso de cabra y cebolla caramelizada", raciones:2, tiempo:"25 min", imagen:IMG("Queso Cabra"), ingredientes:["Pan tostado","Queso cabra","Cebolla","Edulcorante o azúcar","Balsámico"], pasos:["Carameliza cebolla, monta sobre pan y hornea ligero."] },
+        { categoria:"Aperitivo", titulo:"Ensaladilla rusa ligera", raciones:4, tiempo:"35 min", imagen:IMG("Ensaladilla"), ingredientes:["Patata","Zanahoria","Guisantes","Atún","Mayonesa light"], pasos:["Cuece verduras, mezcla con atún y mayo."] },
+        { categoria:"Aperitivo", titulo:"Sardinas marinadas rápidas", raciones:2, tiempo:"30 min", imagen:IMG("Sardinas"), ingredientes:["Sardinas limpias","Limón","Ajo","Perejil","Aceite","Sal"], pasos:["Marina sardinas 30 min con limón y aliño."] },
+        { categoria:"Aperitivo", titulo:"Pimientos del piquillo rellenos de atún", raciones:3, tiempo:"20 min", imagen:IMG("Piquillo Atun"), ingredientes:["Pimientos piquillo","Atún","Queso crema light"], pasos:["Rellena pimientos y sirve frío."] },
+        { categoria:"Aperitivo", titulo:"Gazpachuelo malagueño ligero", raciones:3, tiempo:"30 min", imagen:IMG("Gazpachuelo"), ingredientes:["Caldo pescado","Mayonesa light","Patata","Clara de huevo"], pasos:["Cuece patata en caldo, liga con mayonesa, agrega clara."] },
+        { categoria:"Aperitivo", titulo:"Crema de tomate asado", raciones:4, tiempo:"35 min", imagen:IMG("Tomate Asado"), ingredientes:["Tomates","Ajo","Cebolla","Aceite","Sal"], pasos:["Asa y tritura."] },
+        { categoria:"Aperitivo", titulo:"Tapenade de aceitunas negras", raciones:4, tiempo:"10 min", imagen:IMG("Tapenade"), ingredientes:["Aceitunas negras","Alcaparras","Ajo","Aceite"], pasos:["Tritura todo hasta pasta."] },
+
+        /* Primeros extra (13) */
+        { categoria:"Primero", titulo:"Crema de coliflor y queso ligero", raciones:4, tiempo:"30 min", imagen:IMG("Crema Coliflor"), ingredientes:["1 coliflor","1 patata","Queso rallado light","Caldo","Sal"], pasos:["Cuece y tritura con queso."] },
+        { categoria:"Primero", titulo:"Sopa de tomate y albahaca", raciones:4, tiempo:"25 min", imagen:IMG("Sopa Tomate"), ingredientes:["Tomates maduros","Cebolla","Ajo","Albahaca","Caldo"], pasos:["Sofríe, añade caldo, tritura y albahaca."] },
+        { categoria:"Primero", titulo:"Ensalada de espelta con verduras", raciones:3, tiempo:"30 min", imagen:IMG("Espelta"), ingredientes:["Espelta cocida","Pepino","Tomate","Pimiento","Aceite","Limón"], pasos:["Mezcla todo y aliña."] },
+        { categoria:"Primero", titulo:"Vichyssoise tradicional", raciones:4, tiempo:"35 min", imagen:IMG("Vichyssoise"), ingredientes:["Puerro","Patata","Caldo","Leche evaporada light","Sal"], pasos:["Cuece y tritura, sirve fría."] },
+        { categoria:"Primero", titulo:"Crema de col rizada (kale) y patata", raciones:4, tiempo:"30 min", imagen:IMG("Crema Kale"), ingredientes:["Kale","Patata","Cebolla","Caldo"], pasos:["Cuece y tritura."] },
+        { categoria:"Primero", titulo:"Sopa minestrone ligera", raciones:4, tiempo:"40 min", imagen:IMG("Minestrone"), ingredientes:["Zanahoria","Apio","Judía verde","Tomate","Pasta pequeña","Caldo"], pasos:["Cuece verduras, añade pasta."] },
+        { categoria:"Primero", titulo:"Ensalada griega light", raciones:2, tiempo:"15 min", imagen:IMG("Griega"), ingredientes:["Pepino","Tomate","Aceitunas negras","Queso feta light","Orégano","Aceite"], pasos:["Corta, mezcla y aliña."] },
+        { categoria:"Primero", titulo:"Crema de puerros y manzana", raciones:4, tiempo:"30 min", imagen:IMG("Puerro Manzana"), ingredientes:["Puerros","Manzana","Patata","Caldo"], pasos:["Cuece y tritura suave."] },
+        { categoria:"Primero", titulo:"Sopa de marisco rápida", raciones:3, tiempo:"25 min", imagen:IMG("Sopa Marisco"), ingredientes:["Mezcla marisco congelado","Caldo pescado","Tomate triturado","Ajo"], pasos:["Cuece todo y sirve caliente."] },
+        { categoria:"Primero", titulo:"Ensalada de judías blancas y atún", raciones:3, tiempo:"15 min", imagen:IMG("Judias Blancas"), ingredientes:["Judías blancas cocidas","Atún","Cebolla","Pimiento","Aceite","Vinagre"], pasos:["Mezcla todo y aliña."] },
+        { categoria:"Primero", titulo:"Crema de nabo y pera", raciones:4, tiempo:"30 min", imagen:IMG("Nabo Pera"), ingredientes:["Nabos","Pera","Patata","Caldo"], pasos:["Cuece y tritura, cremosa."] },
+        { categoria:"Primero", titulo:"Sopa thai de coco y verduras", raciones:3, tiempo:"25 min", imagen:IMG("Thai Coco"), ingredientes:["Leche de coco light","Caldo verduras","Setas","Zanahoria","Curry rojo"], pasos:["Hierve todo sin pasar de cocción."] },
+        { categoria:"Primero", titulo:"Ensalada de espinacas con fresas", raciones:2, tiempo:"10 min", imagen:IMG("Espinacas Fresas"), ingredientes:["Espinacas frescas","Fresas","Nueces","Queso fresco","Vinagre balsámico"], pasos:["Mezcla y aliña."] },
+
+        /* Segundos extra (12) */
+        { categoria:"Segundo", titulo:"Paella mixta sencilla", raciones:4, tiempo:"45 min", imagen:IMG("Paella"), ingredientes:["Arroz","Pollo","Gambas","Caldo","Pimiento","Guisantes","Azafrán"], pasos:["Sofríe, añade arroz y caldo, cocina."] },
+        { categoria:"Segundo", titulo:"Fajitas de pollo y verduras", raciones:3, tiempo:"25 min", imagen:IMG("Fajitas"), ingredientes:["Pollo en tiras","Pimiento","Cebolla","Tortillas integrales","Especias mexicanas"], pasos:["Saltea y rellena tortillas."] },
+        { categoria:"Segundo", titulo:"Tacos de pescado con col", raciones:2, tiempo:"20 min", imagen:IMG("Tacos Pescado"), ingredientes:["Filetes pescado blanco","Tortillas maíz","Col rallada","Yogur","Lima"], pasos:["Plancha pescado y sirve en tacos con col y salsa."] },
+        { categoria:"Segundo", titulo:"Albóndigas de soja texturizada", raciones:3, tiempo:"35 min", imagen:IMG("Soja Texturizada"), ingredientes:["Soja texturizada","Pan rallado","Huevo","Tomate triturado","Ajo"], pasos:["Hidrata soja, forma albóndigas y cocina en salsa."] },
+        { categoria:"Segundo", titulo:"Pollo al curry verde", raciones:3, tiempo:"30 min", imagen:IMG("Curry Verde"), ingredientes:["Pollo","Pasta curry verde","Leche coco light","Verduras variadas"], pasos:["Saltea, añade pasta, leche y cuece."] },
+        { categoria:"Segundo", titulo:"Tortilla de calabacín al horno", raciones:3, tiempo:"35 min", imagen:IMG("Tortilla Calabacin"), ingredientes:["Huevos","Calabacín","Cebolla","Aceite","Sal"], pasos:["Mezcla y hornea en molde."] },
+        { categoria:"Segundo", titulo:"Lomo de cerdo a la mostaza", raciones:2, tiempo:"30 min", imagen:IMG("Lomo Mostaza"), ingredientes:["Lomo cerdo","Mostaza Dijon","Miel","Vino blanco"], pasos:["Sella lomo y cubre con salsa, hornea."] },
+        { categoria:"Segundo", titulo:"Guiso de alubias con verduras", raciones:4, tiempo:"40 min", imagen:IMG("Alubias Verduras"), ingredientes:["Alubias cocidas","Pimiento","Zanahoria","Tomate","Pimentón"], pasos:["Sofríe verdura, añade alubias y cuece."] },
+        { categoria:"Segundo", titulo:"Salmón al papillote con cítricos", raciones:2, tiempo:"25 min", imagen:IMG("Salmon Papillote"), ingredientes:["Salmón","Rodajas de naranja y limón","Eneldo","Aceite"], pasos:["Envuelve y hornea 15-18 min."] },
+        { categoria:"Segundo", titulo:"Quiche ligera de verduras", raciones:4, tiempo:"45 min", imagen:IMG("Quiche"), ingredientes:["Masa integral","Huevo","Leche evaporada light","Verduras","Queso light"], pasos:["Mezcla relleno, vierte y hornea."] },
+        { categoria:"Segundo", titulo:"Pollo tikka masala ligero", raciones:3, tiempo:"35 min", imagen:IMG("Tikka Masala"), ingredientes:["Pollo","Yogur","Especias tikka","Tomate triturado","Coco light"], pasos:["Marina pollo, cocina en salsa."] },
+        { categoria:"Segundo", titulo:"Filetes de ternera a la plancha con salsa chimichurri", raciones:2, tiempo:"20 min", imagen:IMG("Ternera Chimichurri"), ingredientes:["Ternera","Perejil","Ajo","Orégano","Aceite","Vinagre"], pasos:["Plancha carne y sirve con chimichurri."] },
+
+        /* Postres extra (12) */
+        { categoria:"Postre", titulo:"Crema catalana light", raciones:4, tiempo:"30 min (+caramelizar)", imagen:IMG("Crema Catalana"), ingredientes:["Leche desnatada","Yemas","Edulcorante","Maicena","Canela","Limón"], pasos:["Cuece crema, enfría y carameliza edulcorante."] },
+        { categoria:"Postre", titulo:"Arroz con leche desnatada", raciones:4, tiempo:"40 min", imagen:IMG("Arroz Leche"), ingredientes:["Arroz","Leche desnatada","Canela","Cáscara limón","Edulcorante"], pasos:["Cuece lentamente removiendo."] },
+        { categoria:"Postre", titulo:"Tarta de manzana rápida", raciones:6, tiempo:"35 min", imagen:IMG("Tarta Manzana"), ingredientes:["Lámina hojaldre light","Manzanas","Compota","Canela"], pasos:["Extiende hojaldre, rellena y hornea."] },
+        { categoria:"Postre", titulo:"Natillas ligeras de vainilla", raciones:4, tiempo:"25 min", imagen:IMG("Natillas"), ingredientes:["Leche desnatada","Yemas","Maicena","Vainilla","Edulcorante"], pasos:["Cuece hasta espesar."] },
+        { categoria:"Postre", titulo:"Brownie de cacao y calabacín", raciones:6, tiempo:"40 min", imagen:IMG("Brownie Calabacin"), ingredientes:["Calabacín rallado","Cacao puro","Harina integral","Huevo","Edulcorante"], pasos:["Mezcla, hornea 25-30 min."] },
+        { categoria:"Postre", titulo:"Granizado de limón casero", raciones:3, tiempo:"10 min (+congelar)", imagen:IMG("Granizado"), ingredientes:["Zumo de limón","Agua","Edulcorante"], pasos:["Congela y raspa para granizado."] },
+        { categoria:"Postre", titulo:"Mousse de mango y yogur", raciones:2, tiempo:"15 min", imagen:IMG("Mousse Mango"), ingredientes:["Mango maduro","Yogur griego light","Edulcorante"], pasos:["Tritura y enfría."] },
+        { categoria:"Postre", titulo:"Peras con chocolate negro", raciones:2, tiempo:"20 min", imagen:IMG("Peras Chocolate"), ingredientes:["Peras","Chocolate 85%","Canela"], pasos:["Cuece peras y baña en chocolate."] },
+        { categoria:"Postre", titulo:"Panna cotta ligera de coco", raciones:4, tiempo:"15 min (+frío)", imagen:IMG("Panna Cotta"), ingredientes:["Leche coco light","Gelatina","Edulcorante","Vainilla"], pasos:["Calienta, disuelve gelatina y enfría."] },
+        { categoria:"Postre", titulo:"Bolitas energéticas de dátil y avena", raciones:4, tiempo:"15 min", imagen:IMG("Bolitas Energéticas"), ingredientes:["Dátiles","Avena","Cacao","Coco rallado"], pasos:["Tritura, forma bolas y reboza."] },
+        { categoria:"Postre", titulo:"Bizcochitos de zanahoria y nuez", raciones:6, tiempo:"35 min", imagen:IMG("Bizcocho Zanahoria"), ingredientes:["Zanahoria rallada","Harina integral","Huevo","Nueces","Edulcorante","Canela"], pasos:["Mezcla y hornea 25-30 min."] },
+        { categoria:"Postre", titulo:"Tostadas francesas light", raciones:2, tiempo:"15 min", imagen:IMG("Tostadas Francesas"), ingredientes:["Pan integral","Huevo","Leche","Canela","Edulcorante"], pasos:["Empapa y dora en sartén."] }
+    ];
+
+    /* ---------- ESTADO Y DOM ---------- */
+    // NOTA: userFavorites y shoppingItems usan localStorage. 
+    // Si quieres usar Firebase, descomenta las importaciones de Firebase 
+    // y la lógica de inicialización en runRecipeApp().
+    let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
+    let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
+    let currentCategory = 'all';
+    let currentFilter = 'all';
+    let currentRecipeDetail = null;
+    let currentServings = 0;
+    let currentRecipeSteps = [];
+    let currentStep = 0;
+    let speechUtterance = null; // Para la síntesis de voz
+    let recognition = null;     // Para el reconocimiento de voz
+
+    const dom = {
+        grid: document.getElementById('recipeGrid'),
+        search: document.getElementById('searchInput'),
+        filterAllBtn: document.getElementById('filterAll'),
+        filterFavBtn: document.getElementById('filterFavorites'),
+        categoryFilters: document.getElementById('categoryFilters'),
+        noResults: document.getElementById('no-results'),
+        modal: document.getElementById('recipeModal'),
+        modalContent: document.getElementById('modalContent'),
+        copyrightYear: document.getElementById('copyright-year'),
+        openShopping: document.getElementById('openShopping'),
+        shoppingPanel: document.getElementById('shoppingPanel'),
+        closeShopping: document.getElementById('closeShopping'),
+        shoppingList: document.getElementById('shoppingList'),
+        clearShopping: document.getElementById('clearShopping'),
+        exportShopping: document.getElementById('exportShopping'),
+        whatsappShopping: document.getElementById('whatsappShopping'),
+        printShopping: document.getElementById('printShopping'),
+        themeToggle: document.getElementById('theme-toggle'),
+        contrastToggle: document.getElementById('contrast-toggle'),
+        fontInc: document.getElementById('font-inc'),
+        fontDec: document.getElementById('font-dec'),
+        // Elementos del modo cocina (referencias directas a elementos que no están en dom.xxx)
+        cookingModeView: document.getElementById('cooking-mode-view'),
+        stepCounter: document.getElementById('step-counter'),
+        stepText: document.getElementById('step-text'),
+        prevStepBtn: document.getElementById('prev-step-btn'),
+        repeatStepBtn: document.getElementById('repeat-step-btn'),
+        nextStepBtn: document.getElementById('next-step-btn'),
+        exitCookingBtn: document.getElementById('exit-cooking-btn'),
+        srLive: document.getElementById('sr-live'),
+        userInfo: document.getElementById('user-info') 
+    };
+
+    /* ---------- RENDER ---------- */
+    function renderRecipes(list){
+        if(list.length===0){
+            dom.noResults.classList.remove('hidden');
+            dom.grid.innerHTML='';
+            return;
+        }
+        dom.noResults.classList.add('hidden');
+        dom.grid.innerHTML = list.map(recipe=>{
+            const searchTerms = `${recipe.titulo.toLowerCase()} ${(recipe.ingredientes||[]).join(' ').toLowerCase()}`;
+            const fav = userFavorites.includes(recipe.titulo);
+            return `
+            <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
+                <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform transition duration-300 cursor-pointer h-full flex flex-col" tabindex="0" aria-label="${recipe.titulo}">
+                    <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                    <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
+                    <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition" aria-label="Marcar como favorita">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${fav?'text-red-500 fill-current':'text-gray-600 dark:text-gray-400'} pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                    </button>
+                </div>
+                <div class="p-4 flex-grow flex flex-col">
+                    <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
+                    <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function applyFilters(){
+        const searchTerm = dom.search.value.toLowerCase();
+        const filtered = recipes.filter(r=>{
+            const id = r.titulo;
+            const categoryMatch = currentCategory==='all' || r.categoria===currentCategory;
+            const isFav = userFavorites.includes(id);
+            const favMatch = currentFilter!=='favorites' || isFav;
+            const searchData = `${r.titulo.toLowerCase()} ${r.ingredientes.join(' ').toLowerCase()}`;
+            const searchOK = searchTerm==='' || searchData.includes(searchTerm);
+            return categoryMatch && favMatch && searchMatch;
+        });
+        renderRecipes(filtered);
+    }
+
+    /* ---------- FAVORITOS ---------- */
+    function toggleFavorite(title){
+        const isFav = userFavorites.includes(title);
+        if(isFav){
+            userFavorites = userFavorites.filter(t=>t!==title);
+            srLive(`Quitado de favoritas: ${title}`);
+        }else{
+            userFavorites = [...userFavorites, title];
+            srLive(`Añadido a favoritas: ${title}`);
+        }
+        localStorage.setItem('favorites',JSON.stringify(userFavorites));
+        applyFilters();
+    }
+
+    /* ---------- LISTA COMPRA ---------- */
+    // Helpers para pluralización/singularización de ingredientes
+    const commonFormsPlural = {
+        "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+        "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+        "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+        "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+        "filete": "filetes", "manojo": "manojos", "lata": "latas",
+        "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+        "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+        "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+        "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+        "loncha": "lonchas", "judía verde": "judías verdes", "tomate cherry": "tomates cherry",
+        "pasas": "pasas", "nueces": "nueces", "espinacas": "espinacas", "setas": "setas", 
+    };
+    const exceptionsSingulars = ['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'];
+
+    function getBaseName(name) {
+        let base = name.toLowerCase();
+        for (const singular in commonFormsPlural) {
+            if (commonFormsPlural[singular] === base) { return singular; }
+        }
+        if (base.endsWith('s') && !exceptionsSingulars.includes(base) && base.length > 3) {
+            return base.slice(0, -1);
+        }
+        return base;
+    }
+
+    function getPluralName(name) {
+        const base = getBaseName(name); 
+        return commonFormsPlural[base] || (name.endsWith('s') ? name : name + 's');
+    }
+
+    // Función para añadir ingredientes a la lista de la compra, unificando cantidades
+    function addIngredientsToShopping(ingredientsFromModal){
+        ingredientsFromModal.forEach(ingObj => {
+            const parsedIng = parseIngredient(ingObj.original); // Parsear el original para cantidad y unidad
+            const baseName = getBaseName(parsedIng.name); 
+            
+            const existingItem = shoppingItems.find(item => {
+                const existingBaseName = getBaseName(item.cleanName);
+                return existingBaseName === baseName && item.unit === parsedIng.unit;
+            });
+
+            if (existingItem) {
+                if (parsedIng.value > 0 && existingItem.quantity > 0) {
+                    existingItem.quantity += parsedIng.value; // Sumar la cantidad del original
+                    existingItem.formatted = formatIngredient({ // Reformatear con la nueva cantidad total
+                        value: existingItem.quantity,
+                        unit: existingItem.unit,
+                        name: existingItem.cleanName 
+                    }, 1); // Factor 1 porque 'quantity' ya es la cantidad total
+                }
+            } else {
+                shoppingItems.push({
+                    text: ingObj.formatted, // Usamos el texto ya formateado de la UL del modal
+                    cleanName: baseName, // Guardamos la forma base para futuras unificaciones
+                    quantity: parsedIng.value > 0 ? parsedIng.value : 0, // Cantidad del original, no escalada aquí
+                    unit: parsedIng.unit, // Unidad original
+                    done: false // Estado inicial no comprado
+                });
+            }
+        });
+        saveShopping();
+        renderShopping();
+        srLive('Ingredientes añadidos a la lista de la compra.');
+        alert('Ingredientes añadidos a tu lista de la compra.');
+    }
+
+    function renderShopping(){
+        dom.shoppingList.innerHTML = ''; 
+        if(shoppingItems.length === 0){
+            dom.shoppingList.innerHTML = '<li class="text-center text-gray-500 dark:text-stone-400 py-4">Tu lista de la compra está vacía.</li>';
+        } else {
+            shoppingItems.forEach((item,idx)=>{
+                const li = document.createElement('li');
+                li.className = `flex items-start gap-2 py-1 border-b border-gray-200 dark:border-stone-700 last:border-b-0 ${item.done ? 'line-through text-gray-400' : ''}`;
+                li.setAttribute('role', 'listitem');
+                
+                li.innerHTML = `
+                    <input type="checkbox" id="shop-${idx}" ${item.done ? 'checked' : ''} class="mt-1" data-idx="${idx}" aria-label="${item.text}" />
+                    <label for="shop-${idx}" class="flex-1">${item.text}</label>
+                    <button data-del="${idx}" aria-label="Eliminar ${item.text}" class="text-red-600 font-bold text-lg leading-none p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-800">×</button>
+                `;
+                dom.shoppingList.appendChild(li);
+            });
+        }
+    }
+
+    function saveShopping(){ 
+        localStorage.setItem('shopping', JSON.stringify(shoppingItems)); 
+    }
+
+    /* ---------- PARSE / SCALE INGREDIENTS ---------- */
+    // NOTA: Estas funciones son auxiliares de addIngredientsToShopping y updateIngredientsDisplay.
+    // El parseo inicial del ingrediente (sin escalar) para extraer cantidad/unidad/nombre base.
+    function parseIngredient(ingredient){
+        const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
+        const m = ingredient.match(regex);
+        
+        if(m){
+            let value = 0;
+            if(m[1]){ value = m[1].includes('/')? (parseFloat(m[1].split('/')[0])/parseFloat(m[1].split('/')[1])) : parseFloat(m[1].replace(',','.')); }
+            else if(m[2]){ const w=m[2].toLowerCase(); value = (w==='medio'||w==='media')?0.5:1; }
+            else if(m[4]){ value = 1; } 
+            
+            let unit = m[3]?m[3].toLowerCase():'';
+            let name = m[4]?m[4].trim():'';
+
+            if(m[2] && !m[3] && ['un','una','medio','media','gran','pequeña','puñado','chorrito'].includes(m[2].toLowerCase())){
+                name = (m[2]+' '+name).trim(); unit='';
+            }
+            return {value,unit,name,original:ingredient};
+        }
+        return {value:0, unit:'', name:ingredient, original:ingredient};
+    }
+
+    // Función para formatear el ingrediente. Toma un objeto parseado y un factor de escalado.
+    function formatIngredient(p,factor){
+        // Si no hay valor numérico y no es un elemento que deba escalarse, devuelve el original
+        if(p.value === 0 && p.unit === '' && p.name !== '' && !['sal', 'pimienta', 'aceite', 'agua'].includes(p.name.toLowerCase())) {
+            return p.original;
+        }
+
+        let v = p.value * factor; 
+        let unit=p.unit; 
+        let name=p.name;
+
+        // Ajustes de unidad (g <-> kg, ml <-> litro)
+        if(unit === 'kg' && v < 1) { v *= 1000; unit = 'g'; } 
+        else if(unit === 'litro' && v < 1) { v *= 1000; unit = 'ml'; }
+        else if(unit === 'g' && v >= 1000) { v /= 1000; unit = 'kg'; } 
+        else if(unit === 'ml' && v >= 1000) { v /= 1000; unit = 'litro'; }
+        
+        // Redondeo a 2 decimales, o entero si es exacto
+        if(Math.abs(v % 1) < 0.0001) v=Math.round(v); 
+        else if(Math.abs((v * 10) % 1) < 0.0001) v=Math.round(v * 10)/10; 
+        else v=Math.round(v * 100)/100;
+        
+        // Pluralización/singularización del nombre
+        let formattedName = name;
+        if (v === 1 && !['sal','pimienta','aceite','agua'].includes(name.toLowerCase())) { 
+            formattedName = getBaseName(name);
+        } else if (v > 1) { 
+            formattedName = getPluralName(name);
+        }
+
+        // Limpiar redundancia de unidad en el nombre (ej. "gramos gramos" -> "gramos")
+        if (unit !== '') {
+            const unitRegex = new RegExp(`\\b${unit}(es)?\\b`, 'gi');
+            formattedName = formattedName.replace(unitRegex, '').trim();
+        }
+        
+        // Eliminar espacios duplicados y trim
+        formattedName = formattedName.split(/\s+/).filter(Boolean).join(' ');
+
+        // Formato final de la cadena de ingrediente
+        if (unit === 'cdita' || unit === 'cda') {
+            return `${v} ${unit}. ${formattedName}`.trim();
+        }
+        if (v === 1 && (unit === '' || ['un','una','unidad','unidades','puñado','chorrito'].includes(unit))) {
+            return formattedName; 
+        }
+        if (unit !== '') {
+            return `${v} ${unit} ${formattedName}`.trim();
+        }
+        if (v > 0) return `${v} ${formattedName}`.trim(); 
+        
+        return formattedName; 
+    }
+
+    function updateIngredientsDisplay(servings){
+        if(!currentRecipeDetail) return;
+        const ingredientList=document.getElementById('ingredient-list');
+        ingredientList.innerHTML='';
+        const factor = servings / currentRecipeDetail.raciones;
+        currentRecipeDetail.ingredientes.forEach(i=>{
+            const p=parseIngredient(i);
+            const f=formatIngredient(p,factor); // Obtener el string formateado
+            const li=document.createElement('li');
+            li.textContent=f;
+            li.setAttribute('data-original-ingredient', i); // Guardar el original para la lista de compra
+            li.setAttribute('data-formatted-ingredient', f); // Guardar el formateado para la lista de compra
+            ingredientList.appendChild(li);
+        });
+    }
+
+    /* ---------- MODAL RECETA ---------- */
+    function showRecipeDetail(recipe){
+        currentRecipeDetail=recipe;
+        currentServings=recipe.raciones;
+        dom.modalContent.innerHTML=`
+            <div class="p-6 md:p-8">
+                <div class="flex justify-between items-start">
+                    <h2 id="recipe-title" class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
+                    <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition" aria-label="Cerrar">✖</button>
+                </div>
+                <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                <div id="recipe-content-normal">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
+                        <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
+                        <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
+                            <span>Raciones:</span>
+                            <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Reducir raciones">-</button>
+                            <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1" aria-label="Número de raciones">
+                            <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Aumentar raciones">+</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
+                            <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
+                            <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
+                        </div>
+                    </div>
+                    <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
+                        <button id="addToShoppingBtn" class="bg-amber-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-700 transition shadow-lg">Añadir a lista</button>
+                        <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Modo cocina guiada</button>
+                        <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                        <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
+                    </div>
+                </div>
+            </div>`;
+        const stepsList=document.getElementById('steps-list');
+        stepsList.innerHTML=recipe.pasos.map(s=>`<li>${s}</li>`).join('');
+        updateIngredientsDisplay(currentServings);
+
+        dom.modal.classList.remove('hidden');
+        dom.modal.classList.add('modal-visible');
+        focusTrap.enable(dom.modal);
+
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('printRecipeBtn').addEventListener('click', ()=>window.print());
+        
+        const shareBtn=document.getElementById('shareRecipeBtn');
+        if(navigator.share){
+            shareBtn.addEventListener('click',async ()=>{
+                try{
+                    await navigator.share({title:recipe.titulo,text:`Mira esta receta: ${recipe.titulo}`,url:location.href});
+                }catch(e){ console.error('Error al compartir:', e); }
+            });
+        }else shareBtn.style.display='none';
+
+        document.getElementById('addToShoppingBtn').addEventListener('click',()=>{
+            const ingredientsData = Array.from(document.querySelectorAll('#ingredient-list li')).map(li => ({
+                original: li.getAttribute('data-original-ingredient'), 
+                formatted: li.getAttribute('data-formatted-ingredient') 
+            }));
+            addIngredientsToShopping(ingredientsData);
+            openShoppingPanel(); 
+        });
+
+        document.getElementById('start-cooking-btn').addEventListener('click',()=>startCookingMode(recipe));
+
+        const servingsInput=document.getElementById('servings-input');
+        document.getElementById('decrease-servings').addEventListener('click',()=>{
+            let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
+        });
+        document.getElementById('increase-servings').addEventListener('click',()=>{
+            let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
+        });
+        servingsInput.addEventListener('change',e=>{
+            let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
+        });
+    }
+
+    function closeModal(){
+        dom.modal.classList.remove('modal-visible');
+        setTimeout(()=>{
+            dom.modal.classList.add('hidden');
+            dom.modalContent.innerHTML='';
+        },300);
+        focusTrap.disable(); 
+        currentRecipeDetail=null; currentServings=0;
+    }
+
+    /* ---------- COOKING MODE (SÍNTESIS Y RECONOCIMIENTO DE VOZ) ---------- */
+    let recognition = null; 
+
+    function speak(text){
+        if(!('speechSynthesis' in window)) {
+            console.warn("Speech Synthesis API no soportada en este navegador.");
+            if (!sessionStorage.getItem('voice_alert_shown_v2')) {
+                alert("El asistente de voz no puede hablar. Tu navegador no soporta la síntesis de voz.");
+                sessionStorage.setItem('voice_alert_shown_v2', 'true');
+            }
+            return;
+        }
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(text);
+        u.lang='es-ES'; u.rate=0.9; u.pitch=1;
+
+        const voices = speechSynthesis.getVoices();
+        let selectedVoice = voices.find(voice => voice.lang === 'es-ES');
+        if (!selectedVoice) { 
+            selectedVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_'));
+        }
+        if (!selectedVoice) { 
+            selectedVoice = voices.find(voice => voice.lang.startsWith('en-')); 
+            if (selectedVoice) console.warn("No se encontró una voz en español, usando voz en inglés.");
+        }
+        if (selectedVoice) {
+            u.voice = selectedVoice;
+        } else {
+            console.warn("No se encontró ninguna voz compatible. La síntesis de voz podría no funcionar.");
+            if (!sessionStorage.getItem('voice_alert_shown_v2')) { 
+                alert("El asistente de voz no puede hablar. Asegúrate de que tu navegador/sistema operativo tenga voces en español instaladas.");
+                sessionStorage.setItem('voice_alert_shown_v2', 'true');
+            }
+        }
+
+        u.onend = () => dom.repeatStepBtn.classList.remove('speaking');
+        u.onerror = (event) => {
+            console.error('Error en SpeechSynthesis:', event);
+            dom.repeatStepBtn.classList.remove('speaking');
+            if (!sessionStorage.getItem('voice_alert_shown_v2')) { 
+                alert("El asistente de voz encontró un error. Podría ser un problema con las voces instaladas.");
+                sessionStorage.setItem('voice_alert_shown_v2', 'true');
+            }
+        };
+        
+        dom.repeatStepBtn.classList.add('speaking');
+        speechSynthesis.speak(u);
+    }
+
+    function updateCookingStep(){
+        dom.stepCounter.textContent=`Paso ${currentStep+1} de ${currentRecipeSteps.length}`;
+        dom.stepText.textContent=currentRecipeSteps[currentStep];
+        speak(currentRecipeSteps[currentStep]);
+    }
+
+    // --- RECONOCIMIENTO DE VOZ ---
+    function startVoiceRecognition() {
+        if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+            alert('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
+            console.warn('Speech Recognition API no soportada en este navegador.');
+            srLive('Reconocimiento de voz no soportado.');
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'es-ES'; 
+        recognition.interimResults = false; 
+        recognition.maxAlternatives = 1; 
+
+        recognition.onstart = () => {
+            console.log('Reconocimiento de voz iniciado. Escuchando...');
+            srLive('Reconocimiento de voz iniciado. Di "siguiente", "anterior", "repetir" o "salir".');
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript.toLowerCase().trim();
+            console.log('Comando detectado:', transcript);
+            srLive(`Comando detectado: ${transcript}`);
+
+            // Procesar comandos de voz
+            if (transcript.includes('siguiente') || transcript.includes('adelante')) {
+                if (currentStep < currentRecipeSteps.length - 1) {
+                    currentStep++;
+                    updateCookingStep();
+                } else {
+                    speak('Has llegado al final de la receta.');
+                }
+            } else if (transcript.includes('anterior') || transcript.includes('atrás')) {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateCookingStep();
+                } else {
+                    speak('Estás en el primer paso.');
+                }
+            } else if (transcript.includes('repetir') || transcript.includes('otra vez')) {
+                speak(currentRecipeSteps[currentStep]);
+            } else if (transcript.includes('salir') || transcript.includes('terminar')) {
+                exitCookingMode();
+            } else {
+                speak('Comando no reconocido. Puedes decir "siguiente", "anterior", "repetir" o "salir".');
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Error en reconocimiento de voz:', event);
+            srLive(`Error en reconocimiento de voz: ${event.error}.`);
+            if (event.error === 'not-allowed' || event.error === 'no-speech') {
+                if (!sessionStorage.getItem('mic_alert_shown')) {
+                    alert('Para usar comandos de voz, debes permitir el acceso al micrófono. Recarga la página y acepta el permiso.');
+                    sessionStorage.setItem('mic_alert_shown', 'true');
+                }
+            }
+        };
+
+        recognition.onend = () => {
+            console.log('Reconocimiento de voz terminado, reiniciando...');
+            if (dom.cookingModeView.classList.contains('flex')) { // Solo reinicia si sigue en modo cocina
+                recognition.start(); 
+            } else {
+                console.log('Reconocimiento de voz detenido permanentemente.');
+                srLive('Reconocimiento de voz detenido.');
+            }
+        };
+
+        // Inicia el reconocimiento
+        recognition.start(); 
+    }
+
+    function stopVoiceRecognition() {
+        if (recognition) {
+            recognition.stop();
+            recognition = null; 
+            console.log('Reconocimiento de voz detenido.');
+            srLive('Reconocimiento de voz detenido.');
+        }
+    }
+
+    function startCookingMode(recipe){
+        currentRecipeSteps=recipe.pasos;
+        currentStep=0;
+        closeModal();
+        dom.cookingModeView.classList.remove('hidden');
+        dom.cookingModeView.classList.add('flex');
+        speak(`Comenzamos la receta de ${recipe.titulo}.`);
+        setTimeout(()=>{
+            updateCookingStep();
+            startVoiceRecognition(); // Inicia el reconocimiento de voz aquí
+        },1200);
+    }
+
+    function exitCookingMode(){
+        stopVoiceRecognition(); // Detiene el reconocimiento de voz aquí
+        speechSynthesis.cancel();
+        dom.cookingModeView.classList.add('hidden');
+        dom.cookingModeView.classList.remove('flex');
+        speak("Has salido del modo de cocina guiada. ¡Esperamos que hayas disfrutado!");
+    }
+
+    dom.prevStepBtn.addEventListener('click',()=>{
+        if(currentStep>0){ currentStep--; updateCookingStep(); }
+        else speak("Estás en el primer paso.");
+    });
+    dom.nextStepBtn.addEventListener('click',()=>{
+        if(currentStep<currentRecipeSteps.length-1){ currentStep++; updateCookingStep(); }
+        else{ speak("Has terminado. ¡Buen provecho!"); exitCookingMode(); }
+    });
+    dom.repeatStepBtn.addEventListener('click',()=>speak(currentRecipeSteps[currentStep]));
+    dom.exitCookingBtn.addEventListener('click',exitCookingMode);
+
+    /* ---------- SHOPPING PANEL ---------- */
+    function openShoppingPanel(){
+        dom.shoppingPanel.classList.add('open');
+        dom.openShopping.setAttribute('aria-expanded','true');
+        focusTrap.enable(dom.shoppingPanel);
+        srLive("Lista de la compra abierta.");
+    }
+    function closeShoppingPanel(){
+        dom.shoppingPanel.classList.remove('open');
+        dom.openShopping.setAttribute('aria-expanded','false');
+        focusTrap.disable();
+        srLive("Lista de la compra cerrada.");
+    }
+    dom.openShopping.addEventListener('click',openShoppingPanel);
+    dom.closeShopping.addEventListener('click',closeShoppingPanel);
+    dom.clearShopping.addEventListener('click',()=>{
+        if(confirm('¿Estás seguro de que quieres vaciar toda la lista de la compra?')){
+            shoppingItems=[]; saveShopping(); renderShopping(); 
+            srLive("Lista vaciada.");
+        }
+    });
+    dom.shoppingList.addEventListener('click',e=>{
+        // Delegación de eventos para checkboxes y botones de eliminar
+        if(e.target.tagName==='BUTTON' && e.target.dataset.del){
+            const idx=parseInt(e.target.dataset.del);
+            const deletedItemText = shoppingItems[idx].text;
+            if(confirm(`¿Estás seguro de que quieres eliminar "${deletedItemText}" de la lista?`)){
+                shoppingItems.splice(idx,1);
+                renderShopping();
+                srLive(`Eliminado ${deletedItemText} de la lista.`);
+            }
+        } else if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
+            const idx = parseInt(e.target.dataset.idx);
+            shoppingItems[idx].done = e.target.checked;
+            saveShopping();
+            srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
+            renderShopping(); // Re-renderizar para actualizar el estilo tachado
+        }
+    });
+    dom.exportShopping.addEventListener('click',()=>{
+        const text=shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n');
+        navigator.clipboard.writeText(text).then(()=>srLive("Lista copiada al portapapeles."));
+        alert("Lista copiada al portapapeles.");
+    });
+    dom.whatsappShopping.addEventListener('click',()=>{
+        const text=encodeURIComponent("Mi lista de la compra:\n"+shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n'));
+        window.open(`https://wa.me/?text=${text}`,'_blank');
+    });
+    dom.printShopping.addEventListener('click',()=>window.print());
+
+    /* ---------- TEMA / CONTRASTE / FUENTE ---------- */
+    function setupTheme(){
+        const saved=localStorage.getItem('color-theme');
+        if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+            document.documentElement.classList.add('dark');
+        }
+        dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
+        
+        const contrast=localStorage.getItem('contrast');
+        if(contrast==='1'){
+            document.documentElement.classList.add('high-contrast');
+        }
+        dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
+
+        const fs=localStorage.getItem('fontSize');
+        if(fs) document.documentElement.style.setProperty('--base-font-size',fs+'px');
+    }
+    setupTheme();
+    dom.themeToggle.addEventListener('click',()=>{
+        document.documentElement.classList.toggle('dark');
+        const isDark=document.documentElement.classList.contains('dark');
+        localStorage.setItem('color-theme',isDark?'dark':'light');
+        dom.themeToggle.setAttribute('aria-pressed',isDark);
+    });
+
+    dom.contrastToggle.addEventListener('click',()=>{
+        document.documentElement.classList.toggle('high-contrast');
+        const pressed=document.documentElement.classList.contains('high-contrast');
+        localStorage.setItem('contrast',pressed?'1':'0');
+        dom.contrastToggle.setAttribute('aria-pressed',pressed);
+    });
+
+    dom.fontInc.addEventListener('click',()=>{
+        const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
+        const n=Math.min(parseInt(r)+2,26);
+        document.documentElement.style.setProperty('--base-font-size',n+'px');
+        localStorage.setItem('fontSize',n);
+        srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
+    });
+    dom.fontDec.addEventListener('click',()=>{
+        const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
+        const n=Math.max(parseInt(r)-2,12);
+        document.documentElement.style.setProperty('--base-font-size',n+'px');
+        localStorage.setItem('fontSize',n);
+        srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
+    });
+
+    /* ---------- EVENTOS GLOBALES ---------- */
+    // Delegación clicks en grid
+    dom.grid.addEventListener('click',e=>{
+        const card=e.target.closest('.recipe-card');
+        if(!card) return;
+        if(e.target.closest('.favorite-btn')){
+            e.stopPropagation();
+            toggleFavorite(card.dataset.id);
+        }else{
+            const recipe=recipes.find(r=>r.titulo===card.dataset.id);
+            if(recipe) showRecipeDetail(recipe);
+        }
+    });
+    dom.grid.addEventListener('keydown',e=>{
+        if(e.key==='Enter' || e.key===' '){ // Enter o Espacio en tarjeta para abrir modal
+            const card=e.target.closest('.recipe-card');
+            if(card){
+                const recipe=recipes.find(r=>r.titulo===card.dataset.id);
+                if(recipe) showRecipeDetail(recipe);
+            }
+        }
+    });
+
+    dom.modal.addEventListener('click',e=>{if(e.target===dom.modal) closeModal();});
+    document.addEventListener('keydown',e=>{
+        if(e.key==='Escape'){
+            if(dom.modal.classList.contains('modal-visible')) closeModal();
+            else if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
+            else if(dom.cookingModeView.classList.contains('flex')) exitCookingMode();
+        }
+        if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado.'); }
+        if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); } // Atajo para abrir lista
+        if(e.key.toLowerCase()==='f'){ // Atajo para filtrar favoritos
+            e.preventDefault();
+            currentFilter=currentFilter==='favorites'?'all':'favorites';
+            dom.filterFavBtn.setAttribute('aria-pressed',currentFilter==='favorites');
+            dom.filterAllBtn.setAttribute('aria-pressed',currentFilter!=='favorites');
+            dom.filterFavBtn.classList.toggle('active',currentFilter==='favorites');
+            dom.filterAllBtn.classList.toggle('active',currentFilter!=='favorites');
+            applyFilters();
+            srLive(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
+        }
+    });
+
+    dom.search.addEventListener('input',applyFilters);
+    dom.filterAllBtn.addEventListener('click',()=>{
+        currentFilter='all';
+        dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+        dom.filterAllBtn.setAttribute('aria-pressed','true'); dom.filterFavBtn.setAttribute('aria-pressed','false');
+        applyFilters();
+    });
+    dom.filterFavBtn.addEventListener('click',()=>{
+        currentFilter='favorites';
+        dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+        dom.filterFavBtn.setAttribute('aria-pressed','true'); dom.filterAllBtn.setAttribute('aria-pressed','false');
+        applyFilters();
+    });
+    dom.categoryFilters.addEventListener('click',e=>{
+        if(e.target.matches('.category-btn')){
+            currentCategory=e.target.dataset.category;
+            document.querySelectorAll('.category-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-selected','false');});
+            e.target.classList.add('active'); e.target.setAttribute('aria-selected','true');
+            applyFilters();
+        }
+    });
+
+    /* ---------- INICIALIZACIÓN ---------- */
+    dom.filterAllBtn.classList.add('active');
+    dom.filterAllBtn.setAttribute('aria-pressed','true');
+    dom.copyrightYear.textContent=new Date().getFullYear();
+    renderRecipes(recipes);
+    renderShopping();
+
+    // Evento para cargar las voces de SpeechSynthesis (importante para que getVoices() no esté vacío)
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            console.log("Voces de SpeechSynthesis cargadas.");
+        };
+    }
+    </script>
 </body>
-
 </html>
