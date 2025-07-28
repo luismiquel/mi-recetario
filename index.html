@@ -48,7 +48,7 @@
         #recipeModal{opacity:0;transition:opacity .3s,visibility .3s;}
         #recipeModal.modal-visible{visibility:visible;opacity:1;}
         #modalContent{background:#fff;border-radius:1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:100%;max-width:44rem;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .3s;}
-        #recipeModal.modal-visible #modalContent{transform:scale(1);}
+        #modalContent{transform:scale(1);}
         .dark #modalContent{background:#292524;}
 
         #cooking-mode-view{background:#fff;}
@@ -675,7 +675,7 @@
                     <h2 id="recipe-title" class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
                     <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition" aria-label="Cerrar">✖</button>
                 </div>
-                <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+                <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
                 <div id="recipe-content-normal">
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
                         <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
@@ -988,12 +988,16 @@
         const saved=localStorage.getItem('color-theme');
         if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
+        } else { // FIX: Añadida lógica para quitar la clase 'dark' si no debe estar
+            document.documentElement.classList.remove('dark');
         }
         dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
         
         const contrast=localStorage.getItem('contrast');
         if(contrast==='1'){
             document.documentElement.classList.add('high-contrast');
+        } else { // FIX: Añadida lógica para quitar la clase 'high-contrast'
+            document.documentElement.classList.remove('high-contrast');
         }
         dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
 
@@ -1002,21 +1006,19 @@
     }
     setupTheme();
     dom.themeToggle.addEventListener('click',()=>{
-        document.documentElement.classList.toggle('dark');
-        const isDark=document.documentElement.classList.contains('dark');
+        const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('color-theme',isDark?'dark':'light');
-        dom.themeToggle.setAttribute('aria-pressed',isDark);
-        srLive(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); // Anuncio audible
-        speak(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); // Anuncio audible
+        dom.themeToggle.setAttribute('aria-pressed',isDark.toString()); // FIX: .toString() para el atributo
+        srLive(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); 
+        speak(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); 
     });
 
     dom.contrastToggle.addEventListener('click',()=>{
-        document.documentElement.classList.toggle('high-contrast');
-        const pressed=document.documentElement.classList.contains('high-contrast');
+        const pressed=document.documentElement.classList.toggle('high-contrast');
         localStorage.setItem('contrast',pressed?'1':'0');
-        dom.contrastToggle.setAttribute('aria-pressed',pressed);
-        srLive(`Contraste alto ${pressed?'activado':'desactivado'}.`); // Anuncio audible
-        speak(`Contraste alto ${pressed?'activado':'desactivado'}.`); // Anuncio audible
+        dom.contrastToggle.setAttribute('aria-pressed',pressed.toString()); // FIX: .toString() para el atributo
+        srLive(`Contraste alto ${pressed?'activado':'desactivado'}.`); 
+        speak(`Contraste alto ${pressed?'activado':'desactivado'}.`); 
     });
 
     dom.fontInc.addEventListener('click',()=>{
@@ -1025,7 +1027,7 @@
         document.documentElement.style.setProperty('--base-font-size',n+'px');
         localStorage.setItem('fontSize',n);
         srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
-        speak(`Tamaño de fuente aumentado a ${n} píxeles.`); // Anuncio audible
+        speak(`Tamaño de fuente aumentado a ${n} píxeles.`); 
     });
     dom.fontDec.addEventListener('click',()=>{
         const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
@@ -1033,7 +1035,7 @@
         document.documentElement.style.setProperty('--base-font-size',n+'px');
         localStorage.setItem('fontSize',n);
         srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
-        speak(`Tamaño de fuente reducido a ${n} píxeles.`); // Anuncio audible
+        speak(`Tamaño de fuente reducido a ${n} píxeles.`); 
     });
 
     /* ---------- EVENTOS GLOBALES ---------- */
