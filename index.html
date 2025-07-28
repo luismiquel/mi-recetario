@@ -552,13 +552,14 @@
         saveShopping();
         renderShopping();
         srLive('Ingredientes añadidos a la lista de la compra.');
+        speak(`Ingredientes añadidos a la lista de la compra. Tienes ${shoppingItems.length} elementos.`);
         alert('Ingredientes añadidos a tu lista de la compra.');
     }
 
     function renderShopping(){
         dom.shoppingList.innerHTML = ''; 
         if(shoppingItems.length === 0){
-            dom.shoppingList.innerHTML = '<li class="text-center text-gray-500 dark:text-stone-400 py-4">Tu lista de la compra está vacía.</li>';
+            dom.shoppingList.innerHTML = '<li class="text-center text-gray-500 dark:text-stone-400 py-4">Tu lista de la compra está vacía. Añade ingredientes desde los detalles de las recetas.</li>';
         } else {
             shoppingItems.forEach((item,idx)=>{
                 const li = document.createElement('li');
@@ -947,7 +948,7 @@
         if(confirm('¿Estás seguro de que quieres vaciar toda la lista de la compra?')){
             shoppingItems=[]; saveShopping(); renderShopping(); 
             srLive("Lista vaciada.");
-            speak("Lista de la compra vaciada."); // Anuncio audible
+            speak("Lista de la compra vaciada."); 
         }
     });
     dom.shoppingList.addEventListener('click',e=>{
@@ -959,14 +960,14 @@
                 shoppingItems.splice(idx,1);
                 renderShopping();
                 srLive(`Eliminado ${deletedItemText} de la lista.`);
-                speak(`Eliminado ${deletedItemText} de la lista.`); // Anuncio audible
+                speak(`Eliminado ${deletedItemText} de la lista.`); 
             }
         } else if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
             const idx = parseInt(e.target.dataset.idx);
             shoppingItems[idx].done = e.target.checked;
             saveShopping();
             srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
-            speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`); // Anuncio audible
+            speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`); 
             renderShopping(); // Re-renderizar para actualizar el estilo tachado
         }
     });
@@ -974,12 +975,12 @@
         const text=shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n');
         navigator.clipboard.writeText(text).then(()=>srLive("Lista copiada al portapapeles."));
         alert("Lista copiada al portapapeles.");
-        speak("Lista copiada al portapapeles."); // Anuncio audible
+        speak("Lista copiada al portapapeles."); 
     });
     dom.whatsappShopping.addEventListener('click',()=>{
         const text=encodeURIComponent("Mi lista de la compra:\n"+shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n'));
         window.open(`https://wa.me/?text=${text}`,'_blank');
-        speak("Lista de la compra lista para enviar por WhatsApp."); // Anuncio audible
+        speak("Lista de la compra lista para enviar por WhatsApp."); 
     });
     dom.printShopping.addEventListener('click',()=>window.print());
 
@@ -988,7 +989,7 @@
         const saved=localStorage.getItem('color-theme');
         if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
-        } else { // FIX: Añadida lógica para quitar la clase 'dark' si no debe estar
+        } else { 
             document.documentElement.classList.remove('dark');
         }
         dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
@@ -996,7 +997,7 @@
         const contrast=localStorage.getItem('contrast');
         if(contrast==='1'){
             document.documentElement.classList.add('high-contrast');
-        } else { // FIX: Añadida lógica para quitar la clase 'high-contrast'
+        } else { 
             document.documentElement.classList.remove('high-contrast');
         }
         dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
@@ -1008,7 +1009,7 @@
     dom.themeToggle.addEventListener('click',()=>{
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('color-theme',isDark?'dark':'light');
-        dom.themeToggle.setAttribute('aria-pressed',isDark.toString()); // FIX: .toString() para el atributo
+        dom.themeToggle.setAttribute('aria-pressed',isDark.toString()); 
         srLive(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); 
         speak(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); 
     });
@@ -1016,7 +1017,7 @@
     dom.contrastToggle.addEventListener('click',()=>{
         const pressed=document.documentElement.classList.toggle('high-contrast');
         localStorage.setItem('contrast',pressed?'1':'0');
-        dom.contrastToggle.setAttribute('aria-pressed',pressed.toString()); // FIX: .toString() para el atributo
+        dom.contrastToggle.setAttribute('aria-pressed',pressed.toString()); 
         srLive(`Contraste alto ${pressed?'activado':'desactivado'}.`); 
         speak(`Contraste alto ${pressed?'activado':'desactivado'}.`); 
     });
@@ -1079,7 +1080,7 @@
             dom.filterAllBtn.classList.toggle('active',currentFilter!=='favorites');
             applyFilters();
             srLive(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
-            speak(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`); // Anuncio audible
+            speak(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`); 
         }
     });
 
@@ -1089,16 +1090,16 @@
         dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
         dom.filterAllBtn.setAttribute('aria-pressed','true'); dom.filterFavBtn.setAttribute('aria-pressed','false');
         applyFilters();
-        srLive("Mostrando todas las recetas."); // Anuncio audible
-        speak("Mostrando todas las recetas."); // Anuncio audible
+        srLive("Mostrando todas las recetas."); 
+        speak("Mostrando todas las recetas."); 
     });
     dom.filterFavBtn.addEventListener('click',()=>{
         currentFilter='favorites';
         dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
         dom.filterFavBtn.setAttribute('aria-pressed','true'); dom.filterAllBtn.setAttribute('aria-pressed','false');
         applyFilters();
-        srLive("Mostrando solo recetas favoritas."); // Anuncio audible
-        speak("Mostrando solo recetas favoritas."); // Anuncio audible
+        srLive("Mostrando solo recetas favoritas."); 
+        speak("Mostrando solo recetas favoritas."); 
     });
     dom.categoryFilters.addEventListener('click',e=>{
         if(e.target.matches('.category-btn')){
@@ -1106,8 +1107,8 @@
             document.querySelectorAll('.category-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-selected','false');});
             e.target.classList.add('active'); e.target.setAttribute('aria-selected','true');
             applyFilters();
-            srLive(`Filtro por categoría: ${e.target.textContent}.`); // Anuncio audible
-            speak(`Filtro por categoría: ${e.target.textContent}.`); // Anuncio audible
+            srLive(`Filtro por categoría: ${e.target.textContent}.`); 
+            speak(`Filtro por categoría: ${e.target.textContent}.`); 
         }
     });
 
