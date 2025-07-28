@@ -518,7 +518,6 @@
 
     // Función para añadir ingredientes a la lista de la compra, unificando cantidades
     function addIngredientsToShopping(ingredientsFromModal){
-        // ingredientsFromModal ya contiene los objetos { original, formatted }
         ingredientsFromModal.forEach(ingObj => {
             const parsedIng = parseIngredient(ingObj.original); // Parsear el original para cantidad y unidad
             const baseName = getBaseName(parsedIng.name); 
@@ -580,7 +579,7 @@
         localStorage.setItem('shopping', JSON.stringify(shoppingItems)); 
     }
 
-    /* ---------- PARSE / SCALE INGREDIENTS ---------- */
+    /* ---------- PARSE / SCALE INGREDIENTS (REFACTORIZADO) ---------- */
     // El parseo inicial del ingrediente (sin escalar) para extraer cantidad/unidad/nombre base.
     function parseIngredient(ingredient){
         const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
@@ -629,7 +628,6 @@
             formattedName = getPluralName(name);
         }
 
-        // FIX: Corregido formattedName.Name a formattedName
         if (unit !== '') {
             const unitRegex = new RegExp(`\\b${unit}(es)?\\b`, 'gi');
             formattedName = formattedName.replace(unitRegex, '').trim(); 
@@ -826,7 +824,7 @@
         }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition(); // Asignación a la variable global 'recognition'
+        recognition = new SpeechRecognition(); 
         recognition.lang = 'es-ES'; 
         recognition.interimResults = false; 
         recognition.maxAlternatives = 1; 
@@ -949,6 +947,7 @@
         if(confirm('¿Estás seguro de que quieres vaciar toda la lista de la compra?')){
             shoppingItems=[]; saveShopping(); renderShopping(); 
             srLive("Lista vaciada.");
+            speak("Lista de la compra vaciada."); // Anuncio audible
         }
     });
     dom.shoppingList.addEventListener('click',e=>{
@@ -960,12 +959,14 @@
                 shoppingItems.splice(idx,1);
                 renderShopping();
                 srLive(`Eliminado ${deletedItemText} de la lista.`);
+                speak(`Eliminado ${deletedItemText} de la lista.`); // Anuncio audible
             }
         } else if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
             const idx = parseInt(e.target.dataset.idx);
             shoppingItems[idx].done = e.target.checked;
             saveShopping();
             srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
+            speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`); // Anuncio audible
             renderShopping(); // Re-renderizar para actualizar el estilo tachado
         }
     });
@@ -973,10 +974,12 @@
         const text=shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n');
         navigator.clipboard.writeText(text).then(()=>srLive("Lista copiada al portapapeles."));
         alert("Lista copiada al portapapeles.");
+        speak("Lista copiada al portapapeles."); // Anuncio audible
     });
     dom.whatsappShopping.addEventListener('click',()=>{
         const text=encodeURIComponent("Mi lista de la compra:\n"+shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n'));
         window.open(`https://wa.me/?text=${text}`,'_blank');
+        speak("Lista de la compra lista para enviar por WhatsApp."); // Anuncio audible
     });
     dom.printShopping.addEventListener('click',()=>window.print());
 
@@ -1003,6 +1006,8 @@
         const isDark=document.documentElement.classList.contains('dark');
         localStorage.setItem('color-theme',isDark?'dark':'light');
         dom.themeToggle.setAttribute('aria-pressed',isDark);
+        srLive(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); // Anuncio audible
+        speak(`Tema cambiado a ${isDark?'oscuro':'claro'}.`); // Anuncio audible
     });
 
     dom.contrastToggle.addEventListener('click',()=>{
@@ -1010,6 +1015,8 @@
         const pressed=document.documentElement.classList.contains('high-contrast');
         localStorage.setItem('contrast',pressed?'1':'0');
         dom.contrastToggle.setAttribute('aria-pressed',pressed);
+        srLive(`Contraste alto ${pressed?'activado':'desactivado'}.`); // Anuncio audible
+        speak(`Contraste alto ${pressed?'activado':'desactivado'}.`); // Anuncio audible
     });
 
     dom.fontInc.addEventListener('click',()=>{
@@ -1018,6 +1025,7 @@
         document.documentElement.style.setProperty('--base-font-size',n+'px');
         localStorage.setItem('fontSize',n);
         srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
+        speak(`Tamaño de fuente aumentado a ${n} píxeles.`); // Anuncio audible
     });
     dom.fontDec.addEventListener('click',()=>{
         const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
@@ -1025,6 +1033,7 @@
         document.documentElement.style.setProperty('--base-font-size',n+'px');
         localStorage.setItem('fontSize',n);
         srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
+        speak(`Tamaño de fuente reducido a ${n} píxeles.`); // Anuncio audible
     });
 
     /* ---------- EVENTOS GLOBALES ---------- */
@@ -1068,6 +1077,7 @@
             dom.filterAllBtn.classList.toggle('active',currentFilter!=='favorites');
             applyFilters();
             srLive(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
+            speak(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`); // Anuncio audible
         }
     });
 
@@ -1077,12 +1087,16 @@
         dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
         dom.filterAllBtn.setAttribute('aria-pressed','true'); dom.filterFavBtn.setAttribute('aria-pressed','false');
         applyFilters();
+        srLive("Mostrando todas las recetas."); // Anuncio audible
+        speak("Mostrando todas las recetas."); // Anuncio audible
     });
     dom.filterFavBtn.addEventListener('click',()=>{
         currentFilter='favorites';
         dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
         dom.filterFavBtn.setAttribute('aria-pressed','true'); dom.filterAllBtn.setAttribute('aria-pressed','false');
         applyFilters();
+        srLive("Mostrando solo recetas favoritas."); // Anuncio audible
+        speak("Mostrando solo recetas favoritas."); // Anuncio audible
     });
     dom.categoryFilters.addEventListener('click',e=>{
         if(e.target.matches('.category-btn')){
@@ -1090,6 +1104,8 @@
             document.querySelectorAll('.category-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-selected','false');});
             e.target.classList.add('active'); e.target.setAttribute('aria-selected','true');
             applyFilters();
+            srLive(`Filtro por categoría: ${e.target.textContent}.`); // Anuncio audible
+            speak(`Filtro por categoría: ${e.target.textContent}.`); // Anuncio audible
         }
     });
 
