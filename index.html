@@ -164,9 +164,9 @@
             <p id="step-text" class="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100"></p>
         </div>
         <div id="cooking-controls" class="p-4 bg-slate-100 dark:bg-stone-800 grid grid-cols-3 gap-4">
-            <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold" aria-label="Paso anterior"></button>
-            <button id="repeat-step-btn" class="p-4 rounded-lg bg-amber-500 text-white font-bold" aria-label="Repetir paso actual"></button>
-            <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold" aria-label="Siguiente paso"></button>
+            <button id="prev-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold" aria-label="Paso anterior">Anterior</button>
+            <button id="repeat-step-btn" class="p-4 rounded-lg bg-amber-500 text-white font-bold" aria-label="Repetir paso actual">Repetir</button>
+            <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold" aria-label="Siguiente paso">Siguiente</button>
         </div>
         <button id="exit-cooking-btn" class="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full" aria-label="Salir del modo cocina">
             <svg class="w-6 h-6 text-slate-600 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -202,11 +202,10 @@
     <div id="sr-live" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
     <script type="module">
-        // --- Importaciones de Firebase ---
-        // Si no estás usando Firebase para favoritos/lista de compra (localStorage en su lugar),
-        // estas importaciones y el código relacionado con Firebase Auth/Firestore
-        // pueden ser eliminados para reducir el tamaño del script.
-        // Pero si quieres usarlos, ¡las reglas de Firebase Firestore deben estar bien!
+        // --- Importaciones de Firebase (Comentadas para usar localStorage por defecto) ---
+        // Si deseas usar Firebase para guardar favoritos y lista de la compra,
+        // DESCOMENTA las siguientes líneas y la lógica de Firebase en la función runRecipeApp.
+        // También necesitarás configurar las reglas de seguridad de Firestore.
         /*
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
@@ -216,7 +215,7 @@
 
         // Envuelve toda la lógica de la aplicación en una función para asegurar que el DOM esté cargado.
         function runRecipeApp() {
-            // --- Configuración de Firebase (comentada si usas solo localStorage) ---
+            // --- Configuración de Firebase (comentada por defecto para usar localStorage) ---
             /*
             const firebaseConfig = {
                 apiKey: "AIzaSyBnYukeJLJHs9lLNpnGYHRZ58SVE3CpTBQ",
@@ -232,16 +231,14 @@
             const auth = getAuth(app);
             const analytics = getAnalytics(app); 
             const appId = firebaseConfig.appId;
+            let userId = null; // Para Firebase real
             */
 
             // --- ESTADO / VARIABLES ---
-            // Usamos localStorage por defecto para persistencia simplificada.
-            // Si quieres usar Firebase, descomenta el código de Firebase arriba
-            // y reemplaza los "localStorage.getItem/setItem" por llamadas a las funciones de Firebase (loadUserData/saveData).
+            // Por defecto, usamos localStorage para persistencia.
             let userFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
             let shoppingList = JSON.parse(localStorage.getItem('shoppingList') || '[]');
-            let userId = 'localUser'; // ID de usuario ficticio para localStorage
-            // let userId = null; // Para usar con Firebase real
+            let userId = 'localUser'; // ID de usuario ficticio para localStorage. Eliminar si usas Firebase real.
             
             let currentFilter = 'all';
             let currentCategory = 'all';
@@ -251,7 +248,7 @@
             let currentStep = 0;
             let speechUtterance = null; // Para mantener una referencia a la utterance actual
 
-            // Referencias a los elementos del DOM
+            // Referencias a los elementos del DOM (Optimizadas)
             const dom = {
                 grid: document.getElementById('recipeGrid'),
                 search: document.getElementById('searchInput'),
@@ -274,7 +271,6 @@
                 fontInc: document.getElementById('font-inc'),
                 fontDec: document.getElementById('font-dec'),
                 copyrightYear: document.getElementById('copyright-year'),
-                // Elementos del modo cocina
                 cookingModeView: document.getElementById('cooking-mode-view'),
                 stepCounter: document.getElementById('step-counter'),
                 stepText: document.getElementById('step-text'),
@@ -282,8 +278,8 @@
                 repeatStepBtn: document.getElementById('repeat-step-btn'),
                 nextStepBtn: document.getElementById('next-step-btn'),
                 exitCookingBtn: document.getElementById('exit-cooking-btn'),
-                srLive: document.getElementById('sr-live'), // Para mensajes de lector de pantalla
-                userInfo: document.getElementById('user-info') // Añadido para que exista en el DOM
+                srLive: document.getElementById('sr-live'),
+                userInfo: document.getElementById('user-info')
             };
 
             // --- Datos de Recetas (150 recetas) ---
@@ -542,28 +538,50 @@
 
             // --- LISTA DE LA COMPRA ---
 
+            // Helpers para pluralización/singularización de ingredientes
+            const commonFormsPlural = {
+                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+                "filete": "filetes", "manojo": "manojos", "lata": "latas",
+                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+                "loncha": "lonchas", "judía verde": "judías verdes", "tomate cherry": "tomates cherry",
+                "pasas": "pasas", "nueces": "nueces", "espinacas": "espinacas", "setas": "setas", 
+            };
+            const exceptionsSingulars = ['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'];
+
+            function getBaseName(name) {
+                let base = name.toLowerCase();
+                for (const singular in commonFormsPlural) {
+                    if (commonFormsPlural[singular] === base) { return singular; }
+                }
+                if (base.endsWith('s') && !exceptionsSingulars.includes(base) && base.length > 3) {
+                    return base.slice(0, -1);
+                }
+                return base;
+            }
+
+            function getPluralName(name) {
+                const base = getBaseName(name); 
+                return commonFormsPlural[base] || (name.endsWith('s') ? name : name + 's');
+            }
+
             // Función para añadir ingredientes a la lista de la compra, unificando cantidades
             function addIngredientsToShopping(ingredientsTextArray){
-                const currentServingsFactor = currentServings / currentRecipeDetail.raciones; // Factor de ajuste desde el modal
+                const currentServingsFactor = currentServings / currentRecipeDetail.raciones;
 
                 ingredientsTextArray.forEach(ingredientText => {
                     const parsedIng = parseIngredient(ingredientText);
+                    const baseName = getBaseName(parsedIng.name); // Obtener la forma base del nombre
                     
-                    // Normalizar el nombre para la comparación (ej. "tomate" vs "tomates")
-                    let normalizedName = parsedIng.name.toLowerCase();
-                    const commonPluralSingular = { // Un mapa simple para singularizar/pluralizar y encontrar una forma base
-                        "patatas": "patata", "tomates": "tomate", "cebollas": "cebolla", 
-                        "pimientos": "pimiento", "huevos": "huevo", "dientes": "diente",
-                        "zanahorias": "zanahoria", "espinacas": "espinaca", "nueces": "nuez",
-                        "gambas": "gamba", "lonchas": "loncha", "filetes": "filete",
-                        // Agrega más si es necesario para unificar
-                    };
-                    normalizedName = commonPluralSingular[normalizedName] || normalizedName;
-
-                    // Buscar si el ingrediente ya existe en la lista
+                    // Buscar si el ingrediente ya existe en la lista (basado en nombre base y unidad)
                     const existingItem = shoppingList.find(item => {
-                        const existingNormalized = commonPluralSingular[item.cleanName] || item.cleanName;
-                        return existingNormalized === normalizedName && item.unit === parsedIng.unit; // También compara unidades
+                        const existingBaseName = getBaseName(item.cleanName);
+                        return existingBaseName === baseName && item.unit === parsedIng.unit;
                     });
 
                     if (existingItem) {
@@ -576,18 +594,15 @@
                                 unit: existingItem.unit,
                                 name: existingItem.cleanName // Usar el nombre limpio para reformatear
                             }, 1); // Factor 1 porque 'quantity' ya está escalada
-                        } else {
-                            // Si no tiene cantidad o es un ingrediente "sin medida" (ej. "sal"), no lo duplicamos.
-                            // Si queremos duplicar "sal", removemos este else.
                         }
                     } else {
                         // Si no existe, añadirlo a la lista. La cantidad se escala aquí.
                         shoppingList.push({
-                            text: formatIngredient(parsedIng, currentServingsFactor), // El texto formateado para mostrar
-                            cleanName: normalizedName, // Nombre limpio para futuras comparaciones
-                            quantity: parsedIng.value > 0 ? (parsedIng.value * currentServingsFactor) : 0, // Cantidad original escalada
-                            unit: parsedIng.unit, // Unidad original
-                            done: false // Estado inicial no comprado
+                            text: formatIngredient(parsedIng, currentServingsFactor),
+                            cleanName: baseName, // Guardamos la forma base para futuras unificaciones
+                            quantity: parsedIng.value > 0 ? (parsedIng.value * currentServingsFactor) : 0,
+                            unit: parsedIng.unit,
+                            done: false
                         });
                     }
                 });
@@ -598,17 +613,22 @@
             }
 
             function renderShopping(){
-                dom.shoppingList.innerHTML = ''; // Limpiar la lista antes de renderizar
+                dom.shoppingList.innerHTML = '';
                 if(shoppingList.length === 0){
                     dom.shoppingList.innerHTML = '<li class="text-center text-gray-500 dark:text-stone-400 py-4">Tu lista de la compra está vacía.</li>';
                 } else {
-                    shoppingList.forEach((item,idx)=>`
-                        <li class="flex items-start gap-2 py-1 border-b border-gray-200 dark:border-stone-700 last:border-b-0" role="listitem">
-                            <input type="checkbox" id="shop-${idx}" ${item.done?'checked':''} class="mt-1" data-idx="${idx}" aria-label="${item.formatted}" />
-                            <label for="shop-${idx}" class="flex-1 ${item.done?'line-through text-gray-400':''}">${item.formatted}</label>
+                    shoppingList.forEach((item,idx)=>{
+                        const li = document.createElement('li');
+                        li.className = `flex items-start gap-2 py-1 border-b border-gray-200 dark:border-stone-700 last:border-b-0 ${item.done ? 'line-through text-gray-400' : ''}`;
+                        li.setAttribute('role', 'listitem');
+                        
+                        li.innerHTML = `
+                            <input type="checkbox" id="shop-${idx}" ${item.done ? 'checked' : ''} class="mt-1" data-idx="${idx}" aria-label="${item.formatted}" />
+                            <label for="shop-${idx}" class="flex-1">${item.formatted}</label>
                             <button data-del="${idx}" aria-label="Eliminar ${item.formatted}" class="text-red-600 font-bold text-lg leading-none p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-800">×</button>
-                        </li>
-                    `).forEach(itemHtml => dom.shoppingList.innerHTML += itemHtml); // Añadir como HTML, no como cadena
+                        `;
+                        dom.shoppingList.appendChild(li);
+                    });
                 }
             }
 
@@ -616,57 +636,16 @@
                 localStorage.setItem('shoppingList', JSON.stringify(shoppingList)); 
             }
 
-            // --- PARSEO Y FORMATEO DE INGREDIENTES ---
-            // Las he sacado del scope original para que addIngredientsToShopping pueda usarlas mejor
-            const commonFormsPlural = {
-                "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
-                "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-                "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
-                "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-                "filete": "filetes", "manojo": "manojos", "lata": "latas",
-                "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-                "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
-                "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-                "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
-                "loncha": "lonchas", "judía verde": "judías verdes", "tomate cherry": "tomates cherry",
-                "pasas": "pasas", "nueces": "nueces", "espinacas": "espinacas", "setas": "setas", // Mantener plural
-            };
-
-            const exceptionsSingulars = ['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas']; // Palabras que terminan en 's' pero son singulares
-
-            function getBaseName(name) {
-                let base = name.toLowerCase();
-                for (const singular in commonFormsPlural) {
-                    if (commonFormsPlural[singular] === base) { // Si el nombre es un plural conocido, devuelve su singular
-                        return singular;
-                    }
-                }
-                // Si termina en 's' y no es una excepción, quita la 's'
-                if (base.endsWith('s') && !exceptionsSingulars.includes(base) && base.length > 3) {
-                    return base.slice(0, -1);
-                }
-                return base; // Devuelve el nombre tal cual si no se puede simplificar
-            }
-
-            function getPluralName(name) {
-                const base = getBaseName(name); // Obtiene la forma base
-                return commonFormsPlural[base] || (name.endsWith('s') ? name : name + 's'); // Si la forma base tiene plural, úsalo, sino añade 's'
-            }
-
-
+            // --- PARSEO Y FORMATEO DE INGREDIENTES (REFACTORIZADO) ---
             function parseIngredient(ingredient){
                 const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
                 const m = ingredient.match(regex);
                 
                 if(m){
                     let value = 0;
-                    if(m[1]){ 
-                        value = m[1].includes('/')? (parseFloat(m[1].split('/')[0])/parseFloat(m[1].split('/')[1])) : parseFloat(m[1].replace(',','.')); 
-                    } else if(m[2]){ 
-                        const w=m[2].toLowerCase(); value = (w==='medio'||w==='media')?0.5:1; 
-                    } else if(m[4]){ 
-                        value = 1; // Asume 1 si solo hay nombre pero no cantidad explícita
-                    }
+                    if(m[1]){ value = m[1].includes('/')? (parseFloat(m[1].split('/')[0])/parseFloat(m[1].split('/')[1])) : parseFloat(m[1].replace(',','.')); }
+                    else if(m[2]){ const w=m[2].toLowerCase(); value = (w==='medio'||w==='media')?0.5:1; }
+                    else if(m[4]){ value = 1; } // Asume 1 si solo hay nombre pero no cantidad explícita
                     
                     let unit = m[3]?m[3].toLowerCase():'';
                     let name = m[4]?m[4].trim():'';
@@ -689,21 +668,23 @@
                 let unit=p.unit; 
                 let name=p.name;
 
-                // Ajustes de unidad
-                if(unit==='kg' && v<1){ v*=1000; unit='g'; } else if(unit==='litro' && v<1){ v*=1000; unit='ml'; }
-                else if(unit==='g' && v>=1000){ v/=1000; unit='kg'; } else if(unit==='ml' && v>=1000){ v/=1000; unit='litro'; }
+                // Ajustes de unidad (g <-> kg, ml <-> litro)
+                if(unit === 'kg' && v < 1) { v *= 1000; unit = 'g'; } 
+                else if(unit === 'litro' && v < 1) { v *= 1000; unit = 'ml'; }
+                else if(unit === 'g' && v >= 1000) { v /= 1000; unit = 'kg'; } 
+                else if(unit === 'ml' && v >= 1000) { v /= 1000; unit = 'litro'; }
                 
-                // Redondeo
+                // Redondeo a 2 decimales, o entero si es exacto
                 if(Math.abs(v % 1) < 0.0001) v=Math.round(v); 
                 else if(Math.abs((v * 10) % 1) < 0.0001) v=Math.round(v * 10)/10; 
                 else v=Math.round(v * 100)/100;
                 
-                // Pluralización del nombre
+                // Pluralización/singularización del nombre
                 let formattedName = name;
-                if (v === 1) {
-                    formattedName = getBaseName(name); // Intenta singularizar
-                } else if (v > 1) {
-                    formattedName = getPluralName(name); // Intenta pluralizar
+                if (v === 1 && !['sal','pimienta','aceite','agua'].includes(name.toLowerCase())) { // Singularizar si es 1 y no es una excepción
+                    formattedName = getBaseName(name);
+                } else if (v > 1) { // Pluralizar si es más de 1
+                    formattedName = getPluralName(name);
                 }
 
                 // Limpiar redundancia de unidad en el nombre (ej. "gramos gramos" -> "gramos")
@@ -715,20 +696,19 @@
                 // Eliminar espacios duplicados y trim
                 formattedName = formattedName.split(/\s+/).filter(Boolean).join(' ');
 
-                // Formato final
+                // Formato final de la cadena de ingrediente
                 if (unit === 'cdita' || unit === 'cda') {
                     return `${v} ${unit}. ${formattedName}`.trim();
                 }
                 if (v === 1 && (unit === '' || ['un','una','unidad','unidades','puñado','chorrito'].includes(unit))) {
-                    return formattedName; // Ej: "Aceite de oliva", "Un puñado de nueces"
+                    return formattedName; 
                 }
                 if (unit !== '') {
                     return `${v} ${unit} ${formattedName}`.trim();
                 }
-                // Si no hay unidad y la cantidad es relevante (no es 0 ni 1 caso especial)
-                if (v > 0) return `${v} ${formattedName}`.trim();
+                if (v > 0) return `${v} ${formattedName}`.trim(); // Mostrar cantidad si es numérica y no tiene unidad explícita
                 
-                return formattedName; // Para casos como "Sal" sin cantidad
+                return formattedName; // Para casos como "Sal" sin cantidad ni unidad
             }
 
             function updateIngredientsDisplay(servings){
@@ -768,16 +748,16 @@
                             <div>
                                 <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
                                 <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
-                                <button id="add-shopping" class="mt-4 bg-amber-600 text-white px-4 py-2 rounded-full flex items-center justify-center">
+                                <button id="add-shopping-from-modal" class="mt-4 bg-amber-600 text-white px-4 py-2 rounded-full flex items-center justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                                     Añadir a lista de compra
                                 </button>
-                                <button id="read-ingredients" class="mt-2 ml-2 bg-blue-600 text-white px-4 py-2 rounded-full">Leer ingredientes</button>
+                                <button id="read-ingredients-from-modal" class="mt-2 ml-2 bg-blue-600 text-white px-4 py-2 rounded-full">Leer ingredientes</button>
                             </div>
                             <div>
                                 <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
                                 <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
-                                <button id="read-steps" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded-full">Leer pasos</button>
+                                <button id="read-steps-from-modal" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded-full">Leer pasos</button>
                             </div>
                         </div>
 
@@ -798,9 +778,10 @@
                 dom.modal.classList.add('modal-visible');
                 focusTrap.enable(dom.modal);
 
-                // Eventos modal
+                // Eventos modal (se asignan aquí porque los elementos se crean dinámicamente)
                 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
                 document.getElementById('printRecipeBtn').addEventListener('click', ()=>window.print());
+                
                 const shareBtn = document.getElementById('shareRecipeBtn');
                 if(navigator.share){
                     shareBtn.addEventListener('click', async ()=>{
@@ -809,13 +790,12 @@
                 } else { shareBtn.style.display='none'; }
 
                 document.getElementById('start-cooking-btn').addEventListener('click', ()=> startCookingMode(recipe));
-                document.getElementById('add-shopping').addEventListener('click', ()=> {
-                    // Coger los ingredientes formateados actuales del modal
+                document.getElementById('add-shopping-from-modal').addEventListener('click', ()=> {
                     const ingredientsFromModal = Array.from(document.querySelectorAll('#ingredient-list li')).map(li=>li.textContent);
                     addIngredientsToShopping(ingredientsFromModal);
                 });
-                document.getElementById('read-ingredients').addEventListener('click', ()=> speakText('Ingredientes: '+ Array.from(document.querySelectorAll('#ingredient-list li')).map(li=>li.textContent).join('. ')) );
-                document.getElementById('read-steps').addEventListener('click', ()=> speakText('Pasos: '+ Array.from(document.querySelectorAll('#steps-list li')).map((li,i)=>`Paso ${i+1}: ${li.textContent}`).join('. ')) );
+                document.getElementById('read-ingredients-from-modal').addEventListener('click', ()=> speakText('Ingredientes: '+ Array.from(document.querySelectorAll('#ingredient-list li')).map(li=>li.textContent).join('. ')) );
+                document.getElementById('read-steps-from-modal').addEventListener('click', ()=> speakText('Pasos: '+ Array.from(document.querySelectorAll('#steps-list li')).map((li,i)=>`Paso ${i+1}: ${li.textContent}`).join('. ')) );
 
                 const servingsInput = document.getElementById('servings-input');
                 document.getElementById('decrease-servings').addEventListener('click',()=>{ let v=parseInt(servingsInput.value)-1; if(v<1)v=1; servingsInput.value=v; currentServings=v; updateIngredientsDisplay(v); });
@@ -854,10 +834,9 @@
                     u.voice = selectedVoice;
                 } else {
                     console.warn("No se encontró una voz compatible. La síntesis de voz podría no funcionar.");
-                    // Si no hay voces, alertamos una vez al usuario
-                    if (!sessionStorage.getItem('voice_alert_shown')) {
+                    if (!sessionStorage.getItem('voice_alert_shown_v2')) { // Alerta solo una vez por sesión
                         alert("El asistente de voz no puede hablar. Asegúrate de que tu navegador/sistema operativo tenga voces en español instaladas.");
-                        sessionStorage.setItem('voice_alert_shown', 'true');
+                        sessionStorage.setItem('voice_alert_shown_v2', 'true');
                     }
                 }
 
@@ -865,9 +844,9 @@
                 u.onerror = (event) => {
                     console.error('Error en SpeechSynthesis:', event);
                     dom.repeatStepBtn.classList.remove('speaking');
-                    if (!sessionStorage.getItem('voice_alert_shown')) {
+                    if (!sessionStorage.getItem('voice_alert_shown_v2')) { // Alerta solo una vez por sesión
                         alert("El asistente de voz encontró un error. Podría ser un problema con las voces instaladas.");
-                        sessionStorage.setItem('voice_alert_shown', 'true');
+                        sessionStorage.setItem('voice_alert_shown_v2', 'true');
                     }
                 };
                 
@@ -886,16 +865,16 @@
             function startCookingMode(recipe){
                 currentRecipeSteps = recipe.pasos; currentStep=0;
                 closeModal();
-                const view = document.getElementById('cooking-mode-view');
-                view.classList.remove('hidden'); view.classList.add('flex');
+                dom.cookingModeView.classList.remove('hidden'); 
+                dom.cookingModeView.classList.add('flex'); 
                 speakText(`Comenzamos la receta de ${recipe.titulo}.`);
                 setTimeout(updateCookingStep,1200);
             }
 
             function exitCookingMode(){
                 speechSynthesis.cancel();
-                const view=document.getElementById('cooking-mode-view');
-                view.classList.add('hidden'); view.classList.remove('flex');
+                dom.cookingModeView.classList.add('hidden'); 
+                dom.cookingModeView.classList.remove('flex'); 
                 speakText("Has salido del modo de cocina guiada. ¡Esperamos que hayas disfrutado!");
             }
 
@@ -945,7 +924,7 @@
             dom.repeatStepBtn.addEventListener('click',()=>{ speakText(currentRecipeSteps[currentStep]); });
             dom.exitCookingBtn.addEventListener('click', exitCookingMode);
 
-            // Shopping panel events
+            // Shopping panel events (delegación de eventos para eficiencia)
             function toggleShopping(open){
                 if(open){ dom.shoppingPanel.classList.add('open'); dom.openShopping.setAttribute('aria-expanded','true'); focusTrap.enable(dom.shoppingPanel); srLive('Lista de la compra abierta'); }
                 else { dom.shoppingPanel.classList.remove('open'); dom.openShopping.setAttribute('aria-expanded','false'); focusTrap.disable(); srLive('Lista de la compra cerrada'); }
@@ -966,25 +945,30 @@
             dom.printShopping.addEventListener('click',()=>{ 
                 window.print(); 
             });
+            
+            // Event listener delegado para los checkboxes y botones de eliminar en la lista de la compra
             dom.shoppingList.addEventListener('change',(e)=>{
                 if(e.target.matches('input[type="checkbox"]')){ 
-                    const idx=e.target.dataset.idx; 
+                    const idx=parseInt(e.target.dataset.idx); // Asegurarse de que sea número
                     shoppingList[idx].done=e.target.checked; 
                     saveShopping(); 
-                    renderShopping(); // Re-renderizar para aplicar el tachado
+                    renderShopping(); // Re-renderizar para aplicar el tachado visual
                     srLive(`${shoppingList[idx].formatted} ${shoppingList[idx].done?'marcado como comprado':'desmarcado como no comprado'}`);
                 }
             });
             dom.shoppingList.addEventListener('click',(e)=>{
-                if(e.target.dataset.del){ 
-                    const idx = parseInt(e.target.dataset.del);
+                if(e.target.matches('[data-del]')){ // Solo si el click fue en el botón de eliminar
+                    const idx = parseInt(e.target.dataset.del); // Asegurarse de que sea número
                     const deletedItemText = shoppingList[idx].formatted;
-                    shoppingList.splice(idx,1); 
-                    saveShopping(); 
-                    renderShopping(); 
-                    srLive(`Eliminado ${deletedItemText} de la lista`);
+                    if(confirm(`¿Estás seguro de que quieres eliminar "${deletedItemText}" de la lista?`)){
+                        shoppingList.splice(idx,1); 
+                        saveShopping(); 
+                        renderShopping(); 
+                        srLive(`Eliminado ${deletedItemText} de la lista`);
+                    }
                 }
             });
+
 
             // Tema y contraste
             function setupTheme(){
@@ -1031,9 +1015,11 @@
                 if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
                 if(e.key==='/'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado'); }
                 if(e.key==='l' || e.key==='L'){ e.preventDefault(); toggleShopping(!dom.shoppingPanel.classList.contains('open')); }
-                if(e.key==='Escape'){ // Redundant with window.addEventListener, but good for focus
-                    if(document.activeElement.closest('[role="dialog"]')) { // If inside a modal/dialog
-                        document.activeElement.closest('[role="dialog"]').querySelector('[aria-label*="Cerrar"]').click(); // Try to close it
+                if(e.key==='Escape'){ 
+                    if(document.activeElement.closest('[role="dialog"]')) { 
+                        document.activeElement.closest('[role="dialog"]').querySelector('[aria-label*="Cerrar"]').click(); 
+                    } else if (dom.shoppingPanel.classList.contains('open')) {
+                        toggleShopping(false);
                     }
                 }
             });
@@ -1045,50 +1031,10 @@
             renderRecipes(allRecipes);
             renderShopping();
             
-            // Si usas Firebase, descomenta esto
-            /*
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    userId = user.uid;
-                    dom.userInfo.textContent = `ID de sesión: ${userId.substring(0,8)}...`;
-                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                    const userDoc = await getDoc(userDocRef);
-                    if (userDoc.exists()) {
-                        const data = userDoc.data();
-                        userFavorites = data.favorites || [];
-                        shoppingList = data.shoppingList || [];
-                    } else {
-                        userFavorites = [];
-                        shoppingList = [];
-                    }
-                    applyFilters(); // Para actualizar los corazones de favoritos
-                    renderShopping(); // Para actualizar la lista de la compra
-                } else {
-                    signInAnonymously(auth).catch((error) => {
-                        console.error("Firebase: Error al iniciar sesión anónimamente:", error.message);
-                        dom.userInfo.textContent = `Error de autenticación: ${error.code}`;
-                    });
-                }
-            });
-
-            async function saveData(data) {
-                if (!userId) return;
-                try {
-                    const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/data/profile`);
-                    await setDoc(userDocRef, data, { merge: true });
-                    console.log("Firebase: Datos guardados con éxito.");
-                } catch (error) {
-                    console.error("Firebase: Error guardando datos de usuario:", error.message);
-                    alert(`Error al guardar datos. Verifica las reglas de seguridad de Firestore. Error: ${error.message}`);
-                }
-            }
-            */
-
             // Evento para cargar las voces de SpeechSynthesis (importante para que getVoices() no esté vacío)
             if (window.speechSynthesis) {
                 window.speechSynthesis.onvoiceschanged = () => {
                     console.log("Voces de SpeechSynthesis cargadas.");
-                    // Aquí podrías, por ejemplo, intentar preseleccionar una voz por defecto
                 };
             }
         } // Fin de runRecipeApp()
