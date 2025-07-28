@@ -48,7 +48,7 @@
         #recipeModal{opacity:0;transition:opacity .3s,visibility .3s;}
         #recipeModal.modal-visible{visibility:visible;opacity:1;}
         #modalContent{background:#fff;border-radius:1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:100%;max-width:44rem;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .3s;}
-        #recipeModal.modal-visible #modalContent{transform:scale(1);}
+        #recipeModal.modal-visible #modalContent{transform:1;}
         .dark #modalContent{background:#292524;}
 
         #cooking-mode-view{background:#fff;}
@@ -379,9 +379,7 @@
     ];
 
     /* ---------- ESTADO Y DOM ---------- */
-    // NOTA: userFavorites y shoppingItems usan localStorage. 
-    // Si quieres usar Firebase, DESCOMENTA las importaciones de Firebase 
-    // y la lógica de inicialización en runRecipeApp().
+    // userFavorites y shoppingItems usan localStorage. 
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
     let currentCategory = 'all';
@@ -415,7 +413,7 @@
         contrastToggle: document.getElementById('contrast-toggle'),
         fontInc: document.getElementById('font-inc'),
         fontDec: document.getElementById('font-dec'),
-        // Elementos del modo cocina (referencias directas a elementos que no están en dom.xxx)
+        // Elementos del modo cocina
         cookingModeView: document.getElementById('cooking-mode-view'),
         stepCounter: document.getElementById('step-counter'),
         stepText: document.getElementById('step-text'),
@@ -518,8 +516,11 @@
 
     // Función para añadir ingredientes a la lista de la compra, unificando cantidades
     function addIngredientsToShopping(ingredientsFromModal){
+        // Aquí no necesitamos currentServingsFactor, porque ingredientsFromModal
+        // ya viene de updateIngredientsDisplay que ya ha aplicado el escalado de raciones.
         ingredientsFromModal.forEach(ingObj => {
-            const parsedIng = parseIngredient(ingObj.original); // Parsear el original para cantidad y unidad
+            // Volvemos a parsear el 'original' por si necesitamos la cantidad/unidad numérica limpia
+            const parsedIng = parseIngredient(ingObj.original); 
             const baseName = getBaseName(parsedIng.name); 
             
             const existingItem = shoppingItems.find(item => {
@@ -528,19 +529,22 @@
             });
 
             if (existingItem) {
+                // Si existe y ambos tienen una cantidad numérica, las sumamos
                 if (parsedIng.value > 0 && existingItem.quantity > 0) {
-                    existingItem.quantity += parsedIng.value; // Sumar la cantidad del original
-                    existingItem.text = formatIngredient({ // Reformatear con la nueva cantidad total
+                    existingItem.quantity += parsedIng.value; 
+                    // Reformateamos el texto del elemento existente con la nueva cantidad total
+                    existingItem.text = formatIngredient({
                         value: existingItem.quantity,
                         unit: existingItem.unit,
                         name: existingItem.cleanName 
-                    }, 1); // Factor 1 porque 'quantity' ya es la cantidad total
+                    }, 1); // Factor 1 porque existingItem.quantity ya es la cantidad total
                 }
             } else {
+                // Si no existe, lo añadimos como un nuevo elemento
                 shoppingItems.push({
                     text: ingObj.formatted, // Usamos el texto ya formateado de la UL del modal
                     cleanName: baseName, // Guardamos la forma base para futuras unificaciones
-                    quantity: parsedIng.value > 0 ? parsedIng.value : 0, // Cantidad del original, no escalada aquí
+                    quantity: parsedIng.value > 0 ? parsedIng.value : 0, // Cantidad original (sin escalar de nuevo aquí)
                     unit: parsedIng.unit, // Unidad original
                     done: false // Estado inicial no comprado
                 });
@@ -576,7 +580,7 @@
         localStorage.setItem('shopping', JSON.stringify(shoppingItems)); 
     }
 
-    /* ---------- PARSE / SCALE INGREDIENTS ---------- */
+    /* ---------- PARSE / SCALE INGREDIENTS (REFACTORIZADO) ---------- */
     // NOTA: Estas funciones son auxiliares de addIngredientsToShopping y updateIngredientsDisplay.
     // El parseo inicial del ingrediente (sin escalar) para extraer cantidad/unidad/nombre base.
     function parseIngredient(ingredient){
@@ -627,9 +631,10 @@
             formattedName = getPluralName(name);
         }
 
+        // FIX: Corregido formattedName.Name a formattedName
         if (unit !== '') {
             const unitRegex = new RegExp(`\\b${unit}(es)?\\b`, 'gi');
-            formattedName = formattedName.Name.replace(unitRegex, '').trim(); // FIX: formattedName.Name -> formattedName
+            formattedName = formattedName.replace(unitRegex, '').trim(); 
         }
         
         formattedName = formattedName.split(/\s+/).filter(Boolean).join(' ');
