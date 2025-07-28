@@ -48,7 +48,7 @@
         #recipeModal{opacity:0;transition:opacity .3s,visibility .3s;}
         #recipeModal.modal-visible{visibility:visible;opacity:1;}
         #modalContent{background:#fff;border-radius:1.5rem;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);width:100%;max-width:44rem;max-height:90vh;overflow-y:auto;transform:scale(.95);transition:transform .3s;}
-        #recipeModal.modal-visible #modalContent{transform:1;}
+        #recipeModal.modal-visible #modalContent{transform:scale(1);}
         .dark #modalContent{background:#292524;}
 
         #cooking-mode-view{background:#fff;}
@@ -336,7 +336,7 @@
 
         /* Primeros extra (13) */
         { categoria:"Primero", titulo:"Crema de coliflor y queso ligero", raciones:4, tiempo:"30 min", imagen:IMG("Crema Coliflor"), ingredientes:["1 coliflor","1 patata","Queso rallado light","Caldo","Sal"], pasos:["Cuece y tritura con queso."] },
-        { categoria:"Primero", titulo:"Sopa de tomate y albahaca", raciones:4, tiempo:"25 min", imagen:IMG("Sopa Tomate"), ingredientes:["Tomates maduros","Cebolla","Ajo","Albahaca","Caldo"], pasos:["Sofríe, añade caldo, tritura y albahaca."] },
+        { categoria:"Primero", titulo:"Sopa de tomate y albahaca", raciones:4, tiempo:"30 min", imagen:IMG("Sopa Tomate"), ingredientes:["Tomates maduros","Cebolla","Ajo","Albahaca","Caldo"], pasos:["Sofríe, añade caldo, tritura y albahaca."] },
         { categoria:"Primero", titulo:"Ensalada de espelta con verduras", raciones:3, tiempo:"30 min", imagen:IMG("Espelta"), ingredientes:["Espelta cocida","Pepino","Tomate","Pimiento","Aceite","Limón"], pasos:["Mezcla todo y aliña."] },
         { categoria:"Primero", titulo:"Vichyssoise tradicional", raciones:4, tiempo:"35 min", imagen:IMG("Vichyssoise"), ingredientes:["Puerro","Patata","Caldo","Leche evaporada light","Sal"], pasos:["Cuece y tritura, sirve fría."] },
         { categoria:"Primero", titulo:"Crema de col rizada (kale) y patata", raciones:4, tiempo:"30 min", imagen:IMG("Crema Kale"), ingredientes:["Kale","Patata","Cebolla","Caldo"], pasos:["Cuece y tritura."] },
@@ -380,6 +380,8 @@
 
     /* ---------- ESTADO Y DOM ---------- */
     // userFavorites y shoppingItems usan localStorage. 
+    // Si quieres usar Firebase, DESCOMENTA las importaciones de Firebase 
+    // y la lógica de inicialización en runRecipeApp().
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
     let currentCategory = 'all';
@@ -516,11 +518,9 @@
 
     // Función para añadir ingredientes a la lista de la compra, unificando cantidades
     function addIngredientsToShopping(ingredientsFromModal){
-        // Aquí no necesitamos currentServingsFactor, porque ingredientsFromModal
-        // ya viene de updateIngredientsDisplay que ya ha aplicado el escalado de raciones.
+        // ingredientsFromModal ya contiene los objetos { original, formatted }
         ingredientsFromModal.forEach(ingObj => {
-            // Volvemos a parsear el 'original' por si necesitamos la cantidad/unidad numérica limpia
-            const parsedIng = parseIngredient(ingObj.original); 
+            const parsedIng = parseIngredient(ingObj.original); // Parsear el original para cantidad y unidad
             const baseName = getBaseName(parsedIng.name); 
             
             const existingItem = shoppingItems.find(item => {
@@ -580,8 +580,7 @@
         localStorage.setItem('shopping', JSON.stringify(shoppingItems)); 
     }
 
-    /* ---------- PARSE / SCALE INGREDIENTS (REFACTORIZADO) ---------- */
-    // NOTA: Estas funciones son auxiliares de addIngredientsToShopping y updateIngredientsDisplay.
+    /* ---------- PARSE / SCALE INGREDIENTS ---------- */
     // El parseo inicial del ingrediente (sin escalar) para extraer cantidad/unidad/nombre base.
     function parseIngredient(ingredient){
         const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
@@ -606,7 +605,6 @@
 
     // Función para formatear el ingrediente. Toma un objeto parseado y un factor de escalado.
     function formatIngredient(p,factor){
-        // Si no hay valor numérico y no es un elemento que deba escalarse, devuelve el original
         if(p.value === 0 && p.unit === '' && p.name !== '' && !['sal', 'pimienta', 'aceite', 'agua'].includes(p.name.toLowerCase())) {
             return p.original;
         }
