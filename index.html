@@ -460,12 +460,9 @@
     ];
 
     /* ---------- ESTADO Y DOM ---------- */
-    // userFavorites y shoppingItems usan localStorage. 
-    // Si quieres usar Firebase, DESCOMENTA las importaciones de Firebase 
-    // y la lógica de inicialización en runRecipeApp().
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
-    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}'); // Nuevo: Almacena el plan semanal
+    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}');
     
     let currentCategory = 'all';
     let currentFilter = 'all';
@@ -473,10 +470,9 @@
     let currentServings = 0;
     let currentRecipeSteps = [];
     let currentStep = 0;
-    let speechUtterance = null; // Para la síntesis de voz
-    let recognition = null;     // Para el reconocimiento de voz
-    let fullscreenReaderActive = false; // Estado del modo de lectura a pantalla completa
-
+    let speechUtterance = null;
+    let recognition = null;     
+    let fullscreenReaderActive = false; 
 
     const dom = {
         grid: document.getElementById('recipeGrid'),
@@ -586,6 +582,7 @@
     }
 
     /* ---------- LISTA COMPRA ---------- */
+    // Helpers para pluralización/singularización de ingredientes
     const commonFormsPlural = {
         "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
         "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
@@ -617,9 +614,10 @@
         return commonFormsPlural[base] || (name.endsWith('s') ? name : name + 's');
     }
 
+    // Función para añadir ingredientes a la lista de la compra, unificando cantidades
     function addIngredientsToShopping(ingredientsFromModal){
         ingredientsFromModal.forEach(ingObj => {
-            const parsedIng = parseIngredient(ingObj.original); 
+            const parsedIng = parseIngredient(ingObj.original); // Parsear el original para cantidad y unidad
             const baseName = getBaseName(parsedIng.name); 
             
             const existingItem = shoppingItems.find(item => {
@@ -628,21 +626,24 @@
             });
 
             if (existingItem) {
+                // Si existe y ambos tienen una cantidad numérica, las sumamos
                 if (parsedIng.value > 0 && existingItem.quantity > 0) {
                     existingItem.quantity += parsedIng.value; 
+                    // Reformateamos el texto del elemento existente con la nueva cantidad total
                     existingItem.text = formatIngredient({
                         value: existingItem.quantity,
                         unit: existingItem.unit,
                         name: existingItem.cleanName 
-                    }, 1); 
+                    }, 1); // Factor 1 porque existingItem.quantity ya es la cantidad total
                 }
             } else {
+                // Si no existe, lo añadimos como un nuevo elemento
                 shoppingItems.push({
-                    text: ingObj.formatted, 
-                    cleanName: baseName, 
-                    quantity: parsedIng.value > 0 ? parsedIng.value : 0, 
-                    unit: parsedIng.unit, 
-                    done: false 
+                    text: ingObj.formatted, // Usamos el texto ya formateado de la UL del modal
+                    cleanName: baseName, // Guardamos la forma base para futuras unificaciones
+                    quantity: parsedIng.value > 0 ? parsedIng.value : 0, // Cantidad original (sin escalar de nuevo aquí)
+                    unit: parsedIng.unit, // Unidad original
+                    done: false // Estado inicial no comprado
                 });
             }
         });
@@ -677,7 +678,8 @@
         localStorage.setItem('shopping', JSON.stringify(shoppingItems)); 
     }
 
-    /* ---------- PARSE / SCALE INGREDIENTS ---------- */
+    /* ---------- PARSE / SCALE INGREDIENTS (REFACTORIZADO) ---------- */
+    // El parseo inicial del ingrediente (sin escalar) para extraer cantidad/unidad/nombre base.
     function parseIngredient(ingredient){
         const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
         const m = ingredient.match(regex);
@@ -699,6 +701,7 @@
         return {value:0, unit:'', name:ingredient, original:ingredient};
     }
 
+    // Función para formatear el ingrediente. Toma un objeto parseado y un factor de escalado.
     function formatIngredient(p,factor){
         if(p.value === 0 && p.unit === '' && p.name !== '' && !['sal', 'pimienta', 'aceite', 'agua'].includes(p.name.toLowerCase())) {
             return p.original;
@@ -855,7 +858,7 @@
     }
 
     /* ---------- COOKING MODE (SÍNTESIS Y RECONOCIMIENTO DE VOZ) ---------- */
-    let recognition = null; 
+    let recognition = null; // Declarada aquí, una sola vez en el ámbito de runRecipeApp
 
     function speak(text){
         if(!('speechSynthesis' in window)) {
@@ -909,7 +912,7 @@
         speak(currentRecipeSteps[currentStep]);
     }
 
-    /* ---------- RECONOCIMIENTO DE VOZ ---------- */
+    // --- RECONOCIMIENTO DE VOZ ---
     function startVoiceRecognition() {
         if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
             alert('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
@@ -1046,6 +1049,7 @@
         }
     });
     dom.shoppingList.addEventListener('click',e=>{
+        // Delegación de eventos para checkboxes y botones de eliminar
         if(e.target.tagName==='BUTTON' && e.target.dataset.del){
             const idx=parseInt(e.target.dataset.del);
             const deletedItemText = shoppingItems[idx].text;
@@ -1106,6 +1110,23 @@
         dom.plannerContent.innerHTML = plannerHtml;
     }
 
+    function openPlannerPanel() {
+        dom.plannerPanel.classList.add('open');
+        dom.openPlanner.setAttribute('aria-expanded', 'true');
+        focusTrap.enable(dom.plannerPanel);
+        renderPlanner(); // Renderizar el planificador cada vez que se abre
+        srLive("Planificador semanal abierto.");
+        speak("Planificador semanal abierto.");
+    }
+
+    function closePlannerPanel() {
+        dom.plannerPanel.classList.remove('open');
+        dom.openPlanner.setAttribute('aria-expanded', 'false');
+        focusTrap.disable();
+        srLive("Planificador semanal cerrado.");
+        speak("Planificador semanal cerrado.");
+    }
+
     function addRecipeToPlanner(recipeTitle, day) {
         if (!plannerItems[day]) {
             plannerItems[day] = [];
@@ -1143,22 +1164,19 @@
     }
 
     function generateShoppingListFromPlannerRecipes() {
-        let combinedIngredients = {}; // Para sumar cantidades
+        let combinedIngredients = {}; 
         let newShoppingListItems = [];
 
         for (const day in plannerItems) {
             plannerItems[day].forEach(recipeTitle => {
                 const recipe = recipes.find(r => r.titulo === recipeTitle);
                 if (recipe) {
-                    // Por simplicidad, asumimos 1 ración para las recetas del planificador al generar la lista
-                    // O podríamos añadir una opción para que el usuario especifique raciones para el planificador
-                    const servingsFactor = 1; 
+                    const servingsFactor = 1; // Asumiendo 1 ración para el planificador
 
                     recipe.ingredientes.forEach(originalIng => {
                         const parsedIng = parseIngredient(originalIng);
                         const baseName = getBaseName(parsedIng.name);
 
-                        // Encontrar si ya está en nuestra lista combinada temporal
                         const existingCombinedItem = Object.values(combinedIngredients).find(item => {
                             const existingBaseName = getBaseName(item.cleanName);
                             return existingBaseName === baseName && item.unit === parsedIng.unit;
@@ -1167,7 +1185,6 @@
                         if (existingCombinedItem) {
                             if (parsedIng.value > 0 && existingCombinedItem.quantity > 0) {
                                 existingCombinedItem.quantity += (parsedIng.value * servingsFactor);
-                                // Actualizar el texto formateado con la nueva cantidad total
                                 existingCombinedItem.formatted = formatIngredient({
                                     value: existingCombinedItem.quantity,
                                     unit: existingCombinedItem.unit,
@@ -1175,9 +1192,8 @@
                                 }, 1);
                             }
                         } else {
-                            // Añadir a la lista combinada si no existe
                             const formatted = formatIngredient(parsedIng, servingsFactor);
-                            combinedIngredients[formatted] = { // Usamos el formateado como clave temporal para fácil acceso
+                            combinedIngredients[formatted] = { 
                                 original: originalIng,
                                 formatted: formatted,
                                 cleanName: baseName,
@@ -1191,12 +1207,9 @@
             });
         }
         
-        // Convertir el objeto combinado de vuelta a un array para 'shoppingList'
         newShoppingListItems = Object.values(combinedIngredients);
 
-        // Opcional: preguntar si quiere borrar la lista actual
         if (shoppingItems.length > 0 && !confirm('¿Quieres reemplazar la lista de compra actual con los ingredientes del planificador? Si cancelas, se añadirán al final.')) {
-            // Añadir al final si el usuario no quiere reemplazar
             newShoppingListItems.forEach(newItem => {
                 const existingItemInCurrentList = shoppingItems.find(item => item.cleanName === newItem.cleanName && item.unit === newItem.unit);
                 if (existingItemInCurrentList) {
@@ -1213,7 +1226,6 @@
                 }
             });
         } else {
-            // Reemplazar la lista de la compra actual
             shoppingItems = newShoppingListItems;
         }
 
@@ -1228,24 +1240,32 @@
 
     /* ---------- TEMA / CONTRASTE / FUENTE ---------- */
     function setupTheme(){
-        const saved=localStorage.getItem('color-theme');
-        if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+        // Restaura el tema
+        const savedTheme = localStorage.getItem('color-theme');
+        if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
-        } else { 
+        } else {
             document.documentElement.classList.remove('dark');
         }
-        dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
+        dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark').toString());
         
-        const contrast=localStorage.getItem('contrast');
-        if(contrast==='1'){
+        // Restaura el contraste
+        const savedContrast = localStorage.getItem('contrast');
+        if(savedContrast === '1'){
             document.documentElement.classList.add('high-contrast');
-        } else { 
+        } else {
             document.documentElement.classList.remove('high-contrast');
         }
-        dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
+        dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast').toString());
 
-        const fs=localStorage.getItem('fontSize');
-        if(fs) document.documentElement.style.setProperty('--base-font-size',fs+'px');
+        // Restaura el tamaño de fuente
+        const savedFontSize = localStorage.getItem('fontSize');
+        if(savedFontSize) {
+            document.documentElement.style.setProperty('--base-font-size', savedFontSize + 'px');
+        } else {
+            document.documentElement.style.setProperty('--base-font-size', '16px'); // Valor por defecto
+            localStorage.setItem('fontSize', '16');
+        }
     }
     setupTheme();
     dom.themeToggle.addEventListener('click',()=>{
@@ -1265,24 +1285,88 @@
     });
 
     dom.fontInc.addEventListener('click',()=>{
-        const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
-        const n=Math.min(parseInt(r)+2,26);
-        document.documentElement.style.setProperty('--base-font-size',n+'px');
-        localStorage.setItem('fontSize',n);
-        srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
-        speak(`Tamaño de fuente aumentado a ${n} píxeles.`); 
+        let currentSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size'));
+        let newSize = Math.min(currentSize + 2, 26);
+        document.documentElement.style.setProperty('--base-font-size', newSize + 'px');
+        localStorage.setItem('fontSize', newSize.toString());
+        srLive(`Tamaño de fuente aumentado a ${newSize} píxeles.`);
+        speak(`Tamaño de fuente aumentado a ${newSize} píxeles.`); 
     });
     dom.fontDec.addEventListener('click',()=>{
-        const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
-        const n=Math.max(parseInt(r)-2,12);
-        document.documentElement.style.setProperty('--base-font-size',n+'px');
-        localStorage.setItem('fontSize',n);
-        srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
-        speak(`Tamaño de fuente reducido a ${n} píxeles.`); 
+        let currentSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size'));
+        let newSize = Math.max(currentSize - 2, 12);
+        document.documentElement.style.setProperty('--base-font-size', newSize + 'px');
+        localStorage.setItem('fontSize', newSize.toString());
+        srLive(`Tamaño de fuente reducido a ${newSize} píxeles.`);
+        speak(`Tamaño de fuente reducido a ${newSize} píxeles.`); 
     });
 
+    /* ---------- MODO LECTURA PANTALLA COMPLETA ---------- */
+    let currentReaderContent = ""; // Contenido del paso actual
+    let readerCurrentStepIndex = 0; // Índice del paso actual en modo lectura
+
+    function enterFullscreenReader(initialContent, allSteps) {
+        fullscreenReaderActive = true;
+        currentRecipeSteps = allSteps; // Para que los comandos de voz sigan funcionando
+        currentStep = allSteps.indexOf(initialContent); // Sincronizar el paso inicial
+
+        dom.fullscreenReaderView.classList.remove('hidden');
+        dom.fullscreenReaderText.textContent = initialContent;
+        
+        // Esconder elementos de fondo
+        document.body.classList.add('overflow-hidden'); // Evitar scroll de fondo
+        dom.modal.classList.add('hidden'); // Esconder modal si estaba abierto
+        dom.cookingModeView.classList.add('hidden'); // Esconder modo cocina si estaba abierto
+        dom.shoppingPanel.classList.remove('open'); // Cerrar panel compra
+        dom.plannerPanel.classList.remove('open'); // Cerrar panel planificador
+
+        // Iniciar reconocimiento de voz si no está activo
+        if (!recognition) startVoiceRecognition(); 
+        
+        srLive("Modo lectura a pantalla completa activado. Toque la pantalla para el siguiente paso, o diga comandos de voz.");
+        speak("Modo lectura a pantalla completa activado.");
+    }
+
+    function exitFullscreenReader() {
+        fullscreenReaderActive = false;
+        dom.fullscreenReaderView.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        
+        // Detener reconocimiento de voz si solo estaba activo por este modo
+        if (recognition && !dom.cookingModeView.classList.contains('flex')) { // Si no estamos en modo cocina, detenemos
+            stopVoiceRecognition();
+        }
+        
+        srLive("Modo lectura a pantalla completa desactivado.");
+        speak("Modo lectura a pantalla completa desactivado.");
+    }
+
+    function nextReaderStep() {
+        if (currentStep < currentRecipeSteps.length - 1) {
+            currentStep++;
+            dom.fullscreenReaderText.textContent = currentRecipeSteps[currentStep];
+            srLive(`Paso ${currentStep + 1}: ${currentRecipeSteps[currentStep]}`);
+            speak(currentRecipeSteps[currentStep]);
+        } else {
+            srLive("Has llegado al final de la receta en modo lectura.");
+            speak("Has llegado al final de la receta en modo lectura.");
+            exitFullscreenReader();
+        }
+    }
+
+    // Event listeners para el modo de lectura
+    dom.fullscreenReaderView.addEventListener('click', nextReaderStep);
+    dom.exitReaderBtn.addEventListener('click', exitFullscreenReader);
+
+    // Botón para activar el modo de lectura desde el modo cocina
+    dom.fullscreenReaderToggleBtn.addEventListener('click', () => {
+        const initialStepText = dom.stepText.textContent;
+        // Pasa el texto del paso actual y todos los pasos disponibles
+        enterFullscreenReader(initialStepText, currentRecipeSteps); 
+    });
+
+
     /* ---------- EVENTOS GLOBALES ---------- */
-    // Delegación clicks en grid
     dom.grid.addEventListener('click',e=>{
         const card=e.target.closest('.recipe-card');
         if(!card) return;
@@ -1295,7 +1379,7 @@
         }
     });
     dom.grid.addEventListener('keydown',e=>{
-        if(e.key==='Enter' || e.key===' '){ // Enter o Espacio en tarjeta para abrir modal
+        if(e.key==='Enter' || e.key===' '){ 
             const card=e.target.closest('.recipe-card');
             if(card){
                 const recipe=recipes.find(r=>r.titulo===card.dataset.id);
@@ -1309,14 +1393,14 @@
         if(e.key==='Escape'){
             if(dom.modal.classList.contains('modal-visible')) closeModal();
             else if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
-            else if(dom.plannerPanel.classList.contains('open')) closePlannerPanel();
-            else if(dom.cookingModeView.classList.contains('flex') && !fullscreenReaderActive) exitCookingMode(); // Si está en cooking mode normal
-            else if(fullscreenReaderActive) exitFullscreenReader(); // Si está en modo lectura
+            else if(dom.plannerPanel.classList.contains('open')) closePlannerPanel(); // Cierra planificador
+            else if(dom.cookingModeView.classList.contains('flex') && !fullscreenReaderActive) exitCookingMode(); 
+            else if(fullscreenReaderActive) exitFullscreenReader(); // Sale del modo lectura
         }
         if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado.'); }
-        if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); } // Atajo para abrir lista
+        if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); } 
         if(e.key.toLowerCase()==='p'){ e.preventDefault(); openPlannerPanel(); } // Atajo para abrir planificador
-        if(e.key.toLowerCase()==='f'){ // Atajo para filtrar favoritos
+        if(e.key.toLowerCase()==='f'){ 
             e.preventDefault();
             currentFilter=currentFilter==='favorites'?'all':'favorites';
             dom.filterFavBtn.setAttribute('aria-pressed',currentFilter==='favorites');
@@ -1363,7 +1447,7 @@
     dom.copyrightYear.textContent=new Date().getFullYear();
     renderRecipes(recipes);
     renderShopping();
-    renderPlanner(); // Renderizar el planificador al inicio
+    renderPlanner(); // Asegura que el planificador se renderice al inicio
 
     // Evento para cargar las voces de SpeechSynthesis (importante para que getVoices() no esté vacío)
     if (window.speechSynthesis) {
