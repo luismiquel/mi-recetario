@@ -462,7 +462,7 @@
     /* ---------- ESTADO Y DOM ---------- */
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
-    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}');
+    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}'); // Nuevo: Almacena el plan semanal
     
     let currentCategory = 'all';
     let currentFilter = 'all';
@@ -470,9 +470,10 @@
     let currentServings = 0;
     let currentRecipeSteps = [];
     let currentStep = 0;
-    let speechUtterance = null;
-    let recognition = null;     
-    let fullscreenReaderActive = false; 
+    let speechUtterance = null; // Para la síntesis de voz
+    let recognition = null;     // Para el reconocimiento de voz
+    let fullscreenReaderActive = false; // Estado del modo de lectura a pantalla completa
+
 
     const dom = {
         grid: document.getElementById('recipeGrid'),
@@ -838,12 +839,18 @@
         const servingsInput=document.getElementById('servings-input');
         document.getElementById('decrease-servings').addEventListener('click',()=>{
             let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
+            srLive(`Raciones ajustadas a ${currentServings}.`); // Anuncio audible
+            speak(`Raciones ajustadas a ${currentServings}.`);
         });
         document.getElementById('increase-servings').addEventListener('click',()=>{
             let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
+            srLive(`Raciones ajustadas a ${currentServings}.`); // Anuncio audible
+            speak(`Raciones ajustadas a ${currentServings}.`);
         });
         servingsInput.addEventListener('change',e=>{
             let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
+            srLive(`Raciones ajustadas a ${currentServings}.`); // Anuncio audible
+            speak(`Raciones ajustadas a ${currentServings}.`);
         });
     }
 
@@ -912,7 +919,7 @@
         speak(currentRecipeSteps[currentStep]);
     }
 
-    // --- RECONOCIMIENTO DE VOZ ---
+    /* ---------- RECONOCIMIENTO DE VOZ ---------- */
     function startVoiceRecognition() {
         if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
             alert('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
@@ -941,6 +948,7 @@
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
                     updateCookingStep();
+                    speak('Entendido, siguiente paso.'); // Confirmación audible
                 } else {
                     speak('Has llegado al final de la receta.');
                 }
@@ -948,11 +956,13 @@
                 if (currentStep > 0) {
                     currentStep--;
                     updateCookingStep();
+                    speak('Entendido, paso anterior.'); // Confirmación audible
                 } else {
                     speak('Estás en el primer paso.');
                 }
             } else if (transcript.includes('repetir') || transcript.includes('otra vez')) {
                 speak(currentRecipeSteps[currentStep]);
+                speak('Repitiendo paso.'); // Confirmación audible
             } else if (transcript.includes('salir') || transcript.includes('terminar')) {
                 exitCookingMode();
             } else {
@@ -973,7 +983,7 @@
 
         recognition.onend = () => {
             console.log('Reconocimiento de voz terminado, reiniciando...');
-            if (dom.cookingModeView.classList.contains('flex')) { // Solo reinicia si sigue en modo cocina
+            if (dom.cookingModeView.classList.contains('flex') || fullscreenReaderActive) { // Reinicia si está en modo cocina o lectura
                 recognition.start(); 
             } else {
                 console.log('Reconocimiento de voz detenido permanentemente.');
@@ -1049,7 +1059,6 @@
         }
     });
     dom.shoppingList.addEventListener('click',e=>{
-        // Delegación de eventos para checkboxes y botones de eliminar
         if(e.target.tagName==='BUTTON' && e.target.dataset.del){
             const idx=parseInt(e.target.dataset.del);
             const deletedItemText = shoppingItems[idx].text;
@@ -1065,7 +1074,7 @@
             saveShopping();
             srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
             speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`); 
-            renderShopping(); // Re-renderizar para actualizar el estilo tachado
+            renderShopping(); 
         }
     });
     dom.exportShopping.addEventListener('click',()=>{
@@ -1089,7 +1098,7 @@
     }
 
     function renderPlanner() {
-        dom.plannerContent.innerHTML = ''; // Limpiar antes de renderizar
+        dom.plannerContent.innerHTML = ''; 
         const plannerHtml = `
             <div class="planner-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 text-center">
                 ${daysOfWeek.map(day => `
@@ -1114,7 +1123,7 @@
         dom.plannerPanel.classList.add('open');
         dom.openPlanner.setAttribute('aria-expanded', 'true');
         focusTrap.enable(dom.plannerPanel);
-        renderPlanner(); // Renderizar el planificador cada vez que se abre
+        renderPlanner(); 
         srLive("Planificador semanal abierto.");
         speak("Planificador semanal abierto.");
     }
@@ -1171,7 +1180,7 @@
             plannerItems[day].forEach(recipeTitle => {
                 const recipe = recipes.find(r => r.titulo === recipeTitle);
                 if (recipe) {
-                    const servingsFactor = 1; // Asumiendo 1 ración para el planificador
+                    const servingsFactor = 1; // Asumiendo 1 ración para el planificador (podríamos hacer que el usuario lo ajuste)
 
                     recipe.ingredientes.forEach(originalIng => {
                         const parsedIng = parseIngredient(originalIng);
@@ -1244,24 +1253,24 @@
         const savedTheme = localStorage.getItem('color-theme');
         if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
-        } else {
+        } else { 
             document.documentElement.classList.remove('dark');
         }
         dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark').toString());
         
         // Restaura el contraste
-        const savedContrast = localStorage.getItem('contrast');
-        if(savedContrast === '1'){
+        const contrast=localStorage.getItem('contrast');
+        if(contrast==='1'){
             document.documentElement.classList.add('high-contrast');
-        } else {
+        } else { 
             document.documentElement.classList.remove('high-contrast');
         }
         dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast').toString());
 
         // Restaura el tamaño de fuente
-        const savedFontSize = localStorage.getItem('fontSize');
-        if(savedFontSize) {
-            document.documentElement.style.setProperty('--base-font-size', savedFontSize + 'px');
+        const fs=localStorage.getItem('fontSize');
+        if(fs) {
+            document.documentElement.style.setProperty('--base-font-size', fs + 'px');
         } else {
             document.documentElement.style.setProperty('--base-font-size', '16px'); // Valor por defecto
             localStorage.setItem('fontSize', '16');
@@ -1301,71 +1310,6 @@
         speak(`Tamaño de fuente reducido a ${newSize} píxeles.`); 
     });
 
-    /* ---------- MODO LECTURA PANTALLA COMPLETA ---------- */
-    let currentReaderContent = ""; // Contenido del paso actual
-    let readerCurrentStepIndex = 0; // Índice del paso actual en modo lectura
-
-    function enterFullscreenReader(initialContent, allSteps) {
-        fullscreenReaderActive = true;
-        currentRecipeSteps = allSteps; // Para que los comandos de voz sigan funcionando
-        currentStep = allSteps.indexOf(initialContent); // Sincronizar el paso inicial
-
-        dom.fullscreenReaderView.classList.remove('hidden');
-        dom.fullscreenReaderText.textContent = initialContent;
-        
-        // Esconder elementos de fondo
-        document.body.classList.add('overflow-hidden'); // Evitar scroll de fondo
-        dom.modal.classList.add('hidden'); // Esconder modal si estaba abierto
-        dom.cookingModeView.classList.add('hidden'); // Esconder modo cocina si estaba abierto
-        dom.shoppingPanel.classList.remove('open'); // Cerrar panel compra
-        dom.plannerPanel.classList.remove('open'); // Cerrar panel planificador
-
-        // Iniciar reconocimiento de voz si no está activo
-        if (!recognition) startVoiceRecognition(); 
-        
-        srLive("Modo lectura a pantalla completa activado. Toque la pantalla para el siguiente paso, o diga comandos de voz.");
-        speak("Modo lectura a pantalla completa activado.");
-    }
-
-    function exitFullscreenReader() {
-        fullscreenReaderActive = false;
-        dom.fullscreenReaderView.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-        
-        // Detener reconocimiento de voz si solo estaba activo por este modo
-        if (recognition && !dom.cookingModeView.classList.contains('flex')) { // Si no estamos en modo cocina, detenemos
-            stopVoiceRecognition();
-        }
-        
-        srLive("Modo lectura a pantalla completa desactivado.");
-        speak("Modo lectura a pantalla completa desactivado.");
-    }
-
-    function nextReaderStep() {
-        if (currentStep < currentRecipeSteps.length - 1) {
-            currentStep++;
-            dom.fullscreenReaderText.textContent = currentRecipeSteps[currentStep];
-            srLive(`Paso ${currentStep + 1}: ${currentRecipeSteps[currentStep]}`);
-            speak(currentRecipeSteps[currentStep]);
-        } else {
-            srLive("Has llegado al final de la receta en modo lectura.");
-            speak("Has llegado al final de la receta en modo lectura.");
-            exitFullscreenReader();
-        }
-    }
-
-    // Event listeners para el modo de lectura
-    dom.fullscreenReaderView.addEventListener('click', nextReaderStep);
-    dom.exitReaderBtn.addEventListener('click', exitFullscreenReader);
-
-    // Botón para activar el modo de lectura desde el modo cocina
-    dom.fullscreenReaderToggleBtn.addEventListener('click', () => {
-        const initialStepText = dom.stepText.textContent;
-        // Pasa el texto del paso actual y todos los pasos disponibles
-        enterFullscreenReader(initialStepText, currentRecipeSteps); 
-    });
-
-
     /* ---------- EVENTOS GLOBALES ---------- */
     dom.grid.addEventListener('click',e=>{
         const card=e.target.closest('.recipe-card');
@@ -1379,7 +1323,7 @@
         }
     });
     dom.grid.addEventListener('keydown',e=>{
-        if(e.key==='Enter' || e.key===' '){ 
+        if(e.key==='Enter' || e.key===' '){ // Enter o Espacio en tarjeta para abrir modal
             const card=e.target.closest('.recipe-card');
             if(card){
                 const recipe=recipes.find(r=>r.titulo===card.dataset.id);
@@ -1393,13 +1337,13 @@
         if(e.key==='Escape'){
             if(dom.modal.classList.contains('modal-visible')) closeModal();
             else if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
-            else if(dom.plannerPanel.classList.contains('open')) closePlannerPanel(); // Cierra planificador
+            else if(dom.plannerPanel.classList.contains('open')) closePlannerPanel(); 
             else if(dom.cookingModeView.classList.contains('flex') && !fullscreenReaderActive) exitCookingMode(); 
-            else if(fullscreenReaderActive) exitFullscreenReader(); // Sale del modo lectura
+            else if(fullscreenReaderActive) exitFullscreenReader(); 
         }
         if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado.'); }
         if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); } 
-        if(e.key.toLowerCase()==='p'){ e.preventDefault(); openPlannerPanel(); } // Atajo para abrir planificador
+        if(e.key.toLowerCase()==='p'){ e.preventDefault(); openPlannerPanel(); } 
         if(e.key.toLowerCase()==='f'){ 
             e.preventDefault();
             currentFilter=currentFilter==='favorites'?'all':'favorites';
@@ -1447,7 +1391,7 @@
     dom.copyrightYear.textContent=new Date().getFullYear();
     renderRecipes(recipes);
     renderShopping();
-    renderPlanner(); // Asegura que el planificador se renderice al inicio
+    renderPlanner(); // Renderizar el planificador al inicio
 
     // Evento para cargar las voces de SpeechSynthesis (importante para que getVoices() no esté vacío)
     if (window.speechSynthesis) {
