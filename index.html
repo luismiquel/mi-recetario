@@ -1,3 +1,6 @@
+index.html 
+
+
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
 <head>
@@ -57,10 +60,6 @@
         #shoppingPanel{right:-100%;transition:right .35s;}
         #shoppingPanel.open{right:0;}
 
-        #plannerPanel{right:-100%;transition:right .35s;}
-        #plannerPanel.open{right:0;}
-
-
         .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;}
         .skip-link:focus{position:static;width:auto;height:auto;padding:.5rem 1rem;background:#f59e0b;color:#000;z-index:1000;}
 
@@ -73,61 +72,6 @@
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
             70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
-        }
-
-        /* Estilos del modo de lectura a pantalla completa */
-        #fullscreen-reader-view {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: black; /* Fondo oscuro por defecto */
-            color: white; /* Texto claro por defecto */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 8vh; /* Tamaño de fuente grande relativo a la altura de la ventana */
-            text-align: center;
-            padding: 2rem;
-            box-sizing: border-box;
-            line-height: 1.2;
-            cursor: pointer; /* Indicar que es interactivo */
-            z-index: 100; /* Asegurarse de que esté por encima de todo */
-            user-select: none; /* Evitar selección de texto */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        #fullscreen-reader-view .reader-text {
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: hidden; /* Evitar barras de desplazamiento si el texto es demasiado largo */
-            text-overflow: ellipsis; /* Añadir puntos suspensivos si el texto es muy largo */
-        }
-
-        #fullscreen-reader-view.hidden {
-            display: none;
-        }
-        /* Botón de salida flotante para el modo de lectura */
-        #exit-reader-btn {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 101; /* Más alto que el modo de lectura */
-            border: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
         @media print{
@@ -206,12 +150,6 @@
             <button id="next-step-btn" class="p-4 rounded-lg bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-slate-200 font-bold">Siguiente</button>
         </div>
         <button id="exit-cooking-btn" class="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full" aria-label="Salir del modo cocina">✖</button>
-        <button id="fullscreen-reader-toggle-btn" class="absolute top-4 left-4 p-2 bg-slate-100 dark:bg-stone-700 rounded-full" aria-label="Activar modo lectura a pantalla completa">👁️</button>
-    </div>
-
-    <div id="fullscreen-reader-view" class="hidden" role="document" aria-label="Modo lectura a pantalla completa. Toque para avanzar.">
-        <p class="reader-text"></p>
-        <button id="exit-reader-btn" aria-label="Salir del modo lectura">✖</button>
     </div>
 
     <aside id="shoppingPanel" class="fixed top-0 bottom-0 w-full sm:w-96 bg-white dark:bg-stone-800 shadow-xl z-40 p-6 overflow-y-auto" role="complementary" aria-label="Lista de la compra" aria-live="polite">
@@ -228,23 +166,7 @@
         </div>
     </aside>
 
-    <aside id="plannerPanel" class="fixed top-0 bottom-0 w-full sm:w-96 bg-white dark:bg-stone-800 shadow-xl z-40 p-6 overflow-y-auto" role="complementary" aria-label="Planificador semanal" aria-live="polite">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold text-amber-900 dark:text-amber-400">Mi Plan Semanal</h2>
-            <button id="closePlanner" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700" aria-label="Cerrar planificador">✖</button>
-        </div>
-        <div id="plannerContent">
-            </div>
-        <div class="mt-6">
-            <button id="generateShoppingListFromPlanner" class="bg-amber-600 text-white px-4 py-2 rounded-full">Generar Lista de Compra</button>
-            <button id="clearPlanner" class="bg-red-600 text-white px-4 py-2 rounded-full mt-2">Vaciar Plan</button>
-        </div>
-    </aside>
-
-
     <button id="openShopping" class="fixed bottom-6 right-6 bg-amber-600 text-white px-5 py-3 rounded-full shadow-lg z-30" aria-haspopup="true" aria-expanded="false" aria-label="Abrir lista de la compra (tecla L)">🛒 Lista</button>
-    <button id="openPlanner" class="fixed bottom-6 right-28 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg z-30" aria-haspopup="true" aria-expanded="false" aria-label="Abrir planificador semanal">🗓️ Plan</button>
-
 
     <footer class="text-center mt-12 py-6 border-t border-gray-200 dark:border-stone-700">
         <p class="text-sm text-gray-500 dark:text-stone-400">&copy; <span id="copyright-year"></span> Luis Miguel Garcia De Las Morenas. Todos los derechos reservados.</p>
@@ -339,7 +261,7 @@
         { categoria:"Primero", titulo:"Crema de guisantes con menta", raciones:3, tiempo:"25 min", imagen:IMG("Crema Guisantes"), ingredientes:["300 g guisantes","1 cebolleta","Menta","Caldo","Aceite"], pasos:["Sofríe, añade caldo y tritura con menta."] },
         { categoria:"Primero", titulo:"Ensalada de remolacha y queso de cabra", raciones:2, tiempo:"20 min", imagen:IMG("Remolacha Cabra"), ingredientes:["2 remolachas cocidas","100 g queso de cabra","Nueces","Rúcula","Vinagreta miel/mostaza"], pasos:["Combina todo y aliña."] },
         { categoria:"Primero", titulo:"Crema de espárragos verdes", raciones:4, tiempo:"35 min", imagen:IMG("Crema Esparragos"), ingredientes:["500 g espárragos","1 patata","1 cebolla","Caldo","Nata ligera (opc.)","Sal y pimienta"], pasos:["Sofríe, cuece, tritura y cuela.","Añade nata si deseas."] },
-        { categoria:"Primero", titulo:"Sopa de ajo castellana", raciones:2, tiempo:"25 min", imagen:IMG("Sopa Ajo"), ingredientes:["4 ajos","4 rebanadas pan duro","1 cdita pimentón","Caldo","AOVE","Huevo (opc.)"), pasos:["Dora ajos y pan con pimentón.","Añade caldo y cuece.","Escalfa huevo si quieres."] },
+        { categoria:"Primero", titulo:"Sopa de ajo castellana", raciones:2, tiempo:"25 min", imagen:IMG("Sopa Ajo"), ingredientes:["4 ajos","4 rebanadas pan duro","1 cdita pimentón","Caldo","AOVE","Huevo (opc.)"], pasos:["Dora ajos y pan con pimentón.","Añade caldo y cuece.","Escalfa huevo si quieres."] },
         { categoria:"Primero", titulo:"Ensalada de cuscús con pasas y piñones", raciones:3, tiempo:"20 min", imagen:IMG("Cuscus"), ingredientes:["1 taza cuscús","1.5 tazas agua","1/4 taza pasas","2 cdas. piñones","Pepino","Tomate","Aceite","Limón","Menta"], pasos:["Hidrata cuscús y mezcla con todo."] },
         { categoria:"Primero", titulo:"Crema de calabacín y manzana", raciones:4, tiempo:"35 min", imagen:IMG("Calabacin Manzana"), ingredientes:["2 calabacines","1 manzana","1/2 cebolla","Caldo","Aceite","Sal"], pasos:["Sofríe, cuece y tritura."] },
         { categoria:"Primero", titulo:"Salpicón de marisco ligero", raciones:2, tiempo:"25 min", imagen:IMG("Salpicon"), ingredientes:["100 g gambas","100 g pulpo","1/2 cebolla morada","1/2 pimiento rojo","Perejil","Aceite","Vinagre","Sal"], pasos:["Pica todo y aliña."] },
@@ -460,20 +382,19 @@
     ];
 
     /* ---------- ESTADO Y DOM ---------- */
+    // userFavorites y shoppingItems usan localStorage. 
+    // Si quieres usar Firebase, DESCOMENTA las importaciones de Firebase 
+    // y la lógica de inicialización en runRecipeApp().
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
-    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}');
-    
     let currentCategory = 'all';
     let currentFilter = 'all';
     let currentRecipeDetail = null;
     let currentServings = 0;
     let currentRecipeSteps = [];
     let currentStep = 0;
-    let speechUtterance = null; 
-    let recognition = null;     
-    let fullscreenReaderActive = false; 
-
+    let speechUtterance = null; // Para la síntesis de voz
+    let recognition = null;     // Para el reconocimiento de voz
 
     const dom = {
         grid: document.getElementById('recipeGrid'),
@@ -506,27 +427,14 @@
         nextStepBtn: document.getElementById('next-step-btn'),
         exitCookingBtn: document.getElementById('exit-cooking-btn'),
         srLive: document.getElementById('sr-live'),
-        userInfo: document.getElementById('user-info'),
-        // Nuevos elementos para el planificador
-        openPlanner: document.getElementById('openPlanner'),
-        plannerPanel: document.getElementById('plannerPanel'),
-        closePlanner: document.getElementById('closePlanner'),
-        plannerContent: document.getElementById('plannerContent'),
-        generateShoppingListFromPlanner: document.getElementById('generateShoppingListFromPlanner'),
-        clearPlanner: document.getElementById('clearPlanner'),
-        // Elementos del modo de lectura a pantalla completa
-        fullscreenReaderToggleBtn: document.getElementById('fullscreen-reader-toggle-btn'),
-        fullscreenReaderView: document.getElementById('fullscreen-reader-view'),
-        fullscreenReaderText: document.querySelector('#fullscreen-reader-view .reader-text'),
-        exitReaderBtn: document.getElementById('exit-reader-btn')
+        userInfo: document.getElementById('user-info') 
     };
 
     /* ---------- RENDER ---------- */
     function renderRecipes(list){
-        dom.grid.innerHTML = ''; // Limpiar antes de renderizar
-
         if(list.length===0){
             dom.noResults.classList.remove('hidden');
+            dom.grid.innerHTML='';
             return;
         }
         dom.noResults.classList.add('hidden');
@@ -562,8 +470,6 @@
             return categoryMatch && favMatch && searchOK;
         });
         renderRecipes(filtered);
-        srLive(`Se han encontrado ${filtered.length} recetas.`); // Anuncio para lector de pantalla
-        speak(`Se han encontrado ${filtered.length} recetas.`); // Anuncio audible
     }
 
     /* ---------- FAVORITOS ---------- */
@@ -572,11 +478,9 @@
         if(isFav){
             userFavorites = userFavorites.filter(t=>t!==title);
             srLive(`Quitado de favoritas: ${title}`);
-            speak(`Receta ${title} quitada de favoritos.`);
         }else{
             userFavorites = [...userFavorites, title];
             srLive(`Añadido a favoritas: ${title}`);
-            speak(`Receta ${title} añadida a favoritos.`);
         }
         localStorage.setItem('favorites',JSON.stringify(userFavorites));
         applyFilters();
@@ -799,7 +703,6 @@
                     </div>
                     <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
                         <button id="addToShoppingBtn" class="bg-amber-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-700 transition shadow-lg">Añadir a lista</button>
-                        <button id="addToPlannerBtn" class="bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition shadow-lg">Añadir a plan</button>
                         <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Modo cocina guiada</button>
                         <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
                         <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
@@ -835,27 +738,17 @@
             openShoppingPanel(); 
         });
 
-        document.getElementById('addToPlannerBtn').addEventListener('click', () => {
-            showPlannerAddRecipeOptions(recipe.titulo);
-        });
-
         document.getElementById('start-cooking-btn').addEventListener('click',()=>startCookingMode(recipe));
 
         const servingsInput=document.getElementById('servings-input');
         document.getElementById('decrease-servings').addEventListener('click',()=>{
             let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-            srLive(`Raciones ajustadas a ${currentServings}.`); 
-            speak(`Raciones ajustadas a ${currentServings}.`);
         });
         document.getElementById('increase-servings').addEventListener('click',()=>{
             let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-            srLive(`Raciones ajustadas a ${currentServings}.`); 
-            speak(`Raciones ajustadas a ${currentServings}.`);
         });
         servingsInput.addEventListener('change',e=>{
             let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
-            srLive(`Raciones ajustadas a ${currentServings}.`); 
-            speak(`Raciones ajustadas a ${currentServings}.`);
         });
     }
 
@@ -870,7 +763,8 @@
     }
 
     /* ---------- COOKING MODE (SÍNTESIS Y RECONOCIMIENTO DE VOZ) ---------- */
-    let recognition = null; // Declarada aquí, una sola vez en el ámbito de runRecipeApp
+    // La variable 'recognition' ahora es una variable de ámbito superior dentro de runRecipeApp
+    // y se inicializa a null allí.
 
     function speak(text){
         if(!('speechSynthesis' in window)) {
@@ -924,7 +818,7 @@
         speak(currentRecipeSteps[currentStep]);
     }
 
-    /* ---------- RECONOCIMIENTO DE VOZ ---------- */
+    // --- RECONOCIMIENTO DE VOZ ---
     function startVoiceRecognition() {
         if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
             alert('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
@@ -953,7 +847,6 @@
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
                     updateCookingStep();
-                    speak('Entendido, pasando al siguiente paso.'); 
                 } else {
                     speak('Has llegado al final de la receta.');
                 }
@@ -961,13 +854,11 @@
                 if (currentStep > 0) {
                     currentStep--;
                     updateCookingStep();
-                    speak('Entendido, volviendo al paso anterior.'); 
                 } else {
                     speak('Estás en el primer paso.');
                 }
             } else if (transcript.includes('repetir') || transcript.includes('otra vez')) {
                 speak(currentRecipeSteps[currentStep]);
-                speak('Repitiendo paso actual.'); 
             } else if (transcript.includes('salir') || transcript.includes('terminar')) {
                 exitCookingMode();
             } else {
@@ -988,7 +879,7 @@
 
         recognition.onend = () => {
             console.log('Reconocimiento de voz terminado, reiniciando...');
-            if (dom.cookingModeView.classList.contains('flex') || fullscreenReaderActive) { // Solo reinicia si sigue en modo cocina o lectura a pantalla completa
+            if (dom.cookingModeView.classList.contains('flex')) { // Solo reinicia si sigue en modo cocina
                 recognition.start(); 
             } else {
                 console.log('Reconocimiento de voz detenido permanentemente.');
@@ -1080,7 +971,7 @@
             saveShopping();
             srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
             speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`); 
-            renderShopping(); 
+            renderShopping(); // Re-renderizar para actualizar el estilo tachado
         }
     });
     dom.exportShopping.addEventListener('click',()=>{
@@ -1096,234 +987,26 @@
     });
     dom.printShopping.addEventListener('click',()=>window.print());
 
-    /* ---------- PLANIFICADOR SEMANAL ---------- */
-    const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-
-    function savePlanner() {
-        localStorage.setItem('planner', JSON.stringify(plannerItems));
-    }
-
-    function renderPlanner() {
-        dom.plannerContent.innerHTML = ''; 
-        const plannerHtml = `
-            <div class="planner-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 text-center">
-                ${daysOfWeek.map(day => `
-                    <div class="day-column bg-stone-100 dark:bg-stone-700 p-3 rounded-lg shadow-sm" data-day="${day}">
-                        <h3 class="font-bold text-amber-900 dark:text-amber-400 mb-2">${day}</h3>
-                        <ul id="recipes-for-${day}" class="min-h-[5rem] space-y-1">
-                            ${(plannerItems[day] || []).map(recipeTitle => `
-                                <li class="bg-white dark:bg-stone-800 text-sm p-2 rounded flex justify-between items-center">
-                                    <span class="truncate">${recipeTitle}</span>
-                                    <button data-remove-from-day="${day}" data-recipe-title="${recipeTitle}" class="text-red-500 hover:text-red-700 ml-2">✖</button>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        dom.plannerContent.innerHTML = plannerHtml;
-
-        dom.plannerContent.querySelectorAll('[data-remove-from-day]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const day = e.target.dataset.removeFromDay;
-                const recipeTitle = e.target.dataset.recipeTitle;
-                removeRecipeFromPlanner(recipeTitle, day);
-            });
-        });
-    }
-
-    function openPlannerPanel() {
-        dom.plannerPanel.classList.add('open');
-        dom.openPlanner.setAttribute('aria-expanded', 'true');
-        focusTrap.enable(dom.plannerPanel);
-        renderPlanner(); 
-        srLive("Planificador semanal abierto.");
-        speak("Planificador semanal abierto.");
-    }
-
-    function closePlannerPanel() {
-        dom.plannerPanel.classList.remove('open');
-        dom.openPlanner.setAttribute('aria-expanded', 'false');
-        focusTrap.disable();
-        srLive("Planificador semanal cerrado.");
-        speak("Planificador semanal cerrado.");
-    }
-
-    // Muestra un mini-modal para seleccionar el día al añadir al planificador
-    function showPlannerAddRecipeOptions(recipeTitle) {
-        let dayOptionsHtml = `
-            <h3 class="text-xl font-bold mb-4">Añadir "${recipeTitle}" a:</h3>
-            <div class="grid grid-cols-2 gap-2">
-                ${daysOfWeek.map(day => `
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition" data-add-to-planner-day="${day}" data-recipe-to-add="${recipeTitle}">${day}</button>
-                `).join('')}
-            </div>
-        `;
-
-        const tempModal = document.createElement('div');
-        tempModal.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4';
-        tempModal.innerHTML = `
-            <div class="bg-white dark:bg-stone-800 rounded-lg p-6 shadow-xl max-w-sm w-full text-center">
-                ${dayOptionsHtml}
-                <button id="closePlannerOptions" class="mt-4 text-gray-500 hover:text-gray-700">Cancelar</button>
-            </div>
-        `;
-        document.body.appendChild(tempModal);
-
-        tempModal.addEventListener('click', (e) => {
-            if (e.target.matches('[data-add-to-planner-day]')) {
-                const day = e.target.dataset.addToPlannerDay;
-                const recipe = e.target.dataset.recipeToAdd;
-                addRecipeToPlanner(recipe, day);
-                document.body.removeChild(tempModal); 
-            } else if (e.target.id === 'closePlannerOptions' || e.target === tempModal) { 
-                document.body.removeChild(tempModal); 
-            }
-        });
-        tempModal.querySelector('[data-add-to-planner-day]')?.focus();
-    }
-
-
-    function addRecipeToPlanner(recipeTitle, day) {
-        if (!plannerItems[day]) {
-            plannerItems[day] = [];
-        }
-        if (!plannerItems[day].includes(recipeTitle)) {
-            plannerItems[day].push(recipeTitle);
-            savePlanner();
-            renderPlanner();
-            srLive(`Receta ${recipeTitle} añadida al ${day}.`);
-            speak(`Receta ${recipeTitle} añadida al ${day}.`);
-        } else {
-            srLive(`La receta ${recipeTitle} ya está en el plan para el ${day}.`);
-            speak(`La receta ${recipeTitle} ya está en el plan para el ${day}.`);
-        }
-    }
-
-    function removeRecipeFromPlanner(recipeTitle, day) {
-        if (plannerItems[day]) {
-            plannerItems[day] = plannerItems[day].filter(title => title !== recipeTitle);
-            savePlanner();
-            renderPlanner();
-            srLive(`Receta ${recipeTitle} eliminada del ${day}.`);
-            speak(`Receta ${recipeTitle} eliminada del ${day}.`);
-        }
-    }
-
-    function clearPlannerContent() {
-        if (confirm('¿Estás seguro de que quieres vaciar todo el planificador semanal?')) {
-            plannerItems = {};
-            savePlanner();
-            renderPlanner();
-            srLive("Planificador semanal vaciado.");
-            speak("Planificador semanal vaciado.");
-        }
-    }
-
-    function generateShoppingListFromPlannerRecipes() {
-        let combinedIngredients = {}; 
-        let newShoppingListItems = [];
-
-        for (const day in plannerItems) {
-            plannerItems[day].forEach(recipeTitle => {
-                const recipe = recipes.find(r => r.titulo === recipeTitle);
-                if (recipe) {
-                    const servingsFactor = 1; 
-
-                    recipe.ingredientes.forEach(originalIng => {
-                        const parsedIng = parseIngredient(originalIng);
-                        const baseName = getBaseName(parsedIng.name);
-
-                        const existingCombinedItem = Object.values(combinedIngredients).find(item => {
-                            const existingBaseName = getBaseName(item.cleanName);
-                            return existingBaseName === baseName && item.unit === parsedIng.unit;
-                        });
-
-                        if (existingCombinedItem) {
-                            if (parsedIng.value > 0 && existingCombinedItem.quantity > 0) {
-                                existingCombinedItem.quantity += (parsedIng.value * servingsFactor);
-                                existingCombinedItem.formatted = formatIngredient({
-                                    value: existingCombinedItem.quantity,
-                                    unit: existingCombinedItem.unit,
-                                    name: existingCombinedItem.cleanName
-                                }, 1);
-                            }
-                        } else {
-                            const formatted = formatIngredient(parsedIng, servingsFactor);
-                            combinedIngredients[formatted] = { 
-                                original: originalIng,
-                                formatted: formatted,
-                                cleanName: baseName,
-                                quantity: parsedIng.value > 0 ? (parsedIng.value * servingsFactor) : 0,
-                                unit: parsedIng.unit,
-                                done: false
-                            };
-                        }
-                    });
-                }
-            });
-        }
-        
-        newShoppingListItems = Object.values(combinedIngredients);
-
-        if (shoppingItems.length > 0 && !confirm('¿Quieres reemplazar la lista de compra actual con los ingredientes del planificador? Si cancelas, se añadirán al final.')) {
-            newShoppingListItems.forEach(newItem => {
-                const existingItemInCurrentList = shoppingItems.find(item => item.cleanName === newItem.cleanName && item.unit === newItem.unit);
-                if (existingItemInCurrentList) {
-                    if (newItem.quantity > 0 && existingItemInCurrentList.quantity > 0) {
-                        existingItemInCurrentList.quantity += newItem.quantity;
-                        existingItemInCurrentList.text = formatIngredient({
-                            value: existingItemInCurrentList.quantity,
-                            unit: existingItemInCurrentList.unit,
-                            name: existingItemInCurrentList.cleanName
-                        }, 1);
-                    }
-                } else {
-                    shoppingItems.push(newItem);
-                }
-            });
-        } else {
-            shoppingItems = newShoppingListItems;
-        }
-
-        saveShopping();
-        renderShopping();
-        openShoppingPanel(); // Abrir el panel de la lista de compra
-        srLive(`Lista de la compra generada desde el planificador. Tienes ${shoppingItems.length} elementos.`);
-        speak(`Lista de la compra generada desde el planificador. Tienes ${shoppingItems.length} elementos.`);
-        alert('Lista de la compra generada con éxito desde tu planificador.');
-    }
-
-
     /* ---------- TEMA / CONTRASTE / FUENTE ---------- */
     function setupTheme(){
-        // Restaura el tema
-        const savedTheme = localStorage.getItem('color-theme');
-        if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+        const saved=localStorage.getItem('color-theme');
+        if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
         } else { 
             document.documentElement.classList.remove('dark');
         }
-        dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark').toString());
+        dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
         
-        // Restaura el contraste
         const contrast=localStorage.getItem('contrast');
         if(contrast==='1'){
             document.documentElement.classList.add('high-contrast');
         } else { 
             document.documentElement.classList.remove('high-contrast');
         }
-        dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast').toString());
+        dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
 
-        // Restaura el tamaño de fuente
         const fs=localStorage.getItem('fontSize');
-        if(fs) {
-            document.documentElement.style.setProperty('--base-font-size', fs + 'px');
-        } else {
-            document.documentElement.style.setProperty('--base-font-size', '16px'); // Valor por defecto
-            localStorage.setItem('fontSize', '16');
-        }
+        if(fs) document.documentElement.style.setProperty('--base-font-size',fs+'px');
     }
     setupTheme();
     dom.themeToggle.addEventListener('click',()=>{
@@ -1343,23 +1026,24 @@
     });
 
     dom.fontInc.addEventListener('click',()=>{
-        let currentSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size'));
-        let newSize = Math.min(currentSize + 2, 26);
-        document.documentElement.style.setProperty('--base-font-size', newSize + 'px');
-        localStorage.setItem('fontSize', newSize.toString());
-        srLive(`Tamaño de fuente aumentado a ${newSize} píxeles.`);
-        speak(`Tamaño de fuente aumentado a ${newSize} píxeles.`); 
+        const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
+        const n=Math.min(parseInt(r)+2,26);
+        document.documentElement.style.setProperty('--base-font-size',n+'px');
+        localStorage.setItem('fontSize',n);
+        srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
+        speak(`Tamaño de fuente aumentado a ${n} píxeles.`); 
     });
     dom.fontDec.addEventListener('click',()=>{
-        let currentSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--base-font-size'));
-        let newSize = Math.max(currentSize - 2, 12);
-        document.documentElement.style.setProperty('--base-font-size', newSize + 'px');
-        localStorage.setItem('fontSize', newSize.toString());
-        srLive(`Tamaño de fuente reducido a ${newSize} píxeles.`);
-        speak(`Tamaño de fuente reducido a ${newSize} píxeles.`); 
+        const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
+        const n=Math.max(parseInt(r)-2,12);
+        document.documentElement.style.setProperty('--base-font-size',n+'px');
+        localStorage.setItem('fontSize',n);
+        srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
+        speak(`Tamaño de fuente reducido a ${n} píxeles.`); 
     });
 
     /* ---------- EVENTOS GLOBALES ---------- */
+    // Delegación clicks en grid
     dom.grid.addEventListener('click',e=>{
         const card=e.target.closest('.recipe-card');
         if(!card) return;
@@ -1386,14 +1070,11 @@
         if(e.key==='Escape'){
             if(dom.modal.classList.contains('modal-visible')) closeModal();
             else if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
-            else if(dom.plannerPanel.classList.contains('open')) closePlannerPanel(); 
-            else if(dom.cookingModeView.classList.contains('flex') && !fullscreenReaderActive) exitCookingMode(); 
-            else if(fullscreenReaderActive) exitFullscreenReader(); 
+            else if(dom.cookingModeView.classList.contains('flex')) exitCookingMode();
         }
         if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado.'); }
-        if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); } 
-        if(e.key.toLowerCase()==='p'){ e.preventDefault(); openPlannerPanel(); } 
-        if(e.key.toLowerCase()==='f'){ 
+        if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); } // Atajo para abrir lista
+        if(e.key.toLowerCase()==='f'){ // Atajo para filtrar favoritos
             e.preventDefault();
             currentFilter=currentFilter==='favorites'?'all':'favorites';
             dom.filterFavBtn.setAttribute('aria-pressed',currentFilter==='favorites');
@@ -1440,7 +1121,6 @@
     dom.copyrightYear.textContent=new Date().getFullYear();
     renderRecipes(recipes);
     renderShopping();
-    renderPlanner(); // Renderizar el planificador al inicio
 
     // Evento para cargar las voces de SpeechSynthesis (importante para que getVoices() no esté vacío)
     if (window.speechSynthesis) {
@@ -1451,3 +1131,7 @@
     </script>
 </body>
 </html>
+
+
+
+
