@@ -339,7 +339,7 @@
         { categoria:"Primero", titulo:"Crema de guisantes con menta", raciones:3, tiempo:"25 min", imagen:IMG("Crema Guisantes"), ingredientes:["300 g guisantes","1 cebolleta","Menta","Caldo","Aceite"], pasos:["Sofríe, añade caldo y tritura con menta."] },
         { categoria:"Primero", titulo:"Ensalada de remolacha y queso de cabra", raciones:2, tiempo:"20 min", imagen:IMG("Remolacha Cabra"), ingredientes:["2 remolachas cocidas","100 g queso de cabra","Nueces","Rúcula","Vinagreta miel/mostaza"], pasos:["Combina todo y aliña."] },
         { categoria:"Primero", titulo:"Crema de espárragos verdes", raciones:4, tiempo:"35 min", imagen:IMG("Crema Esparragos"), ingredientes:["500 g espárragos","1 patata","1 cebolla","Caldo","Nata ligera (opc.)","Sal y pimienta"], pasos:["Sofríe, cuece, tritura y cuela.","Añade nata si deseas."] },
-        { categoria:"Primero", titulo:"Sopa de ajo castellana", raciones:2, tiempo:"25 min", imagen:IMG("Sopa Ajo"), ingredientes:["4 ajos","4 rebanadas pan duro","1 cdita pimentón","Caldo","AOVE","Huevo (opc.)"], pasos:["Dora ajos y pan con pimentón.","Añade caldo y cuece.","Escalfa huevo si quieres."] },
+        { categoria:"Primero", titulo:"Sopa de ajo castellana", raciones:2, tiempo:"25 min", imagen:IMG("Sopa Ajo"), ingredientes:["4 ajos","4 rebanadas pan duro","1 cdita pimentón","Caldo","AOVE","Huevo (opc.)"), pasos:["Dora ajos y pan con pimentón.","Añade caldo y cuece.","Escalfa huevo si quieres."] },
         { categoria:"Primero", titulo:"Ensalada de cuscús con pasas y piñones", raciones:3, tiempo:"20 min", imagen:IMG("Cuscus"), ingredientes:["1 taza cuscús","1.5 tazas agua","1/4 taza pasas","2 cdas. piñones","Pepino","Tomate","Aceite","Limón","Menta"], pasos:["Hidrata cuscús y mezcla con todo."] },
         { categoria:"Primero", titulo:"Crema de calabacín y manzana", raciones:4, tiempo:"35 min", imagen:IMG("Calabacin Manzana"), ingredientes:["2 calabacines","1 manzana","1/2 cebolla","Caldo","Aceite","Sal"], pasos:["Sofríe, cuece y tritura."] },
         { categoria:"Primero", titulo:"Salpicón de marisco ligero", raciones:2, tiempo:"25 min", imagen:IMG("Salpicon"), ingredientes:["100 g gambas","100 g pulpo","1/2 cebolla morada","1/2 pimiento rojo","Perejil","Aceite","Vinagre","Sal"], pasos:["Pica todo y aliña."] },
@@ -462,7 +462,7 @@
     /* ---------- ESTADO Y DOM ---------- */
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
-    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}'); // Nuevo: Almacena el plan semanal
+    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}'); // Almacena el plan semanal
     
     let currentCategory = 'all';
     let currentFilter = 'all';
@@ -839,17 +839,17 @@
         const servingsInput=document.getElementById('servings-input');
         document.getElementById('decrease-servings').addEventListener('click',()=>{
             let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-            srLive(`Raciones ajustadas a ${currentServings}.`); // Anuncio audible
+            srLive(`Raciones ajustadas a ${currentServings}.`); 
             speak(`Raciones ajustadas a ${currentServings}.`);
         });
         document.getElementById('increase-servings').addEventListener('click',()=>{
             let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-            srLive(`Raciones ajustadas a ${currentServings}.`); // Anuncio audible
+            srLive(`Raciones ajustadas a ${currentServings}.`); 
             speak(`Raciones ajustadas a ${currentServings}.`);
         });
         servingsInput.addEventListener('change',e=>{
             let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
-            srLive(`Raciones ajustadas a ${currentServings}.`); // Anuncio audible
+            srLive(`Raciones ajustadas a ${currentServings}.`); 
             speak(`Raciones ajustadas a ${currentServings}.`);
         });
     }
@@ -948,7 +948,7 @@
                 if (currentStep < currentRecipeSteps.length - 1) {
                     currentStep++;
                     updateCookingStep();
-                    speak('Entendido, siguiente paso.'); // Confirmación audible
+                    speak('Entendido, pasando al siguiente paso.'); 
                 } else {
                     speak('Has llegado al final de la receta.');
                 }
@@ -956,13 +956,13 @@
                 if (currentStep > 0) {
                     currentStep--;
                     updateCookingStep();
-                    speak('Entendido, paso anterior.'); // Confirmación audible
+                    speak('Entendido, volviendo al paso anterior.'); 
                 } else {
                     speak('Estás en el primer paso.');
                 }
             } else if (transcript.includes('repetir') || transcript.includes('otra vez')) {
                 speak(currentRecipeSteps[currentStep]);
-                speak('Repitiendo paso.'); // Confirmación audible
+                speak('Repitiendo paso actual.'); 
             } else if (transcript.includes('salir') || transcript.includes('terminar')) {
                 exitCookingMode();
             } else {
@@ -983,7 +983,8 @@
 
         recognition.onend = () => {
             console.log('Reconocimiento de voz terminado, reiniciando...');
-            if (dom.cookingModeView.classList.contains('flex') || fullscreenReaderActive) { // Reinicia si está en modo cocina o lectura
+            // Solo reinicia si sigue en modo cocina o lectura a pantalla completa
+            if (dom.cookingModeView.classList.contains('flex') || fullscreenReaderActive) { 
                 recognition.start(); 
             } else {
                 console.log('Reconocimiento de voz detenido permanentemente.');
@@ -1059,6 +1060,7 @@
         }
     });
     dom.shoppingList.addEventListener('click',e=>{
+        // Delegación de eventos para checkboxes y botones de eliminar
         if(e.target.tagName==='BUTTON' && e.target.dataset.del){
             const idx=parseInt(e.target.dataset.del);
             const deletedItemText = shoppingItems[idx].text;
@@ -1117,6 +1119,15 @@
             </div>
         `;
         dom.plannerContent.innerHTML = plannerHtml;
+
+        // Event listeners para eliminar recetas del planificador
+        dom.plannerContent.querySelectorAll('[data-remove-from-day]').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const day = e.target.dataset.removeFromDay;
+                const recipeTitle = e.target.dataset.recipeTitle;
+                removeRecipeFromPlanner(recipeTitle, day);
+            });
+        });
     }
 
     function openPlannerPanel() {
@@ -1152,15 +1163,19 @@
         }
     }
 
-    function removeRecipeFromPlanner(recipeTitle, day) {
-        if (plannerItems[day]) {
-            plannerItems[day] = plannerItems[day].filter(title => title !== recipeTitle);
-            savePlanner();
-            renderPlanner();
-            srLive(`Receta ${recipeTitle} eliminada del ${day}.`);
-            speak(`Receta ${recipeTitle} eliminada del ${day}.`);
+    // Listener para añadir receta al planificador desde el modal de receta (nuevo)
+    // Esto se añade en showRecipeDetail para los botones que se crean dinámicamente
+
+    // Listener para eliminar del planificador (dentro de renderPlanner)
+    // Se delega a plannerContent para que funcione con los botones dinámicos
+    dom.plannerContent.addEventListener('click', e => {
+        if (e.target.matches('[data-remove-from-day]')) {
+            const day = e.target.dataset.removeFromDay;
+            const recipeTitle = e.target.dataset.recipeTitle;
+            removeRecipeFromPlanner(recipeTitle, day);
         }
-    }
+    });
+
 
     function clearPlannerContent() {
         if (confirm('¿Estás seguro de que quieres vaciar todo el planificador semanal?')) {
