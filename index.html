@@ -460,9 +460,12 @@
     ];
 
     /* ---------- ESTADO Y DOM ---------- */
+    // userFavorites y shoppingItems usan localStorage. 
+    // Si quieres usar Firebase, DESCOMENTA las importaciones de Firebase 
+    // y la lógica de inicialización en runRecipeApp().
     let userFavorites = JSON.parse(localStorage.getItem('favorites')||'[]');
     let shoppingItems = JSON.parse(localStorage.getItem('shopping')||'[]');
-    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}'); // Almacena el plan semanal
+    let plannerItems = JSON.parse(localStorage.getItem('planner') || '{}');
     
     let currentCategory = 'all';
     let currentFilter = 'all';
@@ -799,6 +802,7 @@
                     </div>
                     <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
                         <button id="addToShoppingBtn" class="bg-amber-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-700 transition shadow-lg">Añadir a lista</button>
+                        <button id="addToPlannerBtn" class="bg-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-purple-700 transition shadow-lg">Añadir a plan</button>
                         <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Modo cocina guiada</button>
                         <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
                         <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
@@ -834,6 +838,10 @@
             openShoppingPanel(); 
         });
 
+        document.getElementById('addToPlannerBtn').addEventListener('click', () => {
+            showPlannerAddRecipeOptions(recipe.titulo);
+        });
+
         document.getElementById('start-cooking-btn').addEventListener('click',()=>startCookingMode(recipe));
 
         const servingsInput=document.getElementById('servings-input');
@@ -865,7 +873,7 @@
     }
 
     /* ---------- COOKING MODE (SÍNTESIS Y RECONOCIMIENTO DE VOZ) ---------- */
-    let recognition = null; // Declarada aquí, una sola vez en el ámbito de runRecipeApp
+    let recognition = null; // Esta es la única declaración de 'recognition'
 
     function speak(text){
         if(!('speechSynthesis' in window)) {
@@ -929,7 +937,7 @@
         }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition(); 
+        recognition = new SpeechRecognition(); // Se asigna a la variable global 'recognition'
         recognition.lang = 'es-ES'; 
         recognition.interimResults = false; 
         recognition.maxAlternatives = 1; 
@@ -983,8 +991,7 @@
 
         recognition.onend = () => {
             console.log('Reconocimiento de voz terminado, reiniciando...');
-            // Solo reinicia si sigue en modo cocina o lectura a pantalla completa
-            if (dom.cookingModeView.classList.contains('flex') || fullscreenReaderActive) { 
+            if (dom.cookingModeView.classList.contains('flex') || fullscreenReaderActive) { // Solo reinicia si sigue en modo cocina o lectura a pantalla completa
                 recognition.start(); 
             } else {
                 console.log('Reconocimiento de voz detenido permanentemente.');
@@ -1120,7 +1127,6 @@
         `;
         dom.plannerContent.innerHTML = plannerHtml;
 
-        // Event listeners para eliminar recetas del planificador
         dom.plannerContent.querySelectorAll('[data-remove-from-day]').forEach(button => {
             button.addEventListener('click', (e) => {
                 const day = e.target.dataset.removeFromDay;
@@ -1147,6 +1153,41 @@
         speak("Planificador semanal cerrado.");
     }
 
+    // Muestra un mini-modal para seleccionar el día al añadir al planificador
+    function showPlannerAddRecipeOptions(recipeTitle) {
+        let dayOptionsHtml = `
+            <h3 class="text-xl font-bold mb-4">Añadir "${recipeTitle}" a:</h3>
+            <div class="grid grid-cols-2 gap-2">
+                ${daysOfWeek.map(day => `
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition" data-add-to-planner-day="${day}" data-recipe-to-add="${recipeTitle}">${day}</button>
+                `).join('')}
+            </div>
+        `;
+
+        const tempModal = document.createElement('div');
+        tempModal.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4';
+        tempModal.innerHTML = `
+            <div class="bg-white dark:bg-stone-800 rounded-lg p-6 shadow-xl max-w-sm w-full text-center">
+                ${dayOptionsHtml}
+                <button id="closePlannerOptions" class="mt-4 text-gray-500 hover:text-gray-700">Cancelar</button>
+            </div>
+        `;
+        document.body.appendChild(tempModal);
+
+        tempModal.addEventListener('click', (e) => {
+            if (e.target.matches('[data-add-to-planner-day]')) {
+                const day = e.target.dataset.addToPlannerDay;
+                const recipe = e.target.dataset.recipeToAdd;
+                addRecipeToPlanner(recipe, day);
+                document.body.removeChild(tempModal); 
+            } else if (e.target.id === 'closePlannerOptions' || e.target === tempModal) { 
+                document.body.removeChild(tempModal); 
+            }
+        });
+        tempModal.querySelector('[data-add-to-planner-day]')?.focus(); // Enfocar para accesibilidad
+    }
+
+
     function addRecipeToPlanner(recipeTitle, day) {
         if (!plannerItems[day]) {
             plannerItems[day] = [];
@@ -1163,19 +1204,15 @@
         }
     }
 
-    // Listener para añadir receta al planificador desde el modal de receta (nuevo)
-    // Esto se añade en showRecipeDetail para los botones que se crean dinámicamente
-
-    // Listener para eliminar del planificador (dentro de renderPlanner)
-    // Se delega a plannerContent para que funcione con los botones dinámicos
-    dom.plannerContent.addEventListener('click', e => {
-        if (e.target.matches('[data-remove-from-day]')) {
-            const day = e.target.dataset.removeFromDay;
-            const recipeTitle = e.target.dataset.recipeTitle;
-            removeRecipeFromPlanner(recipeTitle, day);
+    function removeRecipeFromPlanner(recipeTitle, day) {
+        if (plannerItems[day]) {
+            plannerItems[day] = plannerItems[day].filter(title => title !== recipeTitle);
+            savePlanner();
+            renderPlanner();
+            srLive(`Receta ${recipeTitle} eliminada del ${day}.`);
+            speak(`Receta ${recipeTitle} eliminada del ${day}.`);
         }
-    });
-
+    }
 
     function clearPlannerContent() {
         if (confirm('¿Estás seguro de que quieres vaciar todo el planificador semanal?')) {
@@ -1195,7 +1232,7 @@
             plannerItems[day].forEach(recipeTitle => {
                 const recipe = recipes.find(r => r.titulo === recipeTitle);
                 if (recipe) {
-                    const servingsFactor = 1; // Asumiendo 1 ración para el planificador (podríamos hacer que el usuario lo ajuste)
+                    const servingsFactor = 1; 
 
                     recipe.ingredientes.forEach(originalIng => {
                         const parsedIng = parseIngredient(originalIng);
@@ -1255,7 +1292,7 @@
 
         saveShopping();
         renderShopping();
-        openShoppingPanel(); // Abrir el panel de la lista de compra
+        openShoppingPanel(); 
         srLive(`Lista de la compra generada desde el planificador. Tienes ${shoppingItems.length} elementos.`);
         speak(`Lista de la compra generada desde el planificador. Tienes ${shoppingItems.length} elementos.`);
         alert('Lista de la compra generada con éxito desde tu planificador.');
@@ -1264,7 +1301,6 @@
 
     /* ---------- TEMA / CONTRASTE / FUENTE ---------- */
     function setupTheme(){
-        // Restaura el tema
         const savedTheme = localStorage.getItem('color-theme');
         if(savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)){
             document.documentElement.classList.add('dark');
@@ -1273,7 +1309,6 @@
         }
         dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark').toString());
         
-        // Restaura el contraste
         const contrast=localStorage.getItem('contrast');
         if(contrast==='1'){
             document.documentElement.classList.add('high-contrast');
@@ -1282,7 +1317,6 @@
         }
         dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast').toString());
 
-        // Restaura el tamaño de fuente
         const fs=localStorage.getItem('fontSize');
         if(fs) {
             document.documentElement.style.setProperty('--base-font-size', fs + 'px');
@@ -1325,6 +1359,58 @@
         speak(`Tamaño de fuente reducido a ${newSize} píxeles.`); 
     });
 
+    /* ---------- MODO LECTURA PANTALLA COMPLETA ---------- */
+    // Función para entrar en modo lectura
+    function enterFullscreenReader(initialContent, allSteps) {
+        fullscreenReaderActive = true;
+        currentRecipeSteps = allSteps; 
+        currentStep = allSteps.indexOf(initialContent); 
+
+        dom.fullscreenReaderView.classList.remove('hidden');
+        dom.fullscreenReaderText.textContent = initialContent;
+        
+        document.body.classList.add('overflow-hidden'); 
+        dom.modal.classList.add('hidden'); 
+        dom.cookingModeView.classList.add('hidden'); 
+        dom.shoppingPanel.classList.remove('open'); 
+        dom.plannerPanel.classList.remove('open'); 
+
+        if (!recognition) startVoiceRecognition(); 
+        
+        srLive("Modo lectura a pantalla completa activado. Toque la pantalla para el siguiente paso, o diga comandos de voz.");
+        speak("Modo lectura a pantalla completa activado.");
+    }
+
+    // Función para salir del modo lectura
+    function exitFullscreenReader() {
+        fullscreenReaderActive = false;
+        dom.fullscreenReaderView.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        
+        if (recognition && !dom.cookingModeView.classList.contains('flex')) {
+            stopVoiceRecognition();
+        }
+        
+        srLive("Modo lectura a pantalla completa desactivado.");
+        speak("Modo lectura a pantalla completa desactivado.");
+    }
+
+    // Evento para avanzar paso en modo lectura (al tocar/clicar la pantalla)
+    dom.fullscreenReaderView.addEventListener('click', () => {
+        if (currentStep < currentRecipeSteps.length - 1) {
+            currentStep++;
+            dom.fullscreenReaderText.textContent = currentRecipeSteps[currentStep];
+            srLive(`Paso ${currentStep + 1}: ${currentRecipeSteps[currentStep]}`);
+            speak(currentRecipeSteps[currentStep]);
+        } else {
+            srLive("Has llegado al final de la receta en modo lectura.");
+            speak("Has llegado al final de la receta en modo lectura.");
+            exitFullscreenReader();
+        }
+    });
+    // Botón de salida del modo lectura
+    dom.exitReaderBtn.addEventListener('click', exitFullscreenReader);
+
     /* ---------- EVENTOS GLOBALES ---------- */
     dom.grid.addEventListener('click',e=>{
         const card=e.target.closest('.recipe-card');
@@ -1338,7 +1424,7 @@
         }
     });
     dom.grid.addEventListener('keydown',e=>{
-        if(e.key==='Enter' || e.key===' '){ // Enter o Espacio en tarjeta para abrir modal
+        if(e.key==='Enter' || e.key===' '){ 
             const card=e.target.closest('.recipe-card');
             if(card){
                 const recipe=recipes.find(r=>r.titulo===card.dataset.id);
