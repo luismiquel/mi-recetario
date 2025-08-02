@@ -6,12 +6,15 @@
     <title>Recetario Delicioso – 150 recetas accesibles</title>
 
     <meta name="theme-color" content="#78350f" />
+    <!-- Uso de la meta etiqueta más actual para web apps móviles -->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Recetario" />
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R" />
     <link rel="manifest" href="/manifest.json" />
 
+    <!-- Advertencia: El CDN es para desarrollo, no para producción -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' };</script>
 
@@ -812,8 +815,8 @@
                 showModal("El asistente de voz no puede hablar. Asegúrate de que tu navegador/sistema operativo tenga voces en español instaladas.");
                 sessionStorage.setItem('voice_alert_shown_v2', 'true');
             }
-        }
-
+        };
+        
         u.onend = () => dom.repeatStepBtn.classList.remove('speaking');
         u.onerror = (event) => {
             console.error('Error en SpeechSynthesis:', event);
@@ -896,7 +899,12 @@
         recognition.onend = () => {
             console.log('Reconocimiento de voz terminado, reiniciando...');
             if (dom.cookingModeView.classList.contains('flex')) { // Solo reinicia si sigue en modo cocina
-                recognition.start(); 
+                // Añado un pequeño retraso para evitar que los comandos se solapen
+                setTimeout(() => {
+                    if (dom.cookingModeView.classList.contains('flex')) { // Vuelvo a verificar por si el usuario salió durante el retraso
+                        recognition.start();
+                    }
+                }, 500);
             } else {
                 console.log('Reconocimiento de voz detenido permanentemente.');
                 srLive('Reconocimiento de voz detenido.');
