@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Recetario Completo</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #fefefe; color: #222; }
+    section { margin-bottom: 3rem; }
+    .recipe { border: 1px solid #ddd; padding: 1rem; margin: .5rem 0; border-radius: 8px; background: #fff; }
+    .recipe img { width: 100%; max-width: 400px; border-radius: 4px; }
+    ul, ol { padding-left: 1.2rem; }
+    li { margin: .3rem 0; }
+    li:hover { text-decoration: underline; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Mi Recetario Completo – 80 recetas</h1>
+  <section id="Aperitivo"><h2>Aperitivos</h2></section>
+  <section id="Primero"><h2>Primeros</h2></section>
+  <section id="Segundo"><h2>Segundos</h2></section>
+  <section id="Postre"><h2>Postres</h2></section>
+
+  <script>
+    const recetas = [ /* Aquí va el array completo `allRecipes` que ya tienes */ ];
+
+    const speak = text => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'es-ES';
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    };
+
+    function render() {
+      const cont = {
+        "Aperitivo": document.getElementById('Aperitivo'),
+        "Primero":   document.getElementById('Primero'),
+        "Segundo":   document.getElementById('Segundo'),
+        "Postre":    document.getElementById('Postre'),
+      };
+
+      recetas.forEach(r => {
+        const sec = cont[r.categoria];
+        const div = document.createElement('div');
+        div.className = 'recipe';
+        div.innerHTML = `
+          <h3>${r.titulo}</h3>
+          <img src="${r.imagen}" alt="${r.titulo}">
+          <h4>Ingredientes:</h4>
+          <ul>${r.ingredientes.map(i => `<li>${i}</li>`).join('')}</ul>
+          <h4>Pasos:</h4>
+          <ol>${r.pasos.map((p, i) => `<li onclick="speak('${p.replace(/'/g,"\\'")}')">Paso ${i+1}: ${p}</li>`).join('')}</ol>
+        `;
+        sec.appendChild(div);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
