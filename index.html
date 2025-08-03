@@ -9,7 +9,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Recetario" />
+    <meta name="apple-mobile-app-title" content="Recetario" />
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/78350f/ffffff?text=R" />
     <link rel="manifest" href="/manifest.json" />
 
@@ -1981,7 +1981,27 @@
     // La variable 'recognition' ahora es una variable de ámbito superior dentro de runRecipeApp
     // y se inicializa a null allí.
 
-    function speak(text){
+    let voicesLoaded = false;
+    const loadVoices = () => {
+        return new Promise(resolve => {
+            if (voicesLoaded) {
+                resolve();
+            } else {
+                speechSynthesis.onvoiceschanged = () => {
+                    voicesLoaded = true;
+                    resolve();
+                };
+                // En algunos navegadores, onvoiceschanged no se dispara si las voces ya están cargadas.
+                // Verificamos si ya hay voces disponibles.
+                if (speechSynthesis.getVoices().length > 0) {
+                    voicesLoaded = true;
+                    resolve();
+                }
+            }
+        });
+    };
+
+    async function speak(text){
         if(!('speechSynthesis' in window)) {
             console.warn("Speech Synthesis API no soportada en este navegador.");
             if (!sessionStorage.getItem('voice_alert_shown_v2')) {
@@ -1990,7 +2010,11 @@
             }
             return;
         }
+
         speechSynthesis.cancel();
+        
+        await loadVoices();
+
         const u=new SpeechSynthesisUtterance(text);
         u.lang='es-ES'; u.rate=0.9; u.pitch=1;
 
@@ -2346,13 +2370,6 @@
     dom.copyrightYear.textContent=new Date().getFullYear();
     renderRecipes(recipes);
     renderShopping();
-
-    // Evento para cargar las voces de SpeechSynthesis (importante para que getVoices() no esté vacío)
-    if (window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = () => {
-            console.log("Voces de SpeechSynthesis cargadas.");
-        };
-    }
     </script>
 </body>
 </html>
