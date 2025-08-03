@@ -713,7 +713,7 @@
             tiempo: "10 minutos",
             imagen: IMG("Ensalada de remolacha y queso de cabra"),
             ingredientes: ["1 remolacha cocida", "60 g de queso de cabra", "Nueces troceadas (opcional)", "Aceite de oliva y sal"],
-            pasos: ["1. Preparar ingredientes (5 min): Corta la remolacha en rodajas o cubos. Corta el queso en trozos medianos. Trocea las nueces si usas.", "2. Montar ensalada (5 min): Mezcla todo en un bol. Añade aceite de oliva y una pizca de sal."]
+            pasos: ["1. Preparar ingredientes (5 min): Corta la remolacha en rodajas o cubos. Corta el queso en trozos medianos. Trocea las nueces si usas.", "2. Montar ensalada (5 min): Mezcla todo en un bol. Aliña con aceite y sal."]
         },
         {
             categoria: "Primero",
@@ -1960,3 +1960,23 @@
                 const confirmBtn = document.createElement('button');
                 confirmBtn.textContent = 'Confirmar';
                 confirmBtn.className = 'px-4 py-2 bg-red-600 text-white rounded-full font-semibold hover:bg-red-700 transition';
+                confirmBtn.onclick = () => { onConfirm(); this.hide(); };
+
+                this.buttons.appendChild(cancelBtn);
+                this.buttons.appendChild(confirmBtn);
+            }
+
+            this.element.classList.add('visible');
+            focusTrap.enable(this.element);
+        },
+        hide() {
+            this.element.classList.remove('visible');
+            focusTrap.disable();
+        }
+    };
+    const showModal = (msg) => customModal.show(msg, 'alert');
+    const showConfirm = (msg, onConfirm) => customModal.show(msg, 'confirm', onConfirm);
+
+    /* ---------- COOKING MODE (SÍNTESIS Y RECONOCIMIENTO DE VOZ) ---------- */
+    // La variable 'recognition' ahora es una variable de ámbito superior dentro de runRecipeApp
+    // y se
