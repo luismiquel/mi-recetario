@@ -748,7 +748,7 @@
             raciones: 2,
             tiempo: "25 minutos",
             imagen: IMG("Crema de calabacín y manzana"),
-            ingredientes: ["1 calabacín", "1 manzana verde", "¼ cebolla", "Aceite, sal y agua"],
+            ingredientes: ["1 calabacín", "1 manzana verde", "1 patata", "Aceite, sal y agua"],
             pasos: ["1. Preparar ingredientes (5 min): Lava y trocea el calabacín. Pela y trocea la manzana y cebolla.", "2. Cocinar (15 min): Sofríe cebolla. Añade calabacín, manzana y agua. Cocina hasta que esté blando.", "3. Triturar (5 min): Tritura todo y ajusta sal. Sirve caliente o tibio."]
         },
         {
@@ -1989,12 +1989,14 @@
             } else {
                 speechSynthesis.onvoiceschanged = () => {
                     voicesLoaded = true;
+                    console.log("Voces de síntesis de voz listas.");
                     resolve();
                 };
                 // En algunos navegadores, onvoiceschanged no se dispara si las voces ya están cargadas.
                 // Verificamos si ya hay voces disponibles.
                 if (speechSynthesis.getVoices().length > 0) {
                     voicesLoaded = true;
+                    console.log("Voces de síntesis de voz listas (desde el principio).");
                     resolve();
                 }
             }
