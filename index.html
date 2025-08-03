@@ -370,7 +370,7 @@
             tiempo: "15 minutos",
             imagen: IMG("Gazpacho ligero de remolacha"),
             ingredientes: ["1 remolacha cocida", "1 tomate maduro", "¼ pepino", "¼ diente de ajo", "1 cucharada de aceite de oliva", "1 cucharada de vinagre", "Sal y agua fría al gusto"],
-            pasos: ["1. Preparación de ingredientes (5 min): Lava y pela el tomate y el pepino. Corta todo en trozos medianos.", "2. Batido (5 min): Coloca todos los ingredientes en una batidora y tritura hasta obtener una crema suave.", "3. Refrigerado (5 min): Sirve muy frío, tras enfriar en la nevera al menos 10 minutos."]
+            pasos: ["1. Preparar ingredientes (5 min): Lava y pela el tomate y el pepino. Corta todo en trozos medianos.", "2. Batido (5 min): Coloca todos los ingredientes en una batidora y tritura hasta obtener una crema suave.", "3. Refrigerado (5 min): Sirve muy frío, tras enfriar en la nevera al menos 10 minutos."]
         },
         {
             categoria: "Aperitivo",
@@ -2025,14 +2025,10 @@
         if (!selectedVoice) { 
             selectedVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_'));
         }
-        if (!selectedVoice) { 
-            selectedVoice = voices.find(voice => voice.lang.startsWith('en-')); 
-            if (selectedVoice) console.warn("No se encontró una voz en español, usando voz en inglés.");
-        }
         if (selectedVoice) {
             u.voice = selectedVoice;
         } else {
-            console.warn("No se encontró ninguna voz compatible. La síntesis de voz podría no funcionar.");
+            console.warn("No se encontró una voz compatible. La síntesis de voz podría no funcionar.");
             if (!sessionStorage.getItem('voice_alert_shown_v2')) { 
                 showModal("El asistente de voz no puede hablar. Asegúrate de que tu navegador/sistema operativo tenga voces en español instaladas.");
                 sessionStorage.setItem('voice_alert_shown_v2', 'true');
@@ -2050,7 +2046,12 @@
         };
         
         dom.repeatStepBtn.classList.add('speaking');
-        speechSynthesis.speak(u);
+        try {
+            speechSynthesis.speak(u);
+        } catch(err) {
+            console.error("Error al intentar hablar:", err);
+            dom.repeatStepBtn.classList.remove('speaking');
+        }
     }
 
     function updateCookingStep(){
