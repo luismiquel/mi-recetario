@@ -821,7 +821,7 @@
             tiempo: "10 minutos",
             imagen: IMG("Ensalada griega light"),
             ingredientes: ["1 tomate", "¼ pepino", "50 g de queso feta", "4 aceitunas negras", "Orégano, aceite y sal"],
-            pasos: ["1. Preparar ingredientes (5 min): Lava y corta el tomate y el pepino. Corta el queso en cubitos.", "2. Montar (5 min): Mezcla todo en un bol. Añade orégano, aceite y sal."]
+            pasos: ["1. Preparar ingredientes (5 min): Lava y corta el tomate y el pepino. Corta el queso en cubitos.", "2. Montar (5 min): Mezcla todo en un bol. Aliña con aceite y sal."]
         },
         {
             categoria: "Primero",
@@ -2061,6 +2061,7 @@
     }
 
     // --- RECONOCIMIENTO DE VOZ ---
+    let isListening = false;
     function startVoiceRecognition() {
         if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
             showModal('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
@@ -2068,6 +2069,8 @@
             srLive('Reconocimiento de voz no soportado.');
             return;
         }
+        
+        if (isListening) return;
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition(); 
@@ -2076,6 +2079,7 @@
         recognition.maxAlternatives = 1; 
 
         recognition.onstart = () => {
+            isListening = true;
             console.log('Reconocimiento de voz iniciado. Escuchando...');
             srLive('Reconocimiento de voz iniciado. Di "siguiente", "anterior", "repetir" o "salir".');
         };
@@ -2121,6 +2125,7 @@
 
         recognition.onend = () => {
             console.log('Reconocimiento de voz terminado, reiniciando...');
+            isListening = false;
             if (dom.cookingModeView.classList.contains('flex')) { // Solo reinicia si sigue en modo cocina
                 // Añado un pequeño retraso para evitar que los comandos se solapen
                 setTimeout(() => {
@@ -2133,14 +2138,14 @@
                 srLive('Reconocimiento de voz detenido.');
             }
         };
-
         recognition.start(); 
     }
 
     function stopVoiceRecognition() {
-        if (recognition) {
+        if (recognition && isListening) {
             recognition.stop();
             recognition = null; 
+            isListening = false;
             console.log('Reconocimiento de voz detenido.');
             srLive('Reconocimiento de voz detenido.');
         }
