@@ -1234,7 +1234,7 @@ const recipes = [
         tiempo: "35 minutos",
         imagen: IMG("Bizcocho de limón sin azúcar"),
         ingredientes: ["2 huevos", "100 ml yogur natural", "Ralladura de 1 limón", "100 g harina", "Levadura y edulcorante"],
-        pasos: ["1. Batir mezcla (10 min): Mezcla todos los ingredientes.", "2. Hornear (25 min): En molde a 180 °C. Verifica con un palillo."]
+        pasos: ["1. Batir mezcla (10 min): Mezcla todos los ingredientes.", "2. Hornear (25 min): En molde engrasado a 180 °C. Verifica con un palillo."]
     },
     {
         categoria: "Postre",
