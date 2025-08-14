@@ -1234,7 +1234,7 @@ const recipes = [
         tiempo: "35 minutos",
         imagen: IMG("Bizcocho de limón sin azúcar"),
         ingredientes: ["2 huevos", "100 ml yogur natural", "Ralladura de 1 limón", "100 g harina", "Levadura y edulcorante"],
-        pasos: ["1. Batir mezcla (10 min): Mezcla todos los ingredientes.", "2. Hornear (25 min): En molde engrasado, hornea a 180 °C. Verifica con un palillo."]
+        pasos: ["1. Batir mezcla (10 min): Mezcla todos los ingredientes.", "2. Hornear (25 min): En molde engrasado a 180 °C. Verifica con un palillo."]
     },
     {
         categoria: "Postre",
@@ -1369,400 +1369,400 @@ let recognition = null;
 let isListening = false;
 
 const dom = {
-    grid: document.getElementById('recipeGrid'),
-    search: document.getElementById('searchInput'),
-    filterAllBtn: document.getElementById('filterAll'),
-    filterFavBtn: document.getElementById('filterFavorites'),
-    categoryFilters: document.getElementById('categoryFilters'),
-    noResults: document.getElementById('no-results'),
-    modal: document.getElementById('recipeModal'),
-    modalContent: document.getElementById('modalContent'),
-    copyrightYear: document.getElementById('copyright-year'),
-    openShopping: document.getElementById('openShopping'),
-    shoppingPanel: document.getElementById('shoppingPanel'),
-    closeShopping: document.getElementById('closeShopping'),
-    shoppingList: document.getElementById('shoppingList'),
-    clearShopping: document.getElementById('clearShopping'),
-    exportShopping: document.getElementById('exportShopping'),
-    whatsappShopping: document.getElementById('whatsappShopping'),
-    printShopping: document.getElementById('printShopping'),
-    themeToggle: document.getElementById('theme-toggle'),
-    contrastToggle: document.getElementById('contrast-toggle'),
-    fontInc: document.getElementById('font-inc'),
-    fontDec: document.getElementById('font-dec'),
-    cookingModeView: document.getElementById('cooking-mode-view'),
-    stepCounter: document.getElementById('step-counter'),
-    stepText: document.getElementById('step-text'),
-    prevStepBtn: document.getElementById('prev-step-btn'),
-    repeatStepBtn: document.getElementById('repeat-step-btn'),
-    nextStepBtn: document.getElementById('next-step-btn'),
-    exitCookingBtn: document.getElementById('exit-cooking-btn'),
-    srLive: document.getElementById('sr-live'),
-    userInfo: document.getElementById('user-info')
+    grid: document.getElementById('recipeGrid'),
+    search: document.getElementById('searchInput'),
+    filterAllBtn: document.getElementById('filterAll'),
+    filterFavBtn: document.getElementById('filterFavorites'),
+    categoryFilters: document.getElementById('categoryFilters'),
+    noResults: document.getElementById('no-results'),
+    modal: document.getElementById('recipeModal'),
+    modalContent: document.getElementById('modalContent'),
+    copyrightYear: document.getElementById('copyright-year'),
+    openShopping: document.getElementById('openShopping'),
+    shoppingPanel: document.getElementById('shoppingPanel'),
+    closeShopping: document.getElementById('closeShopping'),
+    shoppingList: document.getElementById('shoppingList'),
+    clearShopping: document.getElementById('clearShopping'),
+    exportShopping: document.getElementById('exportShopping'),
+    whatsappShopping: document.getElementById('whatsappShopping'),
+    printShopping: document.getElementById('printShopping'),
+    themeToggle: document.getElementById('theme-toggle'),
+    contrastToggle: document.getElementById('contrast-toggle'),
+    fontInc: document.getElementById('font-inc'),
+    fontDec: document.getElementById('font-dec'),
+    cookingModeView: document.getElementById('cooking-mode-view'),
+    stepCounter: document.getElementById('step-counter'),
+    stepText: document.getElementById('step-text'),
+    prevStepBtn: document.getElementById('prev-step-btn'),
+    repeatStepBtn: document.getElementById('repeat-step-btn'),
+    nextStepBtn: document.getElementById('next-step-btn'),
+    exitCookingBtn: document.getElementById('exit-cooking-btn'),
+    srLive: document.getElementById('sr-live'),
+    userInfo: document.getElementById('user-info')
 };
 
 /* ---------- RENDER ---------- */
 function renderRecipes(list){
-    if(list.length===0){
-        dom.noResults.classList.remove('hidden');
-        dom.grid.innerHTML='';
-        return;
-    }
-    dom.noResults.classList.add('hidden');
-    dom.grid.innerHTML = list.map(recipe=>{
-        const searchTerms = `${recipe.titulo.toLowerCase()} ${(recipe.ingredientes||[]).join(' ').toLowerCase()}`;
-        const fav = userFavorites.includes(recipe.titulo);
-        return `
-        <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
-            <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform transition duration-300 cursor-pointer h-full flex flex-col" tabindex="0" aria-label="${recipe.titulo}">
-                <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
-                <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
-                <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition" aria-label="Marcar como favorita">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${fav?'text-red-500 fill-current':'text-gray-600 dark:text-gray-400'} pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
-                </button>
-            </div>
-            <div class="p-4 flex-grow flex flex-col">
-                <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
-                <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
-            </div>
-        </div>`;
-    }).join('');
+    if(list.length===0){
+        dom.noResults.classList.remove('hidden');
+        dom.grid.innerHTML='';
+        return;
+    }
+    dom.noResults.classList.add('hidden');
+    dom.grid.innerHTML = list.map(recipe=>{
+        const searchTerms = `${recipe.titulo.toLowerCase()} ${(recipe.ingredientes||[]).join(' ').toLowerCase()}`;
+        const fav = userFavorites.includes(recipe.titulo);
+        return `
+        <div class="recipe-card" data-id="${recipe.titulo}" data-category="${recipe.categoria}" data-search="${searchTerms}">
+            <div class="relative bg-white dark:bg-stone-800 rounded-lg shadow-md overflow-hidden transform transition duration-300 cursor-pointer h-full flex flex-col" tabindex="0" aria-label="${recipe.titulo}">
+                <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-40 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1c4b5/4a2e0a?text=Receta';">
+                <div class="absolute top-2 left-2 bg-amber-800 text-white text-xs font-semibold px-2 py-1 rounded-full">${recipe.categoria}</div>
+                <button class="favorite-btn absolute top-2 right-2 bg-white/80 rounded-full p-2 hover:bg-white dark:hover:bg-stone-600 transition" aria-label="Marcar como favorita">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${fav?'text-red-500 fill-current':'text-gray-600 dark:text-gray-400'} pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z" /></svg>
+                </button>
+            </div>
+            <div class="p-4 flex-grow flex flex-col">
+                <h3 class="font-bold text-lg text-amber-900 dark:text-amber-500 truncate">${recipe.titulo}</h3>
+                <p class="text-sm text-gray-500 dark:text-stone-400 mt-1">Tiempo: ${recipe.tiempo} | Raciones: ${recipe.raciones}</p>
+            </div>
+        </div>`;
+    }).join('');
 }
 
 function applyFilters(){
-    const searchTerm = dom.search.value.toLowerCase();
-    const filtered = recipes.filter(r=>{
-        const id = r.titulo;
-        const categoryMatch = currentCategory==='all' || r.categoria===currentCategory;
-        const isFav = userFavorites.includes(id);
-        const favMatch = currentFilter!=='favorites' || isFav;
-        const searchData = `${r.titulo.toLowerCase()} ${(r.ingredientes||[]).join(' ').toLowerCase()}`;
-        const searchOK = searchTerm==='' || searchData.includes(searchTerm);
-        return categoryMatch && favMatch && searchOK;
-    });
-    renderRecipes(filtered);
+    const searchTerm = dom.search.value.toLowerCase();
+    const filtered = recipes.filter(r=>{
+        const id = r.titulo;
+        const categoryMatch = currentCategory==='all' || r.categoria===currentCategory;
+        const isFav = userFavorites.includes(id);
+        const favMatch = currentFilter!=='favorites' || isFav;
+        const searchData = `${r.titulo.toLowerCase()} ${(r.ingredientes||[]).join(' ').toLowerCase()}`;
+        const searchOK = searchTerm==='' || searchData.includes(searchTerm);
+        return categoryMatch && favMatch && searchOK;
+    });
+    renderRecipes(filtered);
 }
 
 /* ---------- FAVORITOS ---------- */
 function toggleFavorite(title){
-    const isFav = userFavorites.includes(title);
-    if(isFav){
-        userFavorites = userFavorites.filter(t=>t!==title);
-        srLive(`Quitado de favoritas: ${title}`);
-    }else{
-        userFavorites = [...userFavorites, title];
-        srLive(`Añadido a favoritas: ${title}`);
-    }
-    localStorage.setItem('favorites',JSON.stringify(userFavorites));
-    applyFilters();
+    const isFav = userFavorites.includes(title);
+    if(isFav){
+        userFavorites = userFavorites.filter(t=>t!==title);
+        srLive(`Quitado de favoritas: ${title}`);
+    }else{
+        userFavorites = [...userFavorites, title];
+        srLive(`Añadido a favoritas: ${title}`);
+    }
+    localStorage.setItem('favorites',JSON.stringify(userFavorites));
+    applyFilters();
 }
 
 /* ---------- LISTA COMPRA ---------- */
 const commonFormsPlural = {
-    "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
-    "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
-    "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
-    "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
-    "filete": "filetes", "manojo": "manojos", "lata": "latas",
-    "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
-    "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
-    "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
-    "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
-    "loncha": "lonchas", "judía verde": "judías verdes", "tomate cherry": "tomates cherry",
-    "pasas": "pasas", "nueces": "nueces", "espinacas": "espinacas", "setas": "setas",
+    "patata": "patatas", "zanahoria": "zanahorias", "cebolla": "cebollas",
+    "pimiento": "pimientos", "huevo": "huevos", "diente": "dientes",
+    "ramita": "ramitas", "bola": "bolas", "pieza": "piezas",
+    "unidad": "unidades", "hoja": "hojas", "lomo": "lomos",
+    "filete": "filetes", "manojo": "manojos", "lata": "latas",
+    "cucharada": "cucharadas", "cucharadita": "cucharaditas", "trozo": "trozos",
+    "vaso": "vasos", "taza": "tazas", "rebanada": "rebanadas",
+    "gramo": "gramos", "mililitro": "mililitros", "litro": "litros", "kilogramo": "kilogramos",
+    "brocheta": "brochetas", "espárrago": "espárragos", "espárrago triguero": "espárragos trigueros",
+    "loncha": "lonchas", "judía verde": "judías verdes", "tomate cherry": "tomates cherry",
+    "pasas": "pasas", "nueces": "nueces", "espinacas": "espinacas", "setas": "setas",
 };
 const exceptionsSingulars = ['pasas', 'nueces', 'espinacas', 'judías verdes', 'tomates cherry', 'setas'];
 
 function getBaseName(name) {
-    let base = name.toLowerCase();
-    for (const singular in commonFormsPlural) {
-        if (commonFormsPlural[singular] === base) { return singular; }
-    }
-    if (base.endsWith('s') && !exceptionsSingulars.includes(base) && base.length > 3) {
-        return base.slice(0, -1);
-    }
-    return base;
+    let base = name.toLowerCase();
+    for (const singular in commonFormsPlural) {
+        if (commonFormsPlural[singular] === base) { return singular; }
+    }
+    if (base.endsWith('s') && !exceptionsSingulars.includes(base) && base.length > 3) {
+        return base.slice(0, -1);
+    }
+    return base;
 }
 
 function getPluralName(name) {
-    const base = getBaseName(name);
-    return commonFormsPlural[base] || (name.endsWith('s') ? name : name + 's');
+    const base = getBaseName(name);
+    return commonFormsPlural[base] || (name.endsWith('s') ? name : name + 's');
 }
 
 function addIngredientsToShopping(ingredientsFromModal){
-    ingredientsFromModal.forEach(ingObj => {
-        const parsedIng = parseIngredient(ingObj.original);
-        const baseName = getBaseName(parsedIng.name);
-        
-        const existingItem = shoppingItems.find(item => {
-            const existingBaseName = getBaseName(item.cleanName);
-            return existingBaseName === baseName && item.unit === parsedIng.unit;
-        });
+    ingredientsFromModal.forEach(ingObj => {
+        const parsedIng = parseIngredient(ingObj.original);
+        const baseName = getBaseName(parsedIng.name);
+        
+        const existingItem = shoppingItems.find(item => {
+            const existingBaseName = getBaseName(item.cleanName);
+            return existingBaseName === baseName && item.unit === parsedIng.unit;
+        });
 
-        if (existingItem) {
-            if (parsedIng.value > 0 && existingItem.quantity > 0) {
-                existingItem.quantity += parsedIng.value;
-                existingItem.text = formatIngredient({
-                    value: existingItem.quantity,
-                    unit: existingItem.unit,
-                    name: existingItem.cleanName
-                }, 1);
-            }
-        } else {
-            shoppingItems.push({
-                text: ingObj.formatted,
-                cleanName: baseName,
-                quantity: parsedIng.value > 0 ? parsedIng.value : 0,
-                unit: parsedIng.unit,
-                done: false
-            });
-        }
-    });
-    saveShopping();
-    renderShopping();
-    srLive('Ingredientes añadidos a la lista de la compra.');
-    speak(`Ingredientes añadidos a la lista de la compra. Tienes ${shoppingItems.length} elementos.`);
-    showModal('Ingredientes añadidos a tu lista de la compra.');
+        if (existingItem) {
+            if (parsedIng.value > 0 && existingItem.quantity > 0) {
+                existingItem.quantity += parsedIng.value;
+                existingItem.text = formatIngredient({
+                    value: existingItem.quantity,
+                    unit: existingItem.unit,
+                    name: existingItem.cleanName
+                }, 1);
+            }
+        } else {
+            shoppingItems.push({
+                text: ingObj.formatted,
+                cleanName: baseName,
+                quantity: parsedIng.value > 0 ? parsedIng.value : 0,
+                unit: parsedIng.unit,
+                done: false
+            });
+        }
+    });
+    saveShopping();
+    renderShopping();
+    srLive('Ingredientes añadidos a la lista de la compra.');
+    speak(`Ingredientes añadidos a la lista de la compra. Tienes ${shoppingItems.length} elementos.`);
+    showModal('Ingredientes añadidos a tu lista de la compra.');
 }
 
 function renderShopping(){
-    dom.shoppingList.innerHTML = '';
-    if(shoppingItems.length === 0){
-        dom.shoppingList.innerHTML = '<li class="text-center text-gray-500 dark:text-stone-400 py-4">Tu lista de la compra está vacía. Añade ingredientes desde los detalles de las recetas.</li>';
-    } else {
-        shoppingItems.forEach((item,idx)=>{
-            const li = document.createElement('li');
-            li.className = `flex items-start gap-2 py-1 border-b border-gray-200 dark:border-stone-700 last:border-b-0 ${item.done ? 'line-through text-gray-400' : ''}`;
-            li.setAttribute('role', 'listitem');
-            
-            li.innerHTML = `
-                <input type="checkbox" id="shop-${idx}" ${item.done ? 'checked' : ''} class="mt-1" data-idx="${idx}" aria-label="${item.text}" />
-                <label for="shop-${idx}" class="flex-1">${item.text}</label>
-                <button data-del="${idx}" aria-label="Eliminar ${item.text}" class="text-red-600 font-bold text-lg leading-none p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-800">×</button>
-            `;
-            dom.shoppingList.appendChild(li);
-        });
-    }
+    dom.shoppingList.innerHTML = '';
+    if(shoppingItems.length === 0){
+        dom.shoppingList.innerHTML = '<li class="text-center text-gray-500 dark:text-stone-400 py-4">Tu lista de la compra está vacía. Añade ingredientes desde los detalles de las recetas.</li>';
+    } else {
+        shoppingItems.forEach((item,idx)=>{
+            const li = document.createElement('li');
+            li.className = `flex items-start gap-2 py-1 border-b border-gray-200 dark:border-stone-700 last:border-b-0 ${item.done ? 'line-through text-gray-400' : ''}`;
+            li.setAttribute('role', 'listitem');
+            
+            li.innerHTML = `
+                <input type="checkbox" id="shop-${idx}" ${item.done ? 'checked' : ''} class="mt-1" data-idx="${idx}" aria-label="${item.text}" />
+                <label for="shop-${idx}" class="flex-1">${item.text}</label>
+                <button data-del="${idx}" aria-label="Eliminar ${item.text}" class="text-red-600 font-bold text-lg leading-none p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-800">×</button>
+            `;
+            dom.shoppingList.appendChild(li);
+        });
+    }
 }
 
 function saveShopping(){
-    localStorage.setItem('shopping', JSON.stringify(shoppingItems));
+    localStorage.setItem('shopping', JSON.stringify(shoppingItems));
 }
 
 /* ---------- PARSE / SCALE INGREDIENTS ---------- */
 function parseIngredient(ingredient){
-    const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
-    const m = ingredient.match(regex);
-    
-    if(m){
-        let value = 0;
-        if(m[1]){ value = m[1].includes('/')? (parseFloat(m[1].split('/')[0])/parseFloat(m[1].split('/')[1])) : parseFloat(m[1].replace(',','.')); }
-        else if(m[2]){ const w=m[2].toLowerCase(); value = (w==='medio'||w==='media')?0.5:1; }
-        else if(m[4]){ value = 1; }
-        
-        let unit = m[3]?m[3].toLowerCase():'';
-        let name = m[4]?m[4].trim():'';
+    const regex = /^(\d+(?:[.,]\d+)?|\d+\/\d+)?\s*(un|una|medio|media|gran|pequeña|puñado|chorrito)?\s*(g|ml|litro|kg|cdita|cda|taza|vaso|trozo|hojas|onza|rebanada|lonchas|lomos|filetes|manojo|piezas|patata|pimientos|ramas|ramitas|cucharadas|unidad|unidades|latas|gramos|cucharaditas|dientes|bolas|ramo|ramita)?\s*(.+)?$/i;
+    const m = ingredient.match(regex);
+    
+    if(m){
+        let value = 0;
+        if(m[1]){ value = m[1].includes('/')? (parseFloat(m[1].split('/')[0])/parseFloat(m[1].split('/')[1])) : parseFloat(m[1].replace(',','.')); }
+        else if(m[2]){ const w=m[2].toLowerCase(); value = (w==='medio'||w==='media')?0.5:1; }
+        else if(m[4]){ value = 1; }
+        
+        let unit = m[3]?m[3].toLowerCase():'';
+        let name = m[4]?m[4].trim():'';
 
-        if(m[2] && !m[3] && ['un','una','medio','media','gran','pequeña','puñado','chorrito'].includes(m[2].toLowerCase())){
-            name = (m[2]+' '+name).trim(); unit='';
-        }
-        return {value,unit,name,original:ingredient};
-    }
-    return {value:0, unit:'', name:ingredient, original:ingredient};
+        if(m[2] && !m[3] && ['un','una','medio','media','gran','pequeña','puñado','chorrito'].includes(m[2].toLowerCase())){
+            name = (m[2]+' '+name).trim(); unit='';
+        }
+        return {value,unit,name,original:ingredient};
+    }
+    return {value:0, unit:'', name:ingredient, original:ingredient};
 }
 
 function formatIngredient(p,factor){
-    if(p.value === 0 && p.unit === '' && p.name !== '' && !['sal', 'pimienta', 'aceite', 'agua'].includes(p.name.toLowerCase())) {
-        return p.original;
-    }
+    if(p.value === 0 && p.unit === '' && p.name !== '' && !['sal', 'pimienta', 'aceite', 'agua'].includes(p.name.toLowerCase())) {
+        return p.original;
+    }
 
-    let v = p.value * factor;
-    let unit=p.unit;
-    let name=p.name;
+    let v = p.value * factor;
+    let unit=p.unit;
+    let name=p.name;
 
-    if(unit === 'kg' && v < 1) { v *= 1000; unit = 'g'; }
-    else if(unit === 'litro' && v < 1) { v *= 1000; unit = 'ml'; }
-    else if(unit === 'g' && v >= 1000) { v /= 1000; unit = 'kg'; }
-    else if(unit === 'ml' && v >= 1000) { v /= 1000; unit = 'litro'; }
-    
-    if(Math.abs(v % 1) < 0.0001) v=Math.round(v);
-    else if(Math.abs((v * 10) % 1) < 0.0001) v=Math.round(v * 10)/10;
-    else v=Math.round(v * 100)/100;
-    
-    let formattedName = name;
-    if (v === 1 && !['sal','pimienta','aceite','agua'].includes(name.toLowerCase())) {
-        formattedName = getBaseName(name);
-    } else if (v > 1) {
-        formattedName = getPluralName(name);
-    }
+    if(unit === 'kg' && v < 1) { v *= 1000; unit = 'g'; }
+    else if(unit === 'litro' && v < 1) { v *= 1000; unit = 'ml'; }
+    else if(unit === 'g' && v >= 1000) { v /= 1000; unit = 'kg'; }
+    else if(unit === 'ml' && v >= 1000) { v /= 1000; unit = 'litro'; }
+    
+    if(Math.abs(v % 1) < 0.0001) v=Math.round(v);
+    else if(Math.abs((v * 10) % 1) < 0.0001) v=Math.round(v * 10)/10;
+    else v=Math.round(v * 100)/100;
+    
+    let formattedName = name;
+    if (v === 1 && !['sal','pimienta','aceite','agua'].includes(name.toLowerCase())) {
+        formattedName = getBaseName(name);
+    } else if (v > 1) {
+        formattedName = getPluralName(name);
+    }
 
-    if (unit !== '') {
-        const unitRegex = new RegExp(`\\b${unit}(es)?\\b`, 'gi');
-        formattedName = formattedName.replace(unitRegex, '').trim();
-    }
-    
-    formattedName = formattedName.split(/\s+/).filter(Boolean).join(' ');
+    if (unit !== '') {
+        const unitRegex = new RegExp(`\\b${unit}(es)?\\b`, 'gi');
+        formattedName = formattedName.replace(unitRegex, '').trim();
+    }
+    
+    formattedName = formattedName.split(/\s+/).filter(Boolean).join(' ');
 
-    if (unit === 'cdita' || unit === 'cda') {
-        return `${v} ${unit}. ${formattedName}`.trim();
-    }
-    if (v === 1 && (unit === '' || ['un','una','unidad','unidades','puñado','chorrito'].includes(unit))) {
-        return formattedName;
-    }
-    if (unit !== '') {
-        return `${v} ${unit} ${formattedName}`.trim();
-    }
-    if (v > 0) return `${v} ${formattedName}`.trim();
-    
-    return formattedName;
+    if (unit === 'cdita' || unit === 'cda') {
+        return `${v} ${unit}. ${formattedName}`.trim();
+    }
+    if (v === 1 && (unit === '' || ['un','una','unidad','unidades','puñado','chorrito'].includes(unit))) {
+        return formattedName;
+    }
+    if (unit !== '') {
+        return `${v} ${unit} ${formattedName}`.trim();
+    }
+    if (v > 0) return `${v} ${formattedName}`.trim();
+    
+    return formattedName;
 }
 
 function updateIngredientsDisplay(servings){
-    if(!currentRecipeDetail) return;
-    const ingredientList=document.getElementById('ingredient-list');
-    ingredientList.innerHTML='';
-    const factor = servings / currentRecipeDetail.raciones;
-    currentRecipeDetail.ingredientes.forEach(i=>{
-        const p=parseIngredient(i);
-        const f=formatIngredient(p,factor);
-        const li=document.createElement('li');
-        li.textContent=f;
-        li.setAttribute('data-original-ingredient', i);
-        li.setAttribute('data-formatted-ingredient', f);
-        ingredientList.appendChild(li);
-    });
+    if(!currentRecipeDetail) return;
+    const ingredientList=document.getElementById('ingredient-list');
+    ingredientList.innerHTML='';
+    const factor = servings / currentRecipeDetail.raciones;
+    currentRecipeDetail.ingredientes.forEach(i=>{
+        const p=parseIngredient(i);
+        const f=formatIngredient(p,factor);
+        const li=document.createElement('li');
+        li.textContent=f;
+        li.setAttribute('data-original-ingredient', i);
+        li.setAttribute('data-formatted-ingredient', f);
+        ingredientList.appendChild(li);
+    });
 }
 
 /* ---------- MODAL RECETA ---------- */
 function showRecipeDetail(recipe){
-    currentRecipeDetail=recipe;
-    currentServings=recipe.raciones;
-    dom.modalContent.innerHTML=`
-        <div class="p-6 md:p-8">
-            <div class="flex justify-between items-start">
-                <h2 id="recipe-title" class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
-                <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition" aria-label="Cerrar">✖</button>
-            </div>
-            <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
-            <div id="recipe-content-normal">
-                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
-                    <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
-                    <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
-                        <span>Raciones:</span>
-                        <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Reducir raciones">-</button>
-                        <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1" aria-label="Número de raciones">
-                        <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Aumentar raciones">+</button>
-                    </div>
-                </div>
+    currentRecipeDetail=recipe;
+    currentServings=recipe.raciones;
+    dom.modalContent.innerHTML=`
+        <div class="p-6 md:p-8">
+            <div class="flex justify-between items-start">
+                <h2 id="recipe-title" class="text-3xl font-bold text-amber-900 dark:text-amber-500 mb-4">${recipe.titulo}</h2>
+                <button id="closeModalBtn" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-stone-700 transition" aria-label="Cerrar">✖</button>
+            </div>
+            <img src="${recipe.imagen}" alt="Imagen de ${recipe.titulo}" class="w-full h-64 object-cover" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/600x400/d1c4b5/4a2e0a?text=Receta';">
+            <div id="recipe-content-normal">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
+                    <p class="text-md font-semibold text-gray-700 dark:text-stone-300">Tiempo: <span class="text-amber-700 dark:text-amber-400">${recipe.tiempo}</span></p>
+                    <div id="portion-adjuster" class="flex items-center justify-center space-x-3 text-lg font-medium text-gray-700 dark:text-stone-300">
+                        <span>Raciones:</span>
+                        <button id="decrease-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Reducir raciones">-</button>
+                        <input type="number" id="servings-input" value="${recipe.raciones}" min="1" class="w-16 text-center bg-white dark:bg-stone-700 border border-gray-300 dark:border-stone-600 rounded-md p-1" aria-label="Número de raciones">
+                        <button id="increase-servings" class="px-3 py-1 bg-amber-100 dark:bg-amber-700 rounded-md hover:bg-amber-200 dark:hover:bg-amber-600 transition-colors" aria-label="Aumentar raciones">+</button>
+                    </div>
+                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
-                        <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
-                        <button id="addToShoppingBtn" class="mt-4 bg-amber-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-700 transition shadow-lg w-full">Añadir a lista</button>
-                    </div>
-                    <div>
-                        <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
-                        <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
-                    </div>
-                </div>
-                <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
-                    <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Modo cocina guiada</button>
-                    <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
-                    <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
-                </div>
-            </div>
-        </div>`;
-    const stepsList=document.getElementById('steps-list');
-    stepsList.innerHTML=recipe.pasos.map(s=>`<li>${s}</li>`).join('');
-    updateIngredientsDisplay(currentServings);
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold border-b-2 border-amber-200 dark:border-amber-800 pb-2">Ingredientes</h4>
+                        <ul id="ingredient-list" class="list-disc list-inside space-y-2 text-gray-700 dark:text-stone-300"></ul>
+                        <button id="addToShoppingBtn" class="mt-4 bg-amber-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-amber-700 transition shadow-lg w-full">Añadir a lista</button>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold mb-3 border-b-2 border-amber-200 dark:border-amber-800 pb-2">Pasos</h4>
+                        <ol id="steps-list" class="list-decimal list-inside space-y-3 text-gray-700 dark:text-stone-300"></ol>
+                    </div>
+                </div>
+                <div class="modal-buttons-container text-center mt-8 flex flex-wrap gap-4 justify-center">
+                    <button id="start-cooking-btn" class="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition shadow-lg">Modo cocina guiada</button>
+                    <button id="printRecipeBtn" class="bg-gray-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-600 transition shadow-lg">Imprimir</button>
+                    <button id="shareRecipeBtn" class="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition shadow-lg">Compartir</button>
+                </div>
+            </div>
+        </div>`;
+    const stepsList=document.getElementById('steps-list');
+    stepsList.innerHTML=recipe.pasos.map(s=>`<li>${s}</li>`).join('');
+    updateIngredientsDisplay(currentServings);
 
-    dom.modal.classList.remove('hidden');
-    dom.modal.classList.add('modal-visible');
-    focusTrap.enable(dom.modal);
+    dom.modal.classList.remove('hidden');
+    dom.modal.classList.add('modal-visible');
+    focusTrap.enable(dom.modal);
 
-    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-    document.getElementById('printRecipeBtn').addEventListener('click', ()=>window.print());
-    
-    const shareBtn=document.getElementById('shareRecipeBtn');
-    if(navigator.share){
-        shareBtn.addEventListener('click',async ()=>{
-            try{
-                await navigator.share({title:recipe.titulo,text:`Mira esta receta: ${recipe.titulo}`,url:location.href});
-            }catch(e){ console.error('Error al compartir:', e); }
-        });
-    }else shareBtn.style.display='none';
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('printRecipeBtn').addEventListener('click', ()=>window.print());
+    
+    const shareBtn=document.getElementById('shareRecipeBtn');
+    if(navigator.share){
+        shareBtn.addEventListener('click',async ()=>{
+            try{
+                await navigator.share({title:recipe.titulo,text:`Mira esta receta: ${recipe.titulo}`,url:location.href});
+            }catch(e){ console.error('Error al compartir:', e); }
+        });
+    }else shareBtn.style.display='none';
 
-    document.getElementById('addToShoppingBtn').addEventListener('click',()=>{
-        const ingredientsData = Array.from(document.querySelectorAll('#ingredient-list li')).map(li => ({
-            original: li.getAttribute('data-original-ingredient'),
-            formatted: li.getAttribute('data-formatted-ingredient')
-        }));
-        addIngredientsToShopping(ingredientsData);
-        openShoppingPanel();
-    });
+    document.getElementById('addToShoppingBtn').addEventListener('click',()=>{
+        const ingredientsData = Array.from(document.querySelectorAll('#ingredient-list li')).map(li => ({
+            original: li.getAttribute('data-original-ingredient'),
+            formatted: li.getAttribute('data-formatted-ingredient')
+        }));
+        addIngredientsToShopping(ingredientsData);
+        openShoppingPanel();
+    });
 
-    document.getElementById('start-cooking-btn').addEventListener('click',()=>startCookingMode(recipe));
+    document.getElementById('start-cooking-btn').addEventListener('click',()=>startCookingMode(recipe));
 
-    const servingsInput=document.getElementById('servings-input');
-    document.getElementById('decrease-servings').addEventListener('click',()=>{
-        let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-    });
-    document.getElementById('increase-servings').addEventListener('click',()=>{
-        let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
-    });
-    servingsInput.addEventListener('change',e=>{
-        let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
-    });
+    const servingsInput=document.getElementById('servings-input');
+    document.getElementById('decrease-servings').addEventListener('click',()=>{
+        let v=parseInt(servingsInput.value)-1;if(v<1)v=1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
+    });
+    document.getElementById('increase-servings').addEventListener('click',()=>{
+        let v=parseInt(servingsInput.value)+1;servingsInput.value=v;currentServings=v;updateIngredientsDisplay(v);
+    });
+    servingsInput.addEventListener('change',e=>{
+        let v=parseInt(e.target.value);if(isNaN(v)||v<1)v=1;e.target.value=v;currentServings=v;updateIngredientsDisplay(v);
+    });
 }
 
 function closeModal(){
-    dom.modal.classList.remove('modal-visible');
-    setTimeout(()=>{
-        dom.modal.classList.add('hidden');
-        dom.modalContent.innerHTML='';
-    },300);
-    focusTrap.disable();
-    currentRecipeDetail=null; currentServings=0;
+    dom.modal.classList.remove('modal-visible');
+    setTimeout(()=>{
+        dom.modal.classList.add('hidden');
+        dom.modalContent.innerHTML='';
+    },300);
+    focusTrap.disable();
+    currentRecipeDetail=null; currentServings=0;
 }
 
 /* ---------- CUSTOM MODAL (ALERTA/CONFIRMACIÓN) ---------- */
 const customModal = {
-    element: document.getElementById('customModal'),
-    message: document.getElementById('modalMessage'),
-    buttons: document.getElementById('modalButtons'),
-    show(message, type = 'alert', onConfirm = null) {
-        this.message.textContent = message;
-        this.buttons.innerHTML = '';
-        
-        if (type === 'alert') {
-            const okBtn = document.createElement('button');
-            okBtn.textContent = 'Aceptar';
-            okBtn.className = 'px-4 py-2 bg-amber-600 text-white rounded-full font-semibold hover:bg-amber-700 transition';
-            okBtn.onclick = () => this.hide();
-            this.buttons.appendChild(okBtn);
-        } else if (type === 'confirm') {
-            const cancelBtn = document.createElement('button');
-            cancelBtn.textContent = 'Cancelar';
-            cancelBtn.className = 'px-4 py-2 bg-gray-300 text-gray-800 rounded-full font-semibold hover:bg-gray-400 transition';
-            cancelBtn.onclick = () => this.hide();
+    element: document.getElementById('customModal'),
+    message: document.getElementById('modalMessage'),
+    buttons: document.getElementById('modalButtons'),
+    show(message, type = 'alert', onConfirm = null) {
+        this.message.textContent = message;
+        this.buttons.innerHTML = '';
+        
+        if (type === 'alert') {
+            const okBtn = document.createElement('button');
+            okBtn.textContent = 'Aceptar';
+            okBtn.className = 'px-4 py-2 bg-amber-600 text-white rounded-full font-semibold hover:bg-amber-700 transition';
+            okBtn.onclick = () => this.hide();
+            this.buttons.appendChild(okBtn);
+        } else if (type === 'confirm') {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.className = 'px-4 py-2 bg-gray-300 text-gray-800 rounded-full font-semibold hover:bg-gray-400 transition';
+            cancelBtn.onclick = () => this.hide();
 
-            const confirmBtn = document.createElement('button');
-            confirmBtn.textContent = 'Confirmar';
-            confirmBtn.className = 'px-4 py-2 bg-red-600 text-white rounded-full font-semibold hover:bg-red-700 transition';
-            confirmBtn.onclick = () => { onConfirm(); this.hide(); };
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.className = 'px-4 py-2 bg-red-600 text-white rounded-full font-semibold hover:bg-red-700 transition';
+            confirmBtn.onclick = () => { onConfirm(); this.hide(); };
 
-            this.buttons.appendChild(cancelBtn);
-            this.buttons.appendChild(confirmBtn);
-        }
+            this.buttons.appendChild(cancelBtn);
+            this.buttons.appendChild(confirmBtn);
+        }
 
-        this.element.classList.add('visible');
-        focusTrap.enable(this.element);
-    },
-    hide() {
-        this.element.classList.remove('visible');
-        focusTrap.disable();
-    }
+        this.element.classList.add('visible');
+        focusTrap.enable(this.element);
+    },
+    hide() {
+        this.element.classList.remove('visible');
+        focusTrap.disable();
+    }
 };
 const showModal = (msg) => customModal.show(msg, 'alert');
 const showConfirm = (msg, onConfirm) => customModal.show(msg, 'confirm', onConfirm);
@@ -1770,387 +1770,387 @@ const showConfirm = (msg, onConfirm) => customModal.show(msg, 'confirm', onConfi
 /* ---------- COOKING MODE (SÍNTESIS Y RECONOCIMIENTO DE VOZ) ---------- */
 let voicesLoaded = false;
 const loadVoices = () => {
-    return new Promise(resolve => {
-        if (voicesLoaded) {
-            resolve();
-        } else {
-            speechSynthesis.onvoiceschanged = () => {
-                voicesLoaded = true;
-                console.log("Voces de síntesis de voz listas.");
-                resolve();
-            };
-            if (speechSynthesis.getVoices().length > 0) {
-                voicesLoaded = true;
-                console.log("Voces de síntesis de voz listas (desde el principio).");
-                resolve();
-            }
-        }
-    });
+    return new Promise(resolve => {
+        if (voicesLoaded) {
+            resolve();
+        } else {
+            speechSynthesis.onvoiceschanged = () => {
+                voicesLoaded = true;
+                console.log("Voces de síntesis de voz listas.");
+                resolve();
+            };
+            if (speechSynthesis.getVoices().length > 0) {
+                voicesLoaded = true;
+                console.log("Voces de síntesis de voz listas (desde el principio).");
+                resolve();
+            }
+        }
+    });
 };
 
 async function speak(text){
-    if(!('speechSynthesis' in window)) {
-        console.warn("Speech Synthesis API no soportada en este navegador.");
-        if (!sessionStorage.getItem('voice_alert_shown_v2')) {
-            showModal("El asistente de voz no puede hablar. Tu navegador no soporta la síntesis de voz.");
-            sessionStorage.setItem('voice_alert_shown_v2', 'true');
-        }
-        return;
-    }
+    if(!('speechSynthesis' in window)) {
+        console.warn("Speech Synthesis API no soportada en este navegador.");
+        if (!sessionStorage.getItem('voice_alert_shown_v2')) {
+            showModal("El asistente de voz no puede hablar. Tu navegador no soporta la síntesis de voz.");
+            sessionStorage.setItem('voice_alert_shown_v2', 'true');
+        }
+        return;
+    }
 
-    speechSynthesis.cancel();
-    
-    await loadVoices();
+    speechSynthesis.cancel();
+    
+    await loadVoices();
 
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang='es-ES'; u.rate=0.9; u.pitch=1;
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='es-ES'; u.rate=0.9; u.pitch=1;
 
-    const voices = speechSynthesis.getVoices();
-    let selectedVoice = voices.find(voice => voice.lang === 'es-ES');
-    if (!selectedVoice) {
-        selectedVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_'));
-    }
-    if (selectedVoice) {
-        u.voice = selectedVoice;
-    } else {
-        console.warn("No se encontró una voz compatible. La síntesis de voz podría no funcionar.");
-        if (!sessionStorage.getItem('voice_alert_shown_v2')) {
-            showModal("El asistente de voz no puede hablar. Asegúrate de que tu navegador/sistema operativo tenga voces en español instaladas.");
-            sessionStorage.setItem('voice_alert_shown_v2', 'true');
-        }
-    };
-    
-    u.onend = () => dom.repeatStepBtn.classList.remove('speaking');
-    u.onerror = (event) => {
-        console.error('Error en SpeechSynthesis:', event);
-        dom.repeatStepBtn.classList.remove('speaking');
-        if (!sessionStorage.getItem('voice_alert_shown_v2')) {
-            showModal("El asistente de voz encontró un error. Podría ser un problema con las voces instaladas.");
-            sessionStorage.setItem('voice_alert_shown_v2', 'true');
-        }
-    };
-    
-    dom.repeatStepBtn.classList.add('speaking');
-    try {
-        speechSynthesis.speak(u);
-    } catch(err) {
-        console.error("Error al intentar hablar:", err);
-        dom.repeatStepBtn.classList.remove('speaking');
-    }
+    const voices = speechSynthesis.getVoices();
+    let selectedVoice = voices.find(voice => voice.lang === 'es-ES');
+    if (!selectedVoice) {
+        selectedVoice = voices.find(voice => voice.lang.startsWith('es-') || voice.lang.startsWith('es_'));
+    }
+    if (selectedVoice) {
+        u.voice = selectedVoice;
+    } else {
+        console.warn("No se encontró una voz compatible. La síntesis de voz podría no funcionar.");
+        if (!sessionStorage.getItem('voice_alert_shown_v2')) {
+            showModal("El asistente de voz no puede hablar. Asegúrate de que tu navegador/sistema operativo tenga voces en español instaladas.");
+            sessionStorage.setItem('voice_alert_shown_v2', 'true');
+        }
+    };
+    
+    u.onend = () => dom.repeatStepBtn.classList.remove('speaking');
+    u.onerror = (event) => {
+        console.error('Error en SpeechSynthesis:', event);
+        dom.repeatStepBtn.classList.remove('speaking');
+        if (!sessionStorage.getItem('voice_alert_shown_v2')) {
+            showModal("El asistente de voz encontró un error. Podría ser un problema con las voces instaladas.");
+            sessionStorage.setItem('voice_alert_shown_v2', 'true');
+        }
+    };
+    
+    dom.repeatStepBtn.classList.add('speaking');
+    try {
+        speechSynthesis.speak(u);
+    } catch(err) {
+        console.error("Error al intentar hablar:", err);
+        dom.repeatStepBtn.classList.remove('speaking');
+    }
 }
 
 function updateCookingStep(){
-    dom.stepCounter.textContent=`Paso ${currentStep+1} de ${currentRecipeSteps.length}`;
-    dom.stepText.textContent=currentRecipeSteps[currentStep];
-    speak(currentRecipeSteps[currentStep]);
+    dom.stepCounter.textContent=`Paso ${currentStep+1} de ${currentRecipeSteps.length}`;
+    dom.stepText.textContent=currentRecipeSteps[currentStep];
+    speak(currentRecipeSteps[currentStep]);
 }
 
 let isListening = false;
 function startVoiceRecognition() {
-    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
-        showModal('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
-        console.warn('Speech Recognition API no soportada en este navegador.');
-        srLive('Reconocimiento de voz no soportado.');
-        return;
-    }
-    
-    if (isListening) return;
+    if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) {
+        showModal('Tu navegador no soporta el reconocimiento de voz. No podrás usar comandos por voz.');
+        console.warn('Speech Recognition API no soportada en este navegador.');
+        srLive('Reconocimiento de voz no soportado.');
+        return;
+    }
+    
+    if (isListening) return;
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognition = new SpeechRecognition();
-    recognition.lang = 'es-ES';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'es-ES';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => {
-        isListening = true;
-        console.log('Reconocimiento de voz iniciado. Escuchando...');
-        srLive('Reconocimiento de voz iniciado. Di "siguiente", "anterior", "repetir" o "salir".');
-    };
+    recognition.onstart = () => {
+        isListening = true;
+        console.log('Reconocimiento de voz iniciado. Escuchando...');
+        srLive('Reconocimiento de voz iniciado. Di "siguiente", "anterior", "repetir" o "salir".');
+    };
 
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase().trim();
-        console.log('Comando detectado:', transcript);
-        srLive(`Comando detectado: ${transcript}`);
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase().trim();
+        console.log('Comando detectado:', transcript);
+        srLive(`Comando detectado: ${transcript}`);
 
-        if (transcript.includes('siguiente') || transcript.includes('adelante')) {
-            if (currentStep < currentRecipeSteps.length - 1) {
-                currentStep++;
-                updateCookingStep();
-            } else {
-                speak('Has llegado al final de la receta.');
-            }
-        } else if (transcript.includes('anterior') || transcript.includes('atrás')) {
-            if (currentStep > 0) {
-                currentStep--;
-                updateCookingStep();
-            } else {
-                speak('Estás en el primer paso.');
-            }
-        } else if (transcript.includes('repetir') || transcript.includes('otra vez')) {
-            speak(currentRecipeSteps[currentStep]);
-        } else if (transcript.includes('salir') || transcript.includes('terminar')) {
-            exitCookingMode();
-        } else {
-            speak('Comando no reconocido. Puedes decir "siguiente", "anterior", "repetir" o "salir".');
-        }
-    };
+        if (transcript.includes('siguiente') || transcript.includes('adelante')) {
+            if (currentStep < currentRecipeSteps.length - 1) {
+                currentStep++;
+                updateCookingStep();
+            } else {
+                speak('Has llegado al final de la receta.');
+            }
+        } else if (transcript.includes('anterior') || transcript.includes('atrás')) {
+            if (currentStep > 0) {
+                currentStep--;
+                updateCookingStep();
+            } else {
+                speak('Estás en el primer paso.');
+            }
+        } else if (transcript.includes('repetir') || transcript.includes('otra vez')) {
+            speak(currentRecipeSteps[currentStep]);
+        } else if (transcript.includes('salir') || transcript.includes('terminar')) {
+            exitCookingMode();
+        } else {
+            speak('Comando no reconocido. Puedes decir "siguiente", "anterior", "repetir" o "salir".');
+        }
+    };
 
-    recognition.onerror = (event) => {
-        console.error('Error en reconocimiento de voz:', event);
-        srLive(`Error en reconocimiento de voz: ${event.error}.`);
-        if (event.error === 'not-allowed' || event.error === 'no-speech') {
-            if (!sessionStorage.getItem('mic_alert_shown')) {
-                showModal('Para usar comandos de voz, debes permitir el acceso al micrófono. Recarga la página y acepta el permiso.');
-                sessionStorage.setItem('mic_alert_shown', 'true');
-            }
-        }
-    };
+    recognition.onerror = (event) => {
+        console.error('Error en reconocimiento de voz:', event);
+        srLive(`Error en reconocimiento de voz: ${event.error}.`);
+        if (event.error === 'not-allowed' || event.error === 'no-speech') {
+            if (!sessionStorage.getItem('mic_alert_shown')) {
+                showModal('Para usar comandos de voz, debes permitir el acceso al micrófono. Recarga la página y acepta el permiso.');
+                sessionStorage.setItem('mic_alert_shown', 'true');
+            }
+        }
+    };
 
-    recognition.onend = () => {
-        console.log('Reconocimiento de voz terminado, reiniciando...');
-        isListening = false;
-        if (dom.cookingModeView.classList.contains('flex')) {
-            setTimeout(() => {
-                if (dom.cookingModeView.classList.contains('flex')) {
-                    recognition.start();
-                }
-            }, 500);
-        } else {
-            console.log('Reconocimiento de voz detenido permanentemente.');
-            srLive('Reconocimiento de voz detenido.');
-        }
-    };
-    recognition.start();
+    recognition.onend = () => {
+        console.log('Reconocimiento de voz terminado, reiniciando...');
+        isListening = false;
+        if (dom.cookingModeView.classList.contains('flex')) {
+            setTimeout(() => {
+                if (dom.cookingModeView.classList.contains('flex')) {
+                    recognition.start();
+                }
+            }, 500);
+        } else {
+            console.log('Reconocimiento de voz detenido permanentemente.');
+            srLive('Reconocimiento de voz detenido.');
+        }
+    };
+    recognition.start();
 }
 
 function stopVoiceRecognition() {
-    if (recognition && isListening) {
-        recognition.stop();
-        recognition = null;
-        isListening = false;
-        console.log('Reconocimiento de voz detenido.');
-        srLive('Reconocimiento de voz detenido.');
-    }
+    if (recognition && isListening) {
+        recognition.stop();
+        recognition = null;
+        isListening = false;
+        console.log('Reconocimiento de voz detenido.');
+        srLive('Reconocimiento de voz detenido.');
+    }
 }
 
 
 function startCookingMode(recipe){
-    currentRecipeSteps=recipe.pasos;
-    currentStep=0;
-    closeModal();
-    dom.cookingModeView.classList.remove('hidden');
-    dom.cookingModeView.classList.add('flex');
-    speak(`Comenzamos la receta de ${recipe.titulo}.`);
-    setTimeout(()=>{
-        updateCookingStep();
-        startVoiceRecognition();
-    },1200);
+    currentRecipeSteps=recipe.pasos;
+    currentStep=0;
+    closeModal();
+    dom.cookingModeView.classList.remove('hidden');
+    dom.cookingModeView.classList.add('flex');
+    speak(`Comenzamos la receta de ${recipe.titulo}.`);
+    setTimeout(()=>{
+        updateCookingStep();
+        startVoiceRecognition();
+    },1200);
 }
 
 function exitCookingMode(){
-    stopVoiceRecognition();
-    speechSynthesis.cancel();
-    dom.cookingModeView.classList.add('hidden');
-    dom.cookingModeView.classList.remove('flex');
-    speak("Has salido del modo de cocina guiada. ¡Esperamos que hayas disfrutado!");
+    stopVoiceRecognition();
+    speechSynthesis.cancel();
+    dom.cookingModeView.classList.add('hidden');
+    dom.cookingModeView.classList.remove('flex');
+    speak("Has salido del modo de cocina guiada. ¡Esperamos que hayas disfrutado!");
 }
 
 dom.prevStepBtn.addEventListener('click',()=>{
-    if(currentStep>0){ currentStep--; updateCookingStep(); }
-    else speak("Estás en el primer paso.");
+    if(currentStep>0){ currentStep--; updateCookingStep(); }
+    else speak("Estás en el primer paso.");
 });
 dom.nextStepBtn.addEventListener('click',()=>{
-    if(currentStep<currentRecipeSteps.length-1){ currentStep++; updateCookingStep(); }
-    else{ speak("Has terminado. ¡Buen provecho!"); exitCookingMode(); }
+    if(currentStep<currentRecipeSteps.length-1){ currentStep++; updateCookingStep(); }
+    else{ speak("Has terminado. ¡Buen provecho!"); exitCookingMode(); }
 });
 dom.repeatStepBtn.addEventListener('click',()=>speak(currentRecipeSteps[currentStep]));
 dom.exitCookingBtn.addEventListener('click',exitCookingMode);
 
 /* ---------- SHOPPING PANEL ---------- */
 function openShoppingPanel(){
-    dom.shoppingPanel.classList.add('open');
-    dom.openShopping.setAttribute('aria-expanded','true');
-    focusTrap.enable(dom.shoppingPanel);
-    srLive("Lista de la compra abierta.");
+    dom.shoppingPanel.classList.add('open');
+    dom.openShopping.setAttribute('aria-expanded','true');
+    focusTrap.enable(dom.shoppingPanel);
+    srLive("Lista de la compra abierta.");
 }
 function closeShoppingPanel(){
-    dom.shoppingPanel.classList.remove('open');
-    dom.openShopping.setAttribute('aria-expanded','false');
-    focusTrap.disable();
-    srLive("Lista de la compra cerrada.");
+    dom.shoppingPanel.classList.remove('open');
+    dom.openShopping.setAttribute('aria-expanded','false');
+    focusTrap.disable();
+    srLive("Lista de la compra cerrada.");
 }
 dom.openShopping.addEventListener('click',openShoppingPanel);
 dom.closeShopping.addEventListener('click',closeShoppingPanel);
 dom.clearShopping.addEventListener('click',()=>{
-    showConfirm('¿Estás seguro de que quieres vaciar toda la lista de la compra?',()=>{
-        shoppingItems=[]; saveShopping(); renderShopping();
-        srLive("Lista vaciada.");
-        speak("Lista de la compra vaciada.");
-    });
+    showConfirm('¿Estás seguro de que quieres vaciar toda la lista de la compra?',()=>{
+        shoppingItems=[]; saveShopping(); renderShopping();
+        srLive("Lista vaciada.");
+        speak("Lista de la compra vaciada.");
+    });
 });
 dom.shoppingList.addEventListener('click',e=>{
-    if(e.target.tagName==='BUTTON' && e.target.dataset.del){
-        const idx=parseInt(e.target.dataset.del);
-        const deletedItemText = shoppingItems[idx].text;
-        showConfirm(`¿Estás seguro de que quieres eliminar "${deletedItemText}" de la lista?`,()=>{
-            shoppingItems.splice(idx,1);
-            renderShopping();
-            srLive(`Eliminado ${deletedItemText} de la lista.`);
-            speak(`Eliminado ${deletedItemText} de la lista.`);
-        });
-    } else if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
-        const idx = parseInt(e.target.dataset.idx);
-        shoppingItems[idx].done = e.target.checked;
-        saveShopping();
-        srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
-        speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
-        renderShopping();
-    }
+    if(e.target.tagName==='BUTTON' && e.target.dataset.del){
+        const idx=parseInt(e.target.dataset.del);
+        const deletedItemText = shoppingItems[idx].text;
+        showConfirm(`¿Estás seguro de que quieres eliminar "${deletedItemText}" de la lista?`,()=>{
+            shoppingItems.splice(idx,1);
+            renderShopping();
+            srLive(`Eliminado ${deletedItemText} de la lista.`);
+            speak(`Eliminado ${deletedItemText} de la lista.`);
+        });
+    } else if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
+        const idx = parseInt(e.target.dataset.idx);
+        shoppingItems[idx].done = e.target.checked;
+        saveShopping();
+        srLive(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
+        speak(`${shoppingItems[idx].text} ${shoppingItems[idx].done ? 'marcado como comprado' : 'desmarcado como no comprado'}.`);
+        renderShopping();
+    }
 });
 dom.exportShopping.addEventListener('click',()=>{
-    const text=shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n');
-    navigator.clipboard.writeText(text).then(()=>{
-        srLive("Lista copiada al portapapeles.");
-        showModal("Lista copiada al portapapeles.");
-        speak("Lista copiada al portapapeles.");
-    }).catch(err => {
-        console.error('Error al copiar:', err);
-        showModal('Error al copiar la lista. Por favor, inténtalo de nuevo.');
-    });
+    const text=shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n');
+    navigator.clipboard.writeText(text).then(()=>{
+        srLive("Lista copiada al portapapeles.");
+        showModal("Lista copiada al portapapeles.");
+        speak("Lista copiada al portapapeles.");
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+        showModal('Error al copiar la lista. Por favor, inténtalo de nuevo.');
+    });
 });
 dom.whatsappShopping.addEventListener('click',()=>{
-    const text=encodeURIComponent("Mi lista de la compra:\n"+shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n'));
-    window.open(`https://wa.me/?text=${text}`,'_blank');
-    speak("Lista de la compra lista para enviar por WhatsApp.");
+    const text=encodeURIComponent("Mi lista de la compra:\n"+shoppingItems.map(i=>`- ${i.text}${i.done?' (comprado)':''}`).join('\n'));
+    window.open(`https://wa.me/?text=${text}`,'_blank');
+    speak("Lista de la compra lista para enviar por WhatsApp.");
 });
 dom.printShopping.addEventListener('click',()=>window.print());
 
 /* ---------- TEMA / CONTRASTE / FUENTE ---------- */
 function setupTheme(){
-    const saved=localStorage.getItem('color-theme');
-    if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
-    dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
-    
-    const contrast=localStorage.getItem('contrast');
-    if(contrast==='1'){
-        document.documentElement.classList.add('high-contrast');
-    } else {
-        document.documentElement.classList.remove('high-contrast');
-    }
-    dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
+    const saved=localStorage.getItem('color-theme');
+    if(saved==='dark'||(!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    dom.themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark'));
+    
+    const contrast=localStorage.getItem('contrast');
+    if(contrast==='1'){
+        document.documentElement.classList.add('high-contrast');
+    } else {
+        document.documentElement.classList.remove('high-contrast');
+    }
+    dom.contrastToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('high-contrast'));
 
-    const fs=localStorage.getItem('fontSize');
-    if(fs) document.documentElement.style.setProperty('--base-font-size',fs+'px');
+    const fs=localStorage.getItem('fontSize');
+    if(fs) document.documentElement.style.setProperty('--base-font-size',fs+'px');
 }
 setupTheme();
 dom.themeToggle.addEventListener('click',()=>{
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('color-theme',isDark?'dark':'light');
-    dom.themeToggle.setAttribute('aria-pressed',isDark.toString());
-    srLive(`Tema cambiado a ${isDark?'oscuro':'claro'}.`);
-    speak(`Tema cambiado a ${isDark?'oscuro':'claro'}.`);
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('color-theme',isDark?'dark':'light');
+    dom.themeToggle.setAttribute('aria-pressed',isDark.toString());
+    srLive(`Tema cambiado a ${isDark?'oscuro':'claro'}.`);
+    speak(`Tema cambiado a ${isDark?'oscuro':'claro'}.`);
 });
 
 dom.contrastToggle.addEventListener('click',()=>{
-    const pressed=document.documentElement.classList.toggle('high-contrast');
-    localStorage.setItem('contrast',pressed?'1':'0');
-    dom.contrastToggle.setAttribute('aria-pressed',pressed.toString());
-    srLive(`Contraste alto ${pressed?'activado':'desactivado'}.`);
-    speak(`Contraste alto ${pressed?'activado':'desactivado'}.`);
+    const pressed=document.documentElement.classList.toggle('high-contrast');
+    localStorage.setItem('contrast',pressed?'1':'0');
+    dom.contrastToggle.setAttribute('aria-pressed',pressed.toString());
+    srLive(`Contraste alto ${pressed?'activado':'desactivado'}.`);
+    speak(`Contraste alto ${pressed?'activado':'desactivado'}.`);
 });
 
 dom.fontInc.addEventListener('click',()=>{
-    const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
-    const n=Math.min(parseInt(r)+2,26);
-    document.documentElement.style.setProperty('--base-font-size',n+'px');
-    localStorage.setItem('fontSize',n);
-    srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
-    speak(`Tamaño de fuente aumentado a ${n} píxeles.`);
+    const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
+    const n=Math.min(parseInt(r)+2,26);
+    document.documentElement.style.setProperty('--base-font-size',n+'px');
+    localStorage.setItem('fontSize',n);
+    srLive(`Tamaño de fuente aumentado a ${n} píxeles.`);
+    speak(`Tamaño de fuente aumentado a ${n} píxeles.`);
 });
 dom.fontDec.addEventListener('click',()=>{
-    const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
-    const n=Math.max(parseInt(r)-2,12);
-    document.documentElement.style.setProperty('--base-font-size',n+'px');
-    localStorage.setItem('fontSize',n);
-    srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
-    speak(`Tamaño de fuente reducido a ${n} píxeles.`);
+    const r=getComputedStyle(document.documentElement).getPropertyValue('--base-font-size').replace('px','');
+    const n=Math.max(parseInt(r)-2,12);
+    document.documentElement.style.setProperty('--base-font-size',n+'px');
+    localStorage.setItem('fontSize',n);
+    srLive(`Tamaño de fuente reducido a ${n} píxeles.`);
+    speak(`Tamaño de fuente reducido a ${n} píxeles.`);
 });
 
 /* ---------- EVENTOS GLOBALES ---------- */
 dom.grid.addEventListener('click',e=>{
-    const card=e.target.closest('.recipe-card');
-    if(!card) return;
-    if(e.target.closest('.favorite-btn')){
-        e.stopPropagation();
-        toggleFavorite(card.dataset.id);
-    }else{
-        const recipe=recipes.find(r=>r.titulo===card.dataset.id);
-        if(recipe) showRecipeDetail(recipe);
-    }
+    const card=e.target.closest('.recipe-card');
+    if(!card) return;
+    if(e.target.closest('.favorite-btn')){
+        e.stopPropagation();
+        toggleFavorite(card.dataset.id);
+    }else{
+        const recipe=recipes.find(r=>r.titulo===card.dataset.id);
+        if(recipe) showRecipeDetail(recipe);
+    }
 });
 dom.grid.addEventListener('keydown',e=>{
-    if(e.key==='Enter' || e.key===' '){
-        const card=e.target.closest('.recipe-card');
-        if(card){
-            const recipe=recipes.find(r=>r.titulo===card.dataset.id);
-            if(recipe) showRecipeDetail(recipe);
-        }
-    }
+    if(e.key==='Enter' || e.key===' '){
+        const card=e.target.closest('.recipe-card');
+        if(card){
+            const recipe=recipes.find(r=>r.titulo===card.dataset.id);
+            if(recipe) showRecipeDetail(recipe);
+        }
+    }
 });
 
 dom.modal.addEventListener('click',e=>{if(e.target===dom.modal) closeModal();});
 document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'){
-        if(dom.modal.classList.contains('modal-visible')) closeModal();
-        else if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
-        else if(dom.cookingModeView.classList.contains('flex')) exitCookingMode();
-    }
-    if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado.'); }
-    if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); }
-    if(e.key.toLowerCase()==='f'){
-        e.preventDefault();
-        currentFilter=currentFilter==='favorites'?'all':'favorites';
-        dom.filterFavBtn.setAttribute('aria-pressed',currentFilter==='favorites');
-        dom.filterAllBtn.setAttribute('aria-pressed',currentFilter!=='favorites');
-        dom.filterFavBtn.classList.toggle('active',currentFilter==='favorites');
-        dom.filterAllBtn.classList.toggle('active',currentFilter!=='favorites');
-        applyFilters();
-        srLive(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
-        speak(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
-    }
+    if(e.key==='Escape'){
+        if(dom.modal.classList.contains('modal-visible')) closeModal();
+        else if(dom.shoppingPanel.classList.contains('open')) closeShoppingPanel();
+        else if(dom.cookingModeView.classList.contains('flex')) exitCookingMode();
+    }
+    if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); dom.search.focus(); srLive('Campo de búsqueda activado.'); }
+    if(e.key.toLowerCase()==='l'){ e.preventDefault(); openShoppingPanel(); }
+    if(e.key.toLowerCase()==='f'){
+        e.preventDefault();
+        currentFilter=currentFilter==='favorites'?'all':'favorites';
+        dom.filterFavBtn.setAttribute('aria-pressed',currentFilter==='favorites');
+        dom.filterAllBtn.setAttribute('aria-pressed',currentFilter!=='favorites');
+        dom.filterFavBtn.classList.toggle('active',currentFilter==='favorites');
+        dom.filterAllBtn.classList.toggle('active',currentFilter!=='favorites');
+        applyFilters();
+        srLive(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
+        speak(`Filtro cambiado a ${currentFilter==='favorites'?'favoritas':'todas'}.`);
+    }
 });
 
 dom.search.addEventListener('input',applyFilters);
 dom.filterAllBtn.addEventListener('click',()=>{
-    currentFilter='all';
-    dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
-    dom.filterAllBtn.setAttribute('aria-pressed','true'); dom.filterFavBtn.setAttribute('aria-pressed','false');
-    applyFilters();
-    srLive("Mostrando todas las recetas.");
-    speak("Mostrando todas las recetas.");
+    currentFilter='all';
+    dom.filterAllBtn.classList.add('active'); dom.filterFavBtn.classList.remove('active');
+    dom.filterAllBtn.setAttribute('aria-pressed','true'); dom.filterFavBtn.setAttribute('aria-pressed','false');
+    applyFilters();
+    srLive("Mostrando todas las recetas.");
+    speak("Mostrando todas las recetas.");
 });
 dom.filterFavBtn.addEventListener('click',()=>{
-    currentFilter='favorites';
-    dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
-    dom.filterFavBtn.setAttribute('aria-pressed','true'); dom.filterAllBtn.setAttribute('aria-pressed','false');
-    applyFilters();
-    srLive("Mostrando solo recetas favoritas.");
-    speak("Mostrando solo recetas favoritas.");
+    currentFilter='favorites';
+    dom.filterFavBtn.classList.add('active'); dom.filterAllBtn.classList.remove('active');
+    dom.filterFavBtn.setAttribute('aria-pressed','true'); dom.filterAllBtn.setAttribute('aria-pressed','false');
+    applyFilters();
+    srLive("Mostrando solo recetas favoritas.");
+    speak("Mostrando solo recetas favoritas.");
 });
 dom.categoryFilters.addEventListener('click',e=>{
-    if(e.target.matches('.category-btn')){
-        currentCategory=e.target.dataset.category;
-        document.querySelectorAll('.category-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-selected','false');});
-        e.target.classList.add('active'); e.target.setAttribute('aria-selected','true');
-        applyFilters();
-        srLive(`Filtro por categoría: ${e.target.textContent}.`);
-        speak(`Filtro por categoría: ${e.target.textContent}.`);
-    }
+    if(e.target.matches('.category-btn')){
+        currentCategory=e.target.dataset.category;
+        document.querySelectorAll('.category-btn').forEach(btn=>{btn.classList.remove('active');btn.setAttribute('aria-selected','false');});
+        e.target.classList.add('active'); e.target.setAttribute('aria-selected','true');
+        applyFilters();
+        srLive(`Filtro por categoría: ${e.target.textContent}.`);
+        speak(`Filtro por categoría: ${e.target.textContent}.`);
+    }
 });
 
 /* ---------- INICIALIZACIÓN ---------- */
