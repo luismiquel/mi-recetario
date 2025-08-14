@@ -810,7 +810,7 @@ const recipes = [
         tiempo: "25 minutos",
         imagen: IMG("Hamburguesas de pollo caseras"),
         ingredientes: ["250 g de carne picada de pollo", "1 cucharadita de pan rallado", "1 huevo pequeño", "Sal, pimienta y aceite"],
-        pasos: ["1. Preparar mezcla (5 min): Mezcla carne, huevo, pan rallado, sal y pimienta. Forma hamburguesas con las manos.", "2. Cocinar (10 min por lado): Cocina en sartén 8–10 min por cada cara."]
+        pasos: ["1. Preparar mezcla (5 min): Mezcla carne, huevo, pan rallado y sal. Forma hamburguesas con las manos.", "2. Cocinar (10 min por lado): Cocina en sartén 8–10 min por cada cara."]
     },
     {
         categoria: "Segundo",
@@ -1351,7 +1351,7 @@ const recipes = [
         tiempo: "35 minutos",
         imagen: IMG("Bizcochitos de zanahoria y nuez"),
         ingredientes: ["1 zanahoria rallada", "2 huevos", "50 g nueces picadas", "100 g harina", "Levadura y edulcorante"],
-        pasos: ["1. Preparar mezcla (10 min): Bate todo junto hasta integrar.", "2. Hornear (25 min): En molde engrasado a 180 °C. Verifica cocción con palillo."]
+        pasos: ["1. Preparar mezcla (10 min): Bate todo junto hasta integrar.", "2. Hornear (25 min): En molde a 180 °C. Verifica cocción con palillo."]
     }
 ];
 
