@@ -1,8 +1,16 @@
 /* Service Worker – Recetario (Netlify-friendly) */
-const VERSION = "v1.1.0";
+const VERSION = "v2.0.0";
 const CACHE_NAME = `recetario-${VERSION}`;
+
+// Detecta la base (raíz o subcarpeta) a partir de dónde vive el SW
 const BASE = new URL(self.location.href).pathname.replace(/[^/]+$/, "");
-const CORE_ASSETS = [ BASE, BASE + "index.html", BASE + "manifest.json" ];
+
+// Precarga mínimos para modo offline
+const CORE_ASSETS = [
+  BASE,
+  BASE + "index.html",
+  BASE + "manifest.json"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
@@ -15,20 +23,25 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null));
+    await Promise.all(keys.map(k => (k !== CACHE_NAME ? caches.delete(k) : null)));
     if (self.registration.navigationPreload) {
       await self.registration.navigationPreload.enable().catch(()=>{});
     }
-    self.clients.claim();
+    await self.clients.claim();
   })());
 });
 
+// Estrategias:
+// - Navegación: network-first con fallback a index.html (offline).
+// - Same-origin: stale-while-revalidate.
+// - Terceros: red y, si falla, caché si existe.
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
+
   const url = new URL(req.url);
 
-  // Navegaciones: network-first con fallback a index.html
+  // Navegación (SPA)
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       try {
@@ -37,14 +50,14 @@ self.addEventListener("fetch", (event) => {
         return await fetch(new Request(req, { cache: "no-store" }));
       } catch {
         const cache = await caches.open(CACHE_NAME);
-        const fallback = await cache.match(BASE + "index.html");
-        return fallback || new Response("Sin conexión.", { status: 503 });
+        const fb = await cache.match(BASE + "index.html");
+        return fb || new Response("Sin conexión.", { status: 503 });
       }
     })());
     return;
   }
 
-  // Same-origin: stale-while-revalidate
+  // Same-origin
   if (url.origin === self.location.origin) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
@@ -60,7 +73,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Terceros: red, o caché si existe
+  // Terceros
   event.respondWith((async () => {
     try { return await fetch(req); }
     catch {
