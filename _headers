@@ -1,0 +1,5 @@
+/service-worker.js
+  Content-Type: application/javascript; charset=utf-8
+
+/manifest.json
+  Content-Type: application/manifest+json; charset=utf-8
