@@ -2,57 +2,63 @@
 <html lang="es" dir="ltr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Recetario Español – 160 recetas accesibles</title>
   <meta name="theme-color" content="#78350f" />
   <link rel="manifest" href="./manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class'};</script>
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
-    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.5rem 1rem;font-size:.875rem;font-weight:600}
-    .btn-primary{background:#92400e;color:#fff}.btn-primary:hover{background:#78350f}
-    .btn-ghost{background:transparent}.btn-ghost:hover{background:#f3f4f6}.dark .btn-ghost:hover{background:#1f2937}
-    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.875rem;font-weight:600;cursor:pointer}
+    body{ -webkit-tap-highlight-color: transparent; }
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
+    .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
+    .btn-ghost{background:transparent}.btn-ghost:active{transform:scale(.98)}
+    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700}
     .tab-active{background:#92400e;color:#fff}
     .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:#fff}
     .dark .card{background:#1f2937;border-color:#374151}
     .hc *{ color:#000 !important; background:#fff !important; }
     .hc .tab-active{ background:#000 !important; color:#fff !important; }
-    .drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s transform ease;z-index:60}
+    .drawer{position:fixed;top:env(safe-area-inset-top,0);right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s;z-index:60}
     .dark .drawer{background:#111827;color:#e5e7eb}
     .drawer.open{transform:translateX(0)}
     .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
     .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.5rem .75rem;background:#fff;color:#111;border-radius:.5rem;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-    @media print{header,.controls,.tabs,#recipesGrid>article .btn-ghost,#shoppingDrawer,.no-print{display:none!important}.printable{display:block!important}}
+    /* Subtítulos de voz (lo que se está leyendo) */
+    #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-width:680px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
+    #ttsCaption.show{display:block}
+    @media (min-width:1024px){ #ttsCaption{max-width:780px} }
+    @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
   </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="app">
-    <header class="flex items-center justify-between gap-3 mb-6">
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4" id="app">
+    <header class="flex items-center justify-between gap-3 mb-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-bold">Recetario Español – 160 recetas</h1>
-        <p class="text-sm text-stone-600 dark:text-stone-400">Accesible · Voz (ES) · Contraste · Letra grande · Lista de la compra.</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold">Recetario Español – 160 recetas</h1>
+        <p class="text-sm text-stone-600 dark:text-stone-400">Accesible · Voz clara · Contraste · Letra grande · Lista de compra.</p>
       </div>
       <div class="flex items-center gap-2">
         <button id="toggleTheme" class="btn btn-ghost" title="Tema claro/oscuro">🌙/☀️</button>
         <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste">🌓</button>
         <button id="fontMinus" class="btn btn-ghost" title="Reducir letra">A−</button>
         <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra">A+</button>
-        <button id="toggleMic" class="btn btn-primary" title="Activar micrófono">🎤 Micro</button>
-        <button id="openShopping" class="btn btn-ghost" title="Lista de la compra">🧺 Lista</button>
+        <button id="openShopping" class="btn btn-ghost" title="Lista de la compra">🧺</button>
       </div>
     </header>
 
-    <section class="card p-4 mb-5 controls" aria-label="Búsqueda y filtros">
+    <section class="card p-4 mb-4" aria-label="Búsqueda y filtros">
       <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
         <div class="flex-1">
           <label for="search" class="block text-sm font-medium mb-1">Buscar</label>
-          <input id="search" type="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
-            class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
+          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
+                 class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
         </div>
         <div class="flex items-center gap-2 tabs" role="tablist" aria-label="Categorías">
           <button class="tab tab-active" data-cat="Todas">Todas</button>
@@ -61,24 +67,34 @@
           <button class="tab" data-cat="Segundo">Segundos</button>
           <button class="tab" data-cat="Postre">Postres</button>
         </div>
+        <div class="flex items-end gap-2">
+          <label class="text-sm">Voz:
+            <select id="voiceRate" class="rounded-lg border px-2 py-1 dark:bg-stone-900 dark:border-stone-700">
+              <option value="0.8">Lenta</option>
+              <option value="0.9" selected>Clara</option>
+              <option value="1.0">Normal</option>
+            </select>
+          </label>
+          <button id="toggleMic" class="btn btn-primary" title="Activar micrófono">🎤 Micro</button>
+        </div>
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
       <div id="heard" class="text-xs mt-1 text-stone-500">🎧 Oído: <span id="heardText">—</span></div>
     </section>
 
-    <section class="mb-3 text-sm text-stone-600 dark:text-stone-400">
+    <section class="mb-2 text-sm text-stone-600 dark:text-stone-400">
       <span id="countLabel">Mostrando 0 recetas.</span>
     </section>
 
     <main id="main">
-      <div id="recipesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+      <div id="recipesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
 
     <!-- Modal Detalle -->
-    <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4" role="dialog" aria-modal="true">
+    <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true">
       <div class="card max-w-3xl w-full">
-        <div class="p-4 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+        <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="detailTitle" class="text-xl font-semibold">Detalle</h3>
           <button id="closeDetail" class="btn btn-ghost">✕</button>
         </div>
@@ -103,10 +119,9 @@
     </div>
 
     <!-- Modal Guiada -->
-    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4" role="dialog" aria-modal="true">
-      <div class="card max-w-2xl w-full printable" style="display:none"></div>
+    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true">
       <div class="card max-w-2xl w-full">
-        <div class="p-4 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+        <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="guidedTitle" class="text-xl font-semibold">Cocina guiada</h3>
           <button id="closeGuided" class="btn btn-ghost">✕</button>
         </div>
@@ -131,8 +146,8 @@
     </div>
 
     <!-- Drawer Lista compra -->
-    <aside id="shoppingDrawer" class="drawer no-print" aria-label="Lista de la compra">
-      <div class="p-4 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+    <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra">
+      <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
         <div class="flex items-center gap-2">
           <button id="exportList" class="btn btn-ghost">⬇️ Exportar</button>
@@ -141,7 +156,7 @@
           <button id="closeShopping" class="btn btn-ghost">✕</button>
         </div>
       </div>
-      <div class="p-4">
+      <div class="p-3">
         <div class="flex gap-2 mb-3">
           <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="Añadir artículo (ej. 1 kg tomates)" />
           <button id="addItem" class="btn btn-primary">Añadir</button>
@@ -150,25 +165,26 @@
         <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista está vacía.</p>
       </div>
     </aside>
-
-    <footer class="mt-10 text-xs text-stone-500 dark:text-stone-400">
-      Atajos: Ctrl+/ buscar · V micro · A+/A− letra · Espacio/←/→ en guiado.
-    </footer>
   </div>
 
-  <script>
-  /* ===== Datos de 160 recetas (40 x categoría) ===== */
-  const IMG = c => ({Aperitivo:"https://placehold.co/800x500?text=Aperitivo",Primero:"https://placehold.co/800x500?text=Primero",Segundo:"https://placehold.co/800x500?text=Segundo",Postre:"https://placehold.co/800x500?text=Postre"}[c]);
-  const APERITIVOS = ["Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco","Croquetas de jamón","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas","Empanadillas de atún","Empanadillas de carne","Patatas bravas","Patatas alioli","Boquerones en vinagre","Champiñones al ajillo","Gildas donostiarras","Pinchos de tortilla","Pinchos morunos","Queso marinado en aceite","Hummus clásico con crudités","Hummus de remolacha","Hummus de aguacate","Gazpacho en vasitos","Salmorejo en chupitos","Ensaladilla rusa","Tortilla francesa mini","Banderillas variadas","Mejillones en escabeche","Sardinas marinadas","Pulpo a la gallega (tapa)","Calamares a la romana","Torreznos crujientes","Jamón con picos","Queso manchego con membrillo","Pimientos del padrón","Montadito de lomo","Montadito de pringá","Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"];
-  const PRIMEROS   = ["Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobés","Ajoblanco","Crema de calabaza","Crema de puerros","Crema de champiñón","Pisto manchego","Menestra de verduras","Lentejas estofadas","Garbanzos con espinacas","Judías blancas con verduras","Arroz caldoso de verduras","Arroz a la cubana","Arroz negro","Arroz al horno","Paella de verduras","Fideuá de pescado","Macarrones con tomate","Tallarines al ajillo","Espaguetis carbonara ligera","Ensalada mixta","Ensalada campera","Ensalada de garbanzos","Ensalada de pasta fría","Tomates aliñados","Papas arrugadas con mojo","Pimientos asados","Alcachofas salteadas","Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise","Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"];
-  const SEGUNDOS   = ["Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha","Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro","Albóndigas en salsa","Lomo adobado","Costillas al horno","Chuletillas de cordero","Cordero asado","Secreto ibérico a la plancha","Solomillo al roquefort","Bacalao a la vizcaína","Bacalao al pil-pil","Merluza en salsa verde","Dorada al horno","Lubina a la sal","Salmón al papillote","Atún encebollado","Calamares en su tinta","Pulpo a la gallega","Paella mixta","Arroz con pollo","Arroz con bogavante","Empanada gallega de atún","Pisto con huevos","Tortilla de patatas","Revuelto de setas","Conejo al ajillo","Codornices escabechadas","Callos a la madrileña","Fabada asturiana","Marmitako de bonito","Chuletón a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"];
-  const POSTRES    = ["Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana","Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras","Galletas de mantequilla","Rosquillas fritas","Pestiños","Buñuelos de viento","Filloas","Peras al vino","Compota de manzana","Macedonia de frutas","Helado rápido de plátano","Mousse de chocolate","Natillas de vainilla","Tarta de manzana","Tarta tres leches (versión)","Brazo de gitano","Quesada pasiega","Tocino de cielo","Pan de Calatrava","Cuajada con miel","Crepes dulces","Flan de café","Crema pastelera con frutas","Tarta de almendra","Tarta de galletas con chocolate","Bizcocho marmolado","Helado de yogur","Brownie sencillo","Crema de limón","Naranja con canela","Fresas con nata"];
+  <!-- Subtítulos/Caption de voz -->
+  <div id="ttsCaption" role="status" aria-live="polite"></div>
 
-  const PASOS={
-    Aperitivo:["Prepara y ten a mano todo.","Corta/dispón los ingredientes.","Sofríe o mezcla base hasta aromatizar.","Monta el aperitivo y ajusta sal/aliño.","Reposa 1–2 min o sirve caliente.","Emplata y sirve."],
-    Primero:["Lava y prepara verduras.","Sofríe ajo/cebolla suave.","Añade ingrediente principal y rehoga.","Cubre con caldo/agua y cocina.","Ajusta textura (tritura/reposa).","Sirve caliente o frío según toque."],
-    Segundo:["Seca la pieza y sala.","Añade adobo/especias.","Dora/hornea/sella bien.","Agrega guarnición/salsa y cocina al punto.","Reposa unos minutos.","Sirve con jugo/guarnición."],
-    Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera/ cuaja.","Enfría o reposa.","Decora y sirve."]
+  <script>
+  /* ===== 1) Datos: 160 recetas (40 por categoría) ===== */
+  const CATS = ["Aperitivo","Primero","Segundo","Postre"];
+  const IMG = c => ({Aperitivo:"https://placehold.co/800x500?text=Aperitivo",Primero:"https://placehold.co/800x500?text=Primero",Segundo:"https://placehold.co/800x500?text=Segundo",Postre:"https://placehold.co/800x500?text=Postre"}[c]);
+
+  const APERITIVOS=[ "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco","Croquetas de jamón","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas","Empanadillas de atún","Empanadillas de carne","Patatas bravas","Patatas alioli","Boquerones en vinagre","Champiñones al ajillo","Gildas donostiarras","Pinchos de tortilla","Pinchos morunos","Queso marinado en aceite","Hummus clásico con crudités","Hummus de remolacha","Hummus de aguacate","Gazpacho en vasitos","Salmorejo en chupitos","Ensaladilla rusa","Tortilla francesa mini","Banderillas variadas","Mejillones en escabeche","Sardinas marinadas","Pulpo a la gallega (tapa)","Calamares a la romana","Torreznos crujientes","Jamón con picos","Queso manchego con membrillo","Pimientos del padrón","Montadito de lomo","Montadito de pringá","Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"];
+  const PRIMEROS=[ "Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobés","Ajoblanco","Crema de calabaza","Crema de puerros","Crema de champiñón","Pisto manchego","Menestra de verduras","Lentejas estofadas","Garbanzos con espinacas","Judías blancas con verduras","Arroz caldoso de verduras","Arroz a la cubana","Arroz negro","Arroz al horno","Paella de verduras","Fideuá de pescado","Macarrones con tomate","Tallarines al ajillo","Espaguetis carbonara ligera","Ensalada mixta","Ensalada campera","Ensalada de garbanzos","Ensalada de pasta fría","Tomates aliñados","Papas arrugadas con mojo","Pimientos asados","Alcachofas salteadas","Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise","Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"];
+  const SEGUNDOS=[ "Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha","Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro","Albóndigas en salsa","Lomo adobado","Costillas al horno","Chuletillas de cordero","Cordero asado","Secreto ibérico a la plancha","Solomillo al roquefort","Bacalao a la vizcaína","Bacalao al pil-pil","Merluza en salsa verde","Dorada al horno","Lubina a la sal","Salmón al papillote","Atún encebollado","Calamares en su tinta","Pulpo a la gallega","Paella mixta","Arroz con pollo","Arroz con bogavante","Empanada gallega de atún","Pisto con huevos","Tortilla de patatas","Revuelto de setas","Conejo al ajillo","Codornices escabechadas","Callos a la madrileña","Fabada asturiana","Marmitako de bonito","Chuletón a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"];
+  const POSTRES=[ "Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana","Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras","Galletas de mantequilla","Rosquillas fritas","Pestiños","Buñuelos de viento","Filloas","Peras al vino","Compota de manzana","Macedonia de frutas","Helado rápido de plátano","Mousse de chocolate","Natillas de vainilla","Tarta de manzana","Tarta tres leches (versión)","Brazo de gitano","Quesada pasiega","Tocino de cielo","Pan de Calatrava","Cuajada con miel","Crepes dulces","Flan de café","Crema pastelera con frutas","Tarta de almendra","Tarta de galletas con chocolate","Bizcocho marmolado","Helado de yogur","Brownie sencillo","Crema de limón","Naranja con canela","Fresas con nata"];
+
+  const PASOS = {
+    Aperitivo:["Prepara y ten a mano todo.","Corta/dispón los ingredientes.","Sofríe o mezcla hasta aromatizar.","Monta y ajusta sal/aliño.","Reposa 1–2 min o sirve caliente.","Emplata y sirve."],
+    Primero:["Lava y prepara verduras.","Sofríe ajo/cebolla suave.","Añade ingrediente principal y rehoga.","Cubre con caldo/agua y cocina.","Ajusta textura (tritura/reposa).","Sirve caliente o frío."],
+    Segundo:["Seca la pieza y sala.","Añade adobo/especias.","Dora/hornea/sella bien.","Agrega guarnición/salsa y cocina al punto.","Reposa unos minutos.","Sirve con su jugo."],
+    Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","Enfría o reposa.","Decora y sirve."]
   };
 
   function ingredientesPara(cat,t){
@@ -193,21 +209,23 @@
   const build=(cat,list)=>list.map(n=>({categoria:cat,titulo:n,imagen:IMG(cat),ingredientes:ingredientesPara(cat,n),pasos:PASOS[cat],tiempo:tiempo(cat,n)}));
   const RECETAS=[...build("Aperitivo",APERITIVOS),...build("Primero",PRIMEROS),...build("Segundo",SEGUNDOS),...build("Postre",POSTRES)];
 
-  /* ===== Estado y elementos ===== */
-  const state={q:"",cat:"Todas",list:RECETAS,current:null,step:0,dark:matchMedia('(prefers-color-scheme: dark)').matches,contrast:false,font:16,listening:false};
-  const $=(id)=>document.getElementById(id);
+  /* ===== 2) Estado + elementos ===== */
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const state={q:"",cat:"Todas",list:RECETAS,current:null,step:0,dark:matchMedia('(prefers-color-scheme: dark)').matches,contrast:false,font:16,listening:false,rate:0.9};
+  const $=id=>document.getElementById(id);
   const els={grid:$('recipesGrid'),empty:$('emptyState'),count:$('countLabel'),search:$('search'),tabs:()=>document.querySelectorAll('.tab'),status:$('readerStatus'),
     toggleTheme:$('toggleTheme'),toggleContrast:$('toggleContrast'),fontPlus:$('fontPlus'),fontMinus:$('fontMinus'),
-    toggleMic:$('toggleMic'),heard:$('heardText'),
+    toggleMic:$('toggleMic'),heard:$('heardText'),voiceRate:$('voiceRate'),
     detailModal:$('detailModal'),detailTitle:$('detailTitle'),detailImg:$('detailImg'),detailMeta:$('detailMeta'),detailIngredients:$('detailIngredients'),detailSteps:$('detailSteps'),closeDetail:$('closeDetail'),btnReadAll:$('btnReadAll'),btnGuided:$('btnGuided'),btnAddAll:$('btnAddAll'),
     guidedModal:$('guidedModal'),gTitle:$('guidedTitle'),gSteps:$('guidedSteps'),gProg:$('guidedProgress'),next:$('nextStep'),prev:$('prevStep'),rep:$('repeatStep'),stop:$('stopReading'),close:$('closeGuided'),printBtn:$('printRecipe'),
-    shoppingDrawer:$('shoppingDrawer'),openShopping:$('openShopping'),closeShopping:$('closeShopping'),shoppingList:$('shoppingList'),shoppingEmpty:$('shoppingEmpty'),newItem:$('newItem'),addItem:$('addItem'),exportList:$('exportList'),printList:$('printList'),clearChecked:$('clearChecked')
+    shoppingDrawer:$('shoppingDrawer'),openShopping:$('openShopping'),closeShopping:$('closeShopping'),shoppingList:$('shoppingList'),shoppingEmpty:$('shoppingEmpty'),newItem:$('newItem'),addItem:$('addItem'),exportList:$('exportList'),printList:$('printList'),clearChecked:$('clearChecked'),
+    caption: $('ttsCaption')
   };
 
   /* Tema/contraste/letra */
   function applyTheme(){ document.documentElement.classList.toggle('dark',state.dark); }
   function applyContrast(){ document.documentElement.classList.toggle('hc',state.contrast); }
-  function setFont(px){ state.font=Math.max(12,Math.min(22,px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); }
+  function setFont(px){ state.font=Math.max(14,Math.min(22,px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); }
   applyTheme(); applyContrast(); setFont(state.font);
   els.toggleTheme.onclick=()=>{state.dark=!state.dark;applyTheme();};
   els.toggleContrast.onclick=()=>{state.contrast=!state.contrast;applyContrast();};
@@ -217,11 +235,11 @@
   /* Render tarjetas */
   function card(r,i){
     return `<article class="card">
-      <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-48 object-cover" loading="lazy">
-      <div class="p-4 space-y-2">
+      <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
+      <div class="p-3 space-y-2">
         <h3 class="text-lg font-semibold">${r.titulo}</h3>
         <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
-        <div class="flex flex-wrap gap-2 pt-2">
+        <div class="flex flex-wrap gap-2 pt-1">
           <button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button>
           <button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button>
           <button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button>
@@ -234,8 +252,8 @@
   function filter(){ const q=state.q.toLowerCase().trim(); const l=RECETAS.filter(r=>(state.cat==="Todas"||r.categoria===state.cat)&&(!q||[r.titulo,...r.ingredientes,...r.pasos].join(" ").toLowerCase().includes(q))); render(l); }
   render(RECETAS);
   els.tabs().forEach(b=>b.onclick=()=>{ els.tabs().forEach(x=>x.classList.remove('tab-active')); b.classList.add('tab-active'); state.cat=b.dataset.cat; filter(); });
-  els.search.oninput=(e)=>{ state.q=e.target.value; filter(); };
-  document.addEventListener('keydown',(e)=>{ if(e.ctrlKey&&e.key==='/'){ e.preventDefault(); els.search.focus(); } });
+  els.search.oninput=e=>{ state.q=e.target.value; filter(); };
+  document.addEventListener('keydown',e=>{ if(e.ctrlKey&&e.key==='/'){ e.preventDefault(); els.search.focus(); } });
 
   /* Detalle */
   function openDetail(r){ state.current=r; els.detailTitle.textContent=r.titulo; els.detailImg.src=r.imagen; els.detailImg.alt=`Foto de ${r.titulo}`; els.detailMeta.textContent=`${r.categoria} · ${r.tiempo}`; els.detailIngredients.innerHTML=r.ingredientes.map(i=>`<li>${i}</li>`).join(""); els.detailSteps.innerHTML=r.pasos.map(p=>`<li>${p}</li>`).join(""); els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex'); }
@@ -243,66 +261,116 @@
   els.closeDetail.onclick=closeDetail;
   document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
 
-  /* Lectura (TTS) */
-  let voice=null; function pickVoice(){ const vs=speechSynthesis.getVoices(); voice=vs.find(v=>/(^es-|Spanish)/i.test(v.lang))||vs[0]||null; }
-  if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
-  function speak(txt){ if(!('speechSynthesis'in window)) return; try{speechSynthesis.cancel();}catch{} const u=new SpeechSynthesisUtterance(txt); if(voice)u.voice=voice; u.lang=(voice&&voice.lang)||'es-ES'; speechSynthesis.speak(u); }
-  function readRecipe(r){ const t=`${r.titulo}. ${r.categoria}. Tiempo ${r.tiempo}. Ingredientes: ${r.ingredientes.join(", ")}. Pasos: `+r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" "); speak(t); els.status.textContent=`Leyendo ${r.titulo}`; }
+  /* ===== 3) Voz clara (TTS) con subtítulos ===== */
+  let voice=null;
+  function pickVoice(){
+    const vs=speechSynthesis.getVoices();
+    // Preferencias típicas en Chrome/Android/Edge
+    voice = vs.find(v=>/Spanish.*(Spain)|es[-_]ES/i.test(v.name+v.lang)) ||
+            vs.find(v=>/Spanish/i.test(v.name+v.lang)) || vs[0] || null;
+  }
+  if('speechSynthesis'in window){ try{pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}catch{} }
+  function showCaption(text){ els.caption.textContent=text; els.caption.classList.add('show'); }
+  function hideCaption(){ els.caption.classList.remove('show'); els.caption.textContent=""; }
+  function speak(text){
+    if(!('speechSynthesis'in window)) return;
+    try{ speechSynthesis.cancel(); }catch{}
+    const u=new SpeechSynthesisUtterance(text);
+    if(voice) u.voice=voice;
+    u.lang=(voice&&voice.lang)||'es-ES';
+    u.rate=state.rate; // 0.8–1.0 (más claro)
+    u.pitch=1.0;
+    u.onstart=()=>showCaption(text);
+    u.onend=()=>hideCaption();
+    speechSynthesis.speak(u);
+  }
+  els.voiceRate.onchange=(e)=>{ state.rate = Number(e.target.value)||0.9; };
 
-  /* Guiada + comandos */
-  function openGuided(r){ state.current=r; state.step=0; $('guidedRecipeTitle').textContent=r.titulo; $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join(""); $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex'); speak(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`); readCurrent(); }
-  function closeGuided(){ try{speechSynthesis.cancel();}catch{} $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); state.current=null; els.status.textContent=""; }
-  function readCurrent(){ const p=state.current?.pasos?.[state.step]; if(p) speak(`Paso ${state.step+1}. ${p}`); updateProg(); }
-  function updateProg(){ const t=state.current?.pasos?.length||0; $('guidedProgress').textContent=`Paso ${state.step+1} de ${t}`; [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold',i===state.step)); }
-  function nextStep(){ const t=state.current?.pasos?.length||0; if(state.step<t-1){ state.step++; readCurrent(); } else { speak("Receta terminada. ¡Buen provecho!"); } }
-  function prevStep(){ if(state.step>0){ state.step--; readCurrent(); } else { speak("Ya estás en el primer paso."); } }
-  function repeatStep(){ readCurrent(); }
-  function readIngredients(){ if(!state.current) return; speak("Ingredientes: "+state.current.ingredientes.join(", ")); }
-  function goToStep(n){ const t=state.current?.pasos?.length||0; if(n>=0&&n<t){ state.step=n; readCurrent(); } else speak("Ese paso no existe."); }
-  $('nextStep').onclick=nextStep; $('prevStep').onclick=prevStep; $('repeatStep').onclick=repeatStep; $('stopReading').onclick=()=>{ try{speechSynthesis.cancel();}catch{}; els.status.textContent="Lectura parada."; }; $('closeGuided').onclick=closeGuided; $('printRecipe').onclick=()=>{ window.print(); };
+  function readRecipe(r){
+    const intro=`${r.titulo}. ${r.categoria}. Tiempo ${r.tiempo}.`;
+    const ing=r.ingredientes?.length?`Ingredientes: ${r.ingredientes.join(", ")}.`:"";
+    const pasos=r.pasos?.length?`Pasos: ${r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" ")}`:"";
+    speak([intro,ing,pasos].filter(Boolean).join(" "));
+    els.status.textContent=`Leyendo ${r.titulo}.`;
+  }
 
-  // SR (reconocimiento ES) robusto + depurador “Oído:”
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition; let rec=null,restarting=false;
-  const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
-  function startMic(){
-    if(!SR){ els.status.textContent="Voz no disponible en este navegador."; state.listening=false; updateMic(); return; }
-    if(!rec){
-      rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
-      rec.onresult=(ev)=>{ const last=ev.results[ev.results.length-1][0].transcript||''; const text=norm(last); els.heard.textContent=last; handleCmd(text); };
-      rec.onerror=(e)=>{ els.status.textContent=`Voz: ${e.error||'error'}`; };
-      rec.onend=()=>{ if(state.listening&&!restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch{} },300); } };
+  /* ===== 4) Cocina guiada robusta (botón y voz) ===== */
+  function ensureCurrent(){
+    if(!state.current){
+      const primera = (state.list && state.list[0]) || null;
+      if(!primera){ els.status.textContent="Abre una receta y pulsa ‘Guiada’."; return false; }
+      state.current = primera; state.step=0;
     }
-    try{ rec.start(); }catch{}
-    els.status.textContent='Micrófono activo.';
+    return true;
   }
-  function stopMic(){ if(rec){ try{rec.stop();}catch{} } els.status.textContent='Micrófono desactivado.'; }
-  function updateMic(){ els.toggleMic.textContent=state.listening?"🎤 Micro activo":"🎤 Micro"; }
-  els.toggleMic.onclick=()=>{ state.listening=!state.listening; state.listening?startMic():stopMic(); updateMic(); };
-
-  function handleCmd(cmd){
-    if(!state.current && /siguiente|anterior|repetir|paso|leer ingredientes|salir/.test(cmd)){ speak("Abre primero Cocina guiada."); return; }
-    const m=cmd.match(/paso\s+(\d{1,2})/); const num=m?Number(m[1]):null;
-    if(/^salir$|^parar$|^detener$/.test(cmd)) return closeGuided();
-    if(/^repetir$|^otra vez$|^de nuevo$/.test(cmd)) return repeatStep();
-    if(/^siguiente$|^continuar$|^proximo$|^adelante$|^avanzar$/.test(cmd)) return nextStep();
-    if(/^anterior$|^atras$|^retroceder$/.test(cmd)) return prevStep();
-    if(/^leer ingredientes?$/.test(cmd)) return readIngredients();
-    if(num) return goToStep(num-1);
+  function openGuided(r){
+    state.current=r; state.step=0;
+    $('guidedRecipeTitle').textContent=r.titulo;
+    $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
+    $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
+    speak(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
+    readCurrent();
   }
+  function closeGuided(){ try{speechSynthesis.cancel();}catch{}; $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; }
+  function readCurrent(){
+    if(!ensureCurrent()) return;
+    const pasos = state.current.pasos || [];
+    if(!pasos.length) return;
+    if(state.step<0) state.step=0;
+    if(state.step>=pasos.length) state.step=pasos.length-1;
+    const p = pasos[state.step];
+    speak(`Paso ${state.step+1}. ${p}`);
+    updateProg();
+  }
+  function updateProg(){ const t=state.current?.pasos?.length||0; $('guidedProgress').textContent=`Paso ${state.step+1} de ${t}`; [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold',i===state.step)); }
+  function nextStep(){ if(!ensureCurrent()) return; const t=state.current?.pasos?.length||0; if(state.step<t-1){ state.step++; readCurrent(); } else { speak("Receta terminada. ¡Buen provecho!"); } }
+  function prevStep(){ if(!ensureCurrent()) return; if(state.step>0){ state.step--; readCurrent(); } else { speak("Ya estás en el primer paso."); } }
+  function repeatStep(){ readCurrent(); }
+  function readIngredients(){ if(!ensureCurrent()) return; const ing=state.current?.ingredientes||[]; speak(ing.length?("Ingredientes: "+ing.join(", ")):"No hay ingredientes listados."); }
+  function goToStep(n){ if(!ensureCurrent()) return; const t=state.current?.pasos?.length||0; if(n>=0&&n<t){ state.step=n; readCurrent(); } else { speak("Ese número de paso no existe."); } }
 
-  // Lista de la compra
+  $('btnReadAll').onclick=()=>{ if(state.current) readRecipe(state.current); };
+  $('btnGuided').onclick=()=>{ if(state.current) openGuided(state.current); };
+  $('btnAddAll').onclick=()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
+  $('closeDetail').onclick=closeDetail;
+  document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
+
+  $('nextStep').onclick=nextStep; $('prevStep').onclick=prevStep; $('repeatStep').onclick=repeatStep; $('stopReading').onclick=()=>{ try{speechSynthesis.cancel();}catch{}; els.status.textContent="Lectura parada."; }; $('closeGuided').onclick=closeGuided;
+  $('printRecipe').onclick=()=>{ window.print(); };
+
+  // Delegación en tarjetas
+  els.grid.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-a]'); if(!b) return;
+    const r=state.list[Number(b.dataset.i)];
+    if(!r) return;
+    if(b.dataset.a==='leer') readRecipe(r);
+    if(b.dataset.a==='guiada') openGuided(r);
+    if(b.dataset.a==='abrir') openDetail(r);
+    if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
+  });
+
+  // Atajos en modal
+  document.addEventListener('keydown',e=>{
+    if($('guidedModal').classList.contains('hidden')) return;
+    if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
+    if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
+    if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
+    if(e.key==='Escape'){ e.preventDefault(); closeGuided(); closeDetail(); }
+  });
+
+  /* ===== 5) Lista de la compra ===== */
   const SKEY='shopping.v1'; let shopping=JSON.parse(localStorage.getItem(SKEY)||'[]');
   function save(){ localStorage.setItem(SKEY,JSON.stringify(shopping)); }
   function uid(){ return Math.random().toString(36).slice(2,9); }
   function renderList(){ $('shoppingList').innerHTML=shopping.map(i=>`<li class="flex items-center gap-2"><input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}"><input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}"><button class="btn btn-ghost" data-a="d" data-id="${i.id}">🗑️</button></li>`).join(""); $('shoppingEmpty').classList.toggle('hidden',shopping.length>0); }
   function addItem(text){ text=text.trim(); if(!text) return; shopping.push({id:uid(),text,done:false}); save(); renderList(); }
   function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
+  function openDrawer(){ els.shoppingDrawer.classList.add('open'); }
+  function closeDrawer(){ els.shoppingDrawer.classList.remove('open'); }
 
-  function openDrawer(){ $('shoppingDrawer').classList.add('open'); }
-  function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); }
-  $('openShopping').onclick=openDrawer; $('closeShopping').onclick=closeDrawer;
-  $('addItem').onclick=()=>{ addItem($('newItem').value); $('newItem').value=""; $('newItem').focus(); };
-  $('newItem').onkeydown=(e)=>{ if(e.key==='Enter'){ e.preventDefault(); $('addItem').click(); } };
+  els.openShopping.onclick=openDrawer; els.closeShopping.onclick=closeDrawer;
+  els.addItem.onclick=()=>{ addItem(els.newItem.value); els.newItem.value=""; els.newItem.focus(); };
+  els.newItem.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); els.addItem.click(); } };
   $('shoppingList').addEventListener('click',e=>{ const b=e.target.closest('button[data-a="d"]'); if(!b) return; shopping=shopping.filter(x=>x.id!==b.dataset.id); save(); renderList(); });
   $('shoppingList').addEventListener('change',e=>{ const c=e.target.closest('input[type="checkbox"][data-a="t"]'); if(!c) return; const it=shopping.find(x=>x.id===c.dataset.id); if(it){ it.done=c.checked; save(); } });
   $('shoppingList').addEventListener('input',e=>{ const t=e.target.closest('input[type="text"][data-a="e"]'); if(!t) return; const it=shopping.find(x=>x.id===t.dataset.id); if(it){ it.text=t.value; save(); } });
@@ -311,31 +379,54 @@
   $('printList').onclick=()=>{ const w=window.open('','_blank'); w.document.write(`<pre>${shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n')}</pre>`); w.document.close(); w.print(); setTimeout(()=>w.close(),300); };
   renderList();
 
-  // Delegación en tarjetas
-  els.grid.addEventListener('click',e=>{
-    const b=e.target.closest('button[data-a]'); if(!b) return;
-    const r=state.list[Number(b.dataset.i)];
-    if(b.dataset.a==='leer') readRecipe(r);
-    if(b.dataset.a==='guiada') openGuided(r);
-    if(b.dataset.a==='abrir') openDetail(r);
-    if(b.dataset.a==='lista') addMany(r.ingredientes);
-  });
+  // ----- Reconocimiento de voz (SR) con detección de soporte -----
+  const SR = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition) ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
+  if(isIOS || !SR){
+    els.toggleMic.disabled=true;
+    els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
+    els.status.textContent = isIOS ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones." : "Voz: reconocimiento no disponible en este navegador.";
+  }
+  let rec=null,restarting=false;
+  const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
 
-  // Atajos guiado
-  document.addEventListener('keydown',e=>{
-    if(e.ctrlKey&&e.key==='/'){ e.preventDefault(); els.search.focus(); }
-    if(!state.current) return;
-    if(e.key===' '){ e.preventDefault(); nextStep(); }
-    if(e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
-    if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
-    if(e.key==='r' || e.key==='R'){ e.preventDefault(); repeatStep(); }
-    if(e.key==='Escape'){ e.preventDefault(); closeGuided(); closeDetail(); }
-  });
+  function startMic(){
+    if(!SR) return;
+    if(!rec){
+      rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
+      rec.onresult=(ev)=>{ const last=ev.results[ev.results.length-1][0].transcript||''; els.heard.textContent=last; const t=norm(last);
+        const m=t.match(/paso\s+(\d{1,2})/); const num=m?Number(m[1]):null;
+        if(/^salir$|^parar$|^detener$/.test(t)) return closeGuided();
+        if(/^repetir$|^otra vez$|^de nuevo$/.test(t)) return repeatStep();
+        if(/^siguiente$|^continuar$|^proximo$|^adelante$|^avanzar$/.test(t)) return nextStep();
+        if(/^anterior$|^atras$|^retroceder$/.test(t)) return prevStep();
+        if(/^leer ingredientes?$/.test(t)) return readIngredients();
+        if(num) return goToStep(num-1);
+        if(!state.current) els.status.textContent="Abre ‘Cocina guiada’ para usar comandos.";
+      };
+      rec.onerror=(e)=>{ els.status.textContent=`Voz: ${e.error||'error'}`; };
+      rec.onend=()=>{ if(state.listening && !restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400); } };
+    }
+    try{ rec.start(); }catch{}
+    els.status.textContent="Micrófono activo.";
+  }
+  function stopMic(){ if(rec){ try{rec.stop();}catch{} } els.status.textContent="Micrófono desactivado."; }
+  function updateMic(){ els.toggleMic.textContent=state.listening?"🎤 Micro activo":"🎤 Micro"; }
+
+  els.toggleMic.onclick=()=>{
+    if(!SR) return;
+    state.listening=!state.listening;
+    state.listening?startMic():stopMic();
+    updateMic();
+  };
 
   // Registrar SW (Netlify) – nombre correcto
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./service-worker.js").catch(console.error);
   }
+
+  // Inicial
+  // Contador visible al inicio
+  document.addEventListener('DOMContentLoaded',()=>{ filter(); });
   </script>
 </body>
 </html>
