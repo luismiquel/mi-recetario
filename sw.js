@@ -1,5 +1,5 @@
 /* Service Worker – Recetario (Netlify) */
-const VERSION = "v3.0.0";
+const VERSION = "v4.0.0";
 const CACHE = `recetario-${VERSION}`;
 const BASE = new URL(self.location.href).pathname.replace(/[^/]+$/, "");
 const CORE = [ BASE, BASE + "index.html", BASE + "manifest.json" ];
