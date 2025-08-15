@@ -25,14 +25,11 @@
     .hc *{ color: #000 !important; background-color: #fff !important; }
     .hc a, .hc button{ outline: 2px solid #000 !important; }
     .hc .tab-active{ background:#000 !important; color:#fff !important; }
-    /* Panel lista compra (drawer) */
+    /* Drawer lista compra */
     .drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s transform ease;z-index:60}
     .dark .drawer{background:#111827;color:#e5e7eb}
     .drawer.open{transform:translateX(0)}
-    @media print{
-      header,.controls,.tabs,#recipesGrid>article .btn-ghost,#shoppingDrawer,.no-print{display:none!important}
-      .printable{display:block!important}
-    }
+    @media print{header,.controls,.tabs,#recipesGrid>article .btn-ghost,#shoppingDrawer,.no-print{display:none!important}.printable{display:block!important}}
   </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -42,7 +39,7 @@
     <header class="flex items-center justify-between gap-3 mb-6">
       <div>
         <h1 class="text-2xl sm:text-3xl font-bold">Recetario Español – 160 recetas</h1>
-        <p class="text-sm text-stone-600 dark:text-stone-400">Accesible, con lectura por voz, contraste y lista de la compra.</p>
+        <p class="text-sm text-stone-600 dark:text-stone-400">Accesible, voz, contraste, letra grande y lista de la compra.</p>
       </div>
       <div class="flex items-center gap-2">
         <button id="toggleTheme" class="btn btn-ghost" aria-pressed="false" title="Tema claro/oscuro">🌙/☀️</button>
@@ -227,12 +224,12 @@
       else if(t.includes("arroz con leche")) ing=["Arroz","Leche","Azúcar","Canela","Limón"];
       else if(t.includes("leche frita")) ing=["Leche","Harina/Maicena","Azúcar","Huevo","Canela"];
       else if(t.includes("torrijas")) ing=["Pan","Leche","Huevo","Azúcar","Canela","Aceite"];
-      else if(t.includes("crema catalana")) ing=["Leche","Yemas","Azúcar","Maicena","Limon","Canela"];
+      else if(t.includes("crema catalana")) ing=["Leche","Yemas","Azúcar","Maicena","Limón","Canela"];
       else if(t.includes("tarta de queso")) ing=["Queso crema","Huevos","Azúcar","Nata","Galletas","Mantequilla"];
       else if(t.includes("tarta de santiago")||t.includes("almendra")) ing=["Almendra molida","Huevos","Azúcar","Limón"];
       else if(t.includes("bizcocho")) ing=["Harina","Azúcar","Huevos","Aceite","Levadura","Yogur/Leche"];
       else if(t.includes("galletas")||t.includes("magdalenas")) ing=["Harina","Azúcar","Huevos","Mantequilla/Aceite","Levadura"];
-      else if(tincludes=("pestiños")||t.includes("rosquillas")||t.includes("buñuelos")||t.includes("filloas")) ing=["Harina","Huevos","Azúcar","Aceite","Levadura/Anís"];
+      else if(t.includes("pestiños")||t.includes("rosquillas")||t.includes("buñuelos")||t.includes("filloas")) ing=["Harina","Huevos","Azúcar","Aceite","Levadura/Anís"];
       else if(t.includes("mousse")) ing=["Chocolate","Nata","Azúcar","Vainilla"];
       else if(t.includes("helado")) ing=["Fruta/Yogur","Azúcar","Leche/Nata"];
       else if(t.includes("crema")||t.includes("cuajada")||t.includes("pastelera")) ing=["Leche","Azúcar","Yemas/Maicena","Vainilla/Limón"];
@@ -244,9 +241,9 @@
 
   const PASOS={
     Aperitivo:["Prepara la mise en place: lava, seca y ten a mano todos los ingredientes.","Corta o trocea los ingredientes principales según el formato del aperitivo.","Realiza el sofrito o mezcla base hasta que desprenda buen aroma.","Monta el aperitivo y ajusta el punto de sal y aliño.","Deja reposar 1–2 minutos o sirve caliente según la elaboración.","Emplata y sirve. Mantén la cadena de frío o calor si procede."],
-    Primero:["Lava y prepara las verduras o bases del plato.","Sofríe suavemente ajo y cebolla si la receta lo requiere.","Añade el ingrediente principal y rehoga 2–3 minutos.","Incorpora caldo/agua y cocina a fuego medio controlando la sal.","Ajusta la textura (tritura/añade líquido/reposa) hasta el punto deseado.","Sirve caliente o bien frío según el plato."],
-    Segundo:["Saca la pieza principal y sécala con papel para una mejor cocción.","Sala ligeramente y añade el adobo o especias indicadas.","Dora en sartén/horno/plancha para sellar y concentrar sabor.","Añade guarnición o salsa y cocina hasta el punto interno adecuado.","Deja reposar unos minutos para asentar los jugos.","Sirve con su guarnición y jugo por encima."],
-    Postre:["Pesa y mide con precisión todos los ingredientes.","Mezcla por separado secos y húmedos; integra sin batir en exceso.","Añade aromáticos (cítricos, vainilla, canela) y homogeneiza.","Hornea/refrigera/cocina según el método indicado hasta cuajar.","Deja enfriar o reposar para que tome cuerpo.","Decora y sirve. Conserva en frío si es necesario."]
+    Primero:["Lava y prepara las verduras o bases del plato.","Sofríe suavemente ajo y cebolla.","Añade el ingrediente principal y rehoga 2–3 minutos.","Incorpora caldo/agua y cocina a fuego medio controlando la sal.","Ajusta la textura (tritura/añade líquido/reposa).","Sirve caliente o bien frío según el plato."],
+    Segundo:["Saca la pieza principal y sécala con papel.","Sala ligeramente y añade el adobo o especias.","Dora en sartén/horno/plancha para sellar.","Añade guarnición o salsa y cocina al punto interno adecuado.","Deja reposar unos minutos.","Sirve con su guarnición y jugo por encima."],
+    Postre:["Pesa y mide con precisión todos los ingredientes.","Mezcla por separado secos y húmedos.","Añade aromáticos (cítricos, vainilla, canela).","Hornea/refrigera/cocina hasta cuajar.","Deja enfriar o reposar.","Decora y sirve."]
   };
 
   function tiempoPara(cat,title){
@@ -348,40 +345,40 @@
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='recetas160.json'; a.click(); URL.revokeObjectURL(a.href);
   });
 
-  // ----- LECTURA Y VOZ -----
-  let voice=null; function pick(){ voice=speechSynthesis.getVoices().find(v=>/es-|Spanish/i.test(v.lang))||speechSynthesis.getVoices()[0]||null; }
-  if('speechSynthesis'in window){ pick(); speechSynthesis.onvoiceschanged=pick; }
-  function speak(text){ if(!('speechSynthesis'in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); if(voice)u.voice=voice; u.lang=(voice&&voice.lang)||'es-ES'; speechSynthesis.speak(u); }
-  function stopSpeak(){ if('speechSynthesis'in window) speechSynthesis.cancel(); }
+  // ----- VOZ ROBUSTA (ES) -----
+  let voice=null;
+  function pickVoice(){ const vs=speechSynthesis.getVoices(); voice = vs.find(v=>/(^es-|Spanish)/i.test(v.lang)) || vs[0] || null; }
+  if('speechSynthesis'in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
+  function speak(text){ if(!('speechSynthesis'in window)) return; try{ speechSynthesis.cancel(); }catch(_){ } const u=new SpeechSynthesisUtterance(text); if(voice)u.voice=voice; u.lang=(voice&&voice.lang)||'es-ES'; speechSynthesis.speak(u); }
+  function stopSpeak(){ try{ speechSynthesis.cancel(); }catch(_){} }
   function announce(msg){ els.status.textContent=msg; }
-  function readFullRecipe(r){
-    const intro=`${r.titulo}. Categoría ${r.categoria}. Tiempo estimado ${r.tiempo}.`;
-    const ing=r.ingredientes?.length?"Ingredientes: "+r.ingredientes.join(", ")+".":"";
-    const pasos=r.pasos?.length?"Pasos: "+r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" "):"";
-    speak([intro,ing,pasos].filter(Boolean).join(" ")); announce(`Leyendo ${r.titulo}.`);
-  }
-  // Reconocimiento
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=null;
+
+  // Reconocimiento ES
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; let rec=null, restarting=false;
+  const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
   function startMic(){
-    if(!SR){ announce("Reconocimiento de voz no disponible."); state.listening=false; updateMicBtn(); return; }
-    if(!rec){ rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
-      rec.onresult=ev=>{ const last=ev.results[ev.results.length-1]; const text=last[0].transcript.trim().toLowerCase(); handleCmd(text); };
-      rec.onend=()=>{ if(state.listening) try{rec.start();}catch(_){} };
+    if(!SR){ announce("Reconocimiento de voz no disponible en este navegador."); state.listening=false; updateMicBtn(); return; }
+    if(!rec){
+      rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
+      rec.onresult=(ev)=>{ const last=ev.results[ev.results.length-1]; const raw=last[0].transcript||''; const text=norm(raw); handleCmd(text); };
+      rec.onerror=(e)=>{ announce(`Voz: ${e.error||'error'}. Intentando continuar…`); };
+      rec.onend=()=>{ if(state.listening && !restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch(_){} }, 300); } };
     }
     try{ rec.start(); }catch(_){}
   }
   function stopMic(){ if(rec) try{ rec.stop(); }catch(_){} }
   function updateMicBtn(){ els.toggleMic.textContent=state.listening?"🎤 Micro activo":"🎤 Micro"; els.toggleMic.setAttribute('aria-pressed', state.listening?'true':'false'); }
-  els.toggleMic.addEventListener('click', ()=>{ state.listening=!state.listening; if(state.listening) startMic(); else stopMic(); updateMicBtn(); announce(state.listening?"Micrófono activado.":"Micrófono desactivado."); });
+  els.toggleMic.addEventListener('click', ()=>{ state.listening=!state.listening; if(state.listening){ startMic(); announce('Micrófono activado. Di “siguiente”, “anterior”, “repetir”, “leer ingredientes” o “paso 2”.'); } else { stopMic(); announce('Micrófono desactivado.'); } updateMicBtn(); });
 
   function handleCmd(cmd){
-    const m=cmd.match(/paso\s+(\d+)/);
-    if(/(salir|parar|detener)/.test(cmd)) return closeGuided();
-    if(/(repetir|otra vez|de nuevo)/.test(cmd)) return repeatStep();
-    if(/(siguiente|continuar|próximo|proximo)/.test(cmd)) return nextStep();
-    if(/(anterior|atrás|atras|retroceder)/.test(cmd)) return prevStep();
-    if(/leer ingredientes?/.test(cmd)) return readIngredients();
-    if(m) return goToStep(Number(m[1])-1);
+    const m=cmd.match(/paso\s+(\d{1,2})/); const num=m?Number(m[1]):null;
+    if(/^salir$|^parar$|^detener$/.test(cmd)) return closeGuided();
+    if(/^repetir$|^otra vez$|^de nuevo$/.test(cmd)) return repeatStep();
+    if(/^siguiente$|^continuar$|^proximo$|^avanzar$|^adelante$/.test(cmd)) return nextStep();
+    if(/^anterior$|^atras$|^retroceder$/.test(cmd)) return prevStep();
+    if(/^leer ingredientes?$/.test(cmd)) return readIngredients();
+    if(num) return goToStep(num-1);
+    if(!state.current){ announce("Para usar comandos, abre “Cocina guiada”."); }
   }
 
   // ----- DETALLE DE RECETA -----
@@ -396,11 +393,18 @@
   }
   function closeDetail(){ els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex'); }
 
-  els.btnReadAll.addEventListener('click', ()=>{ if(state.current) readFullRecipe(state.current); });
-  els.btnGuided.addEventListener('click', ()=>{ if(state.current) openGuided(state.current); });
-  els.btnAddAll.addEventListener('click', ()=>{ if(state.current) addManyToShopping(state.current.ingredientes||[]); });
-  els.closeDetail.addEventListener('click', closeDetail);
-  els.detailModal.addEventListener('click', e=>{ if(e.target.id==='detailModal') closeDetail(); });
+  document.getElementById('btnReadAll').addEventListener('click', ()=>{ if(state.current) readFullRecipe(state.current); });
+  document.getElementById('btnGuided').addEventListener('click', ()=>{ if(state.current) openGuided(state.current); });
+  document.getElementById('btnAddAll').addEventListener('click', ()=>{ if(state.current) addManyToShopping(state.current.ingredientes||[]); });
+  document.getElementById('closeDetail').addEventListener('click', closeDetail);
+  document.getElementById('detailModal').addEventListener('click', e=>{ if(e.target.id==='detailModal') closeDetail(); });
+
+  function readFullRecipe(r){
+    const intro=`${r.titulo}. Categoría ${r.categoria}. Tiempo estimado ${r.tiempo}.`;
+    const ing=r.ingredientes?.length?"Ingredientes: "+r.ingredientes.join(", ")+".":"";
+    const pasos=r.pasos?.length?"Pasos: "+r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" "):"";
+    speak([intro,ing,pasos].filter(Boolean).join(" ")); announce(`Leyendo ${r.titulo}.`);
+  }
 
   // ----- GUIADO -----
   function openGuided(r){
@@ -433,13 +437,6 @@
     </div>`;
     p.style.display='block'; window.print(); setTimeout(()=>p.style.display='none',300);
   });
-
-  document.getElementById('nextStep').addEventListener('click', nextStep);
-  document.getElementById('prevStep').addEventListener('click', prevStep);
-  document.getElementById('repeatStep').addEventListener('click', repeatStep);
-  document.getElementById('stopReading').addEventListener('click', ()=>{ stopSpeak(); announce("Lectura detenida."); });
-  document.getElementById('closeGuided').addEventListener('click', closeGuided);
-  document.getElementById('guidedModal').addEventListener('click', (e)=>{ if(e.target.id==='guidedModal') closeGuided(); });
 
   // Delegación en tarjetas
   els.grid.addEventListener('click', e=>{
@@ -518,11 +515,10 @@
   // Inicializar lista
   renderShopping();
 
- // Registrar SW (ruta relativa para Netlify)
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./service-worker.js").catch(console.error);
-}
-
+  // Registrar SW (nombre correcto para Netlify)
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+  }
   </script>
 </body>
 </html>
