@@ -518,10 +518,11 @@
   // Inicializar lista
   renderShopping();
 
-  // Registrar SW (ruta relativa para Netlify)
-  if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("./sw.js").catch(console.error);
-  }
+ // Registrar SW (ruta relativa para Netlify)
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+}
+
   </script>
 </body>
 </html>
