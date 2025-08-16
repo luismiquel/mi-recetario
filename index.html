@@ -94,7 +94,7 @@
       <div class="card max-w-3xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="detailTitle" class="text-xl font-semibold">Detalle</h3>
-          <button id="closeDetail" class="btn btn-ghost">✕</button>
+          <button id="closeDetail" class="btn btn-ghost" onclick="closeDetail()">✕</button>
         </div>
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
@@ -120,7 +120,7 @@
       <div class="card max-w-2xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="guidedTitle" class="text-xl font-semibold">Cocina guiada</h3>
-          <button id="closeGuided" class="btn btn-ghost">✕</button>
+          <button id="closeGuided" class="btn btn-ghost" onclick="closeGuided()">✕</button>
         </div>
         <div class="p-4 space-y-4">
           <p class="text-sm text-stone-600 dark:text-stone-400">Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
@@ -449,7 +449,13 @@
     speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
     readCurrent();
   }
-  function closeGuided(){ stopSpeak(); $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; }
+  function closeGuided(){ 
+    stopSpeak(); 
+    $('guidedModal').classList.add('hidden'); 
+    $('guidedModal').classList.remove('flex'); 
+    els.status.textContent="Cocina guiada cerrada."; 
+    state.current = null; // Establece la receta actual a nulo al cerrar
+  }
   function readCurrent(){
     if(!ensureCurrent()) return;
     const pasos=state.current.pasos||[]; if(!pasos.length) return;
