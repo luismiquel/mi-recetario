@@ -1,5 +1,5 @@
 /* Service Worker – Recetario (Netlify) */
-const VERSION = "v4.0.0";
+const VERSION = "v4.1.0";
 const CACHE = `recetario-${VERSION}`;
 const BASE = new URL(self.location.href).pathname.replace(/[^/]+$/, "");
 const CORE = [ BASE, BASE + "index.html", BASE + "manifest.json" ];
@@ -15,7 +15,7 @@ self.addEventListener("install", (e) => {
 self.addEventListener("activate", (e) => {
   e.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map(k => k !== CACHE ? caches.delete(k) : null));
+    await Promise.all(keys.map(k => (k !== CACHE ? caches.delete(k) : null)));
     if (self.registration.navigationPreload) {
       await self.registration.navigationPreload.enable().catch(()=>{});
     }
@@ -25,7 +25,7 @@ self.addEventListener("activate", (e) => {
 
 // Navegación: network-first → fallback índice
 // Same-origin: stale-while-revalidate
-// Terceros: red, y si falla, caché si existe
+// Terceros: red → fallback caché si existe
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
