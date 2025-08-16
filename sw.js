@@ -1,5 +1,5 @@
 /* Service Worker – Recetario (Netlify) */
-const VERSION = "v4.1.0";
+const VERSION = "v4.1.1";
 const CACHE = `recetario-${VERSION}`;
 const BASE = new URL(self.location.href).pathname.replace(/[^/]+$/, "");
 const CORE = [ BASE, BASE + "index.html", BASE + "manifest.json" ];
@@ -23,14 +23,12 @@ self.addEventListener("activate", (e) => {
   })());
 });
 
-// Navegación: network-first → fallback índice
-// Same-origin: stale-while-revalidate
-// Terceros: red → fallback caché si existe
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
 
+  // Navegación → network-first con fallback al índice
   if (req.mode === "navigate") {
     e.respondWith((async () => {
       try {
@@ -45,6 +43,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
+  // Mismo origen → stale-while-revalidate
   if (url.origin === self.location.origin) {
     e.respondWith((async () => {
       const c = await caches.open(CACHE);
@@ -60,6 +59,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
+  // Terceros → red; si falla, cache si existiera
   e.respondWith((async () => {
     try { return await fetch(req); }
     catch {
