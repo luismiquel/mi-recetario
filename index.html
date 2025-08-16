@@ -101,9 +101,9 @@
             <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button id="btnReadAll" class="btn btn-ghost">🔈 Leer</button>
-              <button id="btnGuided" class="btn btn-primary">▶️ Guiada</button>
-              <button id="btnAddAll" class="btn btn-ghost">🧺 Añadir todo</button>
+              <button id="btnReadAll" class="btn btn-ghost" onclick="readRecipe(state.current)">🔈 Leer</button>
+              <button id="btnGuided" class="btn btn-primary" onclick="openGuided(state.current)">▶️ Guiada</button>
+              <button id="btnAddAll" class="btn btn-ghost" onclick="addMany(state.current.ingredientes||[])">🧺 Añadir todo</button>
             </div>
           </div>
           <div>
@@ -455,6 +455,9 @@
     $('guidedModal').classList.remove('flex'); 
     els.status.textContent="Cocina guiada cerrada."; 
     state.current = null; // Establece la receta actual a nulo al cerrar
+    stopMic(); // Asegura que el micrófono se apague
+    state.listening = false;
+    updateMic();
   }
   function readCurrent(){
     if(!ensureCurrent()) return;
