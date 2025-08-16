@@ -189,7 +189,6 @@
       "Fríe a 175–180 ºC hasta dorar; escurre."
     ];
     const M = new Map([
-      // Croquetas y otros clave
       ["croquetas de jamón", R(["Jamón serrano picado",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
       ["croquetas de pollo", R(["Pollo cocido desmigado",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
       ["croquetas de bacalao", R(["Bacalao desalado desmigado",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
@@ -209,7 +208,6 @@
         ["Seca aros de calamar y sala.","Pasa por harina y huevo batido.","Fríe a 175–180 ºC 1–2 min; escurre.","Sirve con limón."],
         "20–30 min"
       )],
-      // Gazpachos/paellas y clásicos
       ["gazpacho andaluz", R(["Tomate","Pepino","Pimiento verde","Ajo","Pan","Aceite","Vinagre","Sal"],
         ["Tritura y emulsiona con aceite.","Ajusta sal/vinagre y enfría."],"15–20 min + frío")],
       ["salmorejo cordobés", R(["Tomate","Pan","Ajo","Aceite","Vinagre","Sal","Jamón","Huevo cocido"],
@@ -244,7 +242,6 @@
         ["Dora ajo, añade harina ligera.","Vino+caldo, perejil y merluza 5–7 min.","Añade almejas hasta abrir."],"20–30 min")],
       ["pulpo a la gallega", R(["Pulpo cocido","Patata cocida","Aceite","Pimentón","Sal en escamas"],
         ["Corta pulpo y patata.","Aliña con aceite, pimentón y sal."],"10–15 min")],
-      // Postres clave
       ["tarta de queso al horno", R(["Queso crema","Huevos","Azúcar","Nata","Harina (opcional)"],
         ["Mezcla sin batir en exceso.","Hornea 180 ºC 40–50 min; centro tembloroso.","Enfría y sirve."],"60–90 min con enfriado")],
       ["flan casero", R(["Leche","Huevos","Azúcar","Vainilla","Azúcar para caramelo"],
@@ -256,7 +253,7 @@
       ["arroz con leche", R(["Arroz","Leche entera","Azúcar","Canela","Limón"],
         ["Cuece arroz en leche aromatizada a fuego bajo, removiendo.","Azucara al final; enfría."],"45–60 min")],
       ["tarta de santiago", R(["Almendra molida","Azúcar","Huevos","Limón","Canela"],
-        ["Mezcla todo y hornea 180 ºC 25–35 min.","Espolvorea azúcar glas con cruz."],"40–55 min")],
+        ["Mezcla todo y hornea 180 ºC 25–35 min.","Espolvorea azúcar glas con cruz."],"40–55 min"),
       ["brownie sencillo", R(["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (opcional)"],
         ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Hornea 170–180 ºC 20–25 min."],"35–45 min")]
     ]);
@@ -379,7 +376,7 @@
   $('closeDetail').onclick=closeDetail;
   document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
 
-  /* ===== Voz robusta ===== */
+  /* ===== Voz (TTS) ===== */
   let ttsVoice=null, voicesReady=false;
   function pickVoice(){
     const vs=speechSynthesis.getVoices();
@@ -445,12 +442,12 @@
     $('guidedRecipeTitle').textContent=r.titulo;
     $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
-    // Activa micrófono automáticamente si hay soporte
     if (SR) { state.listening = true; startMic(); updateMic(); }
     speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
     readCurrent();
   }
   function closeGuided(){ stopSpeak(); $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; }
+  document.getElementById('guidedModal').addEventListener('click',e=>{ if(e.target.id==='guidedModal') closeGuided(); });
   function readCurrent(){
     if(!ensureCurrent()) return;
     const pasos=state.current.pasos||[]; if(!pasos.length) return;
@@ -468,10 +465,7 @@
   $('btnReadAll').onclick=()=>{ if(state.current) readRecipe(state.current); };
   $('btnGuided').onclick=()=>{ if(state.current) openGuided(state.current); };
   $('btnAddAll').onclick=()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
-  $('closeDetail').onclick=closeDetail;
-  document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
 
-  // Delegación en tarjetas
   els.grid.addEventListener('click',e=>{
     const b=e.target.closest('button[data-a]'); if(!b) return;
     const r=state.list[Number(b.dataset.i)];
@@ -479,10 +473,9 @@
     if(b.dataset.a==='leer') readRecipe(r);
     if(b.dataset.a==='guiada') openGuided(r);
     if(b.dataset.a==='abrir') openDetail(r);
-    if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
+    if(b.dataset.a==='lista') addMany(r.ingredientes||[]); 
   });
 
-  // Atajos en modal
   document.addEventListener('keydown',e=>{
     if($('guidedModal').classList.contains('hidden')) return;
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
@@ -507,10 +500,10 @@
   $('shoppingList').addEventListener('change',e=>{ const c=e.target.closest('input[type="checkbox"][data-a="t"]'); if(!c) return; const it=shopping.find(x=>x.id===c.dataset.id); if(it){ it.done=c.checked; save(); } });
   $('shoppingList').addEventListener('input',e=>{ const t=e.target.closest('input[type="text"][data-a="e"]'); if(!t) return; const it=shopping.find(x=>x.id===t.dataset.id); if(it){ it.text=t.value; save(); } });
   $('clearChecked').onclick=()=>{ shopping=shopping.filter(i=>!i.done); save(); renderList(); };
-  $('exportList').onclick=()=>{ const data=shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'text/plain'})); a.download='lista_compra.txt'; a.click(); };
+  $('exportList').onclick=()=>{ const data=shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n'); const blob=new Blob([data],{type:'text/plain'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='lista_compra.txt'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); };
   $('printList').onclick=()=>{ const w=window.open('','_blank'); w.document.write(`<pre>${shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n')}</pre>`); w.document.close(); w.print(); setTimeout(()=>w.close(),300); };
 
-  // Reconocimiento de voz actualizado y robusto
+  // ===== Reconocimiento de voz actualizado y robusto =====
   const SR = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition) ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
   if(isIOS || !SR){
     $('toggleMic').disabled=true;
@@ -518,33 +511,51 @@
     $('readerStatus').textContent = isIOS ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones." : "Voz: reconocimiento no disponible en este navegador.";
   }
   let rec=null,restarting=false;
-  const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
+
+  // Normalización potente: minúsculas, sin acentos, sin signos, espacios colapsados
+  const norm = s => (s||"")
+    .toLowerCase()
+    .normalize('NFD').replace(/\p{Diacritic}/gu,'')
+    .replace(/[^\p{Letter}\p{Number}\s]/gu,'')
+    .replace(/\s+/g,' ')
+    .trim();
+
   function startMic(){
     if(!SR) return;
     if(!rec){
       rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
-      rec.onresult=(ev)=>{ const last=ev.results[ev.results.length-1][0].transcript||''; $('heardText').textContent=last; const t=norm(last);
-        const m=t.match(/paso\s+(\d{1,2})/); const num=m?Number(m[1]):null;
-        if(/^salir$|^parar$|^detener$/.test(t)) return closeGuided();
-        if(/^repetir$|^otra vez$|^de nuevo$/.test(t)) return repeatStep();
-        if(/^siguiente$|^continuar$|^proximo$|^adelante$|^avanzar$/.test(t)) return nextStep();
-        if(/^anterior$|^atras$|^retroceder$/.test(t)) return prevStep();
-        if(/^leer ingredientes?$/.test(t)) return readIngredients();
-        if(num) return goToStep(num-1);
+
+      // >>> BLOQUE onresult CORREGIDO (sinónimos + puntuación + "paso N")
+      rec.onresult=(ev)=>{
+        const last=(ev.results[ev.results.length-1][0].transcript||'');
+        $('heardText').textContent=last;
+
+        const t = norm(last);
+        const m = t.match(/\b(?:ir\s+al\s+)?paso\s+(\d{1,2})\b/);
+        const num = m ? Number(m[1]) : null;
+
+        if (/\b(salir|parar|detener|terminar)\b/.test(t)) { closeGuided(); return; }
+        if (/\b(repetir|otra vez|de nuevo|repite)\b/.test(t)) { repeatStep(); return; }
+        if (/\b(siguiente|continuar|proximo|adelante|avanzar|sigue)\b/.test(t)) { nextStep(); return; }
+        if (/\b(anterior|atras|retroceder|volver)\b/.test(t)) { prevStep(); return; }
+        if (/\b(leer\s+ingrediente[s]?|ingredientes)\b/.test(t)) { readIngredients(); return; }
+        if (num) { goToStep(num-1); return; }
+
         if(!state.current) $('readerStatus').textContent="Abre ‘Cocina guiada’ para usar comandos.";
       };
+
       rec.onerror=(e)=>{
         $('readerStatus').textContent=`Voz: ${e.error||'error'}`;
-        // Si hay un error, intentamos reiniciar el micrófono solo si está en estado de "escucha"
         if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) {
           try{ rec.stop(); }catch{}
           setTimeout(()=>{ try{rec.start();}catch{} }, 400);
         }
       };
+
       rec.onend=()=>{
         if(state.listening && !restarting){
           restarting=true;
-          rec.start();
+          try{ rec.start(); }catch{}
           setTimeout(()=>{restarting=false;},100);
         }
       };
