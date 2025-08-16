@@ -444,7 +444,7 @@
     $('guidedRecipeTitle').textContent=r.titulo;
     $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
-    // Activamos el micrófono de forma fiable
+    // Activa micrófono automáticamente si hay soporte
     if (SR) { 
       state.listening = true; 
       startMic(); 
