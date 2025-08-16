@@ -29,7 +29,7 @@
     .drawer.open{transform:translateX(0)}
     .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
     .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.5rem .75rem;background:#fff;color:#111;border-radius:.5rem;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-    #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-width:700px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
+    #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-w-700px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
     #ttsCaption.show{display:block}
     @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
   </style>
@@ -131,11 +131,11 @@
           <div class="flex items-center justify-between">
             <div class="text-xs text-stone-500" id="guidedProgress"></div>
             <div class="flex gap-2">
-              <button id="prevStep" class="btn btn-ghost">← Anterior</button>
-              <button id="repeatStep" class="btn btn-ghost">⟲ Repetir</button>
-              <button id="nextStep" class="btn btn-primary">Siguiente →</button>
-              <button id="stopReading" class="btn btn-ghost">■ Parar</button>
-              <button id="printRecipe" class="btn btn-ghost">🖨️ Imprimir</button>
+              <button id="prevStep" class="btn btn-ghost" onclick="prevStep()">← Anterior</button>
+              <button id="repeatStep" class="btn btn-ghost" onclick="repeatStep()">⟲ Repetir</button>
+              <button id="nextStep" class="btn btn-primary" onclick="nextStep()">Siguiente →</button>
+              <button id="stopReading" class="btn btn-ghost" onclick="stopSpeak()">■ Parar</button>
+              <button id="printRecipe" class="btn btn-ghost" onclick="window.print()">🖨️ Imprimir</button>
             </div>
           </div>
         </div>
@@ -146,16 +146,16 @@
       <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
         <div class="flex items-center gap-2">
-          <button id="exportList" class="btn btn-ghost">⬇️ Exportar</button>
-          <button id="printList" class="btn btn-ghost">🖨️</button>
-          <button id="clearChecked" class="btn btn-ghost">🗑️ Marcados</button>
-          <button id="closeShopping" class="btn btn-ghost">✕</button>
+          <button id="exportList" class="btn btn-ghost" onclick="exportList()">⬇️ Exportar</button>
+          <button id="printList" class="btn btn-ghost" onclick="printList()">🖨️</button>
+          <button id="clearChecked" class="btn btn-ghost" onclick="clearChecked()">🗑️ Marcados</button>
+          <button id="closeShopping" class="btn btn-ghost" onclick="closeDrawer()">✕</button>
         </div>
       </div>
       <div class="p-3">
         <div class="flex gap-2 mb-3">
           <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="Añadir artículo (ej. 1 kg tomates)" />
-          <button id="addItem" class="btn btn-primary">Añadir</button>
+          <button id="addItem" class="btn btn-primary" onclick="addItem($('newItem').value)">Añadir</button>
         </div>
         <ul id="shoppingList" class="space-y-2"></ul>
         <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista está vacía.</p>
