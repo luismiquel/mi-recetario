@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Recetario Español – 160 recetas</title>
   <meta name="theme-color" content="#78350f" />
-  <link rel="manifest" href="./manifest.json" />
+  <link relifest" href="./manifest.json" />
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -445,7 +445,11 @@
     $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
     // Activa micrófono automáticamente si hay soporte
-    if (SR) { state.listening = true; startMic(); updateMic(); }
+    if (SR) { 
+      state.listening = true; 
+      startMic(); 
+      updateMic(); 
+    }
     speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
     readCurrent();
   }
@@ -456,6 +460,7 @@
     els.status.textContent="Cocina guiada cerrada."; 
     state.current = null; // Establece la receta actual a nulo al cerrar
     if (rec) {
+      rec.onend = null; // Evita el reinicio automático
       rec.stop();
       state.listening = false;
       updateMic();
