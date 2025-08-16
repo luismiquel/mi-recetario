@@ -57,7 +57,7 @@
         <div class="flex-1">
           <label for="search" class="block text-sm font-medium mb-1">Buscar</label>
           <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
-                 class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
+                class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
         </div>
         <div class="flex items-center gap-2 tabs" role="tablist" aria-label="Categorías">
           <button class="tab tab-active" data-cat="Todas">Todas</button>
@@ -86,12 +86,10 @@
     </section>
 
     <main id="main">
-      <!-- 2 columnas en móvil, 3 en escritorio -->
       <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
 
-    <!-- Modal Detalle -->
     <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true">
       <div class="card max-w-3xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
@@ -118,7 +116,6 @@
       </div>
     </div>
 
-    <!-- Modal Guiada -->
     <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true">
       <div class="card max-w-2xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
@@ -145,7 +142,6 @@
       </div>
     </div>
 
-    <!-- Drawer Lista compra -->
     <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra">
       <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
@@ -167,7 +163,6 @@
     </aside>
   </div>
 
-  <!-- Subtítulos de voz -->
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
@@ -390,8 +385,8 @@
     const vs=speechSynthesis.getVoices();
     voicesReady = vs && vs.length>0;
     ttsVoice = vs.find(v=>/Spanish.*(Spain)|es[-_]ES/i.test(v.name+v.lang))
-             || vs.find(v=>/Spanish|es[-_]/i.test(v.name+v.lang))
-             || vs[0] || null;
+               || vs.find(v=>/Spanish|es[-_]/i.test(v.name+v.lang))
+               || vs[0] || null;
   }
   if('speechSynthesis'in window){ try{pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}catch{} }
   els.voiceRate.onchange=(e)=>{ state.rate = Number(e.target.value)||0.9; };
@@ -476,9 +471,6 @@
   $('closeDetail').onclick=closeDetail;
   document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
 
-  $('nextStep').onclick=nextStep; $('prevStep').onclick=prevStep; $('repeatStep').onclick=repeatStep; $('stopReading').onclick=()=>{ stopSpeak(); }; $('closeGuided').onclick=closeGuided;
-  $('printRecipe').onclick=()=>{ window.print(); };
-
   // Delegación en tarjetas
   els.grid.addEventListener('click',e=>{
     const b=e.target.closest('button[data-a]'); if(!b) return;
@@ -541,8 +533,21 @@
         if(num) return goToStep(num-1);
         if(!state.current) $('readerStatus').textContent="Abre ‘Cocina guiada’ para usar comandos.";
       };
-      rec.onerror=(e)=>{ $('readerStatus').textContent=`Voz: ${e.error||'error'}`; if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) { try{ rec.stop(); }catch{} setTimeout(()=>{ try{rec.start();}catch{} }, 400); } };
-      rec.onend=()=>{ if(state.listening && !restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400); } };
+      rec.onerror=(e)=>{
+        $('readerStatus').textContent=`Voz: ${e.error||'error'}`;
+        // Si hay un error, intentamos reiniciar el micrófono solo si está en estado de "escucha"
+        if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) {
+          try{ rec.stop(); }catch{}
+          setTimeout(()=>{ try{rec.start();}catch{} }, 400);
+        }
+      };
+      rec.onend=()=>{
+        if(state.listening && !restarting){
+          restarting=true;
+          rec.start();
+          setTimeout(()=>{restarting=false;},100);
+        }
+      };
     }
     try{ rec.start(); }catch{} $('readerStatus').textContent="Micrófono activo.";
   }
