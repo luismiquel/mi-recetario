@@ -444,7 +444,7 @@
     $('guidedRecipeTitle').textContent=r.titulo;
     $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
-    // Activamos el micrófono de forma fiable
+    // Activa micrófono automáticamente si hay soporte
     if (SR) { state.listening = true; startMic(); updateMic(); }
     speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
     readCurrent();
@@ -455,9 +455,11 @@
     $('guidedModal').classList.remove('flex'); 
     els.status.textContent="Cocina guiada cerrada."; 
     state.current = null; // Establece la receta actual a nulo al cerrar
-    stopMic(); // Asegura que el micrófono se apague
-    state.listening = false;
-    updateMic();
+    if (rec) {
+      rec.stop();
+      state.listening = false;
+      updateMic();
+    }
   }
   function readCurrent(){
     if(!ensureCurrent()) return;
@@ -529,6 +531,9 @@
   const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
   function startMic(){
     if(!SR) return;
+    if(rec && state.listening) {
+      rec.stop(); // Si ya está activo, lo paramos para un reinicio limpio
+    }
     if(!rec){
       rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
       rec.onresult=(ev)=>{ const last=ev.results[ev.results.length-1][0].transcript||''; $('heardText').textContent=last; const t=norm(last);
@@ -558,7 +563,13 @@
     }
     try{ rec.start(); }catch{} $('readerStatus').textContent="Micrófono activo.";
   }
-  function stopMic(){ if(rec){ try{rec.stop();}catch{} } $('readerStatus').textContent="Micrófono desactivado."; }
+  function stopMic(){ 
+    if(rec){
+      rec.onend = null; // Evita el reinicio automático al parar manualmente
+      rec.stop();
+    }
+    $('readerStatus').textContent="Micrófono desactivado."; 
+  }
   function updateMic(){ $('toggleMic').textContent=state.listening?"🎤 Micro activo":"🎤 Micro"; }
   $('toggleMic').onclick=()=>{ if(!SR) return; state.listening=!state.listening; state.listening?startMic():stopMic(); updateMic(); };
 
