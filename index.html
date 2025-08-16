@@ -86,8 +86,8 @@
     </section>
 
     <main id="main">
-      <!-- 2 columnas en móvil (salvo <400px), 3 en escritorio -->
-      <div id="recipesGrid" class="grid grid-cols-2 max-[400px]:grid-cols-1 lg:grid-cols-3 gap-4"></div>
+      <!-- 2 columnas en móvil, 3 en escritorio -->
+      <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
 
@@ -384,7 +384,7 @@
   $('closeDetail').onclick=closeDetail;
   document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
 
-  /* ===== Voz robusta móvil ===== */
+  /* ===== Voz robusta ===== */
   let ttsVoice=null, voicesReady=false;
   function pickVoice(){
     const vs=speechSynthesis.getVoices();
@@ -396,7 +396,6 @@
   if('speechSynthesis'in window){ try{pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}catch{} }
   els.voiceRate.onchange=(e)=>{ state.rate = Number(e.target.value)||0.9; };
 
-  // Desbloqueo móvil TTS (autoplay)
   function unlockTTSOnce(){
     if (!('speechSynthesis' in window) || unlockTTSOnce.done) return;
     try{ speechSynthesis.cancel(); speechSynthesis.resume(); }catch{}
@@ -408,7 +407,6 @@
   document.addEventListener('touchend', unlockTTSOnce, {passive:true});
   document.addEventListener('click', unlockTTSOnce, {once:true});
 
-  // Hablar seguro (cancel + pausa corta + speak)
   let speakLock=false;
   function stopSpeak(){ try{ speechSynthesis.cancel(); }catch{} }
   const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -422,8 +420,9 @@
     if(ttsVoice) u.voice=ttsVoice;
     u.lang=(ttsVoice&&ttsVoice.lang)||'es-ES';
     u.rate=state.rate; u.pitch=1.0;
-    if(els.caption){ u.onstart=()=>{ els.caption.textContent=text; els.caption.classList.add('show'); };
-                     u.onend  =()=>{ els.caption.classList.remove('show'); els.caption.textContent=''; }; }
+    const cap=document.getElementById('ttsCaption');
+    if(cap){ u.onstart=()=>{ cap.textContent=text; cap.classList.add('show'); };
+             u.onend  =()=>{ cap.classList.remove('show'); cap.textContent=''; }; }
     const done=new Promise(res=>{ u.onend=()=>{ speakLock=false; res(); }; u.onerror=()=>{ speakLock=false; res(); }; });
     try{ speechSynthesis.speak(u); }catch{ speakLock=false; }
     await done;
@@ -437,7 +436,7 @@
     els.status.textContent=`Leyendo ${r.titulo}.`;
   }
 
-  /* ===== Guiado robusto (botón y voz) ===== */
+  /* ===== Guiado + voz ===== */
   function ensureCurrent(){
     if(!state.current){
       const primera=(state.list && state.list[0])||null;
@@ -451,6 +450,8 @@
     $('guidedRecipeTitle').textContent=r.titulo;
     $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
+    // Activa micrófono automáticamente si hay soporte
+    if (SR) { state.listening = true; startMic(); updateMic(); }
     speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
     readCurrent();
   }
@@ -517,7 +518,7 @@
   $('exportList').onclick=()=>{ const data=shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'text/plain'})); a.download='lista_compra.txt'; a.click(); };
   $('printList').onclick=()=>{ const w=window.open('','_blank'); w.document.write(`<pre>${shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n')}</pre>`); w.document.close(); w.print(); setTimeout(()=>w.close(),300); };
 
-  // Reconocimiento de voz (Android/Chrome/Edge). En iPhone se desactiva con aviso.
+  // Reconocimiento de voz actualizado y robusto
   const SR = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition) ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
   if(isIOS || !SR){
     $('toggleMic').disabled=true;
@@ -540,17 +541,16 @@
         if(num) return goToStep(num-1);
         if(!state.current) $('readerStatus').textContent="Abre ‘Cocina guiada’ para usar comandos.";
       };
-      rec.onerror=(e)=>{ $('readerStatus').textContent=`Voz: ${e.error||'error'}`; };
+      rec.onerror=(e)=>{ $('readerStatus').textContent=`Voz: ${e.error||'error'}`; if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) { try{ rec.stop(); }catch{} setTimeout(()=>{ try{rec.start();}catch{} }, 400); } };
       rec.onend=()=>{ if(state.listening && !restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400); } };
     }
-    try{ rec.start(); }catch{}
-    $('readerStatus').textContent="Micrófono activo.";
+    try{ rec.start(); }catch{} $('readerStatus').textContent="Micrófono activo.";
   }
   function stopMic(){ if(rec){ try{rec.stop();}catch{} } $('readerStatus').textContent="Micrófono desactivado."; }
   function updateMic(){ $('toggleMic').textContent=state.listening?"🎤 Micro activo":"🎤 Micro"; }
   $('toggleMic').onclick=()=>{ if(!SR) return; state.listening=!state.listening; state.listening?startMic():stopMic(); updateMic(); };
 
-  // Registrar SW (Netlify) – nombre: sw.js
+  // Registrar Service Worker (Netlify)
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./sw.js").catch(console.error);
   }
