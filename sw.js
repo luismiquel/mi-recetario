@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v1";
+﻿const CACHE = "recetario-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -28,7 +28,7 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
-  // Cache-first para recursos del propio origen
+  // Cache-first para recursos de tu propio origen (GitHub Pages)
   if (url.origin === location.origin) {
     e.respondWith(
       caches.match(e.request).then(res => res || fetch(e.request))

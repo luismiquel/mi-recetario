@@ -36,6 +36,32 @@
   <script>
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(console.error); }
   </script>
+<script>
+  // Registrar SW
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(console.error);
+  }
+
+  // Botón instalar PWA
+  let deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.createElement('button');
+    btn.textContent = '⬇️ Instalar app';
+    btn.className = 'btn btn-primary fixed bottom-4 right-4';
+    btn.style.zIndex = 9999;
+    btn.onclick = async () => {
+      btn.disabled = true;
+      const p = deferredPrompt; deferredPrompt = null;
+      if (!p) return;
+      p.prompt();
+      await p.userChoice;
+      btn.remove();
+    };
+    document.body.appendChild(btn);
+  });
+</script>
 </body>
 </html>
 
