@@ -2,6 +2,7 @@
   "name": "Mi Recetario",
   "short_name": "Recetario",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#78350f",

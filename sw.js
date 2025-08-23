@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v3";
+﻿const CACHE = "recetario-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -8,7 +8,11 @@ const ASSETS = [
   "./icons/icon-16.png",
   "./icons/icon-32.png",
   "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icons/icon-512.png",
+  "./img/aperitivo.svg",
+  "./img/primero.svg",
+  "./img/segundo.svg",
+  "./img/postre.svg"
 ];
 
 self.addEventListener("install", e => {
@@ -27,12 +31,36 @@ self.addEventListener("activate", e => {
 });
 
 self.addEventListener("fetch", e => {
-  const url = new URL(e.request.url);
-  // Cache-first para recursos de tu propio origen (GitHub Pages)
-  if (url.origin === location.origin) {
-    e.respondWith(
-      caches.match(e.request).then(res => res || fetch(e.request))
-    );
-  }
-});
+  const req = e.request;
+  const url = new URL(req.url);
 
+  // Solo gestionamos mismo origen
+  if (url.origin !== location.origin) return;
+
+  // Navegaciones (HTML): fallback a index si offline
+  if (req.mode === "navigate") {
+    e.respondWith(
+      fetch(req).catch(() => caches.match("./index.html"))
+    );
+    return;
+  }
+
+  // Imágenes locales: stale-while-revalidate
+  if (req.destination === "image") {
+    e.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      const cached = await cache.match(req);
+      const fetchPromise = fetch(req).then(res => {
+        cache.put(req, res.clone());
+        return res;
+      }).catch(() => cached);
+      return cached || fetchPromise;
+    })());
+    return;
+  }
+
+  // Resto: cache-first
+  e.respondWith(
+    caches.match(req).then(res => res || fetch(req))
+  );
+});
