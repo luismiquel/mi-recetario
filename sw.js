@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v5";
+﻿const CACHE = "recetario-v6";
 const ASSETS = [
   "./",
   "./index.html",
@@ -34,33 +34,26 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   const url = new URL(req.url);
 
-  // Solo gestionamos mismo origen
   if (url.origin !== location.origin) return;
 
-  // Navegaciones (HTML): fallback a index si offline
+  // Navegaciones: si falla red, sirve index (SPA fallback)
   if (req.mode === "navigate") {
-    e.respondWith(
-      fetch(req).catch(() => caches.match("./index.html"))
-    );
+    e.respondWith(fetch(req).catch(() => caches.match("./index.html")));
     return;
   }
 
-  // Imágenes locales: stale-while-revalidate
+  // Imágenes: stale-while-revalidate
   if (req.destination === "image") {
     e.respondWith((async () => {
       const cache = await caches.open(CACHE);
       const cached = await cache.match(req);
-      const fetchPromise = fetch(req).then(res => {
-        cache.put(req, res.clone());
-        return res;
-      }).catch(() => cached);
+      const fetchPromise = fetch(req).then(res => { cache.put(req, res.clone()); return res; })
+                                    .catch(() => cached);
       return cached || fetchPromise;
     })());
     return;
   }
 
   // Resto: cache-first
-  e.respondWith(
-    caches.match(req).then(res => res || fetch(req))
-  );
+  e.respondWith(caches.match(req).then(res => res || fetch(req)));
 });
