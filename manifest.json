@@ -1,0 +1,9 @@
+{
+  "name": "Mi Recetario",
+  "short_name": "Recetario",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#78350f",
+  "icons": []
+}
