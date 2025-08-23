@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v11";
+const CACHE = "recetario-v11";
 const ASSETS = [
   "./",
   "./index.html",
