@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v10";
+﻿const CACHE = "recetario-v11";
 const ASSETS = [
   "./",
   "./index.html",
@@ -57,5 +57,6 @@ self.addEventListener("fetch", e => {
   // Resto: cache-first
   e.respondWith(caches.match(req).then(res => res || fetch(req)));
 });
+
 
 
