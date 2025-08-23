@@ -1,0 +1,23 @@
+{
+  "name": "recetario-nuevo",
+  "version": "1.0.0",
+  "description": "- Producción: https://luismiquel.github.io/mi-recetario/ - PWA con manifest, service worker y modo offline. - Servir en local: `npx serve .` y abrir http://localhost:3000",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luismiquel/mi-recetario.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luismiquel/mi-recetario/issues"
+  },
+  "homepage": "https://github.com/luismiquel/mi-recetario#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.10"
+  }
+}

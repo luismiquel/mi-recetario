@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v6";
+﻿const CACHE = "recetario-v10";
 const ASSETS = [
   "./",
   "./index.html",
@@ -13,7 +13,7 @@ const ASSETS = [
   "./img/primero.svg",
   "./img/segundo.svg",
   "./img/postre.svg"
-];
+, "./styles.css"];
 
 self.addEventListener("install", e => {
   e.waitUntil(
@@ -57,3 +57,5 @@ self.addEventListener("fetch", e => {
   // Resto: cache-first
   e.respondWith(caches.match(req).then(res => res || fetch(req)));
 });
+
+

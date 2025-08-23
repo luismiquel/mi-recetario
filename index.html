@@ -15,8 +15,6 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class'};</script>
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
@@ -39,7 +37,7 @@
     #ttsCaption.show{display:block}
     @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
   </style>
-</head>
+<link rel="stylesheet" href="./styles.css"></head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
@@ -106,7 +104,7 @@
         </div>
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
-            <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
+            <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="eager" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
               <button id="btnReadAll" class="btn btn-ghost">ðŸ”ˆ Leer</button>
@@ -365,7 +363,7 @@
 
   function card(r,i){
     return `<article class="card">
-      <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
+      <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="eager">
       <div class="p-3 space-y-2">
         <h3 class="text-lg font-semibold">${r.titulo}</h3>
         <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} Â· ${r.tiempo}</p>
@@ -566,6 +564,10 @@
   </script>
 </body>
 </html>
+
+
+
+
 
 
 
