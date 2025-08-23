@@ -1,4 +1,4 @@
-﻿const CACHE = "recetario-v4";
+﻿const CACHE = "recetario-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -35,3 +35,4 @@ self.addEventListener("fetch", e => {
     );
   }
 });
+
