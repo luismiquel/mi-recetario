@@ -14,6 +14,12 @@
     .card { border-radius: 14px; overflow:hidden; box-shadow: 0 4px 10px rgba(0,0,0,.08); background:#fff; }
     .card img { width:100%; height:150px; object-fit:cover; }
   </style>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="./icons/icon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="./icons/icon-16.png" sizes="16x16" type="image/png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="./icons/icon-512.png" />
 </head>
 <body class="max-w-6xl mx-auto p-4">
   <header class="text-center mb-6">
@@ -27,6 +33,9 @@
 
   <!-- Tu app: importa recipes.js dentro de app.js -->
   <script type="module" src="./app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js').catch(console.error); }
+  </script>
 </body>
 </html>
 

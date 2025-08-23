@@ -1,6 +1,4 @@
-# Sustituye COMPLETO el manifest por este contenido
-@'
-{
+﻿{
   "name": "Mi Recetario",
   "short_name": "Recetario",
   "start_url": "./",
@@ -15,4 +13,3 @@
     { "src": "favicon.svg",        "sizes": "any",     "type": "image/svg+xml", "purpose": "any maskable" }
   ]
 }
-'@ | Set-Content -Encoding UTF8 .\manifest.json
