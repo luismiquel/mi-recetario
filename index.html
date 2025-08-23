@@ -62,6 +62,21 @@
     document.body.appendChild(btn);
   });
 </script>
+  <button id="installBtn" class="btn btn-primary no-print" style="position:fixed;right:1rem;bottom:1rem;z-index:70;">📲 Instalar</button>
+  <script>
+    let defferedPrompt=null;
+    const btn=document.getElementById('installBtn');
+    btn.style.display='none';
+    window.addEventListener('beforeinstallprompt', (e)=>{
+      e.preventDefault(); defferedPrompt=e; btn.style.display='inline-flex';
+    });
+    btn.addEventListener('click', async ()=>{
+      if(!defferedPrompt) return;
+      defferedPrompt.prompt();
+      await defferedPrompt.userChoice;
+      defferedPrompt=null; btn.style.display='none';
+    });
+  </script>
 </body>
 </html>
 
