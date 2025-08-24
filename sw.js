@@ -1,9 +1,8 @@
-﻿const CACHE = "recetario-v300";
+const CACHE = "recetario-v400";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./favicon.svg",
   "./favicon.ico",
   "./icons/icon-16.png",
   "./icons/icon-32.png",
@@ -13,7 +12,7 @@ const ASSETS = [
   "./img/primero.svg",
   "./img/segundo.svg",
   "./img/postre.svg"
-, "./styles.css"];
+];
 
 self.addEventListener("install", e => {
   e.waitUntil(
@@ -34,38 +33,31 @@ self.addEventListener("fetch", e => {
   const req = e.request;
   const url = new URL(req.url);
 
+  // Solo mismo origen
   if (url.origin !== location.origin) return;
 
-  // Navegaciones: si falla red, sirve index (SPA fallback)
+  // Navegaciones: fallback a index si offline
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).catch(() => caches.match("./index.html")));
     return;
   }
 
-  // ImÃƒÂ¡genes: stale-while-revalidate
+  // Imágenes locales: stale-while-revalidate
   if (req.destination === "image") {
     e.respondWith((async () => {
       const cache = await caches.open(CACHE);
       const cached = await cache.match(req);
-      const fetchPromise = fetch(req).then(res => { cache.put(req, res.clone()); return res; })
-                                    .catch(() => cached);
+      const fetchPromise = fetch(req).then(res => {
+        cache.put(req, res.clone());
+        return res;
+      }).catch(() => cached);
       return cached || fetchPromise;
     })());
     return;
   }
 
   // Resto: cache-first
-  e.respondWith(caches.match(req).then(res => res || fetch(req)));
+  e.respondWith(
+    caches.match(req).then(res => res || fetch(req))
+  );
 });
-
-
-
-
-
-
-
-
-
-
-
-
