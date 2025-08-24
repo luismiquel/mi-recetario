@@ -1,4 +1,4 @@
-const CACHE = "recetario-v140";
+﻿const CACHE = "recetario-v150";
 const ASSETS = [
   "./",
   "./index.html",
@@ -42,7 +42,7 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // ImÃ¡genes: stale-while-revalidate
+  // ImÃƒÂ¡genes: stale-while-revalidate
   if (req.destination === "image") {
     e.respondWith((async () => {
       const cache = await caches.open(CACHE);
@@ -57,6 +57,7 @@ self.addEventListener("fetch", e => {
   // Resto: cache-first
   e.respondWith(caches.match(req).then(res => res || fetch(req)));
 });
+
 
 
 
