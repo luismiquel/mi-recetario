@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Recetario EspaÃƒÂ±ol Ã¢â‚¬â€œ 160 recetas</title>
+  <title>Recetario EspaÃƒÆ’Ã‚Â±ol ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ 160 recetas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" rel="stylesheet"><meta name="description" content="Recetario espaÃ±ol con 160 recetas: aperitivos, primeros, segundos y postres. BÃºsqueda, lectura guiada por voz y lista de la compra.">
-<meta property="og:title" content="Recetario EspaÃ±ol â€“ 160 recetas">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" rel="stylesheet"><meta name="description" content="Recetario espaÃƒÂ±ol con 160 recetas: aperitivos, primeros, segundos y postres. BÃƒÂºsqueda, lectura guiada por voz y lista de la compra.">
+<meta property="og:title" content="Recetario EspaÃƒÂ±ol Ã¢â‚¬â€œ 160 recetas">
 <meta property="og:description" content="Busca, cocina guiado por voz y genera tu lista de la compra.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://luismiquel.github.io/mi-recetario/">
@@ -47,31 +47,31 @@
     <header class="flex items-center justify-between gap-3 mb-4">
   <meta charset="UTF-8" />
       <div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold">Recetario EspaÃƒÂ±ol Ã¢â‚¬â€œ 160 recetas</h1>
-        <p class="text-sm text-stone-600 dark:text-stone-400">Voz clara Ã‚Â· Contraste Ã‚Â· Letra grande Ã‚Â· Lista de compra.</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold">Recetario EspaÃƒÆ’Ã‚Â±ol ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“ 160 recetas</h1>
+        <p class="text-sm text-stone-600 dark:text-stone-400">Voz clara Ãƒâ€šÃ‚Â· Contraste Ãƒâ€šÃ‚Â· Letra grande Ãƒâ€šÃ‚Â· Lista de compra.</p>
       </div>
       <div class="flex items-center gap-2">
-        <button id="toggleTheme" class="btn btn-ghost" title="Tema claro/oscuro">Ã°Å¸Å’â„¢/Ã¢Ëœâ‚¬Ã¯Â¸Â</button>
-        <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste">Ã°Å¸Å’â€œ</button>
-        <button id="fontMinus" class="btn btn-ghost" title="Reducir letra">AÃ¢Ë†â€™</button>
-        <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra">A+</button>
-        <button id="openShopping" class="btn btn-ghost" title="Lista de la compra">Ã°Å¸Â§Âº</button>
+        <button id="toggleTheme" class="btn btn-ghost" title="Tema claro/oscuro" aria-label="Tema claro/oscuro">ÃƒÂ°Ã…Â¸Ã…â€™Ã¢â€žÂ¢/ÃƒÂ¢Ã‹Å“Ã¢â€šÂ¬ÃƒÂ¯Ã‚Â¸Ã‚Â</button>
+        <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste" aria-label="Alto contraste">ÃƒÂ°Ã…Â¸Ã…â€™Ã¢â‚¬Å“</button>
+        <button id="fontMinus" class="btn btn-ghost" title="Reducir letra" aria-label="Reducir tamaño de letra">AÃƒÂ¢Ã‹â€ Ã¢â‚¬â„¢</button>
+        <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra" aria-label="Aumentar tamaño de letra">A+</button>
+        <button id="openShopping" class="btn btn-ghost" title="Lista de la compra" aria-label="Abrir lista de la compra">ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Âº</button>
       </div>
     </header>
 
-    <section class="card p-4 mb-4" aria-label="BÃƒÂºsqueda y filtros">
+    <section class="card p-4 mb-4" aria-label="BÃƒÆ’Ã‚Âºsqueda y filtros">
       <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
         <div class="flex-1">
           <label for="search" class="block text-sm font-medium mb-1">Buscar</label>
-          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingredienteÃ¢â‚¬Â¦ (Ctrl+/)"
+          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingredienteÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ (Ctrl+/)"
                  class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
         </div>
-        <div class="flex items-center gap-2 tabs" role="tablist" aria-label="CategorÃƒÂ­as">
-          <button class="tab tab-active" data-cat="Todas">Todas</button>
-          <button class="tab" data-cat="Aperitivo">Aperitivos</button>
-          <button class="tab" data-cat="Primero">Primeros</button>
-          <button class="tab" data-cat="Segundo">Segundos</button>
-          <button class="tab" data-cat="Postre">Postres</button>
+        <div class="flex items-center gap-2 tabs" role="tablist" aria-label="CategorÃƒÆ’Ã‚Â­as">
+          <button class="tab tab-active" data-cat="Todas" role="tab" aria-selected="true" tabindex="0" role="tab" aria-selected="false" tabindex="-1">Todas</button>
+          <button class="tab" data-cat="Aperitivo" role="tab" aria-selected="false" tabindex="-1">Aperitivos</button>
+          <button class="tab" data-cat="Primero" role="tab" aria-selected="false" tabindex="-1">Primeros</button>
+          <button class="tab" data-cat="Segundo" role="tab" aria-selected="false" tabindex="-1">Segundos</button>
+          <button class="tab" data-cat="Postre" role="tab" aria-selected="false" tabindex="-1">Postres</button>
         </div>
         <div class="flex items-end gap-2">
           <label class="text-sm">Voz:
@@ -81,11 +81,11 @@
               <option value="1.0">Normal</option>
             </select>
           </label>
-          <button id="toggleMic" class="btn btn-primary" title="Activar micrÃƒÂ³fono">Ã°Å¸Å½Â¤ Micro</button>
+          <button id="toggleMic" class="btn btn-primary" title="Activar micrÃƒÆ’Ã‚Â³fono">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¤ Micro</button>
         </div>
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
-      <div id="heard" class="text-xs mt-1 text-stone-500">Ã°Å¸Å½Â§ OÃƒÂ­do: <span id="heardText">Ã¢â‚¬â€</span></div>
+      <div id="heard" class="text-xs mt-1 text-stone-500">ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â§ OÃƒÆ’Ã‚Â­do: <span id="heardText">ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â</span></div>
     </section>
 
     <section class="mb-2 text-sm text-stone-600 dark:text-stone-400">
@@ -93,7 +93,7 @@
     </section>
 
     <main id="main">
-      <!-- 2 columnas en mÃƒÂ³vil, 3 en escritorio -->
+      <!-- 2 columnas en mÃƒÆ’Ã‚Â³vil, 3 en escritorio -->
       <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
@@ -103,16 +103,16 @@
       <div class="card max-w-3xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="detailTitle" class="text-xl font-semibold">Detalle</h3>
-          <button id="closeDetail" class="btn btn-ghost">Ã¢Å“â€¢</button>
+          <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button>
         </div>
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
             <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="eager" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button id="btnReadAll" class="btn btn-ghost">Ã°Å¸â€Ë† Leer</button>
-              <button id="btnGuided" class="btn btn-primary">Ã¢â€“Â¶Ã¯Â¸Â Guiada</button>
-              <button id="btnAddAll" class="btn btn-ghost">Ã°Å¸Â§Âº AÃƒÂ±adir todo</button>
+              <button id="btnReadAll" class="btn btn-ghost">ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‹â€  Leer</button>
+              <button id="btnGuided" class="btn btn-primary">ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â¶ÃƒÂ¯Ã‚Â¸Ã‚Â Guiada</button>
+              <button id="btnAddAll" class="btn btn-ghost">ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Âº AÃƒÆ’Ã‚Â±adir todo</button>
             </div>
           </div>
           <div>
@@ -130,10 +130,10 @@
       <div class="card max-w-2xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="guidedTitle" class="text-xl font-semibold">Cocina guiada</h3>
-          <button id="closeGuided" class="btn btn-ghost">Ã¢Å“â€¢</button>
+          <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button>
         </div>
         <div class="p-4 space-y-4">
-          <p class="text-sm text-stone-600 dark:text-stone-400">Di: Ã¢â‚¬Å“siguienteÃ¢â‚¬Â, Ã¢â‚¬Å“anteriorÃ¢â‚¬Â, Ã¢â‚¬Å“repetirÃ¢â‚¬Â, Ã¢â‚¬Å“leer ingredientesÃ¢â‚¬Â, Ã¢â‚¬Å“paso 2Ã¢â‚¬Â, Ã¢â‚¬Å“salirÃ¢â‚¬Â.</p>
+          <p class="text-sm text-stone-600 dark:text-stone-400">Di: ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œsiguienteÃƒÂ¢Ã¢â€šÂ¬Ã‚Â, ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œanteriorÃƒÂ¢Ã¢â€šÂ¬Ã‚Â, ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œrepetirÃƒÂ¢Ã¢â€šÂ¬Ã‚Â, ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œleer ingredientesÃƒÂ¢Ã¢â€šÂ¬Ã‚Â, ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œpaso 2ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â, ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œsalirÃƒÂ¢Ã¢â€šÂ¬Ã‚Â.</p>
           <div class="bg-stone-50 dark:bg-stone-900 rounded-xl p-4">
             <h4 id="guidedRecipeTitle" class="text-lg font-semibold mb-2"></h4>
             <ol id="guidedSteps" class="list-decimal pl-5 space-y-2"></ol>
@@ -141,11 +141,11 @@
           <div class="flex items-center justify-between">
             <div class="text-xs text-stone-500" id="guidedProgress"></div>
             <div class="flex gap-2">
-              <button id="prevStep" class="btn btn-ghost">Ã¢â€ Â Anterior</button>
-              <button id="repeatStep" class="btn btn-ghost">Ã¢Å¸Â² Repetir</button>
-              <button id="nextStep" class="btn btn-primary">Siguiente Ã¢â€ â€™</button>
-              <button id="stopReading" class="btn btn-ghost">Ã¢â€“Â  Parar</button>
-              <button id="printRecipe" class="btn btn-ghost">Ã°Å¸â€“Â¨Ã¯Â¸Â Imprimir</button>
+              <button id="prevStep" class="btn btn-ghost">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Anterior</button>
+              <button id="repeatStep" class="btn btn-ghost">ÃƒÂ¢Ã…Â¸Ã‚Â² Repetir</button>
+              <button id="nextStep" class="btn btn-primary">Siguiente ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢</button>
+              <button id="stopReading" class="btn btn-ghost">ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â  Parar</button>
+              <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta">ÃƒÂ°Ã…Â¸Ã¢â‚¬â€œÃ‚Â¨ÃƒÂ¯Ã‚Â¸Ã‚Â Imprimir</button>
             </div>
           </div>
         </div>
@@ -157,33 +157,33 @@
       <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
         <div class="flex items-center gap-2">
-          <button id="exportList" class="btn btn-ghost">Ã¢Â¬â€¡Ã¯Â¸Â Exportar</button>
-          <button id="printList" class="btn btn-ghost">Ã°Å¸â€“Â¨Ã¯Â¸Â</button>
-          <button id="clearChecked" class="btn btn-ghost">Ã°Å¸â€”â€˜Ã¯Â¸Â Marcados</button>
-          <button id="closeShopping" class="btn btn-ghost">Ã¢Å“â€¢</button>
+          <button id="exportList" class="btn btn-ghost">ÃƒÂ¢Ã‚Â¬Ã¢â‚¬Â¡ÃƒÂ¯Ã‚Â¸Ã‚Â Exportar</button>
+          <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista">ÃƒÂ°Ã…Â¸Ã¢â‚¬â€œÃ‚Â¨ÃƒÂ¯Ã‚Â¸Ã‚Â</button>
+          <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados">ÃƒÂ°Ã…Â¸Ã¢â‚¬â€Ã¢â‚¬ËœÃƒÂ¯Ã‚Â¸Ã‚Â Marcados</button>
+          <button id="closeShopping" class="btn btn-ghost">ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¢</button>
         </div>
       </div>
       <div class="p-3">
         <div class="flex gap-2 mb-3">
-          <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="AÃƒÂ±adir artÃƒÂ­culo (ej. 1 kg tomates)" />
-          <button id="addItem" class="btn btn-primary">AÃƒÂ±adir</button>
+          <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="AÃƒÆ’Ã‚Â±adir artÃƒÆ’Ã‚Â­culo (ej. 1 kg tomates)" />
+          <button id="addItem" class="btn btn-primary">AÃƒÆ’Ã‚Â±adir</button>
         </div>
         <ul id="shoppingList" class="space-y-2"></ul>
-        <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista estÃƒÂ¡ vacÃƒÂ­a.</p>
+        <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista estÃƒÆ’Ã‚Â¡ vacÃƒÆ’Ã‚Â­a.</p>
       </div>
     </aside>
   </div>
 
-  <!-- SubtÃƒÂ­tulos de voz -->
+  <!-- SubtÃƒÆ’Ã‚Â­tulos de voz -->
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
   /* ===== Datos ===== */
   const IMG = c => ({ Aperitivo:"./img/aperitivo.svg", Primero:"./img/primero.svg", Segundo:"./img/segundo.svg", Postre:"./img/postre.svg" }[c]);
-  const APERITIVOS=[ "Tostas de tomate y jamÃƒÂ³n","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmÃƒÂ³n y queso fresco","Croquetas de jamÃƒÂ³n","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas","Empanadillas de atÃƒÂºn","Empanadillas de carne","Patatas bravas","Patatas alioli","Boquerones en vinagre","ChampiÃƒÂ±ones al ajillo","Gildas donostiarras","Pinchos de tortilla","Pinchos morunos","Queso marinado en aceite","Hummus clÃƒÂ¡sico con cruditÃƒÂ©s","Hummus de remolacha","Hummus de aguacate","Gazpacho en vasitos","Salmorejo en chupitos","Ensaladilla rusa","Tortilla francesa mini","Banderillas variadas","Mejillones en escabeche","Sardinas marinadas","Pulpo a la gallega (tapa)","Calamares a la romana","Torreznos crujientes","JamÃƒÂ³n con picos","Queso manchego con membrillo","Pimientos del padrÃƒÂ³n","Montadito de lomo","Montadito de pringÃƒÂ¡","Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"];
-  const PRIMEROS=[ "Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobÃƒÂ©s","Ajoblanco","Crema de calabaza","Crema de puerros","Crema de champiÃƒÂ±ÃƒÂ³n","Pisto manchego","Menestra de verduras","Lentejas estofadas","Garbanzos con espinacas","JudÃƒÂ­as blancas con verduras","Arroz caldoso de verduras","Arroz a la cubana","Arroz negro","Arroz al horno","Paella de verduras","FideuÃƒÂ¡ de pescado","Macarrones con tomate","Tallarines al ajillo","Espaguetis carbonara ligera","Ensalada mixta","Ensalada campera","Ensalada de garbanzos","Ensalada de pasta frÃƒÂ­a","Tomates aliÃƒÂ±ados","Papas arrugadas con mojo","Pimientos asados","Alcachofas salteadas","Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise","Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"];
-  const SEGUNDOS=[ "Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha","Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro","AlbÃƒÂ³ndigas en salsa","Lomo adobado","Costillas al horno","Chuletillas de cordero","Cordero asado","Secreto ibÃƒÂ©rico a la plancha","Solomillo al roquefort","Bacalao a la vizcaÃƒÂ­na","Bacalao al pil-pil","Merluza en salsa verde","Dorada al horno","Lubina a la sal","SalmÃƒÂ³n al papillote","AtÃƒÂºn encebollado","Calamares en su tinta","Pulpo a la gallega","Paella mixta","Arroz con pollo","Arroz con bogavante","Empanada gallega de atÃƒÂºn","Pisto con huevos","Tortilla de patatas","Revuelto de setas","Conejo al ajillo","Codornices escabechadas","Callos a la madrileÃƒÂ±a","Fabada asturiana","Marmitako de bonito","ChuletÃƒÂ³n a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"];
-  const POSTRES=[ "Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana","Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras","Galletas de mantequilla","Rosquillas fritas","PestiÃƒÂ±os","BuÃƒÂ±uelos de viento","Filloas","Peras al vino","Compota de manzana","Macedonia de frutas","Helado rÃƒÂ¡pido de plÃƒÂ¡tano","Mousse de chocolate","Natillas de vainilla","Tarta de manzana","Tarta tres leches (versiÃƒÂ³n)","Brazo de gitano","Quesada pasiega","Tocino de cielo","Pan de Calatrava","Cuajada con miel","Crepes dulces","Flan de cafÃƒÂ©","Crema pastelera con frutas","Tarta de almendra","Tarta de galletas con chocolate","Bizcocho marmolado","Helado de yogur","Brownie sencillo","Crema de limÃƒÂ³n","Naranja con canela","Fresas con nata"];
+  const APERITIVOS=[ "Tostas de tomate y jamÃƒÆ’Ã‚Â³n","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmÃƒÆ’Ã‚Â³n y queso fresco","Croquetas de jamÃƒÆ’Ã‚Â³n","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas","Empanadillas de atÃƒÆ’Ã‚Âºn","Empanadillas de carne","Patatas bravas","Patatas alioli","Boquerones en vinagre","ChampiÃƒÆ’Ã‚Â±ones al ajillo","Gildas donostiarras","Pinchos de tortilla","Pinchos morunos","Queso marinado en aceite","Hummus clÃƒÆ’Ã‚Â¡sico con cruditÃƒÆ’Ã‚Â©s","Hummus de remolacha","Hummus de aguacate","Gazpacho en vasitos","Salmorejo en chupitos","Ensaladilla rusa","Tortilla francesa mini","Banderillas variadas","Mejillones en escabeche","Sardinas marinadas","Pulpo a la gallega (tapa)","Calamares a la romana","Torreznos crujientes","JamÃƒÆ’Ã‚Â³n con picos","Queso manchego con membrillo","Pimientos del padrÃƒÆ’Ã‚Â³n","Montadito de lomo","Montadito de pringÃƒÆ’Ã‚Â¡","Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"];
+  const PRIMEROS=[ "Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobÃƒÆ’Ã‚Â©s","Ajoblanco","Crema de calabaza","Crema de puerros","Crema de champiÃƒÆ’Ã‚Â±ÃƒÆ’Ã‚Â³n","Pisto manchego","Menestra de verduras","Lentejas estofadas","Garbanzos con espinacas","JudÃƒÆ’Ã‚Â­as blancas con verduras","Arroz caldoso de verduras","Arroz a la cubana","Arroz negro","Arroz al horno","Paella de verduras","FideuÃƒÆ’Ã‚Â¡ de pescado","Macarrones con tomate","Tallarines al ajillo","Espaguetis carbonara ligera","Ensalada mixta","Ensalada campera","Ensalada de garbanzos","Ensalada de pasta frÃƒÆ’Ã‚Â­a","Tomates aliÃƒÆ’Ã‚Â±ados","Papas arrugadas con mojo","Pimientos asados","Alcachofas salteadas","Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise","Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"];
+  const SEGUNDOS=[ "Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha","Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro","AlbÃƒÆ’Ã‚Â³ndigas en salsa","Lomo adobado","Costillas al horno","Chuletillas de cordero","Cordero asado","Secreto ibÃƒÆ’Ã‚Â©rico a la plancha","Solomillo al roquefort","Bacalao a la vizcaÃƒÆ’Ã‚Â­na","Bacalao al pil-pil","Merluza en salsa verde","Dorada al horno","Lubina a la sal","SalmÃƒÆ’Ã‚Â³n al papillote","AtÃƒÆ’Ã‚Âºn encebollado","Calamares en su tinta","Pulpo a la gallega","Paella mixta","Arroz con pollo","Arroz con bogavante","Empanada gallega de atÃƒÆ’Ã‚Âºn","Pisto con huevos","Tortilla de patatas","Revuelto de setas","Conejo al ajillo","Codornices escabechadas","Callos a la madrileÃƒÆ’Ã‚Â±a","Fabada asturiana","Marmitako de bonito","ChuletÃƒÆ’Ã‚Â³n a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"];
+  const POSTRES=[ "Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana","Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras","Galletas de mantequilla","Rosquillas fritas","PestiÃƒÆ’Ã‚Â±os","BuÃƒÆ’Ã‚Â±uelos de viento","Filloas","Peras al vino","Compota de manzana","Macedonia de frutas","Helado rÃƒÆ’Ã‚Â¡pido de plÃƒÆ’Ã‚Â¡tano","Mousse de chocolate","Natillas de vainilla","Tarta de manzana","Tarta tres leches (versiÃƒÆ’Ã‚Â³n)","Brazo de gitano","Quesada pasiega","Tocino de cielo","Pan de Calatrava","Cuajada con miel","Crepes dulces","Flan de cafÃƒÆ’Ã‚Â©","Crema pastelera con frutas","Tarta de almendra","Tarta de galletas con chocolate","Bizcocho marmolado","Helado de yogur","Brownie sencillo","Crema de limÃƒÆ’Ã‚Â³n","Naranja con canela","Fresas con nata"];
 
   /* Overrides realistas para platos clave (ingredientes + pasos + tiempo) */
   const OV = (()=> {
@@ -191,132 +191,132 @@
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
     const CROQ_PASOS = [
       "Pica fino cebolla y el relleno.",
-      "Pocha cebolla con aceite y mantequilla 6Ã¢â‚¬â€œ8 min sin dorar.",
-      "AÃƒÂ±ade el relleno y rehoga 1Ã¢â‚¬â€œ2 min.",
-      "Incorpora harina (90Ã¢â‚¬â€œ100 g/L leche) y cocina 2Ã¢â‚¬â€œ3 min.",
+      "Pocha cebolla con aceite y mantequilla 6ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“8 min sin dorar.",
+      "AÃƒÆ’Ã‚Â±ade el relleno y rehoga 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 min.",
+      "Incorpora harina (90ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“100 g/L leche) y cocina 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 min.",
       "Agrega la leche caliente poco a poco, removiendo hasta bechamel espesa y lisa.",
-      "Sazona con sal, pimienta y nuez moscada; cocina 8Ã¢â‚¬â€œ10 min a fuego bajo.",
-      "Pasa a fuente, filma a piel y enfrÃƒÂ­a 4 h (mejor de un dÃƒÂ­a para otro).",
+      "Sazona con sal, pimienta y nuez moscada; cocina 8ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“10 min a fuego bajo.",
+      "Pasa a fuente, filma a piel y enfrÃƒÆ’Ã‚Â­a 4 h (mejor de un dÃƒÆ’Ã‚Â­a para otro).",
       "Da forma, pasa por huevo y pan rallado.",
-      "FrÃƒÂ­e a 175Ã¢â‚¬â€œ180 Ã‚ÂºC hasta dorar; escurre."
+      "FrÃƒÆ’Ã‚Â­e a 175ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“180 Ãƒâ€šÃ‚ÂºC hasta dorar; escurre."
     ];
     const M = new Map([
       // Croquetas y otros clave
-      ["croquetas de jamÃƒÂ³n", R(["JamÃƒÂ³n serrano picado",...CROQ_BASE], CROQ_PASOS, "45Ã¢â‚¬â€œ75 min + reposo")],
-      ["croquetas de pollo", R(["Pollo cocido desmigado",...CROQ_BASE], CROQ_PASOS, "45Ã¢â‚¬â€œ75 min + reposo")],
-      ["croquetas de bacalao", R(["Bacalao desalado desmigado",...CROQ_BASE], CROQ_PASOS, "45Ã¢â‚¬â€œ75 min + reposo")],
-      ["croquetas de setas", R(["Setas picadas",...CROQ_BASE], CROQ_PASOS, "45Ã¢â‚¬â€œ75 min + reposo")],
+      ["croquetas de jamÃƒÆ’Ã‚Â³n", R(["JamÃƒÆ’Ã‚Â³n serrano picado",...CROQ_BASE], CROQ_PASOS, "45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“75 min + reposo")],
+      ["croquetas de pollo", R(["Pollo cocido desmigado",...CROQ_BASE], CROQ_PASOS, "45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“75 min + reposo")],
+      ["croquetas de bacalao", R(["Bacalao desalado desmigado",...CROQ_BASE], CROQ_PASOS, "45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“75 min + reposo")],
+      ["croquetas de setas", R(["Setas picadas",...CROQ_BASE], CROQ_PASOS, "45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“75 min + reposo")],
       ["patatas bravas", R(
-        ["Patatas","Aceite para freÃƒÂ­r","Sal","Ajo","PimentÃƒÂ³n dulce","PimentÃƒÂ³n picante","Tomate triturado","Vinagre"],
-        ["FrÃƒÂ­e patatas en dados hasta dorar.","SofrÃƒÂ­e ajo; aÃƒÂ±ade pimentÃƒÂ³n, tomate y sal.","Cocina 10Ã¢â‚¬â€œ12 min y ajusta con vinagre.","Sirve patatas con salsa por encima."],
-        "30Ã¢â‚¬â€œ40 min"
+        ["Patatas","Aceite para freÃƒÆ’Ã‚Â­r","Sal","Ajo","PimentÃƒÆ’Ã‚Â³n dulce","PimentÃƒÆ’Ã‚Â³n picante","Tomate triturado","Vinagre"],
+        ["FrÃƒÆ’Ã‚Â­e patatas en dados hasta dorar.","SofrÃƒÆ’Ã‚Â­e ajo; aÃƒÆ’Ã‚Â±ade pimentÃƒÆ’Ã‚Â³n, tomate y sal.","Cocina 10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“12 min y ajusta con vinagre.","Sirve patatas con salsa por encima."],
+        "30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“40 min"
       )],
       ["patatas alioli", R(
-        ["Patatas cocidas","Ajo","Huevo o leche (lactonesa)","Aceite suave","LimÃƒÂ³n o vinagre","Sal","Perejil"],
-        ["Cuece patatas y enfrÃƒÂ­a.","Emulsiona ajo con huevo/leche y aceite, sal y limÃƒÂ³n.","Mezcla patata en dados con alioli y perejil."],
-        "25Ã¢â‚¬â€œ35 min"
+        ["Patatas cocidas","Ajo","Huevo o leche (lactonesa)","Aceite suave","LimÃƒÆ’Ã‚Â³n o vinagre","Sal","Perejil"],
+        ["Cuece patatas y enfrÃƒÆ’Ã‚Â­a.","Emulsiona ajo con huevo/leche y aceite, sal y limÃƒÆ’Ã‚Â³n.","Mezcla patata en dados con alioli y perejil."],
+        "25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min"
       )],
       ["calamares a la romana", R(
-        ["Calamares","Harina","Huevo","Aceite para freÃƒÂ­r","Sal","LimÃƒÂ³n"],
-        ["Seca aros de calamar y sala.","Pasa por harina y huevo batido.","FrÃƒÂ­e a 175Ã¢â‚¬â€œ180 Ã‚ÂºC 1Ã¢â‚¬â€œ2 min; escurre.","Sirve con limÃƒÂ³n."],
-        "20Ã¢â‚¬â€œ30 min"
+        ["Calamares","Harina","Huevo","Aceite para freÃƒÆ’Ã‚Â­r","Sal","LimÃƒÆ’Ã‚Â³n"],
+        ["Seca aros de calamar y sala.","Pasa por harina y huevo batido.","FrÃƒÆ’Ã‚Â­e a 175ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“180 Ãƒâ€šÃ‚ÂºC 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 min; escurre.","Sirve con limÃƒÆ’Ã‚Â³n."],
+        "20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 min"
       )],
-      // Gazpachos/paellas y clÃƒÂ¡sicos
+      // Gazpachos/paellas y clÃƒÆ’Ã‚Â¡sicos
       ["gazpacho andaluz", R(["Tomate","Pepino","Pimiento verde","Ajo","Pan","Aceite","Vinagre","Sal"],
-        ["Tritura y emulsiona con aceite.","Ajusta sal/vinagre y enfrÃƒÂ­a."],"15Ã¢â‚¬â€œ20 min + frÃƒÂ­o")],
-      ["salmorejo cordobÃƒÂ©s", R(["Tomate","Pan","Ajo","Aceite","Vinagre","Sal","JamÃƒÂ³n","Huevo cocido"],
-        ["Tritura tomate/pan/ajo/sal.","Emulsiona con aceite y vinagre.","Sirve con jamÃƒÂ³n y huevo."],"15Ã¢â‚¬â€œ20 min + frÃƒÂ­o")],
-      ["ajoblanco", R(["Almendra cruda","Ajo","Pan","Agua frÃƒÂ­a","Aceite","Vinagre","Sal","Uvas"],
-        ["Tritura almendra, ajo, pan, agua y sal.","Emulsiona con aceite y vinagre.","Sirve muy frÃƒÂ­o con uvas."],"15Ã¢â‚¬â€œ20 min + frÃƒÂ­o")],
-      ["fideuÃƒÂ¡ de pescado", R(["Fideo grueso","Caldo de pescado","Sepia/calamar","Gamba","Ajo","PimentÃƒÂ³n","Tomate","Aceite","Sal","Allioli (opcional)"],
-        ["SofrÃƒÂ­e sepia y retira.","AÃƒÂ±ade ajo, pimentÃƒÂ³n y tomate.","Tuesta el fideo, moja con caldo y cocina.","Incorpora sepia/gambas al final. Sirve con allioli."],"30Ã¢â‚¬â€œ40 min")],
-      ["paella de verduras", R(["Arroz","Caldo vegetal","JudÃƒÂ­a verde","Garrafo/garbanzo","Pimiento","Tomate","Ajo","Aceite","Sal","AzafrÃƒÂ¡n"],
-        ["SofrÃƒÂ­e verduras.","AÃƒÂ±ade arroz y nacara un minuto.","Moja con caldo caliente y azafrÃƒÂ¡n.","Cocina 18Ã¢â‚¬â€œ20 min; reposo 5."],"35Ã¢â‚¬â€œ45 min")],
-      ["paella mixta", R(["Arroz","Caldo","Pollo","Conejo","Gamba/Calamar","Pimiento","Tomate","Ajo","Aceite","Sal","AzafrÃƒÂ¡n"],
-        ["Dora carnes, aÃƒÂ±ade sofrito.","Agrega arroz, nacara y moja con caldo/azafrÃƒÂ¡n.","Cocina 18Ã¢â‚¬â€œ20 min, coloca mariscos al final; reposo 5."],"40Ã¢â‚¬â€œ55 min")],
-      ["arroz con bogavante", R(["Arroz","Bogavante","Caldo de marisco","Ajo","PimentÃƒÂ³n","Tomate","Aceite","Sal"],
-        ["Marca bogavante y reserva.","Haz sofrito con ajo/pimentÃƒÂ³n/tomate.","AÃƒÂ±ade arroz, caldo y bogavante; cocina 18 min."],"35Ã¢â‚¬â€œ45 min")],
+        ["Tritura y emulsiona con aceite.","Ajusta sal/vinagre y enfrÃƒÆ’Ã‚Â­a."],"15ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min + frÃƒÆ’Ã‚Â­o")],
+      ["salmorejo cordobÃƒÆ’Ã‚Â©s", R(["Tomate","Pan","Ajo","Aceite","Vinagre","Sal","JamÃƒÆ’Ã‚Â³n","Huevo cocido"],
+        ["Tritura tomate/pan/ajo/sal.","Emulsiona con aceite y vinagre.","Sirve con jamÃƒÆ’Ã‚Â³n y huevo."],"15ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min + frÃƒÆ’Ã‚Â­o")],
+      ["ajoblanco", R(["Almendra cruda","Ajo","Pan","Agua frÃƒÆ’Ã‚Â­a","Aceite","Vinagre","Sal","Uvas"],
+        ["Tritura almendra, ajo, pan, agua y sal.","Emulsiona con aceite y vinagre.","Sirve muy frÃƒÆ’Ã‚Â­o con uvas."],"15ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min + frÃƒÆ’Ã‚Â­o")],
+      ["fideuÃƒÆ’Ã‚Â¡ de pescado", R(["Fideo grueso","Caldo de pescado","Sepia/calamar","Gamba","Ajo","PimentÃƒÆ’Ã‚Â³n","Tomate","Aceite","Sal","Allioli (opcional)"],
+        ["SofrÃƒÆ’Ã‚Â­e sepia y retira.","AÃƒÆ’Ã‚Â±ade ajo, pimentÃƒÆ’Ã‚Â³n y tomate.","Tuesta el fideo, moja con caldo y cocina.","Incorpora sepia/gambas al final. Sirve con allioli."],"30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“40 min")],
+      ["paella de verduras", R(["Arroz","Caldo vegetal","JudÃƒÆ’Ã‚Â­a verde","Garrafo/garbanzo","Pimiento","Tomate","Ajo","Aceite","Sal","AzafrÃƒÆ’Ã‚Â¡n"],
+        ["SofrÃƒÆ’Ã‚Â­e verduras.","AÃƒÆ’Ã‚Â±ade arroz y nacara un minuto.","Moja con caldo caliente y azafrÃƒÆ’Ã‚Â¡n.","Cocina 18ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min; reposo 5."],"35ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“45 min")],
+      ["paella mixta", R(["Arroz","Caldo","Pollo","Conejo","Gamba/Calamar","Pimiento","Tomate","Ajo","Aceite","Sal","AzafrÃƒÆ’Ã‚Â¡n"],
+        ["Dora carnes, aÃƒÆ’Ã‚Â±ade sofrito.","Agrega arroz, nacara y moja con caldo/azafrÃƒÆ’Ã‚Â¡n.","Cocina 18ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min, coloca mariscos al final; reposo 5."],"40ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“55 min")],
+      ["arroz con bogavante", R(["Arroz","Bogavante","Caldo de marisco","Ajo","PimentÃƒÆ’Ã‚Â³n","Tomate","Aceite","Sal"],
+        ["Marca bogavante y reserva.","Haz sofrito con ajo/pimentÃƒÆ’Ã‚Â³n/tomate.","AÃƒÆ’Ã‚Â±ade arroz, caldo y bogavante; cocina 18 min."],"35ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“45 min")],
       ["tortilla de patatas", R(["Patatas","Cebolla (opcional)","Huevos","Aceite","Sal"],
-        ["FrÃƒÂ­e patata en aceite suave.","Mezcla con huevo batido y sal.","Cuaja a tu gusto por ambos lados."],"25Ã¢â‚¬â€œ35 min")],
+        ["FrÃƒÆ’Ã‚Â­e patata en aceite suave.","Mezcla con huevo batido y sal.","Cuaja a tu gusto por ambos lados."],"25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min")],
       ["pollo al ajillo", R(["Pollo troceado","Ajo","Aceite","Vino blanco","Sal","Pimienta","Laurel"],
-        ["Dora pollo con ajos.","Desglasa con vino; reduce.","Ajusta sal/pimienta y sirve."],"25Ã¢â‚¬â€œ35 min")],
+        ["Dora pollo con ajos.","Desglasa con vino; reduce.","Ajusta sal/pimienta y sirve."],"25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min")],
       ["cordero asado", R(["Paletilla/pierna de cordero","Ajo","Romero","Aceite","Sal","Agua o vino"],
-        ["Sala cordero con ajo/romero.","Asa a 180Ã¢â‚¬â€œ190 Ã‚ÂºC 70Ã¢â‚¬â€œ90 min, regando.","Deja reposar y sirve con jugo."],"75Ã¢â‚¬â€œ95 min")],
-      ["fabada asturiana", R(["Fabes","Compango (chorizo, morcilla, panceta)","Cebolla","Ajo","PimentÃƒÂ³n","Sal"],
-        ["Desala si procede.","Cuece fabes con compango a fuego bajo (asustando).","Espuma y rectifica sal."],"120Ã¢â‚¬â€œ180 min")],
+        ["Sala cordero con ajo/romero.","Asa a 180ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“190 Ãƒâ€šÃ‚ÂºC 70ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90 min, regando.","Deja reposar y sirve con jugo."],"75ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“95 min")],
+      ["fabada asturiana", R(["Fabes","Compango (chorizo, morcilla, panceta)","Cebolla","Ajo","PimentÃƒÆ’Ã‚Â³n","Sal"],
+        ["Desala si procede.","Cuece fabes con compango a fuego bajo (asustando).","Espuma y rectifica sal."],"120ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“180 min")],
       ["marmitako de bonito", R(["Bonito","Patata","Pimiento","Cebolla","Ajo","Tomate","Caldo","Aceite","Sal"],
-        ["Haz sofrito y aÃƒÂ±ade patata.","Cubre con caldo y cocina.","Agrega bonito al final (2Ã¢â‚¬â€œ3 min)."],"35Ã¢â‚¬â€œ45 min")],
+        ["Haz sofrito y aÃƒÆ’Ã‚Â±ade patata.","Cubre con caldo y cocina.","Agrega bonito al final (2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 min)."],"35ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“45 min")],
       ["rabo de toro", R(["Rabo de toro","Verduras para sofrito","Vino tinto","Caldo","Aceite","Sal","Harina (ligar)"],
-        ["Dora rabo enharinado.","SofrÃƒÂ­e verduras; moja con vino y reduce.","Cuece con caldo 2Ã¢â‚¬â€œ3 h hasta meloso."],"150Ã¢â‚¬â€œ210 min")],
-      ["callos a la madrileÃƒÂ±a", R(["Callos limpios","Morcilla/chorizo","PimentÃƒÂ³n","Guindilla","Cebolla","Ajo","Laurel","Sal"],
-        ["Blanquea y enjuaga callos.","Guiso con sofrito y pimentÃƒÂ³n a fuego bajo hasta tiernos."],"120Ã¢â‚¬â€œ180 min")],
+        ["Dora rabo enharinado.","SofrÃƒÆ’Ã‚Â­e verduras; moja con vino y reduce.","Cuece con caldo 2ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“3 h hasta meloso."],"150ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“210 min")],
+      ["callos a la madrileÃƒÆ’Ã‚Â±a", R(["Callos limpios","Morcilla/chorizo","PimentÃƒÆ’Ã‚Â³n","Guindilla","Cebolla","Ajo","Laurel","Sal"],
+        ["Blanquea y enjuaga callos.","Guiso con sofrito y pimentÃƒÆ’Ã‚Â³n a fuego bajo hasta tiernos."],"120ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“180 min")],
       ["bacalao al pil-pil", R(["Bacalao desalado","Ajo","Guindilla","Aceite de oliva"],
-        ["Confita ajos y bacalao a baja TÃ‚Âª.","Liga el pil-pil moviendo la cazuela.","Sirve con ajos y guindilla."],"25Ã¢â‚¬â€œ35 min")],
+        ["Confita ajos y bacalao a baja TÃƒâ€šÃ‚Âª.","Liga el pil-pil moviendo la cazuela.","Sirve con ajos y guindilla."],"25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min")],
       ["merluza en salsa verde", R(["Merluza","Ajo","Perejil","Vino blanco","Caldo","Aceite","Sal","Almejas (opcional)"],
-        ["Dora ajo, aÃƒÂ±ade harina ligera.","Vino+caldo, perejil y merluza 5Ã¢â‚¬â€œ7 min.","AÃƒÂ±ade almejas hasta abrir."],"20Ã¢â‚¬â€œ30 min")],
-      ["pulpo a la gallega", R(["Pulpo cocido","Patata cocida","Aceite","PimentÃƒÂ³n","Sal en escamas"],
-        ["Corta pulpo y patata.","AliÃƒÂ±a con aceite, pimentÃƒÂ³n y sal."],"10Ã¢â‚¬â€œ15 min")],
+        ["Dora ajo, aÃƒÆ’Ã‚Â±ade harina ligera.","Vino+caldo, perejil y merluza 5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“7 min.","AÃƒÆ’Ã‚Â±ade almejas hasta abrir."],"20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 min")],
+      ["pulpo a la gallega", R(["Pulpo cocido","Patata cocida","Aceite","PimentÃƒÆ’Ã‚Â³n","Sal en escamas"],
+        ["Corta pulpo y patata.","AliÃƒÆ’Ã‚Â±a con aceite, pimentÃƒÆ’Ã‚Â³n y sal."],"10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 min")],
       // Postres clave
-      ["tarta de queso al horno", R(["Queso crema","Huevos","AzÃƒÂºcar","Nata","Harina (opcional)"],
-        ["Mezcla sin batir en exceso.","Hornea 180 Ã‚ÂºC 40Ã¢â‚¬â€œ50 min; centro tembloroso.","EnfrÃƒÂ­a y sirve."],"60Ã¢â‚¬â€œ90 min con enfriado")],
-      ["flan casero", R(["Leche","Huevos","AzÃƒÂºcar","Vainilla","AzÃƒÂºcar para caramelo"],
-        ["Haz caramelo y forra molde.","Mezcla leche/huevo/azÃƒÂºcar/vainilla.","Horno al baÃƒÂ±o marÃƒÂ­a 160Ã¢â‚¬â€œ170 Ã‚ÂºC 40Ã¢â‚¬â€œ55 min.","EnfrÃƒÂ­a y desmolda."],"70Ã¢â‚¬â€œ120 min con frÃƒÂ­o")],
-      ["natillas caseras", R(["Leche","Yemas","AzÃƒÂºcar","Maicena","Vainilla","Canela"],
-        ["Infusiona leche con vainilla/canela.","Templa yemas con azÃƒÂºcar/maicena.","Cuece sin hervir hasta napar.","EnfrÃƒÂ­a con galleta."],"30Ã¢â‚¬â€œ50 min + frÃƒÂ­o")],
-      ["torrijas", R(["Pan","Leche","AzÃƒÂºcar","Canela","Huevo","Aceite","AzÃƒÂºcar/canela o miel"],
-        ["Empapa pan en leche aromatizada.","Reboza en huevo y frÃƒÂ­e.","Reboza en azÃƒÂºcar/canela o miel."],"30Ã¢â‚¬â€œ45 min")],
-      ["arroz con leche", R(["Arroz","Leche entera","AzÃƒÂºcar","Canela","LimÃƒÂ³n"],
-        ["Cuece arroz en leche aromatizada a fuego bajo, removiendo.","Azucara al final; enfrÃƒÂ­a."],"45Ã¢â‚¬â€œ60 min")],
-      ["tarta de santiago", R(["Almendra molida","AzÃƒÂºcar","Huevos","LimÃƒÂ³n","Canela"],
-        ["Mezcla todo y hornea 180 Ã‚ÂºC 25Ã¢â‚¬â€œ35 min.","Espolvorea azÃƒÂºcar glas con cruz."],"40Ã¢â‚¬â€œ55 min")],
-      ["brownie sencillo", R(["Chocolate","Mantequilla","AzÃƒÂºcar","Huevos","Harina","Nueces (opcional)"],
-        ["Funde choco/mantequilla.","AÃƒÂ±ade huevos y azÃƒÂºcar, luego harina.","Hornea 170Ã¢â‚¬â€œ180 Ã‚ÂºC 20Ã¢â‚¬â€œ25 min."],"35Ã¢â‚¬â€œ45 min")]
+      ["tarta de queso al horno", R(["Queso crema","Huevos","AzÃƒÆ’Ã‚Âºcar","Nata","Harina (opcional)"],
+        ["Mezcla sin batir en exceso.","Hornea 180 Ãƒâ€šÃ‚ÂºC 40ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“50 min; centro tembloroso.","EnfrÃƒÆ’Ã‚Â­a y sirve."],"60ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90 min con enfriado")],
+      ["flan casero", R(["Leche","Huevos","AzÃƒÆ’Ã‚Âºcar","Vainilla","AzÃƒÆ’Ã‚Âºcar para caramelo"],
+        ["Haz caramelo y forra molde.","Mezcla leche/huevo/azÃƒÆ’Ã‚Âºcar/vainilla.","Horno al baÃƒÆ’Ã‚Â±o marÃƒÆ’Ã‚Â­a 160ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“170 Ãƒâ€šÃ‚ÂºC 40ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“55 min.","EnfrÃƒÆ’Ã‚Â­a y desmolda."],"70ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“120 min con frÃƒÆ’Ã‚Â­o")],
+      ["natillas caseras", R(["Leche","Yemas","AzÃƒÆ’Ã‚Âºcar","Maicena","Vainilla","Canela"],
+        ["Infusiona leche con vainilla/canela.","Templa yemas con azÃƒÆ’Ã‚Âºcar/maicena.","Cuece sin hervir hasta napar.","EnfrÃƒÆ’Ã‚Â­a con galleta."],"30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“50 min + frÃƒÆ’Ã‚Â­o")],
+      ["torrijas", R(["Pan","Leche","AzÃƒÆ’Ã‚Âºcar","Canela","Huevo","Aceite","AzÃƒÆ’Ã‚Âºcar/canela o miel"],
+        ["Empapa pan en leche aromatizada.","Reboza en huevo y frÃƒÆ’Ã‚Â­e.","Reboza en azÃƒÆ’Ã‚Âºcar/canela o miel."],"30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“45 min")],
+      ["arroz con leche", R(["Arroz","Leche entera","AzÃƒÆ’Ã‚Âºcar","Canela","LimÃƒÆ’Ã‚Â³n"],
+        ["Cuece arroz en leche aromatizada a fuego bajo, removiendo.","Azucara al final; enfrÃƒÆ’Ã‚Â­a."],"45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“60 min")],
+      ["tarta de santiago", R(["Almendra molida","AzÃƒÆ’Ã‚Âºcar","Huevos","LimÃƒÆ’Ã‚Â³n","Canela"],
+        ["Mezcla todo y hornea 180 Ãƒâ€šÃ‚ÂºC 25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min.","Espolvorea azÃƒÆ’Ã‚Âºcar glas con cruz."],"40ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“55 min")],
+      ["brownie sencillo", R(["Chocolate","Mantequilla","AzÃƒÆ’Ã‚Âºcar","Huevos","Harina","Nueces (opcional)"],
+        ["Funde choco/mantequilla.","AÃƒÆ’Ã‚Â±ade huevos y azÃƒÆ’Ã‚Âºcar, luego harina.","Hornea 170ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“180 Ãƒâ€šÃ‚ÂºC 20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“25 min."],"35ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“45 min")]
     ]);
     return { get: (title) => M.get(title.toLowerCase()) || null };
   })();
 
   const PASOS_BASE = {
-    Aperitivo:["Prepara y ten a mano todo.","Corta/dispÃƒÂ³n los ingredientes.","SofrÃƒÂ­e o mezcla hasta aromatizar.","Monta y ajusta sal/aliÃƒÂ±o.","Reposa 1Ã¢â‚¬â€œ2 min o sirve caliente.","Emplata y sirve."],
-    Primero:["Lava y prepara verduras.","SofrÃƒÂ­e ajo/cebolla suave.","AÃƒÂ±ade ingrediente principal y rehoga.","Cubre con caldo/agua y cocina.","Ajusta textura (tritura/reposa).","Sirve caliente o frÃƒÂ­o."],
-    Segundo:["Seca la pieza y sala.","AÃƒÂ±ade adobo/especias.","Dora/hornea/sella bien.","Agrega guarniciÃƒÂ³n/salsa y cocina al punto.","Reposa unos minutos.","Sirve con su jugo."],
-    Postre:["Pesa y mide todo.","Mezcla secos y hÃƒÂºmedos aparte.","Aromatiza (cÃƒÂ­tricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","EnfrÃƒÂ­a o reposa.","Decora y sirve."]
+    Aperitivo:["Prepara y ten a mano todo.","Corta/dispÃƒÆ’Ã‚Â³n los ingredientes.","SofrÃƒÆ’Ã‚Â­e o mezcla hasta aromatizar.","Monta y ajusta sal/aliÃƒÆ’Ã‚Â±o.","Reposa 1ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“2 min o sirve caliente.","Emplata y sirve."],
+    Primero:["Lava y prepara verduras.","SofrÃƒÆ’Ã‚Â­e ajo/cebolla suave.","AÃƒÆ’Ã‚Â±ade ingrediente principal y rehoga.","Cubre con caldo/agua y cocina.","Ajusta textura (tritura/reposa).","Sirve caliente o frÃƒÆ’Ã‚Â­o."],
+    Segundo:["Seca la pieza y sala.","AÃƒÆ’Ã‚Â±ade adobo/especias.","Dora/hornea/sella bien.","Agrega guarniciÃƒÆ’Ã‚Â³n/salsa y cocina al punto.","Reposa unos minutos.","Sirve con su jugo."],
+    Postre:["Pesa y mide todo.","Mezcla secos y hÃƒÆ’Ã‚Âºmedos aparte.","Aromatiza (cÃƒÆ’Ã‚Â­tricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","EnfrÃƒÆ’Ã‚Â­a o reposa.","Decora y sirve."]
   };
 
   function ingredientesPara(cat,t){
     t=t.toLowerCase(); let ing=[];
     const ov = OV.get(t); if (ov) return ov.ing;
     if(cat==="Aperitivo"){
-      if(/empanadill/.test(t)) ing=["Obladas","AtÃƒÂºn/carne","Cebolla","Tomate frito","Huevo","Aceite","Sal"];
-      else if(/alioli/.test(t)) ing=["Patatas","Ajo","Huevo o leche","Aceite suave","LimÃƒÂ³n/vinagre","Sal","Perejil"];
+      if(/empanadill/.test(t)) ing=["Obladas","AtÃƒÆ’Ã‚Âºn/carne","Cebolla","Tomate frito","Huevo","Aceite","Sal"];
+      else if(/alioli/.test(t)) ing=["Patatas","Ajo","Huevo o leche","Aceite suave","LimÃƒÆ’Ã‚Â³n/vinagre","Sal","Perejil"];
       else if(/boquerones/.test(t)) ing=["Boquerones","Vinagre","Ajo","Perejil","Aceite","Sal"];
-      else if(/romana|calamar/.test(t)) ing=["Calamares","Harina","Huevo","Aceite","Sal","LimÃƒÂ³n"];
-      else if(/hummus/.test(t)) ing=["Garbanzos","Tahini","Ajo","LimÃƒÂ³n","Aceite","Sal","Comino"];
+      else if(/romana|calamar/.test(t)) ing=["Calamares","Harina","Huevo","Aceite","Sal","LimÃƒÆ’Ã‚Â³n"];
+      else if(/hummus/.test(t)) ing=["Garbanzos","Tahini","Ajo","LimÃƒÆ’Ã‚Â³n","Aceite","Sal","Comino"];
       else ing=["Pan/base","Aceite de oliva","Ajo (opcional)","Sal"];
     } else if(cat==="Primero"){
       if(OV.get(t)) ing=OV.get(t).ing;
       else if(/sopa|caldo/.test(t)) ing=["Caldo","Ajo/Cebolla","Aceite","Sal"];
       else if(/crema|vichyssoise|purrusalda|zanahoria/.test(t)) ing=["Verdura principal","Cebolla/Puerro","Caldo","Aceite","Sal"];
-      else if(/arroz|paella/.test(t)) ing=["Arroz","Caldo","Verduras","Aceite","Sal","AzafrÃƒÂ¡n (opcional)"];
-      else if(/fideu/.test(t)) ing=["Fideos","Caldo de pescado","Ajo","PimentÃƒÂ³n","Tomate","Aceite","Sal"];
+      else if(/arroz|paella/.test(t)) ing=["Arroz","Caldo","Verduras","Aceite","Sal","AzafrÃƒÆ’Ã‚Â¡n (opcional)"];
+      else if(/fideu/.test(t)) ing=["Fideos","Caldo de pescado","Ajo","PimentÃƒÆ’Ã‚Â³n","Tomate","Aceite","Sal"];
       else if(/ensalada/.test(t)) ing=["Lechuga/legumbre","Tomate","Cebolla","Aceite","Vinagre","Sal"];
     } else if(cat==="Segundo"){
       if(OV.get(t)) ing=OV.get(t).ing;
       else if(/pollo/.test(t)) ing=["Pollo","Ajo","Aceite","Sal","Pimienta"];
       else if(/ternera|solomillo|chulet/.test(t)) ing=["Vacuno","Aceite","Sal","Pimienta"];
       else if(/cordero/.test(t)) ing=["Cordero","Ajo","Romero","Aceite","Sal"];
-      else if(/secreto|lomo|costillas/.test(t)) ing=["Cerdo","Ajo","PimentÃƒÂ³n","Aceite","Sal"];
+      else if(/secreto|lomo|costillas/.test(t)) ing=["Cerdo","Ajo","PimentÃƒÆ’Ã‚Â³n","Aceite","Sal"];
       else if(/bacalao|merluza|dorada|lubina|trucha|bonito|atun/.test(t)) ing=["Pescado","Aceite","Ajo/Perejil","Sal"];
-      else if(/paella|arroz/.test(t)) ing=["Arroz","Caldo","Pollo/Marisco","Pimiento","Tomate","AzafrÃƒÂ¡n","Sal"];
+      else if(/paella|arroz/.test(t)) ing=["Arroz","Caldo","Pollo/Marisco","Pimiento","Tomate","AzafrÃƒÆ’Ã‚Â¡n","Sal"];
       else if(/tortilla|revuelto/.test(t)) ing=["Huevos","Patata/Setas","Aceite","Sal"];
     } else {
       if(OV.get(t)) ing=OV.get(t).ing;
-      else if(/flan/.test(t)) ing=["Leche","Huevos","AzÃƒÂºcar","Vainilla","AzÃƒÂºcar para caramelo"];
-      else if(/natilla/.test(t)) ing=["Leche","Yemas","AzÃƒÂºcar","Maicena","Vainilla"];
-      else if(/arroz con leche/.test(t)) ing=["Arroz","Leche","AzÃƒÂºcar","Canela","LimÃƒÂ³n"];
-      else if(/tarta de queso/.test(t)) ing=["Queso crema","Huevos","AzÃƒÂºcar","Nata","Harina (opcional)"];
-      else if(/bizcocho|galleta|magdalena|tarta/.test(t)) ing=["Harina","AzÃƒÂºcar","Huevos","Mantequilla/Aceite","Levadura"];
-      else if(/helado|mousse/.test(t)) ing=["Fruta/Yogur/Chocolate","AzÃƒÂºcar","Nata/Leche"];
-      else ing=["AzÃƒÂºcar","Leche/Huevos/Harina (segÃƒÂºn postre)"];
+      else if(/flan/.test(t)) ing=["Leche","Huevos","AzÃƒÆ’Ã‚Âºcar","Vainilla","AzÃƒÆ’Ã‚Âºcar para caramelo"];
+      else if(/natilla/.test(t)) ing=["Leche","Yemas","AzÃƒÆ’Ã‚Âºcar","Maicena","Vainilla"];
+      else if(/arroz con leche/.test(t)) ing=["Arroz","Leche","AzÃƒÆ’Ã‚Âºcar","Canela","LimÃƒÆ’Ã‚Â³n"];
+      else if(/tarta de queso/.test(t)) ing=["Queso crema","Huevos","AzÃƒÆ’Ã‚Âºcar","Nata","Harina (opcional)"];
+      else if(/bizcocho|galleta|magdalena|tarta/.test(t)) ing=["Harina","AzÃƒÆ’Ã‚Âºcar","Huevos","Mantequilla/Aceite","Levadura"];
+      else if(/helado|mousse/.test(t)) ing=["Fruta/Yogur/Chocolate","AzÃƒÆ’Ã‚Âºcar","Nata/Leche"];
+      else ing=["AzÃƒÆ’Ã‚Âºcar","Leche/Huevos/Harina (segÃƒÆ’Ã‚Âºn postre)"];
     }
     return Array.from(new Set(ing));
   }
@@ -324,11 +324,11 @@
   function tiempo(cat,t){
     const ov=OV.get(t.toLowerCase()); if(ov) return ov.tiempo;
     t=t.toLowerCase();
-    if(cat==="Aperitivo") return /croqueta|empanad/.test(t)?"25Ã¢â‚¬â€œ35 min":"5Ã¢â‚¬â€œ15 min";
-    if(cat==="Primero")   return /arroz|fideu|estof|fabada|cocido|marisc/.test(t)?"30Ã¢â‚¬â€œ50 min":"15Ã¢â‚¬â€œ30 min";
-    if(cat==="Segundo")   return /asado|horno|costillas|carrilleras|rabo/.test(t)?"45Ã¢â‚¬â€œ90 min":"15Ã¢â‚¬â€œ35 min";
-    if(cat==="Postre")    return /tarta|horno|tocino|calatrava/.test(t)?"40Ã¢â‚¬â€œ70 min":/helado|mousse|frutas/.test(t)?"10Ã¢â‚¬â€œ20 min":"20Ã¢â‚¬â€œ40 min";
-    return "20Ã¢â‚¬â€œ30 min";
+    if(cat==="Aperitivo") return /croqueta|empanad/.test(t)?"25ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min":"5ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“15 min";
+    if(cat==="Primero")   return /arroz|fideu|estof|fabada|cocido|marisc/.test(t)?"30ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“50 min":"15ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 min";
+    if(cat==="Segundo")   return /asado|horno|costillas|carrilleras|rabo/.test(t)?"45ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“90 min":"15ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“35 min";
+    if(cat==="Postre")    return /tarta|horno|tocino|calatrava/.test(t)?"40ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“70 min":/helado|mousse|frutas/.test(t)?"10ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“20 min":"20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“40 min";
+    return "20ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“30 min";
   }
 
   function pasosPara(cat,t){
@@ -369,12 +369,12 @@
       <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="eager">
       <div class="p-3 space-y-2">
         <h3 class="text-lg font-semibold">${r.titulo}</h3>
-        <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} Ã‚Â· ${r.tiempo}</p>
+        <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} Ãƒâ€šÃ‚Â· ${r.tiempo}</p>
         <div class="flex flex-wrap gap-2 pt-1">
-          <button class="btn btn-ghost" data-a="leer" data-i="${i}">Ã°Å¸â€Ë† Leer</button>
-          <button class="btn btn-primary" data-a="guiada" data-i="${i}">Ã¢â€“Â¶Ã¯Â¸Â Guiada</button>
-          <button class="btn btn-ghost" data-a="abrir" data-i="${i}">Ã°Å¸â€œâ€“ Abrir</button>
-          <button class="btn btn-ghost" data-a="lista" data-i="${i}">Ã°Å¸Â§Âº AÃƒÂ±adir</button>
+          <button class="btn btn-ghost" data-a="leer" data-i="${i}">ÃƒÂ°Ã…Â¸Ã¢â‚¬ÂÃ‹â€  Leer</button>
+          <button class="btn btn-primary" data-a="guiada" data-i="${i}">ÃƒÂ¢Ã¢â‚¬â€œÃ‚Â¶ÃƒÂ¯Ã‚Â¸Ã‚Â Guiada</button>
+          <button class="btn btn-ghost" data-a="abrir" data-i="${i}">ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã¢â‚¬â€œ Abrir</button>
+          <button class="btn btn-ghost" data-a="lista" data-i="${i}">ÃƒÂ°Ã…Â¸Ã‚Â§Ã‚Âº AÃƒÆ’Ã‚Â±adir</button>
         </div>
       </div>
     </article>`;
@@ -382,11 +382,11 @@
   function render(list){ state.list=list; if(!list.length){ els.grid.innerHTML=""; els.empty.classList.remove('hidden'); els.count.textContent="Mostrando 0 recetas."; return; } els.empty.classList.add('hidden'); els.grid.innerHTML=list.map((r,i)=>card(r,i)).join(""); els.count.textContent=`Mostrando ${list.length} recetas.`; }
   function filter(){ const q=state.q.toLowerCase().trim(); const l=RECETAS.filter(r=>(state.cat==="Todas"||r.categoria===state.cat)&&(!q||[r.titulo,...r.ingredientes,...r.pasos].join(" ").toLowerCase().includes(q))); render(l); }
   render(RECETAS);
-  els.tabs().forEach(b=>b.onclick=()=>{ els.tabs().forEach(x=>x.classList.remove('tab-active')); b.classList.add('tab-active'); state.cat=b.dataset.cat; filter(); });
+  const\ tablist\ =\ document\.querySelector\('\[role="tablist"]'\);\nfunction\ activateTab\(btn\)\{\n\ \ els\.tabs\(\)\.forEach\(x=>\{\n\ \ \ \ const\ active\ =\ x===btn;\n\ \ \ \ x\.classList\.toggle\('tab-active',\ active\);\n\ \ \ \ x\.setAttribute\('aria-selected',\ active\ \?\ 'true'\ :\ 'false'\);\n\ \ \ \ x\.setAttribute\('tabindex',\ active\ \?\ '0'\ :\ '-1'\);\n\ \ }\);\n\ \ state\.cat\ =\ btn\.dataset\.cat;\n\ \ filter\(\);\n\ \ btn\.focus\(\);\n}\nels\.tabs\(\)\.forEach\(b=>\{\n\ \ b\.addEventListener\('click',\ \(\)=>activateTab\(b\)\);\n\ \ b\.addEventListener\('keydown',\ \(e\)=>\{\n\ \ \ \ const\ tabs\ =\ Array\.from\(els\.tabs\(\)\);\n\ \ \ \ const\ i\ =\ tabs\.indexOf\(b\);\n\ \ \ \ if\ \(e\.key==='ArrowRight'\ \|\|\ e\.key==='ArrowDown'\)\ \{\ e\.preventDefault\(\);\ activateTab\(tabs\[\(i\+1\)%tabs\.length]\);\ }\n\ \ \ \ if\ \(e\.key==='ArrowLeft'\ \ \|\|\ e\.key==='ArrowUp'\)\ \ \ \{\ e\.preventDefault\(\);\ activateTab\(tabs\[\(i-1\+tabs\.length\)%tabs\.length]\);\ }\n\ \ \ \ if\ \(e\.key==='Home'\)\ \{\ e\.preventDefault\(\);\ activateTab\(tabs\[0]\);\ }\n\ \ \ \ if\ \(e\.key==='End'\)\ \ \{\ e\.preventDefault\(\);\ activateTab\(tabs\[tabs\.length-1]\);\ }\n\ \ }\);\n}\);b.classList.add('tab-active'); state.cat=b.dataset.cat; filter(); });
   els.search.oninput=e=>{ state.q=e.target.value; filter(); };
   document.addEventListener('keydown',e=>{ if(e.ctrlKey&&e.key==='/'){ e.preventDefault(); els.search.focus(); } });
 
-  function openDetail(r){ state.current=r; els.detailTitle.textContent=r.titulo; els.detailImg.src=r.imagen; els.detailImg.alt=`Foto de ${r.titulo}`; els.detailMeta.textContent=`${r.categoria} Ã‚Â· ${r.tiempo}`; els.detailIngredients.innerHTML=r.ingredientes.map(i=>`<li>${i}</li>`).join(""); els.detailSteps.innerHTML=r.pasos.map(p=>`<li>${p}</li>`).join(""); els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex'); }
+  function openDetail(r){ state.current=r; els.detailTitle.textContent=r.titulo; els.detailImg.src=r.imagen; els.detailImg.alt=`Foto de ${r.titulo}`; els.detailMeta.textContent=`${r.categoria} Ãƒâ€šÃ‚Â· ${r.tiempo}`; els.detailIngredients.innerHTML=r.ingredientes.map(i=>`<li>${i}</li>`).join(""); els.detailSteps.innerHTML=r.pasos.map(p=>`<li>${p}</li>`).join(""); els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex'); }
   function closeDetail(){ els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex'); }
   $('closeDetail').onclick=closeDetail;
   document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
@@ -447,7 +447,7 @@
   function ensureCurrent(){
     if(!state.current){
       const primera=(state.list && state.list[0])||null;
-      if(!primera){ els.status.textContent="Abre una receta y pulsa Ã¢â‚¬ËœGuiadaÃ¢â‚¬â„¢."; return false; }
+      if(!primera){ els.status.textContent="Abre una receta y pulsa ÃƒÂ¢Ã¢â€šÂ¬Ã‹Å“GuiadaÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢."; return false; }
       state.current=primera; state.step=0;
     }
     return true;
@@ -457,7 +457,7 @@
     $('guidedRecipeTitle').textContent=r.titulo;
     $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
-    // Activa micrÃƒÂ³fono automÃƒÂ¡ticamente si hay soporte
+    // Activa micrÃƒÆ’Ã‚Â³fono automÃƒÆ’Ã‚Â¡ticamente si hay soporte
     if (SR) { state.listening = true; startMic(); updateMic(); }
     speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
     readCurrent();
@@ -471,11 +471,11 @@
     const t=pasos.length; $('guidedProgress').textContent=`Paso ${state.step+1} de ${t}`;
     [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
   }
-  async function nextStep(){ if(!ensureCurrent()) return; const t=(state.current.pasos||[]).length; if(state.step<t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); } else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. Ã‚Â¡Buen provecho!"); } }
-  async function prevStep(){ if(!ensureCurrent()) return; if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); } else { stopSpeak(); await sleep(80); speakSafe("Ya estÃƒÂ¡s en el primer paso."); } }
+  async function nextStep(){ if(!ensureCurrent()) return; const t=(state.current.pasos||[]).length; if(state.step<t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); } else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. Ãƒâ€šÃ‚Â¡Buen provecho!"); } }
+  async function prevStep(){ if(!ensureCurrent()) return; if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); } else { stopSpeak(); await sleep(80); speakSafe("Ya estÃƒÆ’Ã‚Â¡s en el primer paso."); } }
   function repeatStep(){ stopSpeak(); setTimeout(readCurrent,80); }
   function readIngredients(){ if(!ensureCurrent()) return; const ing=state.current?.ingredientes||[]; stopSpeak(); setTimeout(()=>speakSafe(ing.length?("Ingredientes: "+ing.join(", ")):"No hay ingredientes listados."),80); }
-  function goToStep(n){ const total=state?.current?.pasos?.length||0; if(n>=0&&n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); } else { stopSpeak(); setTimeout(()=>speakSafe("Ese nÃƒÂºmero de paso no existe."),80); } }
+  function goToStep(n){ const total=state?.current?.pasos?.length||0; if(n>=0&&n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); } else { stopSpeak(); setTimeout(()=>speakSafe("Ese nÃƒÆ’Ã‚Âºmero de paso no existe."),80); } }
 
   $('btnReadAll').onclick=()=>{ if(state.current) readRecipe(state.current); };
   $('btnGuided').onclick=()=>{ if(state.current) openGuided(state.current); };
@@ -486,7 +486,7 @@
   $('nextStep').onclick=nextStep; $('prevStep').onclick=prevStep; $('repeatStep').onclick=repeatStep; $('stopReading').onclick=()=>{ stopSpeak(); }; $('closeGuided').onclick=closeGuided;
   $('printRecipe').onclick=()=>{ window.print(); };
 
-  // DelegaciÃƒÂ³n en tarjetas
+  // DelegaciÃƒÆ’Ã‚Â³n en tarjetas
   els.grid.addEventListener('click',e=>{
     const b=e.target.closest('button[data-a]'); if(!b) return;
     const r=state.list[Number(b.dataset.i)];
@@ -510,7 +510,7 @@
   const SKEY='shopping.v1'; let shopping=JSON.parse(localStorage.getItem(SKEY)||'[]');
   function save(){ localStorage.setItem(SKEY,JSON.stringify(shopping)); }
   function uid(){ return Math.random().toString(36).slice(2,9); }
-  function renderList(){ $('shoppingList').innerHTML=shopping.map(i=>`<li class="flex items-center gap-2"><input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}"><input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}"><button class="btn btn-ghost" data-a="d" data-id="${i.id}">Ã°Å¸â€”â€˜Ã¯Â¸Â</button></li>`).join(""); $('shoppingEmpty').classList.toggle('hidden',shopping.length>0); }
+  function renderList(){ $('shoppingList').innerHTML=shopping.map(i=>`<li class="flex items-center gap-2"><input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}"><input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}"><button class="btn btn-ghost" data-a="d" data-id="${i.id}">ÃƒÂ°Ã…Â¸Ã¢â‚¬â€Ã¢â‚¬ËœÃƒÂ¯Ã‚Â¸Ã‚Â</button></li>`).join(""); $('shoppingEmpty').classList.toggle('hidden',shopping.length>0); }
   function addItem(text){ text=text.trim(); if(!text) return; shopping.push({id:uid(),text,done:false}); save(); renderList(); }
   function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
   function openDrawer(){ $('shoppingDrawer').classList.add('open'); }
@@ -530,7 +530,7 @@
   if(isIOS || !SR){
     $('toggleMic').disabled=true;
     $('toggleMic').classList.add('opacity-60','cursor-not-allowed');
-    $('readerStatus').textContent = isIOS ? "Voz: el micrÃƒÂ³fono no estÃƒÂ¡ soportado en iPhone/iPad (Safari). Usa los botones." : "Voz: reconocimiento no disponible en este navegador.";
+    $('readerStatus').textContent = isIOS ? "Voz: el micrÃƒÆ’Ã‚Â³fono no estÃƒÆ’Ã‚Â¡ soportado en iPhone/iPad (Safari). Usa los botones." : "Voz: reconocimiento no disponible en este navegador.";
   }
   let rec=null,restarting=false;
   const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
@@ -546,15 +546,15 @@
         if(/^anterior$|^atras$|^retroceder$/.test(t)) return prevStep();
         if(/^leer ingredientes?$/.test(t)) return readIngredients();
         if(num) return goToStep(num-1);
-        if(!state.current) $('readerStatus').textContent="Abre Ã¢â‚¬ËœCocina guiadaÃ¢â‚¬â„¢ para usar comandos.";
+        if(!state.current) $('readerStatus').textContent="Abre ÃƒÂ¢Ã¢â€šÂ¬Ã‹Å“Cocina guiadaÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ para usar comandos.";
       };
       rec.onerror=(e)=>{ $('readerStatus').textContent=`Voz: ${e.error||'error'}`; if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) { try{ rec.stop(); }catch{} setTimeout(()=>{ try{rec.start();}catch{} }, 400); } };
       rec.onend=()=>{ if(state.listening && !restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400); } };
     }
-    try{ rec.start(); }catch{} $('readerStatus').textContent="MicrÃƒÂ³fono activo.";
+    try{ rec.start(); }catch{} $('readerStatus').textContent="MicrÃƒÆ’Ã‚Â³fono activo.";
   }
-  function stopMic(){ if(rec){ try{rec.stop();}catch{} } $('readerStatus').textContent="MicrÃƒÂ³fono desactivado."; }
-  function updateMic(){ $('toggleMic').textContent=state.listening?"Ã°Å¸Å½Â¤ Micro activo":"Ã°Å¸Å½Â¤ Micro"; }
+  function stopMic(){ if(rec){ try{rec.stop();}catch{} } $('readerStatus').textContent="MicrÃƒÆ’Ã‚Â³fono desactivado."; }
+  function updateMic(){ $('toggleMic').textContent=state.listening?"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¤ Micro activo":"ÃƒÂ°Ã…Â¸Ã…Â½Ã‚Â¤ Micro"; }
   $('toggleMic').onclick=()=>{ if(!SR) return; state.listening=!state.listening; state.listening?startMic():stopMic(); updateMic(); };
 
   // Registrar Service Worker (Netlify)
