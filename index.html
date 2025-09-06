@@ -1,42 +1,31 @@
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
 <head>
-  <!-- ¡Deja ESTE meta el primero! Evita mojibake y asegura UTF-8 -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Recetario Español – 160 recetas</title>
-
-  <!-- Color del tema para Android/Chrome (Firefox lo ignora, no pasa nada) -->
   <meta name="theme-color" content="#78350f" />
-
-  <!-- PWA -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-  <!-- Tailwind vía CDN (rápido). Si más adelante quieres build local, lo cambiamos. -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class'};</script>
-
+  <script>tailwind.config = { darkMode: 'class' };</script>
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
-    /* Fuente base robusta con soporte emoji en Windows, Android, iOS y Linux */
-    body{
-      -webkit-tap-highlight-color: transparent;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-                   "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji", sans-serif;
-    }
+    body{ -webkit-tap-highlight-color: transparent; }
+    /* Foco visible para accesibilidad */
+    *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
     .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
     .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
     .btn-ghost{background:transparent}.btn-ghost:active{transform:scale(.98)}
     .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700}
-    .tab-active{background:#92400e;color:#fff}
+    .tab[aria-selected="true"]{background:#92400e;color:#fff}
     .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:#fff}
     .dark .card{background:#1f2937;border-color:#374151}
     .hc *{ color:#000 !important; background:#fff !important; }
-    .hc .tab-active{ background:#000 !important; color:#fff !important; }
+    .hc .tab[aria-selected="true"]{ background:#000 !important; color:#fff !important; }
     .drawer{position:fixed;top:env(safe-area-inset-top,0);right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s;z-index:60}
     .dark .drawer{background:#111827;color:#e5e7eb}
     .drawer.open{transform:translateX(0)}
@@ -57,11 +46,11 @@
         <p class="text-sm text-stone-600 dark:text-stone-400">Voz clara · Contraste · Letra grande · Lista de compra.</p>
       </div>
       <div class="flex items-center gap-2">
-        <button id="toggleTheme" class="btn btn-ghost" title="Tema claro/oscuro" aria-label="Tema claro/oscuro">🌙/☀️</button>
-        <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste" aria-label="Alto contraste">🌓</button>
-        <button id="fontMinus" class="btn btn-ghost" title="Reducir letra" aria-label="Reducir letra">A−</button>
-        <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra" aria-label="Aumentar letra">A+</button>
-        <button id="openShopping" class="btn btn-ghost" title="Lista de la compra" aria-label="Lista de la compra">🧺</button>
+        <button id="toggleTheme" class="btn btn-ghost" title="Cambiar entre tema claro y oscuro" aria-label="Cambiar tema">🌙/☀️</button>
+        <button id="toggleContrast" class="btn btn-ghost" title="Activar alto contraste" aria-label="Alto contraste">🌓</button>
+        <button id="fontMinus" class="btn btn-ghost" title="Reducir tamaño de letra" aria-label="Reducir letra">A−</button>
+        <button id="fontPlus" class="btn btn-ghost" title="Aumentar tamaño de letra" aria-label="Aumentar letra">A+</button>
+        <button id="openShopping" class="btn btn-ghost" title="Abrir lista de la compra" aria-label="Lista de la compra">🧺</button>
       </div>
     </header>
 
@@ -72,25 +61,22 @@
           <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
                  class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
         </div>
-
-        <!-- Tabs con roles ARIA -->
-        <div class="flex items-center gap-2 tabs" role="tablist" aria-label="Categorías">
-          <button class="tab tab-active" role="tab" aria-selected="true" data-cat="Todas">Todas</button>
-          <button class="tab" role="tab" aria-selected="false" data-cat="Aperitivo">Aperitivos</button>
-          <button class="tab" role="tab" aria-selected="false" data-cat="Primero">Primeros</button>
-          <button class="tab" role="tab" aria-selected="false" data-cat="Segundo">Segundos</button>
-          <button class="tab" role="tab" aria-selected="false" data-cat="Postre">Postres</button>
+        <!-- Tabs accesibles -->
+        <div class="flex items-center gap-2" role="tablist" aria-label="Categorías">
+          <button class="tab" role="tab" id="tab-todas" aria-selected="true" aria-controls="panel-todas" data-cat="Todas" title="Mostrar todas las recetas">Todas</button>
+          <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" aria-controls="panel-aperitivo" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
+          <button class="tab" role="tab" id="tab-primero" aria-selected="false" aria-controls="panel-primero" data-cat="Primero" title="Mostrar primeros platos">Primeros</button>
+          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" aria-controls="panel-segundo" data-cat="Segundo" title="Mostrar segundos platos">Segundos</button>
+          <button class="tab" role="tab" id="tab-postre" aria-selected="false" aria-controls="panel-postre" data-cat="Postre" title="Mostrar postres">Postres</button>
         </div>
-
         <div class="flex items-end gap-2">
-          <label class="text-sm">Voz:
-            <select id="voiceRate" class="rounded-lg border px-2 py-1 dark:bg-stone-900 dark:border-stone-700">
-              <option value="0.8">Lenta</option>
-              <option value="0.9" selected>Clara</option>
-              <option value="1.0">Normal</option>
-            </select>
-          </label>
-          <button id="toggleMic" class="btn btn-primary" title="Activar micrófono" aria-label="Activar micrófono">🎤 Micro</button>
+          <label class="text-sm" for="voiceRate">Voz:</label>
+          <select id="voiceRate" class="rounded-lg border px-2 py-1 dark:bg-stone-900 dark:border-stone-700" aria-label="Velocidad de lectura en voz alta">
+            <option value="0.8">Lenta</option>
+            <option value="0.9" selected>Clara</option>
+            <option value="1.0">Normal</option>
+          </select>
+          <button id="toggleMic" class="btn btn-primary" title="Activar o desactivar micrófono" aria-label="Micrófono">🎤 Micro</button>
         </div>
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
@@ -101,26 +87,27 @@
       <span id="countLabel">Mostrando 0 recetas.</span>
     </section>
 
-    <main id="main">
-      <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+    <main id="main" aria-labelledby="countLabel">
+      <!-- panel contenedor (un único grid filtrado por categoría) -->
+      <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4" role="region" aria-label="Listado de recetas"></div>
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
 
     <!-- Modal Detalle -->
-    <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true">
+    <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
       <div class="card max-w-3xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="detailTitle" class="text-xl font-semibold">Detalle</h3>
-          <button id="closeDetail" class="btn btn-ghost" title="Cerrar detalle" aria-label="Cerrar detalle">✕</button>
+          <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle" title="Cerrar">✕</button>
         </div>
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
             <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button id="btnReadAll" class="btn btn-ghost">🔈 Leer</button>
-              <button id="btnGuided" class="btn btn-primary">▶️ Guiada</button>
-              <button id="btnAddAll" class="btn btn-ghost">🧺 Añadir todo</button>
+              <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta">🔈 Leer</button>
+              <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada">▶️ Guiada</button>
+              <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista">🧺 Añadir todo</button>
             </div>
           </div>
           <div>
@@ -134,11 +121,11 @@
     </div>
 
     <!-- Modal Guiada -->
-    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true">
+    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
       <div class="card max-w-2xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="guidedTitle" class="text-xl font-semibold">Cocina guiada</h3>
-          <button id="closeGuided" class="btn btn-ghost" title="Cerrar cocina guiada" aria-label="Cerrar cocina guiada">✕</button>
+          <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
         </div>
         <div class="p-4 space-y-4">
           <p class="text-sm text-stone-600 dark:text-stone-400">Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
@@ -147,13 +134,13 @@
             <ol id="guidedSteps" class="list-decimal pl-5 space-y-2"></ol>
           </div>
           <div class="flex items-center justify-between">
-            <div class="text-xs text-stone-500" id="guidedProgress"></div>
+            <div class="text-xs text-stone-500" id="guidedProgress" aria-live="polite"></div>
             <div class="flex gap-2">
-              <button id="prevStep" class="btn btn-ghost">← Anterior</button>
-              <button id="repeatStep" class="btn btn-ghost">⟲ Repetir</button>
-              <button id="nextStep" class="btn btn-primary">Siguiente →</button>
-              <button id="stopReading" class="btn btn-ghost">■ Parar</button>
-              <button id="printRecipe" class="btn btn-ghost" title="Imprimir receta" aria-label="Imprimir receta">🖨️ Imprimir</button>
+              <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior">← Anterior</button>
+              <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso">⟲ Repetir</button>
+              <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente">Siguiente →</button>
+              <button id="stopReading" class="btn btn-ghost" aria-label="Parar lectura">■ Parar</button>
+              <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta">🖨️ Imprimir</button>
             </div>
           </div>
         </div>
@@ -161,20 +148,21 @@
     </div>
 
     <!-- Drawer Lista compra -->
-    <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra">
+    <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true">
       <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
         <div class="flex items-center gap-2">
-          <button id="exportList" class="btn btn-ghost" title="Exportar lista" aria-label="Exportar lista">⬇️ Exportar</button>
-          <button id="printList" class="btn btn-ghost" title="Imprimir lista" aria-label="Imprimir lista">🖨️</button>
-          <button id="clearChecked" class="btn btn-ghost" title="Borrar marcados" aria-label="Borrar marcados">🗑️ Marcados</button>
-          <button id="closeShopping" class="btn btn-ghost" title="Cerrar lista de la compra" aria-label="Cerrar lista de la compra">✕</button>
+          <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista">⬇️ Exportar</button>
+          <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista">🖨️</button>
+          <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados">🗑️ Marcados</button>
+          <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
         </div>
       </div>
       <div class="p-3">
         <div class="flex gap-2 mb-3">
+          <label for="newItem" class="sr-only">Nuevo artículo</label>
           <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="Añadir artículo (ej. 1 kg tomates)" />
-          <button id="addItem" class="btn btn-primary">Añadir</button>
+          <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo">Añadir</button>
         </div>
         <ul id="shoppingList" class="space-y-2"></ul>
         <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista está vacía.</p>
@@ -186,7 +174,7 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  /* ===== Datos ===== */
+  /* ===== Datos (160 recetas) ===== */
   const IMG = c => ({
     Aperitivo:"https://placehold.co/800x500?text=Aperitivo",
     Primero:"https://placehold.co/800x500?text=Primero",
@@ -194,10 +182,52 @@
     Postre:"https://placehold.co/800x500?text=Postre"
   }[c]);
 
-  const APERITIVOS=[ "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco","Croquetas de jamón","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas","Empanadillas de atún","Empanadillas de carne","Patatas bravas","Patatas alioli","Boquerones en vinagre","Champiñones al ajillo","Gildas donostiarras","Pinchos de tortilla","Pinchos morunos","Queso marinado en aceite","Hummus clásico con crudités","Hummus de remolacha","Hummus de aguacate","Gazpacho en vasitos","Salmorejo en chupitos","Ensaladilla rusa","Tortilla francesa mini","Banderillas variadas","Mejillones en escabeche","Sardinas marinadas","Pulpo a la gallega (tapa)","Calamares a la romana","Torreznos crujientes","Jamón con picos","Queso manchego con membrillo","Pimientos del padrón","Montadito de lomo","Montadito de pringá","Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"];
-  const PRIMEROS=[ "Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobés","Ajoblanco","Crema de calabaza","Crema de puerros","Crema de champiñón","Pisto manchego","Menestra de verduras","Lentejas estofadas","Garbanzos con espinacas","Judías blancas con verduras","Arroz caldoso de verduras","Arroz a la cubana","Arroz negro","Arroz al horno","Paella de verduras","Fideuá de pescado","Macarrones con tomate","Tallarines al ajillo","Espaguetis carbonara ligera","Ensalada mixta","Ensalada campera","Ensalada de garbanzos","Ensalada de pasta fría","Tomates aliñados","Papas arrugadas con mojo","Pimientos asados","Alcachofas salteadas","Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise","Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"];
-  const SEGUNDOS=[ "Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha","Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro","Albóndigas en salsa","Lomo adobado","Costillas al horno","Chuletillas de cordero","Cordero asado","Secreto ibérico a la plancha","Solomillo al roquefort","Bacalao a la vizcaína","Bacalao al pil-pil","Merluza en salsa verde","Dorada al horno","Lubina a la sal","Salmón al papillote","Atún encebollado","Calamares en su tinta","Pulpo a la gallega","Paella mixta","Arroz con pollo","Arroz con bogavante","Empanada gallega de atún","Pisto con huevos","Tortilla de patatas","Revuelto de setas","Conejo al ajillo","Codornices escabechadas","Callos a la madrileña","Fabada asturiana","Marmitako de bonito","Chuletón a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"];
-  const POSTRES=[ "Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana","Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras","Galletas de mantequilla","Rosquillas fritas","Pestiños","Buñuelos de viento","Filloas","Peras al vino","Compota de manzana","Macedonia de frutas","Helado rápido de plátano","Mousse de chocolate","Natillas de vainilla","Tarta de manzana","Tarta tres leches (versión)","Brazo de gitano","Quesada pasiega","Tocino de cielo","Pan de Calatrava","Cuajada con miel","Crepes dulces","Flan de café","Crema pastelera con frutas","Tarta de almendra","Tarta de galletas con chocolate","Bizcocho marmolado","Helado de yogur","Brownie sencillo","Crema de limón","Naranja con canela","Fresas con nata"];
+  const APERITIVOS = [
+    "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco",
+    "Croquetas de jamón","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas",
+    "Empanadillas de atún","Empanadillas de carne","Patatas bravas","Patatas alioli",
+    "Boquerones en vinagre","Champiñones al ajillo","Gildas donostiarras","Pinchos de tortilla",
+    "Pinchos morunos","Queso marinado en aceite","Hummus clásico con crudités","Hummus de remolacha",
+    "Hummus de aguacate","Gazpacho en vasitos","Salmorejo en chupitos","Ensaladilla rusa",
+    "Tortilla francesa mini","Banderillas variadas","Mejillones en escabeche","Sardinas marinadas",
+    "Pulpo a la gallega (tapa)","Calamares a la romana","Torreznos crujientes","Jamón con picos",
+    "Queso manchego con membrillo","Pimientos del padrón","Montadito de lomo","Montadito de pringá",
+    "Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"
+  ];
+
+  const PRIMEROS = [
+    "Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobés","Ajoblanco","Crema de calabaza",
+    "Crema de puerros","Crema de champiñón","Pisto manchego","Menestra de verduras","Lentejas estofadas",
+    "Garbanzos con espinacas","Judías blancas con verduras","Arroz caldoso de verduras","Arroz a la cubana",
+    "Arroz negro","Arroz al horno","Paella de verduras","Fideuá de pescado","Macarrones con tomate",
+    "Tallarines al ajillo","Espaguetis carbonara ligera","Ensalada mixta","Ensalada campera","Ensalada de garbanzos",
+    "Ensalada de pasta fría","Tomates aliñados","Papas arrugadas con mojo","Pimientos asados","Alcachofas salteadas",
+    "Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise",
+    "Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"
+  ];
+
+  const SEGUNDOS = [
+    "Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha",
+    "Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro",
+    "Albóndigas en salsa","Lomo adobado","Costillas al horno","Chuletillas de cordero","Cordero asado",
+    "Secreto ibérico a la plancha","Solomillo al roquefort","Bacalao a la vizcaína","Bacalao al pil-pil",
+    "Merluza en salsa verde","Dorada al horno","Lubina a la sal","Salmón al papillote","Atún encebollado",
+    "Calamares en su tinta","Pulpo a la gallega","Paella mixta","Arroz con pollo","Arroz con bogavante",
+    "Empanada gallega de atún","Pisto con huevos","Tortilla de patatas","Revuelto de setas","Conejo al ajillo",
+    "Codornices escabechadas","Callos a la madrileña","Fabada asturiana","Marmitako de bonito",
+    "Chuletón a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"
+  ];
+
+  const POSTRES = [
+    "Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana",
+    "Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras",
+    "Galletas de mantequilla","Rosquillas fritas","Pestiños","Buñuelos de viento","Filloas","Peras al vino",
+    "Compota de manzana","Macedonia de frutas","Helado rápido de plátano","Mousse de chocolate","Natillas de vainilla",
+    "Tarta de manzana","Tarta tres leches (versión)","Brazo de gitano","Quesada pasiega","Tocino de cielo",
+    "Pan de Calatrava","Cuajada con miel","Crepes dulces","Flan de café","Crema pastelera con frutas",
+    "Tarta de almendra","Tarta de galletas con chocolate","Bizcocho marmolado","Helado de yogur","Brownie sencillo",
+    "Crema de limón","Naranja con canela","Fresas con nata"
+  ];
 
   /* Overrides realistas para platos clave (ingredientes + pasos + tiempo) */
   const OV = (()=> {
@@ -351,107 +381,141 @@
     return list.map(n=>({categoria:cat,titulo:n,imagen:IMG(cat),
       ingredientes:ingredientesPara(cat,n), pasos:pasosPara(cat,n), tiempo:tiempo(cat,n)}));
   }
-  const RECETAS=[...build("Aperitivo",APERITIVOS),...build("Primero",PRIMEROS),...build("Segundo",SEGUNDOS),...build("Postre",POSTRES)];
+
+  const RECETAS = [
+    ...build("Aperitivo", APERITIVOS),
+    ...build("Primero", PRIMEROS),
+    ...build("Segundo", SEGUNDOS),
+    ...build("Postre", POSTRES)
+  ];
 
   /* ===== Estado + UI ===== */
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const state={q:"",cat:"Todas",list:RECETAS,current:null,step:0,dark:matchMedia('(prefers-color-scheme: dark)').matches,contrast:false,font:16,listening:false,rate:0.9};
-  const $=id=>document.getElementById(id);
-  const els={grid:$('recipesGrid'),empty:$('emptyState'),count:$('countLabel'),search:$('search'),tabs:()=>document.querySelectorAll('.tab'),status:$('readerStatus'),
-    toggleTheme:$('toggleTheme'),toggleContrast:$('toggleContrast'),fontPlus:$('fontPlus'),fontMinus:$('fontMinus'),
-    toggleMic:$('toggleMic'),heard:$('heardText'),voiceRate:$('voiceRate'),
-    detailModal:$('detailModal'),detailTitle:$('detailTitle'),detailImg:$('detailImg'),detailMeta:$('detailMeta'),detailIngredients:$('detailIngredients'),detailSteps:$('detailSteps'),closeDetail:$('closeDetail'),btnReadAll:$('btnReadAll'),btnGuided:$('btnGuided'),btnAddAll:$('btnAddAll'),
-    guidedModal:$('guidedModal'),gTitle:$('guidedTitle'),gSteps:$('guidedSteps'),gProg:$('guidedProgress'),next:$('nextStep'),prev:$('prevStep'),rep:$('repeatStep'),stop:$('stopReading'),close:$('closeGuided'),printBtn:$('printRecipe'),
-    shoppingDrawer:$('shoppingDrawer'),openShopping:$('openShopping'),closeShopping:$('closeShopping'),shoppingList:$('shoppingList'),shoppingEmpty:$('shoppingEmpty'),newItem:$('newItem'),addItem:$('addItem'),exportList:$('exportList'),printList:$('printList'),clearChecked:$('clearChecked'),
-    caption:$('ttsCaption')
+  const state = {
+    q:"", cat:"Todas", list:RECETAS, current:null, step:0,
+    dark: matchMedia('(prefers-color-scheme: dark)').matches,
+    contrast:false, font:16, listening:false, rate:0.9
   };
 
-  function applyTheme(){ document.documentElement.classList.toggle('dark',state.dark); }
-  function applyContrast(){ document.documentElement.classList.toggle('hc',state.contrast); }
-  function setFont(px){ state.font=Math.max(14,Math.min(22,px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); }
+  const $ = id => document.getElementById(id);
+  const els = {
+    grid: $('recipesGrid'), empty: $('emptyState'), count: $('countLabel'), search: $('search'),
+    tabs: () => document.querySelectorAll('[role="tab"]'),
+    status: $('readerStatus'),
+    toggleTheme: $('toggleTheme'), toggleContrast: $('toggleContrast'),
+    fontPlus: $('fontPlus'), fontMinus: $('fontMinus'),
+    toggleMic: $('toggleMic'), heard: $('heardText'), voiceRate: $('voiceRate'),
+    detailModal: $('detailModal'), detailTitle: $('detailTitle'), detailImg: $('detailImg'),
+    detailMeta: $('detailMeta'), detailIngredients: $('detailIngredients'), detailSteps: $('detailSteps'),
+    btnReadAll: $('btnReadAll'), btnGuided: $('btnGuided'), btnAddAll: $('btnAddAll'),
+    guidedModal: $('guidedModal'), gTitle: $('guidedTitle'), gSteps: $('guidedSteps'),
+    gProg: $('guidedProgress'), next: $('nextStep'), prev: $('prevStep'),
+    rep: $('repeatStep'), stop: $('stopReading'), close: $('closeGuided'), printBtn: $('printRecipe'),
+    shoppingDrawer: $('shoppingDrawer'), openShopping: $('openShopping'), closeShopping: $('closeShopping'),
+    shoppingList: $('shoppingList'), shoppingEmpty: $('shoppingEmpty'), newItem: $('newItem'),
+    addItem: $('addItem'), exportList: $('exportList'), printList: $('printList'), clearChecked: $('clearChecked'),
+    caption: $('ttsCaption'), closeDetail: $('closeDetail')
+  };
+
+  function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); }
+  function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); }
+  function setFont(px){ state.font = Math.max(14, Math.min(22, px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); }
   applyTheme(); applyContrast(); setFont(state.font);
-  els.toggleTheme.onclick=()=>{state.dark=!state.dark;applyTheme();};
-  els.toggleContrast.onclick=()=>{state.contrast=!state.contrast;applyContrast();};
-  els.fontPlus.onclick=()=>setFont(state.font+1);
-  els.fontMinus.onclick=()=>setFont(state.font-1);
+  els.toggleTheme.onclick = () => { state.dark = !state.dark; applyTheme(); };
+  els.toggleContrast.onclick = () => { state.contrast = !state.contrast; applyContrast(); };
+  els.fontPlus.onclick = () => setFont(state.font+1);
+  els.fontMinus.onclick = () => setFont(state.font-1);
+
+  // Tabs accesibles
+  function setActiveTab(btn){
+    els.tabs().forEach(t => {
+      const selected = t === btn;
+      t.setAttribute('aria-selected', selected ? 'true' : 'false');
+    });
+    state.cat = btn.dataset.cat;
+    filter();
+  }
+  els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
 
   function card(r,i){
-    return `<article class="card">
-      <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
+    return `<article class="card" role="article" aria-label="${r.titulo}">
+      <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
       <div class="p-3 space-y-2">
         <h3 class="text-lg font-semibold">${r.titulo}</h3>
         <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
         <div class="flex flex-wrap gap-2 pt-1">
-          <button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button>
-          <button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button>
-          <button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button>
-          <button class="btn btn-ghost" data-a="lista" data-i="${i}">🧺 Añadir</button>
+          <button class="btn btn-ghost" data-a="leer" data-i="${i}" aria-label="Leer ${r.titulo} en voz alta" title="Leer">🔈 Leer</button>
+          <button class="btn btn-primary" data-a="guiada" data-i="${i}" aria-label="Cocina guiada para ${r.titulo}" title="Guiada">▶️ Guiada</button>
+          <button class="btn btn-ghost" data-a="abrir" data-i="${i}" aria-label="Abrir detalles de ${r.titulo}" title="Abrir">📖 Abrir</button>
+          <button class="btn btn-ghost" data-a="lista" data-i="${i}" aria-label="Añadir ingredientes de ${r.titulo} a la lista" title="Añadir a lista">🧺 Añadir</button>
         </div>
       </div>
     </article>`;
   }
+
   function render(list){
-    state.list=list;
+    state.list = list;
     if(!list.length){
-      els.grid.innerHTML="";
+      els.grid.innerHTML = "";
       els.empty.classList.remove('hidden');
-      els.count.textContent="Mostrando 0 recetas.";
+      els.count.textContent = "Mostrando 0 recetas.";
       return;
     }
     els.empty.classList.add('hidden');
-    els.grid.innerHTML=list.map((r,i)=>card(r,i)).join("");
-    els.count.textContent=`Mostrando ${list.length} recetas.`;
+    els.grid.innerHTML = list.map((r,i)=>card(r,i)).join("");
+    els.count.textContent = `Mostrando ${list.length} recetas.`;
   }
+
   function filter(){
-    const q=state.q.toLowerCase().trim();
-    const l=RECETAS.filter(r=>(state.cat==="Todas"||r.categoria===state.cat)&&(!q||[r.titulo,...r.ingredientes,...r.pasos].join(" ").toLowerCase().includes(q)));
+    const q = state.q.toLowerCase().trim();
+    const l = RECETAS.filter(r =>
+      (state.cat==="Todas" || r.categoria===state.cat) &&
+      (!q || [r.titulo, ...r.ingredientes, ...r.pasos].join(" ").toLowerCase().includes(q))
+    );
     render(l);
   }
+
   render(RECETAS);
 
-  // Pestañas: actualiza clase activa + aria-selected
-  els.tabs().forEach(b=>b.onclick=()=>{
-    els.tabs().forEach(x=>{ x.classList.remove('tab-active'); x.setAttribute('aria-selected','false'); });
-    b.classList.add('tab-active');
-    b.setAttribute('aria-selected','true');
-    state.cat=b.dataset.cat;
-    filter();
+  els.search.oninput = e => { state.q = e.target.value; filter(); };
+  document.addEventListener('keydown', e => {
+    if(e.ctrlKey && e.key === '/'){ e.preventDefault(); els.search.focus(); }
   });
 
-  els.search.oninput=e=>{ state.q=e.target.value; filter(); };
-  document.addEventListener('keydown',e=>{ if(e.ctrlKey&&e.key==='/'){ e.preventDefault(); els.search.focus(); } });
-
   function openDetail(r){
-    state.current=r;
-    els.detailTitle.textContent=r.titulo;
-    els.detailImg.src=r.imagen;
-    els.detailImg.alt=`Foto de ${r.titulo}`;
-    els.detailMeta.textContent=`${r.categoria} · ${r.tiempo}`;
-    els.detailIngredients.innerHTML=r.ingredientes.map(i=>`<li>${i}</li>`).join("");
-    els.detailSteps.innerHTML=r.pasos.map(p=>`<li>${p}</li>`).join("");
+    state.current = r;
+    els.detailTitle.textContent = r.titulo;
+    els.detailImg.src = r.imagen;
+    els.detailImg.alt = `Foto de ${r.titulo}`;
+    els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
+    els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
+    els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
     els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex');
   }
   function closeDetail(){ els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex'); }
-  $('closeDetail').onclick=closeDetail;
-  document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
+  els.closeDetail.onclick = closeDetail;
+  document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
 
-  /* ===== Voz robusta ===== */
-  let ttsVoice=null, voicesReady=false;
+  /* ===== Voz (TTS) ===== */
+  let ttsVoice = null, voicesReady = false;
   function pickVoice(){
-    const vs=speechSynthesis.getVoices();
+    const vs = speechSynthesis.getVoices();
     voicesReady = vs && vs.length>0;
     ttsVoice = vs.find(v=>/Spanish.*(Spain)|es[-_]ES/i.test(v.name+v.lang))
              || vs.find(v=>/Spanish|es[-_]/i.test(v.name+v.lang))
              || vs[0] || null;
   }
-  if('speechSynthesis'in window){ try{pickVoice(); speechSynthesis.onvoiceschanged=pickVoice;}catch{} }
-  els.voiceRate.onchange=(e)=>{ state.rate = Number(e.target.value)||0.9; };
+  if('speechSynthesis' in window){
+    try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch{}
+  }
+  els.voiceRate.onchange = e => { state.rate = Number(e.target.value) || 0.9; };
 
   function unlockTTSOnce(){
     if (!('speechSynthesis' in window) || unlockTTSOnce.done) return;
     try{ speechSynthesis.cancel(); speechSynthesis.resume(); }catch{}
-    const u=new SpeechSynthesisUtterance(''); try{ speechSynthesis.speak(u);}catch{} try{ speechSynthesis.cancel(); }catch{}
-    unlockTTSOnce.done=true;
+    const u = new SpeechSynthesisUtterance(' ');
+    try{ speechSynthesis.speak(u);}catch{} try{ speechSynthesis.cancel(); }catch{}
+    unlockTTSOnce.done = true;
     document.removeEventListener('touchend', unlockTTSOnce);
     document.removeEventListener('click', unlockTTSOnce);
   }
@@ -460,88 +524,105 @@
 
   let speakLock=false;
   function stopSpeak(){ try{ speechSynthesis.cancel(); }catch{} }
-  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const sleep = ms => new Promise(r=>setTimeout(r,ms));
   async function speakSafe(text){
     if(!('speechSynthesis' in window)) return;
     while(speakLock) await sleep(20);
-    speakLock=true;
-    if(!voicesReady){ try{pickVoice();}catch{} }
+    speakLock = true;
+    if(!voicesReady){ try{ pickVoice(); }catch{} }
     stopSpeak(); await sleep(120);
-    const u=new SpeechSynthesisUtterance(text);
-    if(ttsVoice) u.voice=ttsVoice;
-    u.lang=(ttsVoice&&ttsVoice.lang)||'es-ES';
-    u.rate=state.rate; u.pitch=1.0;
-    const cap=document.getElementById('ttsCaption');
-    if(cap){ u.onstart=()=>{ cap.textContent=text; cap.classList.add('show'); };
-             u.onend  =()=>{ cap.classList.remove('show'); cap.textContent=''; }; }
-    const done=new Promise(res=>{ u.onend=()=>{ speakLock=false; res(); }; u.onerror=()=>{ speakLock=false; res(); }; });
+    const u = new SpeechSynthesisUtterance(text);
+    if(ttsVoice) u.voice = ttsVoice;
+    u.lang = (ttsVoice && ttsVoice.lang) || 'es-ES';
+    u.rate = state.rate; u.pitch = 1.0;
+    const cap = document.getElementById('ttsCaption');
+    if(cap){
+      u.onstart = ()=>{ cap.textContent = text; cap.classList.add('show'); };
+      u.onend   = ()=>{ cap.classList.remove('show'); cap.textContent=''; };
+    }
+    const done = new Promise(res=>{ u.onend=()=>{ speakLock=false; res(); }; u.onerror=()=>{ speakLock=false; res(); }; });
     try{ speechSynthesis.speak(u); }catch{ speakLock=false; }
     await done;
   }
 
   function readRecipe(r){
-    const intro=`${r.titulo}. ${r.categoria}. Tiempo ${r.tiempo}.`;
-    const ing=r.ingredientes?.length?`Ingredientes: ${r.ingredientes.join(", ")}.`:"";
-    const pasos=r.pasos?.length?`Pasos: ${r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" ")}`:"";
+    const intro = `${r.titulo}. ${r.categoria}. Tiempo ${r.tiempo}.`;
+    const ing = r.ingredientes?.length ? `Ingredientes: ${r.ingredientes.join(", ")}.` : "";
+    const pasos = r.pasos?.length ? `Pasos: ${r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" ")}` : "";
     speakSafe([intro,ing,pasos].filter(Boolean).join(" "));
-    els.status.textContent=`Leyendo ${r.titulo}.`;
+    els.status.textContent = `Leyendo ${r.titulo}.`;
   }
 
-  /* ===== Guiado + voz ===== */
+  /* ===== Guiado + comandos de voz (STT) ===== */
   function ensureCurrent(){
     if(!state.current){
-      const primera=(state.list && state.list[0])||null;
+      const primera = (state.list && state.list[0]) || null;
       if(!primera){ els.status.textContent="Abre una receta y pulsa ‘Guiada’."; return false; }
-      state.current=primera; state.step=0;
+      state.current = primera; state.step = 0;
     }
     return true;
   }
   function openGuided(r){
-    state.current=r; state.step=0;
-    $('guidedRecipeTitle').textContent=r.titulo;
-    $('guidedSteps').innerHTML=r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
+    state.current = r; state.step = 0;
+    $('guidedRecipeTitle').textContent = r.titulo;
+    $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
     if (SR) { state.listening = true; startMic(); updateMic(); }
-    speakSafe(`Iniciamos ${r.titulo}. Di siguiente, anterior, repetir o salir.`);
+    speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
   }
   function closeGuided(){ stopSpeak(); $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; }
   function readCurrent(){
     if(!ensureCurrent()) return;
-    const pasos=state.current.pasos||[]; if(!pasos.length) return;
+    const pasos = state.current.pasos || []; if(!pasos.length) return;
     if(state.step<0) state.step=0; if(state.step>=pasos.length) state.step=pasos.length-1;
     speakSafe(`Paso ${state.step+1}. ${pasos[state.step]}`);
-    const t=pasos.length; $('guidedProgress').textContent=`Paso ${state.step+1} de ${t}`;
+    const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
     [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
   }
-  async function nextStep(){ if(!ensureCurrent()) return; const t=(state.current.pasos||[]).length; if(state.step<t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); } else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. ¡Buen provecho!"); } }
-  async function prevStep(){ if(!ensureCurrent()) return; if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); } else { stopSpeak(); await sleep(80); speakSafe("Ya estás en el primer paso."); } }
+  async function nextStep(){
+    if(!ensureCurrent()) return;
+    const t = (state.current.pasos||[]).length;
+    if(state.step < t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); }
+    else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. ¡Buen provecho!"); }
+  }
+  async function prevStep(){
+    if(!ensureCurrent()) return;
+    if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); }
+    else { stopSpeak(); await sleep(80); speakSafe("Ya estás en el primer paso."); }
+  }
   function repeatStep(){ stopSpeak(); setTimeout(readCurrent,80); }
-  function readIngredients(){ if(!ensureCurrent()) return; const ing=state.current?.ingredientes||[]; stopSpeak(); setTimeout(()=>speakSafe(ing.length?("Ingredientes: "+ing.join(", ")):"No hay ingredientes listados."),80); }
-  function goToStep(n){ const total=state?.current?.pasos?.length||0; if(n>=0&&n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); } else { stopSpeak(); setTimeout(()=>speakSafe("Ese número de paso no existe."),80); } }
+  function readIngredients(){
+    if(!ensureCurrent()) return;
+    const ing = state.current?.ingredientes || [];
+    stopSpeak();
+    setTimeout(()=>speakSafe(ing.length?("Ingredientes: "+ing.join(", ")):"No hay ingredientes listados."),80);
+  }
+  function goToStep(n){
+    const total = state?.current?.pasos?.length || 0;
+    if(n>=0 && n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); }
+    else { stopSpeak(); setTimeout(()=>speakSafe("Ese número de paso no existe."),80); }
+  }
 
-  $('btnReadAll').onclick=()=>{ if(state.current) readRecipe(state.current); };
-  $('btnGuided').onclick=()=>{ if(state.current) openGuided(state.current); };
-  $('btnAddAll').onclick=()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
-  $('closeDetail').onclick=closeDetail;
-  document.getElementById('detailModal').addEventListener('click',e=>{ if(e.target.id==='detailModal') closeDetail(); });
+  els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
+  els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
+  els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
 
-  $('nextStep').onclick=nextStep; $('prevStep').onclick=prevStep; $('repeatStep').onclick=repeatStep; $('stopReading').onclick=()=>{ stopSpeak(); }; $('closeGuided').onclick=closeGuided;
-  $('printRecipe').onclick=()=>{ window.print(); };
+  $('nextStep').onclick = nextStep; $('prevStep').onclick = prevStep; $('repeatStep').onclick = repeatStep;
+  $('stopReading').onclick = ()=>{ stopSpeak(); }; $('closeGuided').onclick = closeGuided;
+  $('printRecipe').onclick = ()=>{ window.print(); };
 
   // Delegación en tarjetas
   els.grid.addEventListener('click',e=>{
-    const b=e.target.closest('button[data-a]'); if(!b) return;
-    const r=state.list[Number(b.dataset.i)];
-    if(!r) return;
-    if(b.dataset.a==='leer') readRecipe(r);
-    if(b.dataset.a==='guiada') openGuided(r);
+    const b = e.target.closest('button[data-a]'); if(!b) return;
+    const r = state.list[Number(b.dataset.i)]; if(!r) return;
+    if(b.dataset.a==='leer')  { openDetail(r); readRecipe(r); }
+    if(b.dataset.a==='guiada'){ openDetail(r); openGuided(r); }
     if(b.dataset.a==='abrir') openDetail(r);
     if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
-
   });
 
-  // Atajos en modal
+  // Atajos en modal guiado
   document.addEventListener('keydown',e=>{
     if($('guidedModal').classList.contains('hidden')) return;
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
@@ -552,65 +633,128 @@
 
   /* ===== Lista de la compra ===== */
   const SKEY='shopping.v1'; let shopping=JSON.parse(localStorage.getItem(SKEY)||'[]');
-  function save(){ localStorage.setItem(SKEY,JSON.stringify(shopping)); }
+  function save(){ localStorage.setItem(SKEY, JSON.stringify(shopping)); }
   function uid(){ return Math.random().toString(36).slice(2,9); }
   function renderList(){
-    $('shoppingList').innerHTML=shopping.map(i=>`<li class="flex items-center gap-2"><input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}"><input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}"><button class="btn btn-ghost" data-a="d" data-id="${i.id}">🗑️</button></li>`).join("");
-    $('shoppingEmpty').classList.toggle('hidden',shopping.length>0);
+    $('shoppingList').innerHTML = shopping.map(i=>`
+      <li class="flex items-center gap-2">
+        <input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}" aria-label="Marcar ${i.text}">
+        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}">
+        <button class="btn btn-ghost" data-a="d" data-id="${i.id}" aria-label="Eliminar ${i.text}">🗑️</button>
+      </li>`).join("");
+    $('shoppingEmpty').classList.toggle('hidden', shopping.length>0);
   }
-  function addItem(text){ text=text.trim(); if(!text) return; shopping.push({id:uid(),text,done:false}); save(); renderList(); }
+  function addItem(text){ text=(text||"").trim(); if(!text) return; shopping.push({id:uid(),text,done:false}); save(); renderList(); }
   function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
-  function openDrawer(){ $('shoppingDrawer').classList.add('open'); }
-  function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); }
-  $('openShopping').onclick=openDrawer; $('closeShopping').onclick=closeDrawer;
-  $('addItem').onclick=()=>{ addItem($('newItem').value); $('newItem').value=""; $('newItem').focus(); };
-  $('newItem').onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); $('addItem').click(); } };
-  $('shoppingList').addEventListener('click',e=>{ const b=e.target.closest('button[data-a="d"]'); if(!b) return; shopping=shopping.filter(x=>x.id!==b.dataset.id); save(); renderList(); });
-  $('shoppingList').addEventListener('change',e=>{ const c=e.target.closest('input[type="checkbox"][data-a="t"]'); if(!c) return; const it=shopping.find(x=>x.id===c.dataset.id); if(it){ it.done=c.checked; save(); } });
-  $('shoppingList').addEventListener('input',e=>{ const t=e.target.closest('input[type="text"][data-a="e"]'); if(!t) return; const it=shopping.find(x=>x.id===t.dataset.id); if(it){ it.text=t.value; save(); } });
-  $('clearChecked').onclick=()=>{ shopping=shopping.filter(i=>!i.done); save(); renderList(); };
-  $('exportList').onclick=()=>{ const data=shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data],{type:'text/plain'})); a.download='lista_compra.txt'; a.click(); };
-  $('printList').onclick=()=>{ const w=window.open('','_blank'); w.document.write(`<pre>${shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n')}</pre>`); w.document.close(); w.print(); setTimeout(()=>w.close(),300); };
+  function openDrawer(){ $('shoppingDrawer').classList.add('open'); $('shoppingDrawer').setAttribute('aria-hidden','false'); }
+  function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); $('shoppingDrawer').setAttribute('aria-hidden','true'); }
+  els.openShopping.onclick = openDrawer; els.closeShopping.onclick = closeDrawer;
+  els.addItem.onclick = ()=>{ addItem(els.newItem.value); els.newItem.value=""; els.newItem.focus(); };
+  els.newItem.onkeydown = e=>{ if(e.key==='Enter'){ e.preventDefault(); els.addItem.click(); } };
+  $('shoppingList').addEventListener('click',e=>{
+    const b=e.target.closest('button[data-a="d"]'); if(!b) return;
+    shopping = shopping.filter(x=>x.id!==b.dataset.id); save(); renderList();
+  });
+  $('shoppingList').addEventListener('change',e=>{
+    const c=e.target.closest('input[type="checkbox"][data-a="t"]'); if(!c) return;
+    const it=shopping.find(x=>x.id===c.dataset.id); if(it){ it.done=c.checked; save(); }
+  });
+  $('shoppingList').addEventListener('input',e=>{
+    const t=e.target.closest('input[type="text"][data-a="e"]'); if(!t) return;
+    const it=shopping.find(x=>x.id===t.dataset.id); if(it){ it.text=t.value; save(); }
+  });
+  els.clearChecked.onclick = ()=>{ shopping = shopping.filter(i=>!i.done); save(); renderList(); };
+  els.exportList.onclick = ()=>{
+    const data = shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n');
+    const a=document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([data],{type:'text/plain'}));
+    a.download='lista_compra.txt'; a.click();
+  };
+  els.printList.onclick = ()=>{
+    const w = window.open('','_blank');
+    w.document.write(`<pre>${shopping.map(i=>`${i.done?'[x]':'[ ]'} ${i.text}`).join('\n')}</pre>`);
+    w.document.close(); w.print(); setTimeout(()=>w.close(),300);
+  };
 
-  // Reconocimiento de voz actualizado y robusto
-  const SR = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition) ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
+  /* ===== Reconocimiento de voz (STT) robusto ===== */
+  const SR = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
+            ? (window.SpeechRecognition||window.webkitSpeechRecognition)
+            : null;
+
+  // Mensaje de soporte
   if(isIOS || !SR){
-    $('toggleMic').disabled=true;
-    $('toggleMic').classList.add('opacity-60','cursor-not-allowed');
-    $('readerStatus').textContent = isIOS ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones." : "Voz: reconocimiento no disponible en este navegador.";
+    els.toggleMic.disabled = true;
+    els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
+    els.status.textContent = isIOS
+      ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones."
+      : "Voz: reconocimiento no disponible en este navegador.";
   }
-  let rec=null,restarting=false;
-  const norm = s => (s||"").toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/\s+/g,' ').trim();
+
+  let rec=null, restarting=false;
+  const norm = s => (s||"").toLowerCase()
+                  .normalize('NFD').replace(/\p{Diacritic}/gu,'')
+                  .replace(/\s+/g,' ')
+                  .trim();
+
+  const CMD = {
+    next: /^(siguiente|sigue|proximo|adelante|avanza|continuar)$/,
+    prev: /^(anterior|atras|retroceder)$/,
+    rep:  /^(repetir|otra vez|de nuevo)$/,
+    ing:  /^(leer ingredientes?|ingredientes)$/,
+    stop: /^(salir|parar|detener|cerrar)$/,
+    stepNum: /^(?:paso\s+(\d{1,2}))$/
+  };
+
   function startMic(){
     if(!SR) return;
     if(!rec){
-      rec=new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
-      rec.onresult=(ev)=>{ const last=ev.results[ev.results.length-1][0].transcript||''; $('heardText').textContent=last; const t=norm(last);
-        const m=t.match(/paso\s+(\d{1,2})/); const num=m?Number(m[1]):null;
-        if(/^salir$|^parar$|^detener$/.test(t)) return closeGuided();
-        if(/^repetir$|^otra vez$|^de nuevo$/.test(t)) return repeatStep();
-        if(/^siguiente$|^continuar$|^proximo$|^adelante$|^avanzar$/.test(t)) return nextStep();
-        if(/^anterior$|^atras$|^retroceder$/.test(t)) return prevStep();
-        if(/^leer ingredientes?$/.test(t)) return readIngredients();
-        if(num) return goToStep(num-1);
-        if(!state.current) $('readerStatus').textContent="Abre ‘Cocina guiada’ para usar comandos.";
-      };
-      rec.onerror=(e)=>{ $('readerStatus').textContent=`Voz: ${e.error||'error'}`; if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) { try{ rec.stop(); }catch{} setTimeout(()=>{ try{rec.start();}catch{} }, 400); } };
-      rec.onend=()=>{ if(state.listening && !restarting){ restarting=true; setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400); } };
-    }
-    try{ rec.start(); }catch{} $('readerStatus').textContent="Micrófono activo.";
-  }
-  function stopMic(){ if(rec){ try{rec.stop();}catch{} } $('readerStatus').textContent="Micrófono desactivado."; }
-  function updateMic(){ $('toggleMic').textContent=state.listening?"🎤 Micro activo":"🎤 Micro"; }
-  $('toggleMic').onclick=()=>{ if(!SR) return; state.listening=!state.listening; state.listening?startMic():stopMic(); updateMic(); };
+      rec = new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
+      rec.onresult = (ev)=>{
+        const last = ev.results[ev.results.length-1][0].transcript||'';
+        els.heard.textContent = last;
+        const t = norm(last);
 
-  // Registrar Service Worker
+        if(CMD.stop.test(t)) return closeGuided();
+        if(CMD.rep.test(t))  return repeatStep();
+        if(CMD.next.test(t)) return nextStep();
+        if(CMD.prev.test(t)) return prevStep();
+        if(CMD.ing.test(t))  return readIngredients();
+
+        const m = t.match(CMD.stepNum);
+        if(m && m[1]) return goToStep(Number(m[1]) - 1);
+
+        if(!state.current) els.status.textContent = "Abre ‘Cocina guiada’ para usar comandos.";
+      };
+      rec.onerror = (e)=>{
+        els.status.textContent = `Voz: ${e.error || 'error'}`;
+        if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) {
+          try{ rec.stop(); }catch{}
+          setTimeout(()=>{ try{rec.start();}catch{} }, 400);
+        }
+      };
+      rec.onend = ()=>{
+        if(state.listening && !restarting){
+          restarting = true;
+          setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400);
+        }
+      };
+    }
+    try{ rec.start(); }catch{}
+    els.status.textContent = "Micrófono activo.";
+  }
+
+  function stopMic(){ if(rec){ try{rec.stop();}catch{} } els.status.textContent="Micrófono desactivado."; }
+  function updateMic(){ els.toggleMic.textContent = state.listening ? "🎤 Micro activo" : "🎤 Micro"; }
+  els.toggleMic.onclick = ()=>{ if(!SR) return; state.listening = !state.listening; state.listening ? startMic() : stopMic(); updateMic(); };
+
+  // SW opcional (si existe sw.js junto al index)
   if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("./sw.js").catch(console.error);
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
   }
 
   // Inicial
-  document.addEventListener('DOMContentLoaded',()=>{ filter(); });
+  document.addEventListener('DOMContentLoaded', ()=>{ filter(); renderList(); });
+
   </script>
 </body>
 </html>
