@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Recetario Español – 160 recetas</title>
+
+  <!-- theme-color (mejor soporte: claro/oscuro) -->
   <meta name="theme-color" content="#78350f" />
+  <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
+
   <link rel="manifest" href="./manifest.json" />
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -13,9 +18,9 @@
   <script>tailwind.config = { darkMode: 'class' };</script>
   <style>
     :root{ --base-font:16px; }
-    html{ font-size: var(--base-font); }
+    html{ font-size: var(--base-font); text-size-adjust:100%; -webkit-text-size-adjust:100%; }
     body{ -webkit-tap-highlight-color: transparent; }
-    /* Foco visible para accesibilidad */
+    /* Foco visible */
     *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
     .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
     .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
@@ -46,10 +51,10 @@
         <p class="text-sm text-stone-600 dark:text-stone-400">Voz clara · Contraste · Letra grande · Lista de compra.</p>
       </div>
       <div class="flex items-center gap-2">
-        <button id="toggleTheme" class="btn btn-ghost" title="Cambiar entre tema claro y oscuro" aria-label="Cambiar tema">🌙/☀️</button>
-        <button id="toggleContrast" class="btn btn-ghost" title="Activar alto contraste" aria-label="Alto contraste">🌓</button>
-        <button id="fontMinus" class="btn btn-ghost" title="Reducir tamaño de letra" aria-label="Reducir letra">A−</button>
-        <button id="fontPlus" class="btn btn-ghost" title="Aumentar tamaño de letra" aria-label="Aumentar letra">A+</button>
+        <button id="toggleTheme" class="btn btn-ghost" title="Cambiar tema" aria-label="Cambiar tema">🌙/☀️</button>
+        <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste" aria-label="Alto contraste">🌓</button>
+        <button id="fontMinus" class="btn btn-ghost" title="Reducir letra" aria-label="Reducir letra">A−</button>
+        <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra" aria-label="Aumentar letra">A+</button>
         <button id="openShopping" class="btn btn-ghost" title="Abrir lista de la compra" aria-label="Lista de la compra">🧺</button>
       </div>
     </header>
@@ -63,12 +68,12 @@
         </div>
         <!-- Tabs accesibles -->
         <div class="flex items-center gap-2" role="tablist" aria-label="Categorías">
-          <button class="tab" role="tab" id="tab-todas" aria-selected="true" aria-controls="panel-todas" data-cat="Todas" title="Mostrar todas las recetas">Todas</button>
+          <button class="tab" role="tab" id="tab-todas" aria-selected="true" aria-controls="panel-todas" data-cat="Todas" title="Mostrar todas">Todas</button>
           <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" aria-controls="panel-aperitivo" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
-          <button class="tab" role="tab" id="tab-primero" aria-selected="false" aria-controls="panel-primero" data-cat="Primero" title="Mostrar primeros platos">Primeros</button>
-          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" aria-controls="panel-segundo" data-cat="Segundo" title="Mostrar segundos platos">Segundos</button>
+          <button class="tab" role="tab" id="tab-primero" aria-selected="false" aria-controls="panel-primero" data-cat="Primero" title="Mostrar primeros">Primeros</button>
+          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" aria-controls="panel-segundo" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
           <button class="tab" role="tab" id="tab-postre" aria-selected="false" aria-controls="panel-postre" data-cat="Postre" title="Mostrar postres">Postres</button>
-          <!-- La pestaña Favoritas se añade por JS -->
+          <!-- Favoritas se añade por JS -->
         </div>
         <div class="flex items-end gap-2">
           <label class="text-sm" for="voiceRate">Voz:</label>
@@ -77,7 +82,7 @@
             <option value="0.9" selected>Clara</option>
             <option value="1.0">Normal</option>
           </select>
-          <button id="toggleMic" class="btn btn-primary" title="Activar o desactivar micrófono" aria-label="Micrófono">🎤 Micro</button>
+          <button id="toggleMic" class="btn btn-primary" title="Mantén pulsado para hablar" aria-label="Mantén pulsado para hablar">🎤 Micro (mantén pulsado)</button>
         </div>
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
@@ -105,9 +110,9 @@
             <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
-              <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta">🔈 Leer</button>
-              <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada">▶️ Guiada</button>
-              <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista">🧺 Añadir todo</button>
+              <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
+              <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
+              <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
               <!-- El botón Compartir se añade por JS -->
             </div>
           </div>
@@ -129,7 +134,7 @@
           <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
         </div>
         <div class="p-4 space-y-4">
-          <p class="text-sm text-stone-600 dark:text-stone-400">Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
+          <p class="text-sm text-stone-600 dark:text-stone-400">Pulsa y mantén el botón de micrófono para hablar. Prueba: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
           <div class="bg-stone-50 dark:bg-stone-900 rounded-xl p-4">
             <h4 id="guidedRecipeTitle" class="text-lg font-semibold mb-2"></h4>
             <ol id="guidedSteps" class="list-decimal pl-5 space-y-2"></ol>
@@ -137,11 +142,11 @@
           <div class="flex items-center justify-between">
             <div class="text-xs text-stone-500" id="guidedProgress" aria-live="polite"></div>
             <div class="flex gap-2">
-              <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior">← Anterior</button>
-              <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso">⟲ Repetir</button>
-              <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente">Siguiente →</button>
-              <button id="stopReading" class="btn btn-ghost" aria-label="Parar lectura">■ Parar</button>
-              <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta">🖨️ Imprimir</button>
+              <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior" title="Anterior">← Anterior</button>
+              <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso" title="Repetir">⟲ Repetir</button>
+              <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente" title="Siguiente">Siguiente →</button>
+              <button id="stopReading" class="btn btn-ghost" aria-label="Parar lectura" title="Parar">■ Parar</button>
+              <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta" title="Imprimir">🖨️ Imprimir</button>
             </div>
           </div>
         </div>
@@ -153,9 +158,9 @@
       <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
         <div class="flex items-center gap-2">
-          <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista">⬇️ Exportar</button>
-          <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista">🖨️</button>
-          <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados">🗑️ Marcados</button>
+          <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista" title="Exportar lista">⬇️ Exportar</button>
+          <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista" title="Imprimir lista">🖨️</button>
+          <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
           <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
         </div>
       </div>
@@ -163,7 +168,7 @@
         <div class="flex gap-2 mb-3">
           <label for="newItem" class="sr-only">Nuevo artículo</label>
           <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="Añadir artículo (ej. 1 kg tomates)" />
-          <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo">Añadir</button>
+          <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo" title="Añadir artículo">Añadir</button>
         </div>
         <ul id="shoppingList" class="space-y-2"></ul>
         <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista está vacía.</p>
@@ -175,7 +180,7 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  const APP_VERSION = "recetario-1.2.0";
+  const APP_VERSION = "recetario-1.3.0";
 
   /* ===== Datos (160 recetas) ===== */
   const IMG = c => ({
@@ -232,7 +237,7 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides para platos clave */
+  /* Overrides realistas para platos clave */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -287,11 +292,11 @@
         ["Dora pollo con ajos.","Desglasa con vino; reduce.","Ajusta sal/pimienta y sirve."],"25–35 min")],
       ["cordero asado", R(["Paletilla/pierna de cordero","Ajo","Romero","Aceite","Sal","Agua o vino"],
         ["Sala cordero con ajo/romero.","Asa a 180–190 ºC 70–90 min, regando.","Deja reposar y sirve con jugo."],"75–95 min")],
-      ["fabada asturiana", R(["Fabes","Compango (chorizo, morcilla, panceta)","Cebolla","Ajo","Pimentón","Sal"],
+      ["fabada asturiana", R(["Fabes","Compango","Cebolla","Ajo","Pimentón","Sal"],
         ["Desala si procede.","Cuece fabes con compango a fuego bajo (asustando).","Espuma y rectifica sal."],"120–180 min")],
       ["marmitako de bonito", R(["Bonito","Patata","Pimiento","Cebolla","Ajo","Tomate","Caldo","Aceite","Sal"],
         ["Haz sofrito y añade patata.","Cubre con caldo y cocina.","Agrega bonito al final (2–3 min)."],"35–45 min")],
-      ["rabo de toro", R(["Rabo de toro","Verduras para sofrito","Vino tinto","Caldo","Aceite","Sal","Harina (ligar)"],
+      ["rabo de toro", R(["Rabo de toro","Verduras","Vino tinto","Caldo","Aceite","Sal","Harina (ligar)"],
         ["Dora rabo enharinado.","Sofríe verduras; moja con vino y reduce.","Cuece con caldo 2–3 h hasta meloso."],"150–210 min")],
       ["callos a la madrileña", R(["Callos limpios","Morcilla/chorizo","Pimentón","Guindilla","Cebolla","Ajo","Laurel","Sal"],
         ["Blanquea y enjuaga callos.","Guiso con sofrito y pimentón a fuego bajo hasta tiernos."],"120–180 min")],
@@ -325,6 +330,9 @@
     Segundo:["Seca la pieza y sala.","Añade adobo/especias.","Dora/hornea/sella bien.","Agrega guarnición/salsa y cocina al punto.","Reposa unos minutos.","Sirve con su jugo."],
     Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","Enfría o reposa.","Decora y sirve."]
   };
+
+  // Utilidad: quitar diacríticos (compatible)
+  function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 
   function ingredientesPara(cat,t){
     t=t.toLowerCase(); let ing=[];
@@ -456,7 +464,7 @@
           <button class="btn btn-primary" data-a="guiada" data-i="${i}" aria-label="Cocina guiada para ${r.titulo}" title="Guiada">▶️ Guiada</button>
           <button class="btn btn-ghost" data-a="abrir" data-i="${i}" aria-label="Abrir detalles de ${r.titulo}" title="Abrir">📖 Abrir</button>
           <button class="btn btn-ghost" data-a="lista" data-i="${i}" aria-label="Añadir ingredientes de ${r.titulo} a la lista" title="Añadir a lista">🧺 Añadir</button>
-          <button class="btn btn-ghost" data-a="fav" data-i="${i}" aria-label="Marcar favorito">${star} Favorito</button>
+          <button class="btn btn-ghost" data-a="fav" data-i="${i}" aria-label="Marcar favorito" title="Favorito">${star} Favorito</button>
         </div>
       </div>
     </article>`;
@@ -567,7 +575,7 @@
     els.status.textContent = `Leyendo ${r.titulo}.`;
   }
 
-  /* ===== Guiado + comandos de voz (STT) ===== */
+  /* ===== Guiado ===== */
   function ensureCurrent(){
     if(!state.current){
       const primera = (state.list && state.list[0]) || null;
@@ -582,7 +590,7 @@
     $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
     if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
-    if (SR) { state.listening = true; startMic(); updateMic(); }
+    els.status.textContent = "Micrófono listo: mantén pulsado el botón para hablar.";
     speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
     saveSession();
@@ -636,7 +644,7 @@
   $('stopReading').onclick = ()=>{ stopSpeak(); }; $('closeGuided').onclick = closeGuided;
   $('printRecipe').onclick = ()=>{ window.print(); };
 
-  // Delegación en tarjetas (añadimos abrir con hash y favoritos)
+  // Delegación en tarjetas
   els.grid.addEventListener('click',e=>{
     const b = e.target.closest('button[data-a]'); if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
@@ -650,6 +658,7 @@
   // Atajos en modal guiado
   document.addEventListener('keydown',e=>{
     if($('guidedModal').classList.contains('hidden')) return;
+    if(e.code==='Space'){ e.preventDefault(); /* PTT se maneja abajo */ }
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
     if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
     if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
@@ -663,9 +672,9 @@
   function renderList(){
     $('shoppingList').innerHTML = shopping.map(i=>`
       <li class="flex items-center gap-2">
-        <input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}" aria-label="Marcar ${i.text}">
-        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}">
-        <button class="btn btn-ghost" data-a="d" data-id="${i.id}" aria-label="Eliminar ${i.text}">🗑️</button>
+        <input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}" aria-label="Marcar ${i.text}" title="Marcar ${i.text}">
+        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}" title="Editar ${i.text}">
+        <button class="btn btn-ghost" data-a="d" data-id="${i.id}" aria-label="Eliminar ${i.text}" title="Eliminar ${i.text}">🗑️</button>
       </li>`).join("");
     $('shoppingEmpty').classList.toggle('hidden', shopping.length>0);
   }
@@ -701,83 +710,86 @@
     w.document.close(); w.print(); setTimeout(()=>w.close(),300);
   };
 
-  /* ===== Reconocimiento de voz (STT) robusto ===== */
-  const SR = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
-            ? (window.SpeechRecognition||window.webkitSpeechRecognition)
-            : null;
+  /* ===== Temporizadores por paso ===== */
+  let currentTimer = null, countdownInt = null;
+  function clearTimerUI(){
+    if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
+    const old = document.getElementById('guidedTimer');
+    if(old) old.remove();
+  }
+  function beep(ms=200, freq=880){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq; osc.start();
+      setTimeout(()=>{ osc.stop(); ctx.close(); }, ms);
+    }catch{}
+  }
+  function startStepTimer(minutes){
+    clearTimerUI();
+    if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
+    const box = document.createElement('div');
+    box.id='guidedTimer';
+    box.className='mt-3 text-sm';
+    box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
+      <button class="btn btn-ghost ml-2" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador">Cancelar</button>`;
+    document.querySelector('#guidedModal .p-4').appendChild(box);
 
-  if(isIOS || !SR){
-    els.toggleMic.disabled = true;
-    els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
-    els.status.textContent = isIOS
-      ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones."
-      : "Voz: reconocimiento no disponible en este navegador.";
+    let left = Math.round(minutes*60);
+    const $left = document.getElementById('tleft');
+    const fmt = s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    $left.textContent = fmt(left);
+
+    countdownInt = setInterval(()=>{ left--; $left.textContent = fmt(Math.max(0,left)); }, 1000);
+    currentTimer = setTimeout(()=>{ clearTimerUI(); beep(300); speakSafe("¡Tiempo!"); }, minutes*60*1000);
+    document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
   }
 
-  let rec=null, restarting=false;
-  const norm = s => (s||"").toLowerCase()
-                  .normalize('NFD').replace(/\p{Diacritic}/gu,'')
-                  .replace(/\s+/g,' ')
-                  .trim();
+  /* ===== JSON-LD (SEO) ===== */
+  const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  function injectRecipeLD(r){
+    const ld = {
+      "@context":"https://schema.org",
+      "@type":"Recipe",
+      "name": r.titulo,
+      "recipeCategory": r.categoria,
+      "image": r.imagen,
+      "recipeIngredient": r.ingredientes,
+      "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
+      "totalTime": "PT30M"
+    };
+    let n = document.getElementById("ld-recipe");
+    if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-recipe"; document.head.appendChild(n); }
+    n.textContent = JSON.stringify(ld);
+  }
+  function injectListLD(list){
+    const items = (list||[]).slice(0,50).map((r,i)=>({
+      "@type":"ListItem","position":i+1,"name":r.titulo,"url": location.origin + location.pathname + '#receta=' + slug(r.titulo)
+    }));
+    const ld = {"@context":"https://schema.org","@type":"ItemList","itemListElement":items};
+    let n = document.getElementById("ld-list");
+    if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-list"; document.head.appendChild(n); }
+    n.textContent = JSON.stringify(ld);
+  }
 
-  const CMD = {
-    next: /^(siguiente|sigue|proximo|adelante|avanza|continuar)$/,
-    prev: /^(anterior|atras|retroceder)$/,
-    rep:  /^(repetir|otra vez|de nuevo)$/,
-    ing:  /^(leer ingredientes?|ingredientes)$/,
-    stop: /^(salir|parar|detener|cerrar)$/,
-    stepNum: /^(?:paso\s+(\d{1,2}))$/
-  };
-
-  function startMic(){
-    if(!SR) return;
-    if(!rec){
-      rec = new SR(); rec.lang='es-ES'; rec.continuous=true; rec.interimResults=false;
-      rec.onresult = (ev)=>{
-        const last = ev.results[ev.results.length-1][0].transcript||'';
-        els.heard.textContent = last;
-        const t = norm(last);
-
-        if(CMD.stop.test(t)) return closeGuided();
-        if(CMD.rep.test(t))  return repeatStep();
-        if(CMD.next.test(t)) return nextStep();
-        if(CMD.prev.test(t)) return prevStep();
-        if(CMD.ing.test(t))  return readIngredients();
-
-        const m = t.match(CMD.stepNum);
-        if(m && m[1]) return goToStep(Number(m[1]) - 1);
-
-        if(!state.current) els.status.textContent = "Abre ‘Cocina guiada’ para usar comandos.";
-      };
-      rec.onerror = (e)=>{
-        els.status.textContent = `Voz: ${e.error || 'error'}`;
-        if (state.listening && (e.error==='no-speech' || e.error==='network' || e.error==='aborted')) {
-          try{ rec.stop(); }catch{}
-          setTimeout(()=>{ try{rec.start();}catch{} }, 400);
-        }
-      };
-      rec.onend = ()=>{
-        if(state.listening && !restarting){
-          restarting = true;
-          setTimeout(()=>{ restarting=false; try{rec.start();}catch{} }, 400);
-        }
-      };
+  /* ===== Focus trap en modales ===== */
+  function trapFocus(modal){
+    const sel = 'a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])';
+    const f = modal.querySelectorAll(sel); if(!f.length) return ()=>{};
+    const first = f[0], last = f[f.length-1];
+    function onKey(e){
+      if(e.key!=='Tab') return;
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
     }
-    try{ rec.start(); }catch{}
-    els.status.textContent = "Micrófono activo.";
+    modal.addEventListener('keydown', onKey);
+    first.focus();
+    return ()=> modal.removeEventListener('keydown', onKey);
   }
+  let untrapDetail = null, untrapGuided = null;
 
-  function stopMic(){ if(rec){ try{rec.stop();}catch{} } els.status.textContent="Micrófono desactivado."; }
-  function updateMic(){ els.toggleMic.textContent = state.listening ? "🎤 Micro activo" : "🎤 Micro"; }
-  els.toggleMic.onclick = ()=>{ if(!SR) return; state.listening = !state.listening; state.listening ? startMic() : stopMic(); updateMic(); };
-
-  /* ===== Deep-link, Compartir, Favoritas tab, Reanudar sesión, Timers, SEO, Focus trap, SW update ===== */
-
-  // Slug util
-  const slug = s => (s||"").toLowerCase()
-    .normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-
-  // Deep-link abrir detalle
+  /* ===== Deep-link & Compartir ===== */
   function openDetailWithHash(r){
     openDetail(r);
     const h = '#receta=' + slug(r.titulo);
@@ -792,14 +804,19 @@
   window.addEventListener('popstate', fromHashOpen);
   document.addEventListener('DOMContentLoaded', fromHashOpen);
 
-  // Botón Compartir (Web Share / copiar)
   function ensureShareButton(){
     const bar = document.querySelector('#detailModal .mt-3.flex');
-    if(!bar || document.getElementById('btnShare')) return;
-    const btn = document.createElement('button');
-    btn.id='btnShare'; btn.className='btn btn-ghost'; btn.ariaLabel='Compartir receta';
-    btn.textContent='📤 Compartir';
-    bar.appendChild(btn);
+    if(!bar) return;
+    let btn = document.getElementById('btnShare');
+    if(!btn){
+      btn = document.createElement('button');
+      btn.id='btnShare';
+      btn.className='btn btn-ghost';
+      btn.setAttribute('aria-label','Compartir receta');
+      btn.setAttribute('title','Compartir receta');
+      btn.textContent='📤 Compartir';
+      bar.appendChild(btn);
+    }
     btn.onclick = async ()=>{
       if(!state.current) return;
       const url = location.origin + location.pathname + '#receta=' + slug(state.current.titulo);
@@ -812,17 +829,165 @@
     };
   }
 
+  /* ===== Reconocimiento de voz (STT) mejorado: PTT ===== */
+  const SRClass = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
+                ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
+
+  if(isIOS || !SRClass){
+    els.toggleMic.disabled = true;
+    els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
+    els.status.textContent = isIOS
+      ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones."
+      : "Voz: reconocimiento no disponible en este navegador.";
+  }
+
+  let VOICE_MODE = 'ptt'; // 'ptt' por defecto
+  let rec=null, listenTimeout=null, listening=false;
+
+  function makeRecognizer(){
+    const r = new SRClass();
+    r.lang = 'es-ES';
+    r.continuous = (VOICE_MODE === 'continuous');
+    r.interimResults = true;
+    r.maxAlternatives = 3;
+    const SGL = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+    if (SGL) {
+      try {
+        const g = new SGL();
+        const cmds = ["siguiente","anterior","repetir","leer ingredientes","paso uno","paso dos","paso tres","salir"];
+        g.addFromString(`#JSGF V1.0; grammar cmds; public <cmd> = ${cmds.join(' | ')} ;`, 1);
+        r.grammars = g;
+      } catch {}
+    }
+    return r;
+  }
+
+  function updateMic(){
+    if(!SRClass) return;
+    els.toggleMic.textContent = "🎤 Micro (mantén pulsado)";
+    els.toggleMic.setAttribute('title','Mantén pulsado para hablar');
+    els.toggleMic.setAttribute('aria-label','Mantén pulsado para hablar');
+  }
+  updateMic();
+
+  function startPTT(){
+    if(!SRClass) return;
+    clearTimeout(listenTimeout);
+    if(!rec) rec = makeRecognizer();
+    try{
+      els.status.textContent = "🎙️ Escuchando… suelta para enviar.";
+      els.toggleMic.textContent = "🎙️ Grabando… (suelta)";
+      beep(90, 940);
+      rec.onresult = onResult;
+      rec.onerror = onError;
+      rec.onend = onEnd;
+      listening = true;
+      rec.start();
+      listenTimeout = setTimeout(()=>{ try{ rec.stop(); }catch{} }, 6000);
+    }catch{
+      els.status.textContent = "Voz: no se pudo iniciar (revisa permisos del micrófono).";
+    }
+  }
+  function stopPTT(){
+    clearTimeout(listenTimeout);
+    if(!rec) return;
+    try{ rec.stop(); }catch{}
+  }
+
+  const NUM = {uno:1, una:1, dos:2, tres:3, cuatro:4, cinco:5, seis:6, siete:7, ocho:8, nueve:9, diez:10,
+               once:11, doce:12, trece:13, catorce:14, quince:15, dieciseis:16, diecisiete:17, dieciocho:18, diecinueve:19, veinte:20};
+  const norm = s => stripDiacritics((s||"").toLowerCase()).replace(/\s+/g,' ').trim();
+  function parseCommand(text){
+    const t = norm(text);
+    const tNum = t.replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
+                           (_,w)=>'paso '+NUM[w]);
+    if (/^(salir|parar|detener|cerrar)$/i.test(tNum)) return {type:'stop'};
+    if (/^(repetir|otra vez|de nuevo|repite)$/i.test(tNum)) return {type:'repeat'};
+    if (/^(siguiente|sigue|proximo|adelante|avanza|continuar|continuar paso)$/i.test(tNum)) return {type:'next'};
+    if (/^(anterior|atras|retroceder)$/i.test(tNum)) return {type:'prev'};
+    if (/^(leer ingredientes?|ingredientes|leer lista)$/i.test(tNum)) return {type:'ingredients'};
+    const m = tNum.match(/\bpaso\s+(\d{1,2})\b/); if (m) return {type:'goto', n: Number(m[1])};
+    if (/\b(siguiente|avanza)\b/.test(tNum)) return {type:'next'};
+    if (/\b(anterior|atras)\b/.test(tNum)) return {type:'prev'};
+    return {type:'unknown', raw:t};
+  }
+
+  function onResult(ev){
+    let finalTranscript = "";
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      const res = ev.results[i];
+      const txt = res[0]?.transcript || '';
+      if (res.isFinal) finalTranscript += txt + " ";
+      els.heard.textContent = (res.isFinal ? "✓ " : "… ") + txt;
+    }
+    if (finalTranscript.trim()){
+      handleCommand(finalTranscript.trim());
+    }
+  }
+  function onError(e){ els.status.textContent = `Voz: ${e.error || 'error'}`; }
+  function onEnd(){
+    listening = false;
+    els.toggleMic.textContent = "🎤 Micro (mantén pulsado)";
+    els.status.textContent = "Micrófono listo.";
+    beep(70, 700);
+    if (VOICE_MODE === 'continuous' && state.listening) {
+      setTimeout(()=>{ try{ rec.start(); }catch{} }, 350);
+    }
+  }
+  function handleCommand(text){
+    const cmd = parseCommand(text);
+    if(cmd.type==='unknown'){
+      els.status.textContent = `No entendido: “${text}”. Prueba “siguiente / anterior / repetir / paso 2 / leer ingredientes / salir”.`;
+      return;
+    }
+    if(cmd.type==='stop') return closeGuided();
+    if(cmd.type==='repeat') return repeatStep();
+    if(cmd.type==='next') return nextStep();
+    if(cmd.type==='prev') return prevStep();
+    if(cmd.type==='ingredients') return readIngredients();
+    if(cmd.type==='goto') return goToStep((cmd.n||1)-1);
+  }
+
+  // Botón PTT (ratón/táctil/teclado)
+  els.toggleMic.onmousedown = (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
+  els.toggleMic.onmouseup   = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
+  els.toggleMic.onmouseleave= (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
+  els.toggleMic.ontouchstart= (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
+  els.toggleMic.ontouchend  = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
+  document.addEventListener('keydown', (e)=>{
+    if(!SRClass) return;
+    if(e.code==='Space'){ e.preventDefault(); if(!listening) startPTT(); }
+  });
+  document.addEventListener('keyup', (e)=>{
+    if(!SRClass) return;
+    if(e.code==='Space'){ e.preventDefault(); stopPTT(); }
+  });
+
   // Pestaña Favoritas
   (function addFavTab(){
     const tablist = document.querySelector('[role="tablist"]');
     const btn = document.createElement('button');
     btn.className='tab'; btn.role='tab'; btn.id='tab-fav'; btn.dataset.cat='Favoritas';
-    btn.setAttribute('aria-selected','false'); btn.textContent='Favoritas';
+    btn.setAttribute('aria-selected','false'); btn.setAttribute('title','Mostrar favoritas'); btn.textContent='Favoritas';
     tablist.appendChild(btn);
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
 
-  // Reanudar sesión
+  /* ===== SW: aviso de actualización si existe sw.js ===== */
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").then(reg=>{
+      reg.addEventListener('updatefound', ()=>{
+        const nw = reg.installing;
+        nw.addEventListener('statechange', ()=>{
+          if(nw.state==='installed' && navigator.serviceWorker.controller){
+            if(confirm('Hay una actualización disponible. ¿Actualizar ahora?')) location.reload();
+          }
+        });
+      });
+    }).catch(()=>{});
+  }
+
+  /* ===== Reanudar sesión ===== */
   const SKEY_SESSION = "session.v1"; // {slug, step}
   function saveSession(){
     try{
@@ -849,101 +1014,17 @@
     }
   });
 
-  // Temporizadores por paso
-  let currentTimer = null, countdownInt = null;
-  function clearTimerUI(){
-    if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
-    const old = document.getElementById('guidedTimer');
-    if(old) old.remove();
-  }
-  function beep(ms=200, freq=880){
-    try{
-      const ctx = new (window.AudioContext||window.webkitAudioContext)();
-      const osc = ctx.createOscillator(); const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.value = freq; osc.start();
-      setTimeout(()=>{ osc.stop(); ctx.close(); }, ms);
-    }catch{}
-  }
-  function startStepTimer(minutes){
-    clearTimerUI();
-    if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
-    const box = document.createElement('div');
-    box.id='guidedTimer';
-    box.className='mt-3 text-sm';
-    box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
-      <button class="btn btn-ghost ml-2" id="cancelTimer">Cancelar</button>`;
-    document.querySelector('#guidedModal .p-4').appendChild(box);
-
-    let left = Math.round(minutes*60);
-    const $left = document.getElementById('tleft');
-    const fmt = s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-    $left.textContent = fmt(left);
-
-    countdownInt = setInterval(()=>{ left--; $left.textContent = fmt(Math.max(0,left)); }, 1000);
-    currentTimer = setTimeout(()=>{ clearTimerUI(); beep(300); speakSafe("¡Tiempo!"); }, minutes*60*1000);
-    document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
-  }
-
-  // SEO JSON-LD
-  function injectRecipeLD(r){
-    const ld = {
-      "@context":"https://schema.org",
-      "@type":"Recipe",
-      "name": r.titulo,
-      "recipeCategory": r.categoria,
-      "image": r.imagen,
-      "recipeIngredient": r.ingredientes,
-      "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
-      "totalTime": "PT30M"
-    };
-    let n = document.getElementById("ld-recipe");
-    if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-recipe"; document.head.appendChild(n); }
-    n.textContent = JSON.stringify(ld);
-  }
-  function injectListLD(list){
-    const items = (list||[]).slice(0,50).map((r,i)=>({
-      "@type":"ListItem","position":i+1,"name":r.titulo,"url": location.origin + location.pathname + '#receta=' + slug(r.titulo)
-    }));
-    const ld = {"@context":"https://schema.org","@type":"ItemList","itemListElement":items};
-    let n = document.getElementById("ld-list");
-    if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-list"; document.head.appendChild(n); }
-    n.textContent = JSON.stringify(ld);
-  }
-
-  // Focus trap en modales
-  function trapFocus(modal){
-    const sel = 'a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])';
-    const f = modal.querySelectorAll(sel); if(!f.length) return ()=>{};
-    const first = f[0], last = f[f.length-1];
-    function onKey(e){
-      if(e.key!=='Tab') return;
-      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
-      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
-    }
-    modal.addEventListener('keydown', onKey);
-    first.focus();
-    return ()=> modal.removeEventListener('keydown', onKey);
-  }
-  let untrapDetail = null, untrapGuided = null;
-
-  // SW: aviso de actualización (usa tu sw.js si existe)
-  if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("./sw.js").then(reg=>{
-      reg.addEventListener('updatefound', ()=>{
-        const nw = reg.installing;
-        nw.addEventListener('statechange', ()=>{
-          if(nw.state==='installed' && navigator.serviceWorker.controller){
-            if(confirm('Hay una actualización disponible. ¿Actualizar ahora?')) location.reload();
-          }
-        });
-      });
-    }).catch(()=>{});
-  }
-
-  // Inicial
+  /* ===== Inicial ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
     filter(); renderList();
+  });
+
+  /* ===== Accesibilidad: añade title a botones que no lo tengan ===== */
+  document.addEventListener('DOMContentLoaded', ()=>{
+    document.querySelectorAll('button, [role="button"], a[role="button"]').forEach(el=>{
+      const label = el.getAttribute('aria-label') || el.innerText?.trim() || el.textContent?.trim();
+      if(label && !el.hasAttribute('title')) el.setAttribute('title', label);
+    });
   });
 
   </script>
