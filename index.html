@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Recetario Español – 160 recetas</title>
 
-  <!-- theme-color (Firefox puede mostrar aviso informativo) -->
+  <!-- theme-color (Firefox puede mostrar aviso informativo; es inocuo) -->
   <meta name="theme-color" content="#78350f" />
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
@@ -18,7 +18,7 @@
   <!-- ✅ Tailwind compilado (sin CDN) -->
   <link rel="stylesheet" href="./styles.css">
 
-  <!-- Reglas propias (NO poner text-size-adjust aquí; ya va en styles.css) -->
+  <!-- Estilos propios (no dupliques text-size-adjust; ya está en styles.css) -->
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
@@ -48,6 +48,15 @@
     *::-webkit-scrollbar{ width:12px; height:12px }
     *::-webkit-scrollbar-thumb{ background-color: rgba(120,113,108,.5); border-radius: 8px }
     *::-webkit-scrollbar-track{ background: transparent }
+
+    /* HUD del asistente de voz */
+    #voiceHUD{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;font-size:.85rem;color:#6b7280}
+    #voiceDot{width:10px;height:10px;border-radius:9999px;background:#9ca3af;box-shadow:0 0 0 0 rgba(16,185,129,.0);transition:.12s}
+    #voiceWave{position:relative;display:block;width:140px;height:10px;border-radius:9999px;background:rgba(120,113,108,.25);overflow:hidden}
+    #voiceWave > i{position:absolute;left:0;top:0;bottom:0;width:0;background:#10b981;transition:width .08s ease}
+    .talking #voiceDot{background:#10b981;box-shadow:0 0 12px 3px rgba(16,185,129,.45)}
+    .listening #voiceDot{background:#f59e0b}
+    .disabled #voiceDot{background:#9ca3af}
   </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -96,6 +105,7 @@
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
       <div id="heard" class="text-xs mt-1 text-stone-500">🎧 Oído: <span id="heardText">—</span></div>
+      <!-- HUD voz se inyecta aquí por JS -->
     </section>
 
     <section class="mb-2 text-sm text-stone-600 dark:text-stone-400">
@@ -189,7 +199,7 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  const APP_VERSION = "recetario-1.3.2";
+  const APP_VERSION = "recetario-1.4.0";
 
   /* ===== Datos (160 recetas) ===== */
   const IMG = c => ({
@@ -246,7 +256,7 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides realistas para platos clave (ingredientes + pasos + tiempo) */
+  /* Overrides realistas para platos clave */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -340,8 +350,9 @@
     Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","Enfría o reposa.","Decora y sirve."]
   };
 
-  // Utilidad: quitar diacríticos (compatible)
+  // Utils
   function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
+  const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 
   function ingredientesPara(cat,t){
     t=t.toLowerCase(); let ing=[];
@@ -416,6 +427,7 @@
     dark: matchMedia('(prefers-color-scheme: dark)').matches,
     contrast:false, font:16, listening:false, rate:0.9
   };
+  window.state = state; // para acceso desde voz
 
   const $ = id => document.getElementById(id);
   const els = {
@@ -436,6 +448,7 @@
     addItem: $('addItem'), exportList: $('exportList'), printList: $('printList'), clearChecked: $('clearChecked'),
     caption: $('ttsCaption'), closeDetail: $('closeDetail')
   };
+  window.els = els;
 
   function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); }
   function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); }
@@ -446,7 +459,7 @@
   els.fontPlus.onclick = () => setFont(state.font+1);
   els.fontMinus.onclick = () => setFont(state.font-1);
 
-  // Tabs accesibles
+  // Tabs
   function setActiveTab(btn){
     els.tabs().forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
     state.cat = btn.dataset.cat;
@@ -454,14 +467,14 @@
   }
   els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
 
-  // ===== Favoritos
+  // Favoritos
   const FKEY='fav.v1';
   let fav = new Set(JSON.parse(localStorage.getItem(FKEY)||'[]'));
   function saveFav(){ try{ localStorage.setItem(FKEY, JSON.stringify([...fav])); }catch{} }
   function isFav(r){ return fav.has(r.titulo); }
   function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-  // ===== Tarjetas (primera fila: eager/high para reducir aviso de lazy)
+  // Tarjetas (primeras 4 eager/high para reducir aviso informativo de lazy)
   function card(r,i){
     const eager = i < 4 ? 'eager' : 'lazy';
     const fetchp = i < 4 ? 'high' : 'auto';
@@ -647,16 +660,15 @@
     if(n>=0 && n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); saveSession(); }
     else { stopSpeak(); setTimeout(()=>speakSafe("Ese número de paso no existe."),80); }
   }
-
-  els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
-  els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
-  els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
-
+  window.readIngredients = readIngredients;
+  window.goToStep = goToStep;
   $('nextStep').onclick = nextStep; $('prevStep').onclick = prevStep; $('repeatStep').onclick = repeatStep;
   $('stopReading').onclick = ()=>{ stopSpeak(); }; $('closeGuided').onclick = closeGuided;
   $('printRecipe').onclick = ()=>{ window.print(); };
 
-  // Delegación en tarjetas
+  els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
+  els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
+  els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
   els.grid.addEventListener('click',e=>{
     const b = e.target.closest('button[data-a]'); if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
@@ -667,10 +679,8 @@
     if(b.dataset.a==='fav')  toggleFav(r);
   });
 
-  // Atajos en modal guiado
   document.addEventListener('keydown',e=>{
     if($('guidedModal').classList.contains('hidden')) return;
-    if(e.code==='Space'){ e.preventDefault(); /* PTT se maneja abajo */ }
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
     if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
     if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
@@ -759,7 +769,6 @@
   }
 
   /* ===== JSON-LD (SEO) ===== */
-  const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   function injectRecipeLD(r){
     const ld = {
       "@context":"https://schema.org",
@@ -841,141 +850,7 @@
     };
   }
 
-  /* ===== Reconocimiento de voz (STT) PTT ===== */
-  const SRClass = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
-                ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
-
-  if(isIOS || !SRClass){
-    els.toggleMic.disabled = true;
-    els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
-    els.status.textContent = isIOS
-      ? "Voz: el micrófono no está soportado en iPhone/iPad (Safari). Usa los botones."
-      : "Voz: reconocimiento no disponible en este navegador.";
-  }
-
-  let VOICE_MODE = 'ptt'; // 'ptt' por defecto
-  let rec=null, listenTimeout=null, listening=false;
-
-  function makeRecognizer(){
-    const r = new SRClass();
-    r.lang = 'es-ES';
-    r.continuous = (VOICE_MODE === 'continuous');
-    r.interimResults = true;
-    r.maxAlternatives = 3;
-    const SGL = window.SpeechGrammarList || window.webkitSpeechGrammarList;
-    if (SGL) {
-      try {
-        const g = new SGL();
-        const cmds = ["siguiente","anterior","repetir","leer ingredientes","paso uno","paso dos","paso tres","salir"];
-        g.addFromString(`#JSGF V1.0; grammar cmds; public <cmd> = ${cmds.join(' | ')} ;`, 1);
-        r.grammars = g;
-      } catch {}
-    }
-    return r;
-  }
-
-  function updateMic(){
-    if(!SRClass) return;
-    els.toggleMic.textContent = "🎤 Micro (mantén pulsado)";
-    els.toggleMic.setAttribute('title','Mantén pulsado para hablar');
-    els.toggleMic.setAttribute('aria-label','Mantén pulsado para hablar');
-  }
-  updateMic();
-
-  function startPTT(){
-    if(!SRClass) return;
-    clearTimeout(listenTimeout);
-    if(!rec) rec = makeRecognizer();
-    try{
-      els.status.textContent = "🎙️ Escuchando… suelta para enviar.";
-      els.toggleMic.textContent = "🎙️ Grabando… (suelta)";
-      beep(90, 940);
-      rec.onresult = onResult;
-      rec.onerror = onError;
-      rec.onend = onEnd;
-      listening = true;
-      rec.start();
-      listenTimeout = setTimeout(()=>{ try{ rec.stop(); }catch{} }, 6000);
-    }catch{
-      els.status.textContent = "Voz: no se pudo iniciar (revisa permisos del micrófono).";
-    }
-  }
-  function stopPTT(){
-    clearTimeout(listenTimeout);
-    if(!rec) return;
-    try{ rec.stop(); }catch{}
-  }
-
-  const NUM = {uno:1, una:1, dos:2, tres:3, cuatro:4, cinco:5, seis:6, siete:7, ocho:8, nueve:9, diez:10,
-               once:11, doce:12, trece:13, catorce:14, quince:15, dieciseis:16, diecisiete:17, dieciocho:18, diecinueve:19, veinte:20};
-  const norm = s => stripDiacritics((s||"").toLowerCase()).replace(/\s+/g,' ').trim();
-  function parseCommand(text){
-    const t = norm(text);
-    const tNum = t.replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
-                           (_,w)=>'paso '+NUM[w]);
-    if (/^(salir|parar|detener|cerrar)$/i.test(tNum)) return {type:'stop'};
-    if (/^(repetir|otra vez|de nuevo|repite)$/i.test(tNum)) return {type:'repeat'};
-    if (/^(siguiente|sigue|proximo|adelante|avanza|continuar|continuar paso)$/i.test(tNum)) return {type:'next'};
-    if (/^(anterior|atras|retroceder)$/i.test(tNum)) return {type:'prev'};
-    if (/^(leer ingredientes?|ingredientes|leer lista)$/i.test(tNum)) return {type:'ingredients'};
-    const m = tNum.match(/\bpaso\s+(\d{1,2})\b/); if (m) return {type:'goto', n: Number(m[1])};
-    if (/\b(siguiente|avanza)\b/.test(tNum)) return {type:'next'};
-    if (/\b(anterior|atras)\b/.test(tNum)) return {type:'prev'};
-    return {type:'unknown', raw:t};
-  }
-
-  function onResult(ev){
-    let finalTranscript = "";
-    for (let i = ev.resultIndex; i < ev.results.length; i++) {
-      const res = ev.results[i];
-      const txt = res[0]?.transcript || '';
-      if (res.isFinal) finalTranscript += txt + " ";
-      els.heard.textContent = (res.isFinal ? "✓ " : "… ") + txt;
-    }
-    if (finalTranscript.trim()){
-      handleCommand(finalTranscript.trim());
-    }
-  }
-  function onError(e){ els.status.textContent = `Voz: ${e.error || 'error'}`; }
-  function onEnd(){
-    listening = false;
-    els.toggleMic.textContent = "🎤 Micro (mantén pulsado)";
-    els.status.textContent = "Micrófono listo.";
-    beep(70, 700);
-    if (VOICE_MODE === 'continuous' && state.listening) {
-      setTimeout(()=>{ try{ rec.start(); }catch{} }, 350);
-    }
-  }
-  function handleCommand(text){
-    const cmd = parseCommand(text);
-    if(cmd.type==='unknown'){
-      els.status.textContent = `No entendido: “${text}”. Prueba “siguiente / anterior / repetir / paso 2 / leer ingredientes / salir”.`;
-      return;
-    }
-    if(cmd.type==='stop') return closeGuided();
-    if(cmd.type==='repeat') return repeatStep();
-    if(cmd.type==='next') return nextStep();
-    if(cmd.type==='prev') return prevStep();
-    if(cmd.type==='ingredients') return readIngredients();
-    if(cmd.type==='goto') return goToStep((cmd.n||1)-1);
-  }
-
-  // Botón PTT (ratón/táctil/teclado)
-  els.toggleMic.onmousedown = (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
-  els.toggleMic.onmouseup   = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
-  els.toggleMic.onmouseleave= (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
-  els.toggleMic.ontouchstart= (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
-  els.toggleMic.ontouchend  = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
-  document.addEventListener('keydown', (e)=>{
-    if(!SRClass) return;
-    if(e.code==='Space'){ e.preventDefault(); if(!listening) startPTT(); }
-  });
-  document.addEventListener('keyup', (e)=>{
-    if(!SRClass) return;
-    if(e.code==='Space'){ e.preventDefault(); stopPTT(); }
-  });
-
-  // Pestaña Favoritas
+  /* ===== Pestaña Favoritas ===== */
   (function addFavTab(){
     const tablist = document.querySelector('[role="tablist"]');
     const btn = document.createElement('button');
@@ -1027,13 +902,12 @@
     }
   });
 
-  /* ===== Accesibilidad extra: añade title a botones sin título ===== */
+  /* ===== Accesibilidad extra: añade title a botones sin título + dup IDs aviso ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelectorAll('button, [role="button"], a[role="button"]').forEach(el=>{
       const label = el.getAttribute('aria-label') || el.innerText?.trim() || el.textContent?.trim();
       if(label && !el.hasAttribute('title')) el.setAttribute('title', label);
     });
-    // Detección de IDs duplicados (si los hubiera por extensiones/overlays)
     const seen = new Set(), dups = [];
     document.querySelectorAll('[id]').forEach(el=>{
       if(seen.has(el.id)) dups.push(el.id);
@@ -1042,11 +916,197 @@
     if(dups.length){ console.warn('IDs duplicados detectados (posibles extensiones):', [...new Set(dups)]); }
   });
 
+  /* ==========================
+     🔊 VOICE UPGRADE v2 (PTT + silencio + fuzzy + HUD)
+     ========================== */
+  (function(){
+    const SRClass = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
+                  ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
+
+    // HUD
+    let hud, bar;
+    function ensureHUD(){
+      if(hud) return;
+      hud = document.createElement('div');
+      hud.id='voiceHUD';
+      hud.innerHTML = `
+        <span id="voiceDot" aria-hidden="true"></span>
+        <span id="voiceWave" aria-hidden="true"><i></i></span>
+        <span id="voiceTip"><strong>PTT:</strong> mantén pulsado para hablar</span>
+      `;
+      bar = hud.querySelector('#voiceWave > i');
+      els.toggleMic.insertAdjacentElement('afterend', hud);
+    }
+    ensureHUD();
+    function setStatus(msg){ els.status.textContent = msg; }
+    function drawLevel(p){ if(!bar) return; const w = Math.max(4, Math.min(138, Math.round(p*138))); bar.style.width = w + 'px'; }
+    function strip(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
+    function norm(s){ return strip(s).toLowerCase().replace(/\s+/g,' ').trim(); }
+    function tone(ms=110,freq=920){
+      try{ const ctx = new (window.AudioContext||window.webkitAudioContext)();
+        const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination);
+        o.frequency.value=freq; o.start(); setTimeout(()=>{ try{o.stop();ctx.close();}catch{} }, ms);
+      }catch{}
+    }
+
+    // Fuzzy
+    function lev(a,b){
+      const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+      const dp=new Array(n+1).fill(0); for(let j=0;j<=n;j++) dp[j]=j;
+      for(let i=1;i<=m;i++){ let prev=dp[0], tmp; dp[0]=i; for(let j=1;j<=n;j++){
+        tmp=dp[j];
+        dp[j]=Math.min(dp[j]+1, dp[j-1]+1, prev + (a[i-1]===b[j-1]?0:1));
+        prev=tmp;
+      }}
+      return dp[n];
+    }
+    const CMD_LIST = [
+      {type:'next', variants:['siguiente','proximo','avanza','adelante','continuar']},
+      {type:'prev', variants:['anterior','atras','retroceder']},
+      {type:'repeat', variants:['repetir','otra vez','de nuevo','repite']},
+      {type:'ingredients', variants:['leer ingredientes','ingredientes','leer lista']},
+      {type:'stop', variants:['salir','parar','detener','cerrar']},
+    ];
+    const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
+    function parseCommand(raw){
+      const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
+                                  (_,w)=>'paso '+NUM[w]);
+      const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
+      for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
+      let best=99, winner={type:'unknown'};
+      for(const c of CMD_LIST){ for(const v of c.variants){ const d=lev(t,v); if(d<best){ best=d; winner={type:c.type}; } } }
+      return best<=2 ? winner : {type:'unknown', raw:raw};
+    }
+
+    // Audio monitor (VAD simple)
+    let mediaStream=null, audioCtx=null, analyser=null, data=null, raf=null;
+    let startedAt=0, silenceMs=0;
+    const SILENCE_STOP_MS = 900, MIN_SPEECH_MS = 500;
+    function levelFromPCM(buf){ let max=0, v=0; for(let i=0;i<buf.length;i++){ v=Math.abs(buf[i]-128); if(v>max) max=v; } return max/128; }
+    function startAudioMonitor(){
+      if(mediaStream) return;
+      navigator.mediaDevices.getUserMedia({audio:{channelCount:1, sampleRate:48000, echoCancellation:true, noiseSuppression:true, autoGainControl:true}})
+      .then(stream=>{
+        mediaStream=stream; audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+        const src=audioCtx.createMediaStreamSource(stream); analyser=audioCtx.createAnalyser(); analyser.fftSize=512;
+        data=new Uint8Array(analyser.fftSize); src.connect(analyser);
+        startedAt=performance.now(); silenceMs=0;
+        const loop=()=>{
+          analyser.getByteTimeDomainData(data);
+          const lvl = levelFromPCM(data); drawLevel(lvl);
+          document.getElementById('voiceHUD')?.classList.toggle('talking', lvl>0.08);
+          if(performance.now()-startedAt>MIN_SPEECH_MS){ silenceMs = (lvl<0.04) ? (silenceMs+16) : 0; }
+          raf=requestAnimationFrame(loop);
+        };
+        raf=requestAnimationFrame(loop);
+      }).catch(()=>{});
+    }
+    function stopAudioMonitor(){
+      if(raf) cancelAnimationFrame(raf); raf=null;
+      if(audioCtx){ try{audioCtx.close();}catch{} audioCtx=null; }
+      if(mediaStream){ mediaStream.getTracks().forEach(t=>t.stop()); mediaStream=null; }
+      analyser=null; data=null; drawLevel(0); document.getElementById('voiceHUD')?.classList.remove('talking');
+    }
+
+    // Reconocedor
+    let rec=null, listening=false, listenTimer=null;
+    function dynamicWordsForContext(){
+      try{
+        const r = state.current || null;
+        if(!r) return [];
+        const words=[];
+        (r.ingredientes||[]).slice(0,8).forEach(x=>words.push(norm(x).split(' ')[0]));
+        (r.pasos||[]).slice((state.step||0),(state.step||0)+2).forEach(p=>{ const w=norm(p).split(' '); if(w[0]) words.push(w[0]); });
+        return Array.from(new Set(words)).filter(Boolean);
+      }catch{return[]}
+    }
+    function makeRecognizer(){
+      const r=new SRClass(); r.lang='es-ES'; r.continuous=false; r.interimResults=true; r.maxAlternatives=4;
+      const SGL=window.SpeechGrammarList||window.webkitSpeechGrammarList;
+      if(SGL){ try{
+        const g=new SGL(); const cmds=['siguiente','anterior','repetir','leer ingredientes','ingredientes',
+          'paso uno','paso dos','paso tres','paso cuatro','paso cinco','paso seis','paso siete','paso ocho','paso nueve','paso diez',
+          ...dynamicWordsForContext()];
+        g.addFromString(`#JSGF V1.0; grammar cmds; public <cmd> = ${cmds.join(' | ')} ;`,1); r.grammars=g;
+      }catch{} }
+      return r;
+    }
+
+    function startPTT(){
+      if(!SRClass){ setStatus(isIOS ? "Voz: iOS no soporta reconocimiento. Usa botones." : "Voz: reconocimiento no disponible."); return; }
+      if(listening) return;
+      const hudEl = document.getElementById('voiceHUD'); hudEl?.classList.add('listening');
+      const tip = hudEl?.querySelector('#voiceTip'); if(tip) tip.textContent='Escuchando… suelta para enviar';
+      els.toggleMic.textContent='🎙️ Grabando… (suelta)';
+      setStatus("🎙️ Escuchando…");
+      tone(90,940);
+      startAudioMonitor();
+      rec = makeRecognizer();
+      rec.onresult = onResult; rec.onerror = onError; rec.onend = onEnd;
+      listening = true; silenceMs=0; startedAt=performance.now();
+      try{ rec.start(); }catch(e){ onError(e); }
+      clearInterval(listenTimer);
+      listenTimer = setInterval(()=>{
+        if(!listening) { clearInterval(listenTimer); return; }
+        if(silenceMs >= SILENCE_STOP_MS && (performance.now()-startedAt)>MIN_SPEECH_MS){
+          stopPTT();
+        }
+      }, 120);
+    }
+    function stopPTT(){ clearInterval(listenTimer); if(!listening) return; try{ rec.stop(); }catch{} }
+    function onResult(ev){
+      let finalTranscript=""; for(let i=ev.resultIndex;i<ev.results.length;i++){
+        const res=ev.results[i]; const txt=res[0]?.transcript||''; if(res.isFinal) finalTranscript+=txt+" ";
+        els.heard && (els.heard.textContent=(res.isFinal?"✓ ":"… ")+txt);
+      }
+      if(finalTranscript.trim()){ handleCommand(finalTranscript.trim()); }
+    }
+    function onError(e){ setStatus("Voz: " + (e.error||'error')); onEnd(); }
+    function onEnd(){
+      listening=false;
+      const hudEl=document.getElementById('voiceHUD');
+      hudEl?.classList.remove('listening','talking');
+      const tip=hudEl?.querySelector('#voiceTip'); if(tip) tip.textContent='PTT: mantén pulsado para hablar';
+      els.toggleMic.textContent='🎤 Micro (mantén pulsado)';
+      setStatus("Micrófono listo."); stopAudioMonitor(); tone(70,700);
+    }
+    function handleCommand(text){
+      const cmd = parseCommand(text);
+      if(cmd.type==='unknown'){ setStatus(`No entendido: “${text}”. Prueba “siguiente / anterior / repetir / paso 2 / leer ingredientes / salir”.`); return; }
+      if(cmd.type==='stop') return document.getElementById('closeGuided')?.click();
+      if(cmd.type==='repeat') return document.getElementById('repeatStep')?.click();
+      if(cmd.type==='next') return document.getElementById('nextStep')?.click();
+      if(cmd.type==='prev') return document.getElementById('prevStep')?.click();
+      if(cmd.type==='ingredients') return (window.readIngredients||function(){})();
+      if(cmd.type==='goto') return (window.goToStep||function(){})(Math.max(0,(cmd.n||1)-1));
+    }
+
+    // Enlaces UI
+    els.toggleMic.onmousedown = (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
+    els.toggleMic.onmouseup   = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
+    els.toggleMic.onmouseleave= (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
+    els.toggleMic.ontouchstart= (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
+    els.toggleMic.ontouchend  = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
+    document.addEventListener('keydown',(e)=>{ if(!SRClass) return; if(e.code==='Space'){ e.preventDefault(); if(!listening) startPTT(); } });
+    document.addEventListener('keyup',(e)=>{ if(!SRClass) return; if(e.code==='Space'){ e.preventDefault(); stopPTT(); } });
+
+    // Mensaje si no hay SR
+    if(isIOS || !SRClass){
+      els.toggleMic.disabled = true;
+      els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
+      document.getElementById('voiceHUD')?.classList.add('disabled');
+      const msg = isIOS
+        ? "Voz: iPhone/iPad no soporta reconocimiento. Usa los botones."
+        : "Voz: el reconocimiento no está disponible en este navegador.";
+      setStatus(msg);
+      const tip=document.querySelector('#voiceHUD #voiceTip'); if(tip) tip.textContent = msg;
+    }
+  })();
+
   /* ===== Inicial ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
     filter(); renderList();
   });
-
   </script>
 </body>
 </html>
