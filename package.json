@@ -1,23 +1,94 @@
+# ====== /package.json  (REEMPLAZAR si ya existe) ======
 {
-  "name": "recetario-nuevo",
+  "name": "mi-recetario",
   "version": "1.0.0",
-  "description": "- ProducciÃ³n: https://luismiquel.github.io/mi-recetario/ - PWA con manifest, service worker y modo offline. - Servir en local: `npx serve .` y abrir http://localhost:3000",
-  "main": "app.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tailwindcss -i ./src/input.css -o ./styles.css --minify"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/luismiquel/mi-recetario.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/luismiquel/mi-recetario/issues"
-  },
-  "homepage": "https://github.com/luismiquel/mi-recetario#readme",
   "devDependencies": {
-    "tailwindcss": "^4.1.12"
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10"
   }
 }
+
+# ====== /tailwind.config.cjs  (REEMPLAZAR) ======
+module.exports = {
+  content: ["./index.html", "./**/*.js"],
+  theme: { extend: {} },
+  plugins: []
+};
+
+# ====== /postcss.config.js  (NUEVO) ======
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {}
+  }
+};
+
+# ====== /src/input.css  (NUEVO o REEMPLAZAR si ya existe) ======
+/* Reglas propias antes de Tailwind: corrige el orden de text-size-adjust */
+html{
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+# ====== /netlify.toml  (NUEVO – para que Netlify compile solo) ======
+[build]
+  command = "npm run build"
+  publish = "."
+
+# ====== /index.html  (SOLO <head> COMPLETO – REEMPLÁZALO; deja tu <body> igual) ======
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Recetario Español – 160 recetas</title>
+
+  <!-- theme-color (en Firefox puede ser informativo; déjalo) -->
+  <meta name="theme-color" content="#78350f" />
+  <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
+
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- ⛔️ QUITAMOS el CDN de Tailwind y cargamos el CSS compilado -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- Mantén aquí SOLO reglas que no dupliquen text-size-adjust (ya va en styles.css) -->
+  <style>
+    :root{ --base-font:16px; }
+    html{ font-size: var(--base-font); } /* text-size-adjust NO aquí */
+    body{ -webkit-tap-highlight-color: transparent; }
+    *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
+    .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
+    .btn-ghost{background:transparent}.btn-ghost:active{transform:scale(.98)}
+    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700}
+    .tab[aria-selected="true"]{background:#92400e;color:#fff}
+    .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:#fff}
+    .dark .card{background:#1f2937;border-color:#374151}
+    .hc *{ color:#000 !important; background:#fff !important; }
+    .hc .tab[aria-selected="true"]{ background:#000 !important; color:#fff !important; }
+    .drawer{position:fixed;top:env(safe-area-inset-top,0);right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s;z-index:60}
+    .dark .drawer{background:#111827;color:#e5e7eb}
+    .drawer.open{transform:translateX(0)}
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:1rem;top:1rem;width:auto;height:auto;padding:.5rem .75rem;background:#fff;color:#111;border-radius:.5rem;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+    #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-width:700px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
+    #ttsCaption.show{display:block}
+    @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
+  </style>
+</head>
+<!-- De aquí hacia abajo (tu <body> y tus <script>) déjalo como ya lo tienes -->
