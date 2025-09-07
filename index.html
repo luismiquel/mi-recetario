@@ -68,6 +68,7 @@
           <button class="tab" role="tab" id="tab-primero" aria-selected="false" aria-controls="panel-primero" data-cat="Primero" title="Mostrar primeros platos">Primeros</button>
           <button class="tab" role="tab" id="tab-segundo" aria-selected="false" aria-controls="panel-segundo" data-cat="Segundo" title="Mostrar segundos platos">Segundos</button>
           <button class="tab" role="tab" id="tab-postre" aria-selected="false" aria-controls="panel-postre" data-cat="Postre" title="Mostrar postres">Postres</button>
+          <!-- La pestaña Favoritas se añade por JS -->
         </div>
         <div class="flex items-end gap-2">
           <label class="text-sm" for="voiceRate">Voz:</label>
@@ -88,7 +89,6 @@
     </section>
 
     <main id="main" aria-labelledby="countLabel">
-      <!-- panel contenedor (un único grid filtrado por categoría) -->
       <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4" role="region" aria-label="Listado de recetas"></div>
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
@@ -108,6 +108,7 @@
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta">🔈 Leer</button>
               <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada">▶️ Guiada</button>
               <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista">🧺 Añadir todo</button>
+              <!-- El botón Compartir se añade por JS -->
             </div>
           </div>
           <div>
@@ -174,6 +175,8 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
+  const APP_VERSION = "recetario-1.2.0";
+
   /* ===== Datos (160 recetas) ===== */
   const IMG = c => ({
     Aperitivo:"https://placehold.co/800x500?text=Aperitivo",
@@ -229,7 +232,7 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides realistas para platos clave (ingredientes + pasos + tiempo) */
+  /* Overrides para platos clave */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -428,16 +431,21 @@
 
   // Tabs accesibles
   function setActiveTab(btn){
-    els.tabs().forEach(t => {
-      const selected = t === btn;
-      t.setAttribute('aria-selected', selected ? 'true' : 'false');
-    });
+    els.tabs().forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
     state.cat = btn.dataset.cat;
     filter();
   }
   els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
 
+  // ===== Favoritos
+  const FKEY='fav.v1';
+  let fav = new Set(JSON.parse(localStorage.getItem(FKEY)||'[]'));
+  function saveFav(){ try{ localStorage.setItem(FKEY, JSON.stringify([...fav])); }catch{} }
+  function isFav(r){ return fav.has(r.titulo); }
+  function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
+
   function card(r,i){
+    const star = isFav(r) ? '⭐' : '☆';
     return `<article class="card" role="article" aria-label="${r.titulo}">
       <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
       <div class="p-3 space-y-2">
@@ -448,6 +456,7 @@
           <button class="btn btn-primary" data-a="guiada" data-i="${i}" aria-label="Cocina guiada para ${r.titulo}" title="Guiada">▶️ Guiada</button>
           <button class="btn btn-ghost" data-a="abrir" data-i="${i}" aria-label="Abrir detalles de ${r.titulo}" title="Abrir">📖 Abrir</button>
           <button class="btn btn-ghost" data-a="lista" data-i="${i}" aria-label="Añadir ingredientes de ${r.titulo} a la lista" title="Añadir a lista">🧺 Añadir</button>
+          <button class="btn btn-ghost" data-a="fav" data-i="${i}" aria-label="Marcar favorito">${star} Favorito</button>
         </div>
       </div>
     </article>`;
@@ -464,14 +473,16 @@
     els.empty.classList.add('hidden');
     els.grid.innerHTML = list.map((r,i)=>card(r,i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
+    try{ injectListLD(list); }catch{}
   }
 
   function filter(){
     const q = state.q.toLowerCase().trim();
-    const l = RECETAS.filter(r =>
+    const lAll = RECETAS.filter(r =>
       (state.cat==="Todas" || r.categoria===state.cat) &&
       (!q || [r.titulo, ...r.ingredientes, ...r.pasos].join(" ").toLowerCase().includes(q))
     );
+    const l = state.cat==="Favoritas" ? lAll.filter(r=>fav.has(r.titulo)) : lAll;
     render(l);
   }
 
@@ -491,8 +502,11 @@
     els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
     els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
     els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex');
+    injectRecipeLD(r);
+    if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
+    ensureShareButton();
   }
-  function closeDetail(){ els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex'); }
+  function closeDetail(){ els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex'); if(untrapDetail) untrapDetail(); }
   els.closeDetail.onclick = closeDetail;
   document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
 
@@ -567,11 +581,13 @@
     $('guidedRecipeTitle').textContent = r.titulo;
     $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
+    if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
     if (SR) { state.listening = true; startMic(); updateMic(); }
     speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
+    saveSession();
   }
-  function closeGuided(){ stopSpeak(); $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; }
+  function closeGuided(){ stopSpeak(); $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; if(untrapGuided) untrapGuided(); saveSession(); }
   function readCurrent(){
     if(!ensureCurrent()) return;
     const pasos = state.current.pasos || []; if(!pasos.length) return;
@@ -579,16 +595,24 @@
     speakSafe(`Paso ${state.step+1}. ${pasos[state.step]}`);
     const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
     [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
+
+    // Temporizador por paso (detecta “X min”)
+    clearTimerUI();
+    try{
+      const p = state.current?.pasos?.[state.step] || "";
+      const m = /(\d{1,2})\s*(?:min|mins|minutos)\b/i.exec(p);
+      if(m){ const mins = Number(m[1]); if(mins>0){ speakSafe(`Inicio temporizador de ${mins} minutos.`); startStepTimer(mins); } }
+    }catch{}
   }
   async function nextStep(){
     if(!ensureCurrent()) return;
     const t = (state.current.pasos||[]).length;
-    if(state.step < t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); }
-    else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. ¡Buen provecho!"); }
+    if(state.step < t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); saveSession(); }
+    else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. ¡Buen provecho!"); saveSession(); }
   }
   async function prevStep(){
     if(!ensureCurrent()) return;
-    if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); }
+    if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); saveSession(); }
     else { stopSpeak(); await sleep(80); speakSafe("Ya estás en el primer paso."); }
   }
   function repeatStep(){ stopSpeak(); setTimeout(readCurrent,80); }
@@ -600,7 +624,7 @@
   }
   function goToStep(n){
     const total = state?.current?.pasos?.length || 0;
-    if(n>=0 && n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); }
+    if(n>=0 && n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); saveSession(); }
     else { stopSpeak(); setTimeout(()=>speakSafe("Ese número de paso no existe."),80); }
   }
 
@@ -612,14 +636,15 @@
   $('stopReading').onclick = ()=>{ stopSpeak(); }; $('closeGuided').onclick = closeGuided;
   $('printRecipe').onclick = ()=>{ window.print(); };
 
-  // Delegación en tarjetas
+  // Delegación en tarjetas (añadimos abrir con hash y favoritos)
   els.grid.addEventListener('click',e=>{
     const b = e.target.closest('button[data-a]'); if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
-    if(b.dataset.a==='leer')  { openDetail(r); readRecipe(r); }
-    if(b.dataset.a==='guiada'){ openDetail(r); openGuided(r); }
-    if(b.dataset.a==='abrir') openDetail(r);
+    if(b.dataset.a==='leer')  { openDetailWithHash(r); readRecipe(r); }
+    if(b.dataset.a==='guiada'){ openDetailWithHash(r); openGuided(r); }
+    if(b.dataset.a==='abrir') { openDetailWithHash(r); }
     if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
+    if(b.dataset.a==='fav')  toggleFav(r);
   });
 
   // Atajos en modal guiado
@@ -681,7 +706,6 @@
             ? (window.SpeechRecognition||window.webkitSpeechRecognition)
             : null;
 
-  // Mensaje de soporte
   if(isIOS || !SR){
     els.toggleMic.disabled = true;
     els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
@@ -747,13 +771,180 @@
   function updateMic(){ els.toggleMic.textContent = state.listening ? "🎤 Micro activo" : "🎤 Micro"; }
   els.toggleMic.onclick = ()=>{ if(!SR) return; state.listening = !state.listening; state.listening ? startMic() : stopMic(); updateMic(); };
 
-  // SW opcional (si existe sw.js junto al index)
+  /* ===== Deep-link, Compartir, Favoritas tab, Reanudar sesión, Timers, SEO, Focus trap, SW update ===== */
+
+  // Slug util
+  const slug = s => (s||"").toLowerCase()
+    .normalize('NFD').replace(/\p{Diacritic}/gu,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+  // Deep-link abrir detalle
+  function openDetailWithHash(r){
+    openDetail(r);
+    const h = '#receta=' + slug(r.titulo);
+    if(location.hash !== h){ history.pushState({}, "", h); }
+  }
+  function fromHashOpen(){
+    const m = location.hash.match(/#receta=([a-z0-9\-]+)/i);
+    if(!m) return;
+    const r = RECETAS.find(x=>slug(x.titulo)===m[1]);
+    if(r) openDetail(r);
+  }
+  window.addEventListener('popstate', fromHashOpen);
+  document.addEventListener('DOMContentLoaded', fromHashOpen);
+
+  // Botón Compartir (Web Share / copiar)
+  function ensureShareButton(){
+    const bar = document.querySelector('#detailModal .mt-3.flex');
+    if(!bar || document.getElementById('btnShare')) return;
+    const btn = document.createElement('button');
+    btn.id='btnShare'; btn.className='btn btn-ghost'; btn.ariaLabel='Compartir receta';
+    btn.textContent='📤 Compartir';
+    bar.appendChild(btn);
+    btn.onclick = async ()=>{
+      if(!state.current) return;
+      const url = location.origin + location.pathname + '#receta=' + slug(state.current.titulo);
+      if(navigator.share){
+        try{ await navigator.share({ title: state.current.titulo, text: 'Receta', url }); }catch{}
+      }else{
+        try{ await navigator.clipboard.writeText(url);}catch{}
+        alert('Enlace copiado: ' + url);
+      }
+    };
+  }
+
+  // Pestaña Favoritas
+  (function addFavTab(){
+    const tablist = document.querySelector('[role="tablist"]');
+    const btn = document.createElement('button');
+    btn.className='tab'; btn.role='tab'; btn.id='tab-fav'; btn.dataset.cat='Favoritas';
+    btn.setAttribute('aria-selected','false'); btn.textContent='Favoritas';
+    tablist.appendChild(btn);
+    btn.addEventListener('click', ()=>setActiveTab(btn));
+  })();
+
+  // Reanudar sesión
+  const SKEY_SESSION = "session.v1"; // {slug, step}
+  function saveSession(){
+    try{
+      if(!state.current) return;
+      localStorage.setItem(SKEY_SESSION, JSON.stringify({ slug: slug(state.current.titulo), step: state.step||0 }));
+    }catch{}
+  }
+  function loadSession(){
+    try{
+      const raw = localStorage.getItem(SKEY_SESSION);
+      if(!raw) return null;
+      const d = JSON.parse(raw);
+      const r = RECETAS.find(x => slug(x.titulo) === d.slug);
+      return r ? {recipe:r, step:Math.max(0, Math.min((r.pasos||[]).length-1, d.step||0))} : null;
+    }catch{ return null; }
+  }
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const last = loadSession();
+    if(last && confirm(`¿Reanudar "${last.recipe.titulo}" en el paso ${last.step+1}?`)){
+      openDetailWithHash(last.recipe);
+      openGuided(last.recipe);
+      state.step = last.step;
+      readCurrent();
+    }
+  });
+
+  // Temporizadores por paso
+  let currentTimer = null, countdownInt = null;
+  function clearTimerUI(){
+    if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
+    const old = document.getElementById('guidedTimer');
+    if(old) old.remove();
+  }
+  function beep(ms=200, freq=880){
+    try{
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq; osc.start();
+      setTimeout(()=>{ osc.stop(); ctx.close(); }, ms);
+    }catch{}
+  }
+  function startStepTimer(minutes){
+    clearTimerUI();
+    if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
+    const box = document.createElement('div');
+    box.id='guidedTimer';
+    box.className='mt-3 text-sm';
+    box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
+      <button class="btn btn-ghost ml-2" id="cancelTimer">Cancelar</button>`;
+    document.querySelector('#guidedModal .p-4').appendChild(box);
+
+    let left = Math.round(minutes*60);
+    const $left = document.getElementById('tleft');
+    const fmt = s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    $left.textContent = fmt(left);
+
+    countdownInt = setInterval(()=>{ left--; $left.textContent = fmt(Math.max(0,left)); }, 1000);
+    currentTimer = setTimeout(()=>{ clearTimerUI(); beep(300); speakSafe("¡Tiempo!"); }, minutes*60*1000);
+    document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
+  }
+
+  // SEO JSON-LD
+  function injectRecipeLD(r){
+    const ld = {
+      "@context":"https://schema.org",
+      "@type":"Recipe",
+      "name": r.titulo,
+      "recipeCategory": r.categoria,
+      "image": r.imagen,
+      "recipeIngredient": r.ingredientes,
+      "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
+      "totalTime": "PT30M"
+    };
+    let n = document.getElementById("ld-recipe");
+    if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-recipe"; document.head.appendChild(n); }
+    n.textContent = JSON.stringify(ld);
+  }
+  function injectListLD(list){
+    const items = (list||[]).slice(0,50).map((r,i)=>({
+      "@type":"ListItem","position":i+1,"name":r.titulo,"url": location.origin + location.pathname + '#receta=' + slug(r.titulo)
+    }));
+    const ld = {"@context":"https://schema.org","@type":"ItemList","itemListElement":items};
+    let n = document.getElementById("ld-list");
+    if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-list"; document.head.appendChild(n); }
+    n.textContent = JSON.stringify(ld);
+  }
+
+  // Focus trap en modales
+  function trapFocus(modal){
+    const sel = 'a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])';
+    const f = modal.querySelectorAll(sel); if(!f.length) return ()=>{};
+    const first = f[0], last = f[f.length-1];
+    function onKey(e){
+      if(e.key!=='Tab') return;
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+    }
+    modal.addEventListener('keydown', onKey);
+    first.focus();
+    return ()=> modal.removeEventListener('keydown', onKey);
+  }
+  let untrapDetail = null, untrapGuided = null;
+
+  // SW: aviso de actualización (usa tu sw.js si existe)
   if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    navigator.serviceWorker.register("./sw.js").then(reg=>{
+      reg.addEventListener('updatefound', ()=>{
+        const nw = reg.installing;
+        nw.addEventListener('statechange', ()=>{
+          if(nw.state==='installed' && navigator.serviceWorker.controller){
+            if(confirm('Hay una actualización disponible. ¿Actualizar ahora?')) location.reload();
+          }
+        });
+      });
+    }).catch(()=>{});
   }
 
   // Inicial
-  document.addEventListener('DOMContentLoaded', ()=>{ filter(); renderList(); });
+  document.addEventListener('DOMContentLoaded', ()=>{
+    filter(); renderList();
+  });
 
   </script>
 </body>
