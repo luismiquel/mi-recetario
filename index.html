@@ -18,13 +18,14 @@
   <!-- ✅ Tailwind compilado (sin CDN) -->
   <link rel="stylesheet" href="./styles.css">
 
-  <!-- Reglas propias (NO poner text-size-adjust aquí, ya va en styles.css) -->
+  <!-- Reglas propias (NO poner text-size-adjust aquí; ya va en styles.css) -->
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
     body{ -webkit-tap-highlight-color: transparent; }
     /* Foco visible */
     *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
+
     .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
     .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
     .btn-ghost{background:transparent}.btn-ghost:active{transform:scale(.98)}
@@ -42,6 +43,11 @@
     #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-width:700px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
     #ttsCaption.show{display:block}
     @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
+
+    /* Fallback de scrollbars para Safari/Chromium (compat) */
+    *::-webkit-scrollbar{ width:12px; height:12px }
+    *::-webkit-scrollbar-thumb{ background-color: rgba(120,113,108,.5); border-radius: 8px }
+    *::-webkit-scrollbar-track{ background: transparent }
   </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -183,7 +189,7 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  const APP_VERSION = "recetario-1.3.1";
+  const APP_VERSION = "recetario-1.3.2";
 
   /* ===== Datos (160 recetas) ===== */
   const IMG = c => ({
@@ -240,7 +246,7 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides realistas para platos clave */
+  /* Overrides realistas para platos clave (ingredientes + pasos + tiempo) */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -334,7 +340,7 @@
     Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","Enfría o reposa.","Decora y sirve."]
   };
 
-  // Utilidad: quitar diacríticos (compatible; sin \p{Diacritic})
+  // Utilidad: quitar diacríticos (compatible)
   function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 
   function ingredientesPara(cat,t){
@@ -455,10 +461,13 @@
   function isFav(r){ return fav.has(r.titulo); }
   function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
+  // ===== Tarjetas (primera fila: eager/high para reducir aviso de lazy)
   function card(r,i){
+    const eager = i < 4 ? 'eager' : 'lazy';
+    const fetchp = i < 4 ? 'high' : 'auto';
     const star = isFav(r) ? '⭐' : '☆';
     return `<article class="card" role="article" aria-label="${r.titulo}">
-      <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
+      <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="${eager}" fetchpriority="${fetchp}" decoding="async" width="800" height="500">
       <div class="p-3 space-y-2">
         <h3 class="text-lg font-semibold">${r.titulo}</h3>
         <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
@@ -607,7 +616,7 @@
     const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
     [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
 
-    // Temporizador por paso (detecta “X min”)
+    // Temporizador por paso (si detecta “X min”)
     clearTimerUI();
     try{
       const p = state.current?.pasos?.[state.step] || "";
@@ -971,7 +980,8 @@
     const tablist = document.querySelector('[role="tablist"]');
     const btn = document.createElement('button');
     btn.className='tab'; btn.role='tab'; btn.id='tab-fav'; btn.dataset.cat='Favoritas';
-    btn.setAttribute('aria-selected','false'); btn.setAttribute('title','Mostrar favoritas'); btn.textContent='Favoritas';
+    btn.setAttribute('aria-selected','false'); btn.setAttribute('title','Mostrar favoritas'); btn.setAttribute('aria-label','Mostrar favoritas');
+    btn.textContent='Favoritas';
     tablist.appendChild(btn);
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
@@ -1017,17 +1027,24 @@
     }
   });
 
-  /* ===== Inicial ===== */
-  document.addEventListener('DOMContentLoaded', ()=>{
-    filter(); renderList();
-  });
-
-  /* ===== Accesibilidad: añade title a botones que no lo tengan ===== */
+  /* ===== Accesibilidad extra: añade title a botones sin título ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
     document.querySelectorAll('button, [role="button"], a[role="button"]').forEach(el=>{
       const label = el.getAttribute('aria-label') || el.innerText?.trim() || el.textContent?.trim();
       if(label && !el.hasAttribute('title')) el.setAttribute('title', label);
     });
+    // Detección de IDs duplicados (si los hubiera por extensiones/overlays)
+    const seen = new Set(), dups = [];
+    document.querySelectorAll('[id]').forEach(el=>{
+      if(seen.has(el.id)) dups.push(el.id);
+      seen.add(el.id);
+    });
+    if(dups.length){ console.warn('IDs duplicados detectados (posibles extensiones):', [...new Set(dups)]); }
+  });
+
+  /* ===== Inicial ===== */
+  document.addEventListener('DOMContentLoaded', ()=>{
+    filter(); renderList();
   });
 
   </script>
