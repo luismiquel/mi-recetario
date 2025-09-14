@@ -1,23 +1,17 @@
-// 📦 Nombre de la caché (cambia versión al actualizar)
-const CACHE = "recetario-v401";
-
+const CACHE = "recetario-v1.6.0";
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",       // estilos locales
+  "./styles.css",
   "./manifest.json",
   "./favicon.ico",
   "./icons/icon-16.png",
   "./icons/icon-32.png",
   "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./img/aperitivo.svg",
-  "./img/primero.svg",
-  "./img/segundo.svg",
-  "./img/postre.svg"
+  "./icons/icon-512.png"
 ];
 
-// 🚀 Instalar: precache de recursos
+// Instalar
 self.addEventListener("install", e => {
   e.waitUntil(
     caches.open(CACHE)
@@ -26,7 +20,7 @@ self.addEventListener("install", e => {
   );
 });
 
-// ♻️ Activar: limpiar versiones antiguas
+// Activar
 self.addEventListener("activate", e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -36,21 +30,21 @@ self.addEventListener("activate", e => {
   self.clients.claim();
 });
 
-// 🌐 Interceptar peticiones
+// Fetch
 self.addEventListener("fetch", e => {
   const req = e.request;
   const url = new URL(req.url);
 
-  // Solo atender recursos del mismo origen
+  // Solo mismo origen
   if (url.origin !== location.origin) return;
 
-  // Navegaciones → fallback a index si offline
+  // Navegaciones: fallback a index si offline
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).catch(() => caches.match("./index.html")));
     return;
   }
 
-  // Imágenes → estrategia stale-while-revalidate
+  // Imágenes: stale-while-revalidate
   if (req.destination === "image") {
     e.respondWith((async () => {
       const cache = await caches.open(CACHE);
@@ -64,7 +58,7 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // Resto → estrategia cache-first
+  // Otros: cache-first
   e.respondWith(
     caches.match(req).then(res => res || fetch(req))
   );
