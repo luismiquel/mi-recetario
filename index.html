@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz clara manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
   <title>Recetario Español – 160 recetas</title>
 
-  <!-- theme-color (Firefox puede mostrar aviso informativo; es inocuo) -->
+  <!-- theme-color (Firefox puede avisar que hay varias, es intencionado para light/dark) -->
   <meta name="theme-color" content="#78350f" />
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
@@ -15,10 +16,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- ✅ Tailwind compilado (sin CDN) -->
+  <!-- ✅ Tailwind compilado (local) -->
   <link rel="stylesheet" href="./styles.css">
 
-  <!-- Estilos propios (no dupliques text-size-adjust; ya está en styles.css) -->
+  <!-- Estilos propios -->
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
@@ -62,11 +63,17 @@
 <body class="dark:bg-stone-900 dark:text-stone-200">
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
+  <noscript>
+    <div style="padding:1rem;margin:1rem;border:1px solid #e5e7eb;border-radius:12px;background:#fff;color:#111">
+      Esta aplicación necesita JavaScript para funcionar (búsqueda, voz, cocina guiada y lista de la compra).
+    </div>
+  </noscript>
+
   <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4" id="app">
     <header class="flex items-center justify-between gap-3 mb-4">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold">Recetario Español – 160 recetas</h1>
-        <p class="text-sm text-stone-600 dark:text-stone-400">Voz clara · Contraste · Letra grande · Lista de compra.</p>
+        <p class="text-sm text-stone-600 dark:text-stone-400">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
       </div>
       <div class="flex items-center gap-2">
         <button id="toggleTheme" class="btn btn-ghost" title="Cambiar tema" aria-label="Cambiar tema">🌙/☀️</button>
@@ -86,11 +93,11 @@
         </div>
         <!-- Tabs accesibles -->
         <div class="flex items-center gap-2" role="tablist" aria-label="Categorías">
-          <button class="tab" role="tab" id="tab-todas" aria-selected="true" aria-controls="panel-todas" data-cat="Todas" title="Mostrar todas">Todas</button>
-          <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" aria-controls="panel-aperitivo" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
-          <button class="tab" role="tab" id="tab-primero" aria-selected="false" aria-controls="panel-primero" data-cat="Primero" title="Mostrar primeros">Primeros</button>
-          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" aria-controls="panel-segundo" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
-          <button class="tab" role="tab" id="tab-postre" aria-selected="false" aria-controls="panel-postre" data-cat="Postre" title="Mostrar postres">Postres</button>
+          <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
+          <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
+          <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
+          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
+          <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
           <!-- Favoritas se añade por JS -->
         </div>
         <div class="flex items-end gap-2">
@@ -100,7 +107,14 @@
             <option value="0.9" selected>Clara</option>
             <option value="1.0">Normal</option>
           </select>
-          <button id="toggleMic" class="btn btn-primary" title="Mantén pulsado para hablar" aria-label="Mantén pulsado para hablar">🎤 Micro (mantén pulsado)</button>
+
+          <!-- Auto escuchar (ACTIVADO por defecto) -->
+          <label for="autoListen" class="text-sm select-none" title="Escuchar sin pulsar">
+            <input id="autoListen" type="checkbox" class="align-middle mr-1" checked> Auto
+          </label>
+
+          <!-- Botón ahora es para reconectar/forzar inicio si el navegador cortó el micro -->
+          <button id="toggleMic" class="btn btn-primary" title="Reconectar reconocimiento de voz" aria-label="Reconectar reconocimiento de voz">🎤 Reconectar voz</button>
         </div>
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
@@ -126,7 +140,7 @@
         </div>
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
-            <img id="detailImg" src="" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
+            <img id="detailImg" src="https://placehold.co/800x500?text=Receta" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
@@ -153,7 +167,9 @@
           <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
         </div>
         <div class="p-4 space-y-4">
-          <p class="text-sm text-stone-600 dark:text-stone-400">Pulsa y mantén el botón de micrófono para hablar. Prueba: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
+          <p class="text-sm text-stone-600 dark:text-stone-400">
+            <strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.
+          </p>
           <div class="bg-stone-50 dark:bg-stone-900 rounded-xl p-4">
             <h4 id="guidedRecipeTitle" class="text-lg font-semibold mb-2"></h4>
             <ol id="guidedSteps" class="list-decimal pl-5 space-y-2"></ol>
@@ -199,7 +215,7 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  const APP_VERSION = "recetario-1.4.0";
+  const APP_VERSION = "recetario-1.6.0";
 
   /* ===== Datos (160 recetas) ===== */
   const IMG = c => ({
@@ -256,7 +272,7 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides realistas para platos clave */
+  /* Overrides realistas para platos clave (ingredientes y pasos detallados) */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -291,60 +307,92 @@
         ["Seca aros de calamar y sala.","Pasa por harina y huevo batido.","Fríe a 175–180 ºC 1–2 min; escurre.","Sirve con limón."],
         "20–30 min"
       )],
-      ["gazpacho andaluz", R(["Tomate","Pepino","Pimiento verde","Ajo","Pan","Aceite","Vinagre","Sal"],
-        ["Tritura y emulsiona con aceite.","Ajusta sal/vinagre y enfría."],"15–20 min + frío")],
-      ["salmorejo cordobés", R(["Tomate","Pan","Ajo","Aceite","Vinagre","Sal","Jamón","Huevo cocido"],
-        ["Tritura tomate/pan/ajo/sal.","Emulsiona con aceite y vinagre.","Sirve con jamón y huevo."],"15–20 min + frío")],
-      ["ajoblanco", R(["Almendra cruda","Ajo","Pan","Agua fría","Aceite","Vinagre","Sal","Uvas"],
-        ["Tritura almendra, ajo, pan, agua y sal.","Emulsiona con aceite y vinagre.","Sirve muy frío con uvas."],"15–20 min + frío")],
-      ["fideuá de pescado", R(["Fideo grueso","Caldo de pescado","Sepia/calamar","Gamba","Ajo","Pimentón","Tomate","Aceite","Sal","Allioli (opcional)"],
-        ["Sofríe sepia y retira.","Añade ajo, pimentón y tomate.","Tuesta el fideo, moja con caldo y cocina.","Incorpora sepia/gambas al final. Sirve con allioli."],"30–40 min")],
-      ["paella de verduras", R(["Arroz","Caldo vegetal","Judía verde","Garrafo/garbanzo","Pimiento","Tomate","Ajo","Aceite","Sal","Azafrán"],
-        ["Sofríe verduras.","Añade arroz y nacara un minuto.","Moja con caldo caliente y azafrán.","Cocina 18–20 min; reposo 5."],"35–45 min")],
-      ["paella mixta", R(["Arroz","Caldo","Pollo","Conejo","Gamba/Calamar","Pimiento","Tomate","Ajo","Aceite","Sal","Azafrán"],
-        ["Dora carnes, añade sofrito.","Agrega arroz, nacara y moja con caldo/azafrán.","Cocina 18–20 min, coloca mariscos al final; reposo 5."],"40–55 min")],
-      ["arroz con bogavante", R(["Arroz","Bogavante","Caldo de marisco","Ajo","Pimentón","Tomate","Aceite","Sal"],
-        ["Marca bogavante y reserva.","Haz sofrito con ajo/pimentón/tomate.","Añade arroz, caldo y bogavante; cocina 18 min."],"35–45 min")],
-      ["tortilla de patatas", R(["Patatas","Cebolla (opcional)","Huevos","Aceite","Sal"],
-        ["Fríe patata en aceite suave.","Mezcla con huevo batido y sal.","Cuaja a tu gusto por ambos lados."],"25–35 min")],
-      ["pollo al ajillo", R(["Pollo troceado","Ajo","Aceite","Vino blanco","Sal","Pimienta","Laurel"],
-        ["Dora pollo con ajos.","Desglasa con vino; reduce.","Ajusta sal/pimienta y sirve."],"25–35 min")],
-      ["cordero asado", R(["Paletilla/pierna de cordero","Ajo","Romero","Aceite","Sal","Agua o vino"],
-        ["Sala cordero con ajo/romero.","Asa a 180–190 ºC 70–90 min, regando.","Deja reposar y sirve con jugo."],"75–95 min")],
-      ["fabada asturiana", R(["Fabes","Compango","Cebolla","Ajo","Pimentón","Sal"],
-        ["Desala si procede.","Cuece fabes con compango a fuego bajo (asustando).","Espuma y rectifica sal."],"120–180 min")],
-      ["marmitako de bonito", R(["Bonito","Patata","Pimiento","Cebolla","Ajo","Tomate","Caldo","Aceite","Sal"],
-        ["Haz sofrito y añade patata.","Cubre con caldo y cocina.","Agrega bonito al final (2–3 min)."],"35–45 min")],
-      ["rabo de toro", R(["Rabo de toro","Verduras","Vino tinto","Caldo","Aceite","Sal","Harina (ligar)"],
-        ["Dora rabo enharinado.","Sofríe verduras; moja con vino y reduce.","Cuece con caldo 2–3 h hasta meloso."],"150–210 min")],
-      ["callos a la madrileña", R(["Callos limpios","Morcilla/chorizo","Pimentón","Guindilla","Cebolla","Ajo","Laurel","Sal"],
-        ["Blanquea y enjuaga callos.","Guiso con sofrito y pimentón a fuego bajo hasta tiernos."],"120–180 min")],
-      ["bacalao al pil-pil", R(["Bacalao desalado","Ajo","Guindilla","Aceite de oliva"],
-        ["Confita ajos y bacalao a baja Tª.","Liga el pil-pil moviendo la cazuela.","Sirve con ajos y guindilla."],"25–35 min")],
-      ["merluza en salsa verde", R(["Merluza","Ajo","Perejil","Vino blanco","Caldo","Aceite","Sal","Almejas (opcional)"],
-        ["Dora ajo, añade harina ligera.","Vino+caldo, perejil y merluza 5–7 min.","Añade almejas hasta abrir."],"20–30 min")],
-      ["pulpo a la gallega", R(["Pulpo cocido","Patata cocida","Aceite","Pimentón","Sal en escamas"],
-        ["Corta pulpo y patata.","Aliña con aceite, pimentón y sal."],"10–15 min")],
-      ["tarta de queso al horno", R(["Queso crema","Huevos","Azúcar","Nata","Harina (opcional)"],
-        ["Mezcla sin batir en exceso.","Hornea 180 ºC 40–50 min; centro tembloroso.","Enfría y sirve."],"60–90 min con enfriado")],
-      ["flan casero", R(["Leche","Huevos","Azúcar","Vainilla","Azúcar para caramelo"],
-        ["Haz caramelo y forra molde.","Mezcla leche/huevo/azúcar/vainilla.","Horno al baño maría 160–170 ºC 40–55 min.","Enfría y desmolda."],"70–120 min con frío")],
-      ["natillas caseras", R(["Leche","Yemas","Azúcar","Maicena","Vainilla","Canela"],
-        ["Infusiona leche con vainilla/canela.","Templa yemas con azúcar/maicena.","Cuece sin hervir hasta napar.","Enfría con galleta."],"30–50 min + frío")],
-      ["torrijas", R(["Pan","Leche","Azúcar","Canela","Huevo","Aceite","Azúcar/canela o miel"],
-        ["Empapa pan en leche aromatizada.","Reboza en huevo y fríe.","Reboza en azúcar/canela o miel."],"30–45 min")],
-      ["arroz con leche", R(["Arroz","Leche entera","Azúcar","Canela","Limón"],
-        ["Cuece arroz en leche aromatizada a fuego bajo, removiendo.","Azucara al final; enfría."],"45–60 min")],
-      ["tarta de santiago", R(["Almendra molida","Azúcar","Huevos","Limón","Canela"],
-        ["Mezcla todo y hornea 180 ºC 25–35 min.","Espolvorea azúcar glas con cruz."],"40–55 min")],
-      ["brownie sencillo", R(["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (opcional)"],
-        ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Hornea 170–180 ºC 20–25 min."],"35–45 min")]
+      ["gazpacho andaluz", R(
+        ["Tomate","Pepino","Pimiento verde","Ajo","Pan","Aceite de oliva virgen extra","Vinagre","Sal"],
+        ["Tritura con pan hidratado.","Emulsiona con aceite.","Ajusta sal y vinagre, enfría."],
+        "15–20 min + frío"
+      )],
+      ["salmorejo cordobés", R(
+        ["Tomate maduro","Pan","Ajo","Aceite de oliva virgen extra","Vinagre","Sal","Jamón","Huevo cocido"],
+        ["Tritura tomate/pan/ajo/sal.","Emulsiona con aceite y vinagre.","Sirve con jamón y huevo."],
+        "15–20 min + frío"
+      )],
+      ["fideuá de pescado", R(
+        ["Fideo grueso","Caldo de pescado","Sepia/calamar","Gamba","Ajo","Pimentón","Tomate","Aceite","Sal","Allioli (opcional)"],
+        ["Sofríe sepia y retira.","Ajo+pimentón+tomate.","Tuesta fideo, moja con caldo.","Incorpora sepia/gambas al final; sirve con allioli."],
+        "30–40 min"
+      )],
+      ["paella de verduras", R(
+        ["Arroz","Caldo vegetal","Judía verde","Garrafo/garbanzo","Pimiento","Tomate","Ajo","Aceite","Sal","Azafrán"],
+        ["Sofríe verduras.","Añade arroz y nacara.","Moja con caldo y azafrán.","Cocina 18–20 min; reposo 5."],
+        "35–45 min"
+      )],
+      ["paella mixta", R(
+        ["Arroz","Caldo","Pollo","Conejo","Gamba/Calamar","Pimiento","Tomate","Ajo","Aceite","Sal","Azafrán"],
+        ["Dora carnes y haz sofrito.","Nacara el arroz y moja con caldo/azafrán.","Cocina 18–20 min, mariscos al final; reposo 5."],
+        "40–55 min"
+      )],
+      ["arroz con bogavante", R(
+        ["Arroz","Bogavante","Caldo de marisco","Ajo","Pimentón","Tomate","Aceite","Sal"],
+        ["Marca bogavante.","Sofrito ajo/pimentón/tomate.","Arroz + caldo + bogavante; 18 min."],
+        "35–45 min"
+      )],
+      ["tortilla de patatas", R(
+        ["Patatas","Cebolla (opcional)","Huevos","Aceite","Sal"],
+        ["Fríe patata a fuego suave.","Mezcla con huevo y sal.","Cuaja a tu gusto por ambos lados."],
+        "25–35 min"
+      )],
+      ["fabada asturiana", R(
+        ["Fabes","Compango","Cebolla","Ajo","Pimentón","Sal"],
+        ["Desala si procede.","Cuece a fuego bajo asustando.","Espuma y rectifica sal."],
+        "120–180 min"
+      )],
+      ["marmitako de bonito", R(
+        ["Bonito","Patata","Pimiento","Cebolla","Ajo","Tomate","Caldo","Aceite","Sal"],
+        ["Sofrito y añade patata.","Cubre con caldo.","Bonito al final 2–3 min."],
+        "35–45 min"
+      )],
+      ["rabo de toro", R(
+        ["Rabo de toro","Verduras","Vino tinto","Caldo","Aceite","Sal","Harina (ligar)"],
+        ["Dora rabo enharinado.","Sofríe verduras y moja con vino.","Cuece con caldo 2–3 h hasta meloso."],
+        "150–210 min"
+      )],
+      ["merluza en salsa verde", R(
+        ["Merluza","Ajo","Perejil","Vino blanco","Caldo","Aceite","Sal","Almejas (opcional)"],
+        ["Ajo + harina ligera.","Vino+caldo+perejil y merluza 5–7 min.","Almejas hasta abrir."],
+        "20–30 min"
+      )],
+      ["pulpo a la gallega", R(
+        ["Pulpo cocido","Patata cocida","Aceite","Pimentón","Sal en escamas"],
+        ["Corta pulpo y patata.","Aliña con aceite, pimentón y sal."],
+        "10–15 min"
+      )],
+      ["tarta de queso al horno", R(
+        ["Queso crema","Huevos","Azúcar","Nata","Harina (opcional)"],
+        ["Mezcla sin batir de más.","Horno 180 ºC 40–50 min (centro tembloroso).","Enfría y sirve."],
+        "60–90 min con frío"
+      )],
+      ["flan casero", R(
+        ["Leche","Huevos","Azúcar","Vainilla","Azúcar para caramelo"],
+        ["Caramelo al molde.","Mezcla leche/huevo/azúcar.","Horno baño maría 160–170 ºC 40–55 min.","Enfría y desmolda."],
+        "70–120 min con frío"
+      )],
+      ["arroz con leche", R(
+        ["Arroz","Leche entera","Azúcar","Canela","Limón"],
+        ["Cuece arroz en leche aromatizada, removiendo.","Azúcar al final; enfría."],
+        "45–60 min"
+      )],
+      ["brownie sencillo", R(
+        ["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (opcional)"],
+        ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],
+        "35–45 min"
+      )]
     ]);
     return { get: (title) => M.get(title.toLowerCase()) || null };
   })();
 
   const PASOS_BASE = {
-    Aperitivo:["Prepara y ten a mano todo.","Corta/dispón los ingredientes.","Sofríe o mezcla hasta aromatizar.","Monta y ajusta sal/aliño.","Reposa 1–2 min o sirve caliente.","Emplata y sirve."],
+    Aperitivo:["Prepara y ten a mano todo.","Corta o dispón los ingredientes.","Sofríe o mezcla hasta aromatizar.","Monta y ajusta sal/aliño.","Reposa 1–2 min o sirve caliente.","Emplata y sirve."],
     Primero:["Lava y prepara verduras.","Sofríe ajo/cebolla suave.","Añade ingrediente principal y rehoga.","Cubre con caldo/agua y cocina.","Ajusta textura (tritura/reposa).","Sirve caliente o frío."],
     Segundo:["Seca la pieza y sala.","Añade adobo/especias.","Dora/hornea/sella bien.","Agrega guarnición/salsa y cocina al punto.","Reposa unos minutos.","Sirve con su jugo."],
     Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","Enfría o reposa.","Decora y sirve."]
@@ -367,7 +415,7 @@
     } else if(cat==="Primero"){
       if(OV.get(t)) ing=OV.get(t).ing;
       else if(/sopa|caldo/.test(t)) ing=["Caldo","Ajo/Cebolla","Aceite","Sal"];
-      else if(/crema|vichyssoise|purrusalda|zanahoria/.test(t)) ing=["Verdura principal","Cebolla/Puerro","Caldo","Aceite","Sal"];
+      else if(/crema|vichyssoise|porrusalda|zanahoria/.test(t)) ing=["Verdura principal","Cebolla/Puerro","Caldo","Aceite","Sal"];
       else if(/arroz|paella/.test(t)) ing=["Arroz","Caldo","Verduras","Aceite","Sal","Azafrán (opcional)"];
       else if(/fideu/.test(t)) ing=["Fideos","Caldo de pescado","Ajo","Pimentón","Tomate","Aceite","Sal"];
       else if(/ensalada/.test(t)) ing=["Lechuga/legumbre","Tomate","Cebolla","Aceite","Vinagre","Sal"];
@@ -425,9 +473,10 @@
   const state = {
     q:"", cat:"Todas", list:RECETAS, current:null, step:0,
     dark: matchMedia('(prefers-color-scheme: dark)').matches,
-    contrast:false, font:16, listening:false, rate:0.9
+    contrast:false, font:16, listening:false, rate:0.9,
+    autoListen:true  // manos libres por defecto
   };
-  window.state = state; // para acceso desde voz
+  window.state = state;
 
   const $ = id => document.getElementById(id);
   const els = {
@@ -437,6 +486,7 @@
     toggleTheme: $('toggleTheme'), toggleContrast: $('toggleContrast'),
     fontPlus: $('fontPlus'), fontMinus: $('fontMinus'),
     toggleMic: $('toggleMic'), heard: $('heardText'), voiceRate: $('voiceRate'),
+    autoListen: $('autoListen'),
     detailModal: $('detailModal'), detailTitle: $('detailTitle'), detailImg: $('detailImg'),
     detailMeta: $('detailMeta'), detailIngredients: $('detailIngredients'), detailSteps: $('detailSteps'),
     btnReadAll: $('btnReadAll'), btnGuided: $('btnGuided'), btnAddAll: $('btnAddAll'),
@@ -448,7 +498,6 @@
     addItem: $('addItem'), exportList: $('exportList'), printList: $('printList'), clearChecked: $('clearChecked'),
     caption: $('ttsCaption'), closeDetail: $('closeDetail')
   };
-  window.els = els;
 
   function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); }
   function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); }
@@ -474,13 +523,11 @@
   function isFav(r){ return fav.has(r.titulo); }
   function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-  // Tarjetas (primeras 4 eager/high para reducir aviso informativo de lazy)
+  // Tarjetas
   function card(r,i){
-    const eager = i < 4 ? 'eager' : 'lazy';
-    const fetchp = i < 4 ? 'high' : 'auto';
     const star = isFav(r) ? '⭐' : '☆';
     return `<article class="card" role="article" aria-label="${r.titulo}">
-      <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="${eager}" fetchpriority="${fetchp}" decoding="async" width="800" height="500">
+      <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy" decoding="async" width="800" height="500">
       <div class="p-3 space-y-2">
         <h3 class="text-lg font-semibold">${r.titulo}</h3>
         <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
@@ -577,7 +624,7 @@
     while(speakLock) await sleep(20);
     speakLock = true;
     if(!voicesReady){ try{ pickVoice(); }catch{} }
-    stopSpeak(); await sleep(120);
+    stopSpeak(); await sleep(80);
     const u = new SpeechSynthesisUtterance(text);
     if(ttsVoice) u.voice = ttsVoice;
     u.lang = (ttsVoice && ttsVoice.lang) || 'es-ES';
@@ -615,12 +662,21 @@
     $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
     $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
     if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
-    els.status.textContent = "Micrófono listo: mantén pulsado el botón para hablar.";
+    els.status.textContent = "Voz manos libres activa.";
     speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
     saveSession();
+    // 🔊 Arrancar reconocimiento automático si está activado
+    if(state.autoListen) startAutoRecognizer();
   }
-  function closeGuided(){ stopSpeak(); $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex'); els.status.textContent="Cocina guiada cerrada."; if(untrapGuided) untrapGuided(); saveSession(); }
+  function closeGuided(){
+    stopSpeak();
+    $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex');
+    els.status.textContent="Cocina guiada cerrada.";
+    if(untrapGuided) untrapGuided();
+    stopAutoRecognizer();
+    saveSession();
+  }
   function readCurrent(){
     if(!ensureCurrent()) return;
     const pasos = state.current.pasos || []; if(!pasos.length) return;
@@ -640,13 +696,13 @@
   async function nextStep(){
     if(!ensureCurrent()) return;
     const t = (state.current.pasos||[]).length;
-    if(state.step < t-1){ state.step++; stopSpeak(); await sleep(80); readCurrent(); saveSession(); }
-    else { stopSpeak(); await sleep(80); speakSafe("Receta terminada. ¡Buen provecho!"); saveSession(); }
+    if(state.step < t-1){ state.step++; stopSpeak(); await sleep(60); readCurrent(); saveSession(); }
+    else { stopSpeak(); await sleep(60); speakSafe("Receta terminada. ¡Buen provecho!"); saveSession(); }
   }
   async function prevStep(){
     if(!ensureCurrent()) return;
-    if(state.step>0){ state.step--; stopSpeak(); await sleep(80); readCurrent(); saveSession(); }
-    else { stopSpeak(); await sleep(80); speakSafe("Ya estás en el primer paso."); }
+    if(state.step>0){ state.step--; stopSpeak(); await sleep(60); readCurrent(); saveSession(); }
+    else { stopSpeak(); await sleep(60); speakSafe("Ya estás en el primer paso."); }
   }
   function repeatStep(){ stopSpeak(); setTimeout(readCurrent,80); }
   function readIngredients(){
@@ -660,8 +716,6 @@
     if(n>=0 && n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); saveSession(); }
     else { stopSpeak(); setTimeout(()=>speakSafe("Ese número de paso no existe."),80); }
   }
-  window.readIngredients = readIngredients;
-  window.goToStep = goToStep;
   $('nextStep').onclick = nextStep; $('prevStep').onclick = prevStep; $('repeatStep').onclick = repeatStep;
   $('stopReading').onclick = ()=>{ stopSpeak(); }; $('closeGuided').onclick = closeGuided;
   $('printRecipe').onclick = ()=>{ window.print(); };
@@ -902,206 +956,139 @@
     }
   });
 
-  /* ===== Accesibilidad extra: añade title a botones sin título + dup IDs aviso ===== */
-  document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelectorAll('button, [role="button"], a[role="button"]').forEach(el=>{
-      const label = el.getAttribute('aria-label') || el.innerText?.trim() || el.textContent?.trim();
-      if(label && !el.hasAttribute('title')) el.setAttribute('title', label);
-    });
-    const seen = new Set(), dups = [];
-    document.querySelectorAll('[id]').forEach(el=>{
-      if(seen.has(el.id)) dups.push(el.id);
-      seen.add(el.id);
-    });
-    if(dups.length){ console.warn('IDs duplicados detectados (posibles extensiones):', [...new Set(dups)]); }
-  });
-
   /* ==========================
-     🔊 VOICE UPGRADE v2 (PTT + silencio + fuzzy + HUD)
+     🔊 VOZ MANOS LIBRES (Auto Listen)
      ========================== */
-  (function(){
-    const SRClass = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
-                  ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
+  const SRClass = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition)
+                ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
 
-    // HUD
-    let hud, bar;
-    function ensureHUD(){
-      if(hud) return;
-      hud = document.createElement('div');
-      hud.id='voiceHUD';
-      hud.innerHTML = `
-        <span id="voiceDot" aria-hidden="true"></span>
-        <span id="voiceWave" aria-hidden="true"><i></i></span>
-        <span id="voiceTip"><strong>PTT:</strong> mantén pulsado para hablar</span>
-      `;
-      bar = hud.querySelector('#voiceWave > i');
-      els.toggleMic.insertAdjacentElement('afterend', hud);
-    }
-    ensureHUD();
-    function setStatus(msg){ els.status.textContent = msg; }
-    function drawLevel(p){ if(!bar) return; const w = Math.max(4, Math.min(138, Math.round(p*138))); bar.style.width = w + 'px'; }
-    function strip(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
-    function norm(s){ return strip(s).toLowerCase().replace(/\s+/g,' ').trim(); }
-    function tone(ms=110,freq=920){
-      try{ const ctx = new (window.AudioContext||window.webkitAudioContext)();
-        const o = ctx.createOscillator(), g = ctx.createGain(); o.connect(g); g.connect(ctx.destination);
-        o.frequency.value=freq; o.start(); setTimeout(()=>{ try{o.stop();ctx.close();}catch{} }, ms);
-      }catch{}
-    }
+  let recAuto = null;
+  let autoRestartTimer = null;
 
-    // Fuzzy
-    function lev(a,b){
-      const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
-      const dp=new Array(n+1).fill(0); for(let j=0;j<=n;j++) dp[j]=j;
-      for(let i=1;i<=m;i++){ let prev=dp[0], tmp; dp[0]=i; for(let j=1;j<=n;j++){
-        tmp=dp[j];
-        dp[j]=Math.min(dp[j]+1, dp[j-1]+1, prev + (a[i-1]===b[j-1]?0:1));
-        prev=tmp;
-      }}
-      return dp[n];
-    }
-    const CMD_LIST = [
-      {type:'next', variants:['siguiente','proximo','avanza','adelante','continuar']},
-      {type:'prev', variants:['anterior','atras','retroceder']},
-      {type:'repeat', variants:['repetir','otra vez','de nuevo','repite']},
-      {type:'ingredients', variants:['leer ingredientes','ingredientes','leer lista']},
-      {type:'stop', variants:['salir','parar','detener','cerrar']},
-    ];
-    const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
-    function parseCommand(raw){
-      const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
-                                  (_,w)=>'paso '+NUM[w]);
-      const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
-      for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
-      let best=99, winner={type:'unknown'};
-      for(const c of CMD_LIST){ for(const v of c.variants){ const d=lev(t,v); if(d<best){ best=d; winner={type:c.type}; } } }
-      return best<=2 ? winner : {type:'unknown', raw:raw};
-    }
+  function setStatus(msg){ els.status.textContent = msg; }
+  function norm(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }catch{return (s||"").toLowerCase().trim();} }
 
-    // Audio monitor (VAD simple)
-    let mediaStream=null, audioCtx=null, analyser=null, data=null, raf=null;
-    let startedAt=0, silenceMs=0;
-    const SILENCE_STOP_MS = 900, MIN_SPEECH_MS = 500;
-    function levelFromPCM(buf){ let max=0, v=0; for(let i=0;i<buf.length;i++){ v=Math.abs(buf[i]-128); if(v>max) max=v; } return max/128; }
-    function startAudioMonitor(){
-      if(mediaStream) return;
-      navigator.mediaDevices.getUserMedia({audio:{channelCount:1, sampleRate:48000, echoCancellation:true, noiseSuppression:true, autoGainControl:true}})
-      .then(stream=>{
-        mediaStream=stream; audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-        const src=audioCtx.createMediaStreamSource(stream); analyser=audioCtx.createAnalyser(); analyser.fftSize=512;
-        data=new Uint8Array(analyser.fftSize); src.connect(analyser);
-        startedAt=performance.now(); silenceMs=0;
-        const loop=()=>{
-          analyser.getByteTimeDomainData(data);
-          const lvl = levelFromPCM(data); drawLevel(lvl);
-          document.getElementById('voiceHUD')?.classList.toggle('talking', lvl>0.08);
-          if(performance.now()-startedAt>MIN_SPEECH_MS){ silenceMs = (lvl<0.04) ? (silenceMs+16) : 0; }
-          raf=requestAnimationFrame(loop);
-        };
-        raf=requestAnimationFrame(loop);
-      }).catch(()=>{});
-    }
-    function stopAudioMonitor(){
-      if(raf) cancelAnimationFrame(raf); raf=null;
-      if(audioCtx){ try{audioCtx.close();}catch{} audioCtx=null; }
-      if(mediaStream){ mediaStream.getTracks().forEach(t=>t.stop()); mediaStream=null; }
-      analyser=null; data=null; drawLevel(0); document.getElementById('voiceHUD')?.classList.remove('talking');
-    }
+  // HUD
+  let hud, bar;
+  function ensureHUD(){
+    if(hud) return;
+    hud = document.createElement('div');
+    hud.id='voiceHUD';
+    hud.innerHTML = `<span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span>`;
+    bar = hud.querySelector('#voiceWave > i');
+    els.toggleMic.insertAdjacentElement('afterend', hud);
+  }
+  ensureHUD();
+  function drawLevel(w){ if(!bar) return; const px=Math.max(4,Math.min(138,Math.round(w*138))); bar.style.width=px+'px'; }
 
-    // Reconocedor
-    let rec=null, listening=false, listenTimer=null;
-    function dynamicWordsForContext(){
-      try{
-        const r = state.current || null;
-        if(!r) return [];
-        const words=[];
-        (r.ingredientes||[]).slice(0,8).forEach(x=>words.push(norm(x).split(' ')[0]));
-        (r.pasos||[]).slice((state.step||0),(state.step||0)+2).forEach(p=>{ const w=norm(p).split(' '); if(w[0]) words.push(w[0]); });
-        return Array.from(new Set(words)).filter(Boolean);
-      }catch{return[]}
-    }
-    function makeRecognizer(){
-      const r=new SRClass(); r.lang='es-ES'; r.continuous=false; r.interimResults=true; r.maxAlternatives=4;
-      const SGL=window.SpeechGrammarList||window.webkitSpeechGrammarList;
-      if(SGL){ try{
-        const g=new SGL(); const cmds=['siguiente','anterior','repetir','leer ingredientes','ingredientes',
-          'paso uno','paso dos','paso tres','paso cuatro','paso cinco','paso seis','paso siete','paso ocho','paso nueve','paso diez',
-          ...dynamicWordsForContext()];
-        g.addFromString(`#JSGF V1.0; grammar cmds; public <cmd> = ${cmds.join(' | ')} ;`,1); r.grammars=g;
-      }catch{} }
-      return r;
-    }
+  // Levenshtein light
+  function lev(a,b){
+    const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+    const dp=new Array(n+1).fill(0); for(let j=0;j<=n;j++) dp[j]=j;
+    for(let i=1;i<=m;i++){ let prev=dp[0], tmp; dp[0]=i; for(let j=1;j<=n;j++){
+      tmp=dp[j]; dp[j]=Math.min(dp[j]+1, dp[j-1]+1, prev + (a[i-1]===b[j-1]?0:1)); prev=tmp;
+    }}
+    return dp[n];
+  }
 
-    function startPTT(){
-      if(!SRClass){ setStatus(isIOS ? "Voz: iOS no soporta reconocimiento. Usa botones." : "Voz: reconocimiento no disponible."); return; }
-      if(listening) return;
-      const hudEl = document.getElementById('voiceHUD'); hudEl?.classList.add('listening');
-      const tip = hudEl?.querySelector('#voiceTip'); if(tip) tip.textContent='Escuchando… suelta para enviar';
-      els.toggleMic.textContent='🎙️ Grabando… (suelta)';
-      setStatus("🎙️ Escuchando…");
-      tone(90,940);
-      startAudioMonitor();
-      rec = makeRecognizer();
-      rec.onresult = onResult; rec.onerror = onError; rec.onend = onEnd;
-      listening = true; silenceMs=0; startedAt=performance.now();
-      try{ rec.start(); }catch(e){ onError(e); }
-      clearInterval(listenTimer);
-      listenTimer = setInterval(()=>{
-        if(!listening) { clearInterval(listenTimer); return; }
-        if(silenceMs >= SILENCE_STOP_MS && (performance.now()-startedAt)>MIN_SPEECH_MS){
-          stopPTT();
-        }
-      }, 120);
-    }
-    function stopPTT(){ clearInterval(listenTimer); if(!listening) return; try{ rec.stop(); }catch{} }
-    function onResult(ev){
-      let finalTranscript=""; for(let i=ev.resultIndex;i<ev.results.length;i++){
-        const res=ev.results[i]; const txt=res[0]?.transcript||''; if(res.isFinal) finalTranscript+=txt+" ";
-        els.heard && (els.heard.textContent=(res.isFinal?"✓ ":"… ")+txt);
-      }
-      if(finalTranscript.trim()){ handleCommand(finalTranscript.trim()); }
-    }
-    function onError(e){ setStatus("Voz: " + (e.error||'error')); onEnd(); }
-    function onEnd(){
-      listening=false;
-      const hudEl=document.getElementById('voiceHUD');
-      hudEl?.classList.remove('listening','talking');
-      const tip=hudEl?.querySelector('#voiceTip'); if(tip) tip.textContent='PTT: mantén pulsado para hablar';
-      els.toggleMic.textContent='🎤 Micro (mantén pulsado)';
-      setStatus("Micrófono listo."); stopAudioMonitor(); tone(70,700);
-    }
-    function handleCommand(text){
-      const cmd = parseCommand(text);
-      if(cmd.type==='unknown'){ setStatus(`No entendido: “${text}”. Prueba “siguiente / anterior / repetir / paso 2 / leer ingredientes / salir”.`); return; }
-      if(cmd.type==='stop') return document.getElementById('closeGuided')?.click();
-      if(cmd.type==='repeat') return document.getElementById('repeatStep')?.click();
-      if(cmd.type==='next') return document.getElementById('nextStep')?.click();
-      if(cmd.type==='prev') return document.getElementById('prevStep')?.click();
-      if(cmd.type==='ingredients') return (window.readIngredients||function(){})();
-      if(cmd.type==='goto') return (window.goToStep||function(){})(Math.max(0,(cmd.n||1)-1));
-    }
+  const CMD_LIST = [
+    {type:'next', variants:['siguiente','proximo','avanza','adelante','continuar']},
+    {type:'prev', variants:['anterior','atras','retroceder']},
+    {type:'repeat', variants:['repetir','otra vez','de nuevo','repite']},
+    {type:'ingredients', variants:['leer ingredientes','ingredientes','leer lista']},
+    {type:'stop', variants:['salir','parar','detener','cerrar']}
+  ];
+  const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
 
-    // Enlaces UI
-    els.toggleMic.onmousedown = (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
-    els.toggleMic.onmouseup   = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
-    els.toggleMic.onmouseleave= (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
-    els.toggleMic.ontouchstart= (e)=>{ if(!SRClass) return; e.preventDefault(); startPTT(); };
-    els.toggleMic.ontouchend  = (e)=>{ if(!SRClass) return; e.preventDefault(); stopPTT(); };
-    document.addEventListener('keydown',(e)=>{ if(!SRClass) return; if(e.code==='Space'){ e.preventDefault(); if(!listening) startPTT(); } });
-    document.addEventListener('keyup',(e)=>{ if(!SRClass) return; if(e.code==='Space'){ e.preventDefault(); stopPTT(); } });
+  function parseCommand(raw){
+    const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
+                                (_,w)=>'paso '+NUM[w]);
+    const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
+    for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
+    let best=99, winner={type:'unknown'};
+    for(const c of CMD_LIST){ for(const v of c.variants){ const d=lev(t,v); if(d<best){ best=d; winner={type:c.type}; } } }
+    return best<=2 ? winner : {type:'unknown', raw:raw};
+  }
 
-    // Mensaje si no hay SR
-    if(isIOS || !SRClass){
-      els.toggleMic.disabled = true;
-      els.toggleMic.classList.add('opacity-60','cursor-not-allowed');
+  // Mic level (aprox con interim confidence/length)
+  function drawTalkingHint(text){
+    const len = Math.min(1, Math.max(0, (text||'').length/30));
+    drawLevel(len);
+    const hudEl=document.getElementById('voiceHUD');
+    hudEl?.classList.toggle('talking', len>0.15);
+  }
+
+  function makeRecognizer(){
+    if(!SRClass) return null;
+    const r=new SRClass();
+    r.lang='es-ES';
+    r.continuous=true;       // manos libres
+    r.interimResults=true;
+    r.maxAlternatives=4;
+    return r;
+  }
+
+  function startAutoRecognizer(){
+    if(!SRClass){ 
+      setStatus(isIOS ? "Voz: iPhone/iPad no permite reconocimiento web. Usa botones." : "Voz: reconocimiento no disponible en este navegador.");
       document.getElementById('voiceHUD')?.classList.add('disabled');
-      const msg = isIOS
-        ? "Voz: iPhone/iPad no soporta reconocimiento. Usa los botones."
-        : "Voz: el reconocimiento no está disponible en este navegador.";
-      setStatus(msg);
-      const tip=document.querySelector('#voiceHUD #voiceTip'); if(tip) tip.textContent = msg;
+      return;
     }
-  })();
+    if(recAuto) { try{recAuto.stop();}catch{} recAuto=null; }
+    recAuto = makeRecognizer();
+    if(!recAuto) return;
+
+    recAuto.onstart = ()=>{ setStatus("🎙️ Escuchando… (manos libres)"); document.getElementById('voiceHUD')?.classList.add('listening'); };
+    recAuto.onerror = e => { setStatus("Voz: " + (e.error||'error')); scheduleRestart(); };
+    recAuto.onend   = ()=> { setStatus("Voz detenida. Intentando reanudar…"); scheduleRestart(); };
+    recAuto.onresult = ev => {
+      let finalText = "";
+      for(let i=ev.resultIndex;i<ev.results.length;i++){
+        const res=ev.results[i];
+        const txt=res[0]?.transcript||'';
+        if(res.isFinal) finalText += txt + " ";
+        els.heard && (els.heard.textContent=(res.isFinal?"✓ ":"… ")+txt);
+        drawTalkingHint(txt);
+      }
+      if(finalText.trim()){
+        const cmd = parseCommand(finalText.trim());
+        if(cmd.type==='stop') return closeGuided();
+        if(cmd.type==='repeat') return repeatStep();
+        if(cmd.type==='next') return nextStep();
+        if(cmd.type==='prev') return prevStep();
+        if(cmd.type==='ingredients') return readIngredients();
+        if(cmd.type==='goto') return goToStep(Math.max(0,(cmd.n||1)-1));
+        // Si no es comando claro, no hacemos nada (evitamos falsos positivos)
+      }
+    };
+
+    try{
+      recAuto.start();
+    }catch(e){
+      // Algunos navegadores exigen gesto de usuario reciente; el botón Reconectar sirve para esto.
+      setStatus("Voz: permiso requerido. Pulsa “Reconectar voz”.");
+    }
+  }
+
+  function stopAutoRecognizer(){
+    if(autoRestartTimer){ clearTimeout(autoRestartTimer); autoRestartTimer=null; }
+    if(recAuto){ try{recAuto.onresult=recAuto.onend=recAuto.onerror=null; recAuto.stop(); }catch{} recAuto=null; }
+    document.getElementById('voiceHUD')?.classList.remove('listening','talking');
+    drawLevel(0);
+  }
+
+  function scheduleRestart(){
+    if(!state.autoListen) return;
+    if(autoRestartTimer){ clearTimeout(autoRestartTimer); }
+    autoRestartTimer = setTimeout(()=>{ try{ recAuto && recAuto.start(); }catch{} }, 600);
+  }
+
+  // UI para autoListen
+  els.autoListen.onchange = (e)=>{ state.autoListen = !!e.target.checked; if(state.autoListen && !recAuto){ startAutoRecognizer(); } if(!state.autoListen){ stopAutoRecognizer(); } };
+  els.toggleMic.onclick = ()=>{ // Reconectar manual
+    stopAutoRecognizer();
+    startAutoRecognizer();
+  };
 
   /* ===== Inicial ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
