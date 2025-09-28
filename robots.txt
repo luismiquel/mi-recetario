@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://luismiquel.github.io/mi-recetario/sitemap.xml
