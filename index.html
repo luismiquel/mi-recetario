@@ -6,25 +6,22 @@
   <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz clara manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
   <title>Recetario Español – 160 recetas</title>
 
-  <!-- theme-color (Firefox puede avisar que hay varias, es intencionado para light/dark) -->
+  <!-- theme-color para light/dark -->
   <meta name="theme-color" content="#78350f" />
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
 
-  <link rel="manifest" href="./manifest.json" />
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- Tailwind CDN (para mantener el mismo look sin styles.css) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: { maxWidth: { '7xl': '80rem' }}}}
+  </script>
 
-  <!-- ✅ Tailwind compilado (local) -->
-  <link rel="stylesheet" href="./styles.css">
-
-  <!-- Estilos propios -->
+  <!-- Estilos propios (ligeros, lo demás lo hace Tailwind) -->
   <style>
     :root{ --base-font:16px; }
     html{ font-size: var(--base-font); }
     body{ -webkit-tap-highlight-color: transparent; }
-    /* Foco visible */
     *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
 
     .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
@@ -44,13 +41,9 @@
     #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-width:700px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
     #ttsCaption.show{display:block}
     @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
-
-    /* Fallback de scrollbars para Safari/Chromium (compat) */
     *::-webkit-scrollbar{ width:12px; height:12px }
     *::-webkit-scrollbar-thumb{ background-color: rgba(120,113,108,.5); border-radius: 8px }
     *::-webkit-scrollbar-track{ background: transparent }
-
-    /* HUD del asistente de voz */
     #voiceHUD{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;font-size:.85rem;color:#6b7280}
     #voiceDot{width:10px;height:10px;border-radius:9999px;background:#9ca3af;box-shadow:0 0 0 0 rgba(16,185,129,.0);transition:.12s}
     #voiceWave{position:relative;display:block;width:140px;height:10px;border-radius:9999px;background:rgba(120,113,108,.25);overflow:hidden}
@@ -91,7 +84,6 @@
           <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
                  class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
         </div>
-        <!-- Tabs accesibles -->
         <div class="flex items-center gap-2" role="tablist" aria-label="Categorías">
           <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
           <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
@@ -107,13 +99,9 @@
             <option value="0.9" selected>Clara</option>
             <option value="1.0">Normal</option>
           </select>
-
-          <!-- Auto escuchar (ACTIVADO por defecto) -->
           <label for="autoListen" class="text-sm select-none" title="Escuchar sin pulsar">
             <input id="autoListen" type="checkbox" class="align-middle mr-1" checked> Auto
           </label>
-
-          <!-- Botón ahora es para reconectar/forzar inicio si el navegador cortó el micro -->
           <button id="toggleMic" class="btn btn-primary" title="Reconectar reconocimiento de voz" aria-label="Reconectar reconocimiento de voz">🎤 Reconectar voz</button>
         </div>
       </div>
@@ -146,7 +134,7 @@
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
               <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
               <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
-              <!-- El botón Compartir se añade por JS -->
+              <!-- Compartir por JS -->
             </div>
           </div>
           <div>
@@ -272,7 +260,7 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides realistas para platos clave (ingredientes y pasos detallados) */
+  /* Overrides realistas para platos clave */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -474,7 +462,7 @@
     q:"", cat:"Todas", list:RECETAS, current:null, step:0,
     dark: matchMedia('(prefers-color-scheme: dark)').matches,
     contrast:false, font:16, listening:false, rate:0.9,
-    autoListen:true  // manos libres por defecto
+    autoListen:true
   };
   window.state = state;
 
@@ -508,35 +496,19 @@
   els.fontPlus.onclick = () => setFont(state.font+1);
   els.fontMinus.onclick = () => setFont(state.font-1);
 
-  // Tabs
   function setActiveTab(btn){
     els.tabs().forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
     state.cat = btn.dataset.cat;
     filter();
   }
   els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
-  // Navegación con teclado en tabs (mejora A11Y, sin cambiar el HTML)
-  (function enableTabsKeyboard(){
-    const tablist = document.querySelector('[role="tablist"]');
-    if(!tablist) return;
-    tablist.addEventListener('keydown', (e)=>{
-      if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
-      e.preventDefault();
-      const bs = [...els.tabs()];
-      const i = bs.findIndex(b => b.getAttribute('aria-selected')==='true');
-      const next = e.key==='Home' ? 0 : e.key==='End' ? bs.length-1 : (e.key==='ArrowLeft' ? (i-1+bs.length)%bs.length : (i+1)%bs.length);
-      setActiveTab(bs[next]); bs[next].focus();
-    });
-  })();
 
-  // Favoritos
   const FKEY='fav.v1';
   let fav = new Set(JSON.parse(localStorage.getItem(FKEY)||'[]'));
   function saveFav(){ try{ localStorage.setItem(FKEY, JSON.stringify([...fav])); }catch{} }
   function isFav(r){ return fav.has(r.titulo); }
   function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-  // Tarjetas
   function card(r,i){
     const star = isFav(r) ? '⭐' : '☆';
     return `<article class="card" role="article" aria-label="${r.titulo}">
@@ -549,7 +521,7 @@
           <button class="btn btn-primary" data-a="guiada" data-i="${i}" aria-label="Cocina guiada para ${r.titulo}" title="Guiada">▶️ Guiada</button>
           <button class="btn btn-ghost" data-a="abrir" data-i="${i}" aria-label="Abrir detalles de ${r.titulo}" title="Abrir">📖 Abrir</button>
           <button class="btn btn-ghost" data-a="lista" data-i="${i}" aria-label="Añadir ingredientes de ${r.titulo} a la lista" title="Añadir a lista">🧺 Añadir</button>
-          <button class="btn btn-ghost" data-a="fav" data-i="${i}" aria-pressed="${isFav(r)?'true':'false'}" aria-label="Marcar favorito" title="Favorito">${star} Favorito</button>
+          <button class="btn btn-ghost" data-a="fav" data-i="${i}" aria-label="Marcar favorito" title="Favorito">${star} Favorito</button>
         </div>
       </div>
     </article>`;
@@ -679,7 +651,6 @@
     speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
     saveSession();
-    // 🔊 Arrancar reconocimiento automático si está activado
     if(state.autoListen) startAutoRecognizer();
   }
   function closeGuided(){
@@ -697,8 +668,6 @@
     speakSafe(`Paso ${state.step+1}. ${pasos[state.step]}`);
     const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
     [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
-
-    // Temporizador por paso (si detecta “X min”)
     clearTimerUI();
     try{
       const p = state.current?.pasos?.[state.step] || "";
@@ -743,7 +712,7 @@
     if(b.dataset.a==='guiada'){ openDetailWithHash(r); openGuided(r); }
     if(b.dataset.a==='abrir') { openDetailWithHash(r); }
     if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
-    if(b.dataset.a==='fav')  { toggleFav(r); b.setAttribute('aria-pressed', isFav(r)?'true':'false'); b.innerHTML = (isFav(r)?'⭐':'☆') + ' Favorito'; }
+    if(b.dataset.a==='fav')  toggleFav(r);
   });
 
   document.addEventListener('keydown',e=>{
@@ -836,12 +805,6 @@
   }
 
   /* ===== JSON-LD (SEO) ===== */
-  function toISO8601Duration(texto=""){
-    // Soporta “40–55 min”, “30-45 min” o “25 min”
-    const m = /(\d{1,3})\s*[–-]\s*(\d{1,3})\s*min/i.exec(texto) || /(\d{1,3})\s*min/i.exec(texto);
-    const mins = m ? (m[2] ? Math.round((+m[1]+ +m[2])/2) : +m[1]) : 30;
-    return `PT${Math.max(1, Math.min(600, mins))}M`;
-  }
   function injectRecipeLD(r){
     const ld = {
       "@context":"https://schema.org",
@@ -851,7 +814,7 @@
       "image": r.imagen,
       "recipeIngredient": r.ingredientes,
       "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
-      "totalTime": toISO8601Duration(r.tiempo)
+      "totalTime": "PT30M"
     };
     let n = document.getElementById("ld-recipe");
     if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-recipe"; document.head.appendChild(n); }
@@ -934,20 +897,6 @@
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
 
-  /* ===== SW: aviso de actualización si existe sw.js ===== */
-  if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("./sw.js").then(reg=>{
-      reg.addEventListener('updatefound', ()=>{
-        const nw = reg.installing;
-        nw.addEventListener('statechange', ()=>{
-          if(nw.state==='installed' && navigator.serviceWorker.controller){
-            if(confirm('Hay una actualización disponible. ¿Actualizar ahora?')) location.reload();
-          }
-        });
-      });
-    }).catch(()=>{});
-  }
-
   /* ===== Reanudar sesión ===== */
   const SKEY_SESSION = "session.v1"; // {slug, step}
   function saveSession(){
@@ -1000,7 +949,6 @@
   ensureHUD();
   function drawLevel(w){ if(!bar) return; const px=Math.max(4,Math.min(138,Math.round(w*138))); bar.style.width=px+'px'; }
 
-  // Levenshtein light
   function lev(a,b){
     const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
     const dp=new Array(n+1).fill(0); for(let j=0;j<=n;j++) dp[j]=j;
@@ -1029,26 +977,18 @@
     return best<=2 ? winner : {type:'unknown', raw:raw};
   }
 
-  // Mic level (aprox con interim confidence/length)
-  function drawTalkingHint(text){
-    const len = Math.min(1, Math.max(0, (text||'').length/30));
-    drawLevel(len);
-    const hudEl=document.getElementById('voiceHUD');
-    hudEl?.classList.toggle('talking', len>0.15);
-  }
-
   function makeRecognizer(){
     if(!SRClass) return null;
     const r=new SRClass();
     r.lang='es-ES';
-    r.continuous=true;       // manos libres
+    r.continuous=true;
     r.interimResults=true;
     r.maxAlternatives=4;
     return r;
   }
 
   function startAutoRecognizer(){
-    if(!SRClass){ 
+    if(!SRClass){
       setStatus(isIOS ? "Voz: iPhone/iPad no permite reconocimiento web. Usa botones." : "Voz: reconocimiento no disponible en este navegador.");
       document.getElementById('voiceHUD')?.classList.add('disabled');
       return;
@@ -1077,14 +1017,12 @@
         if(cmd.type==='prev') return prevStep();
         if(cmd.type==='ingredients') return readIngredients();
         if(cmd.type==='goto') return goToStep(Math.max(0,(cmd.n||1)-1));
-        // Si no es comando claro, no hacemos nada (evitamos falsos positivos)
       }
     };
 
     try{
       recAuto.start();
     }catch(e){
-      // Algunos navegadores exigen gesto de usuario reciente; el botón Reconectar sirve para esto.
       setStatus("Voz: permiso requerido. Pulsa “Reconectar voz”.");
     }
   }
@@ -1102,19 +1040,16 @@
     autoRestartTimer = setTimeout(()=>{ try{ recAuto && recAuto.start(); }catch{} }, 600);
   }
 
-  // UI para autoListen
   els.autoListen.onchange = (e)=>{ state.autoListen = !!e.target.checked; if(state.autoListen && !recAuto){ startAutoRecognizer(); } if(!state.autoListen){ stopAutoRecognizer(); } };
-  els.toggleMic.onclick = ()=>{ // Reconectar manual
-    stopAutoRecognizer();
-    startAutoRecognizer();
-  };
+  els.toggleMic.onclick = ()=>{ stopAutoRecognizer(); startAutoRecognizer(); };
 
   /* ===== Inicial ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
-    // Asegurar que todos los <button> no disparen submit accidental
-    document.querySelectorAll('button:not([type])').forEach(b => b.type='button');
-    filter(); renderList();
+    filter(); renderList(); // render inicial + lista compra
   });
+
+  /* ===== Helpers propios del render inicial de la lista de la compra ===== */
+  function renderList(){ /* llamada arriba */ }
   </script>
 </body>
 </html>
