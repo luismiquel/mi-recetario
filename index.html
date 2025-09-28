@@ -3,39 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
+  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz manos libres, cocina guiada, alto contraste, letra grande y lista de la compra." />
   <title>Recetario Español – 160 recetas</title>
 
-  <!-- Colores del navegador -->
+  <!-- theme-color -->
   <meta name="theme-color" content="#78350f" />
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
 
-  <!-- PWA opcional (puedes quitarlo si no usas manifest) -->
-  <link rel="manifest" href="./manifest.json" />
+  <!-- Manifest se inyecta vía Blob en runtime (no necesitas manifest.json) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- Estilos (todo inline, sin Tailwind) -->
+  <!-- Estilos internos (no necesitas styles.css) -->
   <style>
-    :root{ --base-font:16px; --bg:#ffffff; --fg:#1f2937; --muted:#6b7280; --card:#ffffff; --card-b:#e5e7eb; --brand:#92400e; }
-    html{ font-size:var(--base-font); }
-    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"; color:var(--fg); background:#f5f5f5; -webkit-tap-highlight-color:transparent; }
-    .dark body,.dark{ background:#0b0f19; color:#e5e7eb; }
-    *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
-    .container{ max-width:1100px; margin-inline:auto; padding:1rem 1rem; }
-    header{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:1rem; }
-    h1{ margin:0; }
-    .muted{ color:#6b7280; }
-    .dark .muted{ color:#9ca3af; }
-
-    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.55rem 1rem;font-weight:600;border:0;cursor:pointer}
-    .btn-primary{background:var(--brand);color:#fff}
-    .btn-primary:active{transform:scale(.98)}
-    .btn-ghost{background:transparent;color:inherit}
-    .btn-ghost:active{transform:scale(.98)}
-    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700;border:1px solid transparent}
-    .tab[aria-selected="true"]{background:var(--brand);color:#fff}
-    .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:var(--card)}
-    .dark .card{background:#111827;border-color:#374151}
+    :root{ --base-font:16px; }
+    html{ font-size: var(--base-font); }
+    body{ -webkit-tap-highlight-color: transparent; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Color Emoji", "Apple Color Emoji", sans-serif; }
+    .container{max-width:80rem;margin:0 auto;padding:1rem 1rem 2rem}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600;cursor:pointer}
+    .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
+    .btn-ghost{background:transparent}.btn-ghost:active{transform:scale(.98)}
+    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700;border:none;cursor:pointer}
+    .tab[aria-selected="true"]{background:#92400e;color:#fff}
+    .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:#fff}
+    .dark .card{background:#1f2937;border-color:#374151}
     .hc *{ color:#000 !important; background:#fff !important; }
     .hc .tab[aria-selected="true"]{ background:#000 !important; color:#fff !important; }
     .drawer{position:fixed;top:env(safe-area-inset-top,0);right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s;z-index:60}
@@ -46,22 +39,16 @@
     #ttsCaption{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0);margin:0 auto;max-width:700px;background:rgba(17,24,39,.92);color:#fff;border-radius:12px 12px 0 0;padding:.6rem .8rem;font-size:.95rem;line-height:1.35;z-index:70;display:none}
     #ttsCaption.show{display:block}
     @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
-
-    /* Grid simple sin Tailwind */
-    .grid{ display:grid; gap:1rem; grid-template-columns: repeat(2, minmax(0,1fr)); }
-    @media (min-width: 880px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-
-    /* Tarjetas */
-    .card img{ width:100%; height:200px; object-fit:cover; display:block; background:#e5e7eb }
-    .dark .card img{ background:#111827 }
-    .card .body{ padding:.75rem; }
-    .row{ display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
-
-    /* Scrollbar */
+    *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
+    /* Scrollbars */
     *::-webkit-scrollbar{ width:12px; height:12px }
     *::-webkit-scrollbar-thumb{ background-color: rgba(120,113,108,.5); border-radius: 8px }
     *::-webkit-scrollbar-track{ background: transparent }
-
+    /* Grid utilitario (sin Tailwind) */
+    .grid{display:grid;gap:1rem}
+    .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .md-grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media (max-width: 768px){ .md-grid-cols-3{grid-template-columns:repeat(2,minmax(0,1fr))} }
     /* HUD del asistente de voz */
     #voiceHUD{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;font-size:.85rem;color:#6b7280}
     #voiceDot{width:10px;height:10px;border-radius:9999px;background:#9ca3af;box-shadow:0 0 0 0 rgba(16,185,129,.0);transition:.12s}
@@ -70,27 +57,10 @@
     .talking #voiceDot{background:#10b981;box-shadow:0 0 12px 3px rgba(16,185,129,.45)}
     .listening #voiceDot{background:#f59e0b}
     .disabled #voiceDot{background:#9ca3af}
-
-    /* Listas */
-    ul,ol{ padding-left:1.25rem; }
-    .meta{ font-size:.9rem; color:#6b7280 }
-    .dark .meta{ color:#9ca3af }
-
-    /* Bloque de filtros */
-    .filters{ display:flex; flex-direction:column; gap:.75rem; }
-    @media (min-width:880px){ .filters{ flex-direction:row; align-items:flex-end; } }
-    .input{ width:100%; border:1px solid #d1d5db; background:#fff; color:#111; padding:.5rem .6rem; border-radius:.75rem; }
-    .dark .input{ border-color:#374151; background:#0b0f19; color:#e5e7eb; }
-
-    /* Estado vacío */
-    #emptyState{ text-align:center; color:#6b7280; margin-top:2rem; }
-
-    /* Botonera modal */
-    .bar{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
-
-    /* Skeleton opcional al cargar (cuando cargamos un gif/base64) */
-    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    .skeleton{ background:linear-gradient(90deg,#eee,#f5f5f5,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; }
+    .dark{background:#0b0f19;color:#e5e7eb}
+    .text-muted{color:#6b7280}
+    .badge{display:inline-block;font-size:.75rem;padding:.15rem .5rem;border-radius:.5rem;background:#f3f4f6;color:#111}
+    .dark .badge{background:#1f2937;color:#e5e7eb}
   </style>
 </head>
 <body class="dark">
@@ -103,12 +73,12 @@
   </noscript>
 
   <div class="container" id="app">
-    <header>
+    <header class="flex items-center justify-between gap-3 mb-4" style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:1rem">
       <div>
-        <h1 class="text-2xl">Recetario Español – 160 recetas</h1>
-        <p class="muted" style="margin:.25rem 0 0 0">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
+        <h1 style="font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;margin:.25rem 0">Recetario Español – 160 recetas</h1>
+        <p class="text-muted" style="font-size:.9rem">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
       </div>
-      <div class="row">
+      <div style="display:flex;gap:.35rem;flex-wrap:wrap">
         <button id="toggleTheme" class="btn btn-ghost" title="Cambiar tema" aria-label="Cambiar tema">🌙/☀️</button>
         <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste" aria-label="Alto contraste">🌓</button>
         <button id="fontMinus" class="btn btn-ghost" title="Reducir letra" aria-label="Reducir letra">A−</button>
@@ -118,71 +88,73 @@
     </header>
 
     <section class="card" style="padding:1rem;margin-bottom:1rem" aria-label="Búsqueda y filtros">
-      <div class="filters">
-        <div style="flex:1">
-          <label for="search" class="muted" style="font-size:.9rem;font-weight:600">Buscar</label>
-          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)" class="input" />
+      <div style="display:flex;flex-direction:column;gap:.75rem">
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:220px">
+            <label for="search" style="display:block;font-size:.9rem;font-weight:600;margin-bottom:.25rem">Buscar</label>
+            <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
+                  style="width:100%;border-radius:12px;border:1px solid #d6d3d1;background:#fff;color:#111;padding:.55rem .75rem" />
+          </div>
+          <!-- Tabs accesibles -->
+          <div style="display:flex;gap:.35rem;flex-wrap:wrap" role="tablist" aria-label="Categorías">
+            <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
+            <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
+            <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
+            <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
+            <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
+            <!-- Favoritas se añade por JS -->
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:end;flex-wrap:wrap">
+            <label for="voiceRate" style="font-size:.9rem">Voz:</label>
+            <select id="voiceRate" class="badge" aria-label="Velocidad de lectura en voz alta">
+              <option value="0.8">Lenta</option>
+              <option value="0.9" selected>Clara</option>
+              <option value="1.0">Normal</option>
+            </select>
+            <label for="autoListen" class="text-sm" style="font-size:.9rem;user-select:none" title="Escuchar sin pulsar">
+              <input id="autoListen" type="checkbox" class="align-middle" checked> Auto
+            </label>
+            <button id="toggleMic" class="btn btn-primary" title="Reconectar reconocimiento de voz" aria-label="Reconectar reconocimiento de voz">🎤 Reconectar voz</button>
+          </div>
         </div>
-        <div class="row" role="tablist" aria-label="Categorías">
-          <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
-          <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
-          <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
-          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
-          <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
-          <!-- Favoritas se añade por JS -->
-        </div>
-        <div class="row" style="align-items:end">
-          <label class="muted" for="voiceRate" style="font-size:.9rem">Voz:</label>
-          <select id="voiceRate" class="input" style="width:auto" aria-label="Velocidad de lectura en voz alta">
-            <option value="0.8">Lenta</option>
-            <option value="0.9" selected>Clara</option>
-            <option value="1.0">Normal</option>
-          </select>
-          <label for="autoListen" class="muted" title="Escuchar sin pulsar" style="user-select:none">
-            <input id="autoListen" type="checkbox" class="align-middle" checked> Auto
-          </label>
-          <button id="toggleMic" class="btn btn-primary" title="Reconectar reconocimiento de voz" aria-label="Reconectar reconocimiento de voz">🎤 Reconectar voz</button>
-        </div>
+        <div id="readerStatus" class="text-muted" style="font-size:.8rem" aria-live="polite"></div>
+        <div id="heard" class="text-muted" style="font-size:.8rem">🎧 Oído: <span id="heardText">—</span></div>
+        <!-- HUD voz se inyecta aquí por JS -->
       </div>
-      <div id="readerStatus" class="muted" style="font-size:.8rem;margin-top:.25rem" aria-live="polite"></div>
-      <div id="heard" class="muted" style="font-size:.8rem;margin-top:.25rem">🎧 Oído: <span id="heardText">—</span></div>
-      <div id="voiceHUD"><span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span></div>
     </section>
 
-    <section class="muted" style="font-size:.9rem;margin-bottom:.5rem">
+    <section class="text-muted" style="margin:.5rem 0;font-size:.9rem">
       <span id="countLabel">Mostrando 0 recetas.</span>
     </section>
 
     <main id="main" aria-labelledby="countLabel">
-      <div id="recipesGrid" class="grid" role="region" aria-label="Listado de recetas"></div>
-      <div id="emptyState" hidden>No hay resultados.</div>
+      <div id="recipesGrid" class="grid grid-cols-2 md-grid-cols-3" role="region" aria-label="Listado de recetas"></div>
+      <div id="emptyState" class="text-muted" style="text-align:center;margin-top:2rem;display:none">No hay resultados.</div>
     </main>
 
     <!-- Modal Detalle -->
     <div id="detailModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <div class="card" style="max-width:960px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="detailTitle" style="margin:0;font-size:1.2rem">Detalle</h3>
+      <div class="card" style="max-width:56rem;width:100%">
+        <div style="padding:.75rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
+          <h3 id="detailTitle" style="font-size:1.25rem;font-weight:700;margin:0">Detalle</h3>
           <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle" title="Cerrar">✕</button>
         </div>
-        <div style="padding:1rem; display:grid; gap:1rem; grid-template-columns: 1fr; }
-        ">
-          <div style="display:grid; gap:.5rem; grid-template-columns: 1fr; }
-          ">
-            <img id="detailImg" alt="" width="800" height="500" class="skeleton" style="width:100%;height:220px;object-fit:cover;border-radius:.75rem">
-            <p id="detailMeta" class="meta"></p>
-            <div class="bar">
+        <div style="padding:1rem;display:grid;gap:1rem;grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div>
+            <img id="detailImg" src="" alt="" class="w-full h-48 object-cover" loading="lazy" width="800" height="500" style="width:100%;height:12rem;object-fit:cover;border-radius:10px">
+            <p id="detailMeta" class="text-muted" style="margin-top:.5rem;font-size:.9rem"></p>
+            <div class="mt-3" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem">
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
               <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
               <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
-              <!-- Compartir se inyecta por JS -->
+              <!-- Compartir por JS -->
             </div>
           </div>
           <div>
-            <h4 style="margin:.25rem 0;font-size:1.05rem">Ingredientes</h4>
-            <ul id="detailIngredients"></ul>
-            <h4 style="margin:.75rem 0 .25rem 0;font-size:1.05rem">Pasos</h4>
-            <ol id="detailSteps"></ol>
+            <h4 style="font-size:1.1rem;font-weight:700;margin:.25rem 0">Ingredientes</h4>
+            <ul id="detailIngredients" style="margin:.5rem 0 .25rem 1.25rem"></ul>
+            <h4 style="font-size:1.1rem;font-weight:700;margin:.75rem 0 .25rem">Pasos</h4>
+            <ol id="detailSteps" style="margin:.5rem 0 .25rem 1.25rem"></ol>
           </div>
         </div>
       </div>
@@ -190,20 +162,22 @@
 
     <!-- Modal Guiada -->
     <div id="guidedModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
-      <div class="card" style="max-width:760px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="guidedTitle" style="margin:0;font-size:1.2rem">Cocina guiada</h3>
+      <div class="card" style="max-width:48rem;width:100%">
+        <div style="padding:.75rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
+          <h3 id="guidedTitle" style="font-size:1.25rem;font-weight:700;margin:0">Cocina guiada</h3>
           <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
         </div>
-        <div style="padding:1rem; display:flex; flex-direction:column; gap:1rem">
-          <p class="meta"><strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
-          <div style="background:#f5f5f5;border-radius:.75rem;padding:1rem" class="dark" id="guidedBox">
-            <h4 id="guidedRecipeTitle" style="margin:0 0 .5rem 0;font-size:1.05rem"></h4>
-            <ol id="guidedSteps" style="display:flex;flex-direction:column;gap:.5rem"></ol>
+        <div style="padding:1rem;display:flex;flex-direction:column;gap:1rem">
+          <p class="text-muted" style="font-size:.9rem">
+            <strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.
+          </p>
+          <div style="background:#f6f6f6;border-radius:12px;padding:1rem" class="dark" id="guidedBox">
+            <h4 id="guidedRecipeTitle" style="font-size:1.1rem;font-weight:700;margin:.25rem 0"></h4>
+            <ol id="guidedSteps" style="margin:.5rem 0 .25rem 1.25rem;display:grid;gap:.35rem"></ol>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
-            <div class="meta" id="guidedProgress" aria-live="polite"></div>
-            <div class="row">
+            <div class="text-muted" id="guidedProgress" style="font-size:.8rem" aria-live="polite"></div>
+            <div style="display:flex;gap:.35rem;flex-wrap:wrap">
               <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior" title="Anterior">← Anterior</button>
               <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso" title="Repetir">⟲ Repetir</button>
               <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente" title="Siguiente">Siguiente →</button>
@@ -211,16 +185,16 @@
               <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta" title="Imprimir">🖨️ Imprimir</button>
             </div>
           </div>
-          <!-- Aquí se inyecta el temporizador -->
+          <!-- Temporizador se inyecta aquí -->
         </div>
       </div>
     </div>
 
     <!-- Drawer Lista compra -->
     <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true">
-      <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-        <h3 style="margin:0;font-size:1.05rem">Lista de la compra</h3>
-        <div class="row">
+      <div style="padding:.75rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
+        <h3 style="font-size:1.1rem;font-weight:700;margin:0">Lista de la compra</h3>
+        <div style="display:flex;gap:.35rem">
           <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista" title="Exportar lista">⬇️ Exportar</button>
           <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista" title="Imprimir lista">🖨️</button>
           <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
@@ -228,13 +202,13 @@
         </div>
       </div>
       <div style="padding:1rem">
-        <div class="row" style="gap:.5rem;margin-bottom:.75rem">
-          <label for="newItem" class="skip">Nuevo artículo</label>
-          <input id="newItem" class="input" style="flex:1" placeholder="Añadir artículo (ej. 1 kg tomates)" />
+        <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+          <label for="newItem" class="sr-only">Nuevo artículo</label>
+          <input id="newItem" style="flex:1;border-radius:12px;border:1px solid #d6d3d1;background:#fff;color:#111;padding:.55rem .75rem" placeholder="Añadir artículo (ej. 1 kg tomates)" />
           <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo" title="Añadir artículo">Añadir</button>
         </div>
-        <ul id="shoppingList" style="display:flex;flex-direction:column;gap:.5rem;list-style:none;padding-left:0;margin:0"></ul>
-        <p id="shoppingEmpty" class="muted" style="margin-top:.5rem" hidden>Tu lista está vacía.</p>
+        <ul id="shoppingList" style="display:grid;gap:.5rem;padding:0;list-style:none;margin:0"></ul>
+        <p id="shoppingEmpty" class="text-muted" style="margin-top:.75rem;display:none">Tu lista está vacía.</p>
       </div>
     </aside>
   </div>
@@ -243,13 +217,71 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  const APP_VERSION = "recetario-1.7.0-singlefile";
+  const APP_VERSION = "recetario-1.8.0";
 
-  /* ===== Datos (160 recetas) ===== */
-  const IMG_BY_CAT = c => ({
-    Aperitivo:"Aperitivo", Primero:"Primero", Segundo:"Segundo", Postre:"Postre"
-  }[c] || "Receta");
+  /* ========= Manifest por Blob (sin manifest.json) ========= */
+  (function injectManifest(){
+    const manifest = {
+      name: "Recetario Español",
+      short_name: "Recetario",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#0b0f19",
+      theme_color: "#78350f",
+      icons: [
+        { src: "data:image/svg+xml;utf8," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2378350f'/><text x='50' y='58' font-size='54' fill='white' text-anchor='middle' font-family='system-ui'>🍳</text></svg>"), sizes: "192x192", type: "image/svg+xml", purpose: "any" }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], {type:"application/manifest+json"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = url;
+    document.head.appendChild(link);
+  })();
 
+  /* ===== Fotos (Wikimedia) + placeholders sin CORS ===== */
+  const PLACE = {
+    Aperitivo: "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'><rect width='800' height='500' fill='#fef3c7'/><text x='50%' y='52%' text-anchor='middle' fill='#92400e' font-size='28' font-family='system-ui'>Aperitivo</text></svg>`),
+    Primero:   "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'><rect width='800' height='500' fill='#e0f2fe'/><text x='50%' y='52%' text-anchor='middle' fill='#0ea5e9' font-size='28' font-family='system-ui'>Primero</text></svg>`),
+    Segundo:   "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'><rect width='800' height='500' fill='#e2e8f0'/><text x='50%' y='52%' text-anchor='middle' fill='#334155' font-size='28' font-family='system-ui'>Segundo</text></svg>`),
+    Postre:    "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'><rect width='800' height='500' fill='#fae8ff'/><text x='50%' y='52%' text-anchor='middle' fill='#a21caf' font-size='28' font-family='system-ui'>Postre</text></svg>`)
+  };
+  const IMG_MAP = new Map([
+    // Aperitivos
+    ["tostas de tomate y jamón","https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Pa_amb_tomaquet.jpg/800px-Pa_amb_tomaquet.jpg"],
+    ["croquetas de jamón","https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Croquetas_de_jam%C3%B3n.jpg/800px-Croquetas_de_jam%C3%B3n.jpg"],
+    ["patatas bravas","https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Patatas_bravas_%28Madrid%29.jpg/800px-Patatas_bravas_%28Madrid%29.jpg"],
+    ["calamares a la romana","https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Calamares_a_la_romana.jpg/800px-Calamares_a_la_romana.jpg"],
+    ["boquerones en vinagre","https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Boquerones_en_vinagre.jpg/800px-Boquerones_en_vinagre.jpg"],
+    ["gildas donostiarras","https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gilda.jpg/800px-Gilda.jpg"],
+    // Primeros
+    ["gazpacho andaluz","https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Gazpacho_con_guarnici%C3%B3n.jpg/800px-Gazpacho_con_guarnici%C3%B3n.jpg"],
+    ["salmorejo cordobés","https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Salmorejo_cordob%C3%A9s.jpg/800px-Salmorejo_cordob%C3%A9s.jpg"],
+    ["fideuá de pescado","https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Fideu%C3%A0_de_gandia.jpg/800px-Fideu%C3%A0_de_gandia.jpg"],
+    ["paella de verduras","https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Paella_de_verduras.jpg/800px-Paella_de_verduras.jpg"],
+    ["caldo gallego","https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Caldo_galego.jpg/800px-Caldo_galego.jpg"],
+    // Segundos
+    ["merluza en salsa verde","https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Merluza_en_salsa_verde.jpg/800px-Merluza_en_salsa_verde.jpg"],
+    ["rabo de toro","https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Rabo_de_toro.jpg/800px-Rabo_de_toro.jpg"],
+    ["fabada asturiana","https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Fabada_asturiana_2.jpg/800px-Fabada_asturiana_2.jpg"],
+    ["marmitako de bonito","https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Marmitako_001.jpg/800px-Marmitako_001.jpg"],
+    ["pulpo a la gallega","https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Pulpo_a_la_gallega.jpg/800px-Pulpo_a_la_gallega.jpg"],
+    ["tortilla de patatas","https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Tortilla_de_patatas_%28Spanish_omelette%29.jpg/800px-Tortilla_de_patatas_%28Spanish_omelette%29.jpg"],
+    ["paella mixta","https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/01_Paella_mixta.jpg/800px-01_Paella_mixta.jpg"],
+    // Postres
+    ["tarta de queso al horno","https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/2020_Basque_Burnt_Cheesecake.jpg/800px-2020_Basque_Burnt_Cheesecake.jpg"],
+    ["flan casero","https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Flan_caramelo.jpg/800px-Flan_caramelo.jpg"],
+    ["arroz con leche","https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Arroz_con_leche.jpg/800px-Arroz_con_leche.jpg"],
+    ["tarta de santiago","https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Tarta_de_Santiago.jpg/800px-Tarta_de_Santiago.jpg"],
+    ["crema catalana","https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Crema_catalana.jpg/800px-Crema_catalana.jpg"],
+  ]);
+  function IMG_URL(titulo, categoria){
+    const key = (titulo||"").toLowerCase();
+    return IMG_MAP.get(key) || PLACE[categoria] || PLACE.Primero;
+  }
+
+  /* ===== Datos (las 160 recetas) ===== */
   const APERITIVOS = [
     "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco",
     "Croquetas de jamón","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas",
@@ -262,7 +294,6 @@
     "Queso manchego con membrillo","Pimientos del padrón","Montadito de lomo","Montadito de pringá",
     "Bonito con tomate (tapa)","Pisto con huevo (tapa)","Chistorra a la sidra","Berenjena frita con miel"
   ];
-
   const PRIMEROS = [
     "Sopa de ajo","Sopa castellana","Gazpacho andaluz","Salmorejo cordobés","Ajoblanco","Crema de calabaza",
     "Crema de puerros","Crema de champiñón","Pisto manchego","Menestra de verduras","Lentejas estofadas",
@@ -273,7 +304,6 @@
     "Acelgas rehogadas","Sopa de pescado","Caldo gallego","Cocido andaluz (sopa)","Sopa minestrone","Vichyssoise",
     "Crema de zanahoria","Porrusalda","Sopa de marisco","Caldo de pollo casero"
   ];
-
   const SEGUNDOS = [
     "Pollo al ajillo","Pollo al horno con patatas","Pollo en pepitoria","Pechuga de pollo a la plancha",
     "Escalope de ternera","Filete de ternera a la plancha","Carrilleras al vino tinto","Rabo de toro",
@@ -285,7 +315,6 @@
     "Codornices escabechadas","Callos a la madrileña","Fabada asturiana","Marmitako de bonito",
     "Chuletón a la plancha","Escabeche de caballa","Bonito con tomate","Trucha a la navarra"
   ];
-
   const POSTRES = [
     "Flan casero","Natillas caseras","Arroz con leche","Leche frita","Torrijas","Crema catalana",
     "Tarta de queso al horno","Tarta de Santiago","Bizcocho de yogur","Bizcocho de naranja","Magdalenas caseras",
@@ -297,121 +326,59 @@
     "Crema de limón","Naranja con canela","Fresas con nata"
   ];
 
-  /* Overrides realistas para platos clave (ingredientes y pasos detallados) */
+  /* Overrides realistas para platos clave */
   const OV = (()=> {
     function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
     const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
     const CROQ_PASOS = [
-      "Pica fino cebolla y el relleno.",
-      "Pocha cebolla con aceite y mantequilla 6–8 min sin dorar.",
-      "Añade el relleno y rehoga 1–2 min.",
-      "Incorpora harina (90–100 g/L leche) y cocina 2–3 min.",
+      "Pica fino cebolla y el relleno.","Pocha cebolla con aceite y mantequilla 6–8 min sin dorar.",
+      "Añade el relleno y rehoga 1–2 min.","Incorpora harina (90–100 g/L leche) y cocina 2–3 min.",
       "Agrega la leche caliente poco a poco, removiendo hasta bechamel espesa y lisa.",
-      "Sazona con sal, pimienta y nuez moscada; cocina 8–10 min a fuego bajo.",
-      "Pasa a fuente, filma a piel y enfría 4 h (mejor de un día para otro).",
-      "Da forma, pasa por huevo y pan rallado.",
-      "Fríe a 175–180 ºC hasta dorar; escurre."
+      "Sazona; cocina 8–10 min a fuego bajo.","Enfría 4 h.","Forma, empana y fríe 175–180 ºC."
     ];
     const M = new Map([
       ["croquetas de jamón", R(["Jamón serrano picado",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
       ["croquetas de pollo", R(["Pollo cocido desmigado",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
       ["croquetas de bacalao", R(["Bacalao desalado desmigado",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
       ["croquetas de setas", R(["Setas picadas",...CROQ_BASE], CROQ_PASOS, "45–75 min + reposo")],
-      ["patatas bravas", R(
-        ["Patatas","Aceite para freír","Sal","Ajo","Pimentón dulce","Pimentón picante","Tomate triturado","Vinagre"],
-        ["Fríe patatas en dados hasta dorar.","Sofríe ajo; añade pimentón, tomate y sal.","Cocina 10–12 min y ajusta con vinagre.","Sirve patatas con salsa por encima."],
-        "30–40 min"
-      )],
-      ["patatas alioli", R(
-        ["Patatas cocidas","Ajo","Huevo o leche (lactonesa)","Aceite suave","Limón o vinagre","Sal","Perejil"],
-        ["Cuece patatas y enfría.","Emulsiona ajo con huevo/leche y aceite, sal y limón.","Mezcla patata en dados con alioli y perejil."],
-        "25–35 min"
-      )],
-      ["calamares a la romana", R(
-        ["Calamares","Harina","Huevo","Aceite para freír","Sal","Limón"],
-        ["Seca aros de calamar y sala.","Pasa por harina y huevo batido.","Fríe a 175–180 ºC 1–2 min; escurre.","Sirve con limón."],
-        "20–30 min"
-      )],
-      ["gazpacho andaluz", R(
-        ["Tomate","Pepino","Pimiento verde","Ajo","Pan","Aceite de oliva virgen extra","Vinagre","Sal"],
-        ["Tritura con pan hidratado.","Emulsiona con aceite.","Ajusta sal y vinagre, enfría."],
-        "15–20 min + frío"
-      )],
-      ["salmorejo cordobés", R(
-        ["Tomate maduro","Pan","Ajo","Aceite de oliva virgen extra","Vinagre","Sal","Jamón","Huevo cocido"],
-        ["Tritura tomate/pan/ajo/sal.","Emulsiona con aceite y vinagre.","Sirve con jamón y huevo."],
-        "15–20 min + frío"
-      )],
-      ["fideuá de pescado", R(
-        ["Fideo grueso","Caldo de pescado","Sepia/calamar","Gamba","Ajo","Pimentón","Tomate","Aceite","Sal","Allioli (opcional)"],
-        ["Sofríe sepia y retira.","Ajo+pimentón+tomate.","Tuesta fideo, moja con caldo.","Incorpora sepia/gambas al final; sirve con allioli."],
-        "30–40 min"
-      )],
-      ["paella de verduras", R(
-        ["Arroz","Caldo vegetal","Judía verde","Garrafo/garbanzo","Pimiento","Tomate","Ajo","Aceite","Sal","Azafrán"],
-        ["Sofríe verduras.","Añade arroz y nacara.","Moja con caldo y azafrán.","Cocina 18–20 min; reposo 5."],
-        "35–45 min"
-      )],
-      ["paella mixta", R(
-        ["Arroz","Caldo","Pollo","Conejo","Gamba/Calamar","Pimiento","Tomate","Ajo","Aceite","Sal","Azafrán"],
-        ["Dora carnes y haz sofrito.","Nacara el arroz y moja con caldo/azafrán.","Cocina 18–20 min, mariscos al final; reposo 5."],
-        "40–55 min"
-      )],
-      ["arroz con bogavante", R(
-        ["Arroz","Bogavante","Caldo de marisco","Ajo","Pimentón","Tomate","Aceite","Sal"],
-        ["Marca bogavante.","Sofrito ajo/pimentón/tomate.","Arroz + caldo + bogavante; 18 min."],
-        "35–45 min"
-      )],
-      ["tortilla de patatas", R(
-        ["Patatas","Cebolla (opcional)","Huevos","Aceite","Sal"],
-        ["Fríe patata a fuego suave.","Mezcla con huevo y sal.","Cuaja a tu gusto por ambos lados."],
-        "25–35 min"
-      )],
-      ["fabada asturiana", R(
-        ["Fabes","Compango","Cebolla","Ajo","Pimentón","Sal"],
-        ["Desala si procede.","Cuece a fuego bajo asustando.","Espuma y rectifica sal."],
-        "120–180 min"
-      )],
-      ["marmitako de bonito", R(
-        ["Bonito","Patata","Pimiento","Cebolla","Ajo","Tomate","Caldo","Aceite","Sal"],
-        ["Sofrito y añade patata.","Cubre con caldo.","Bonito al final 2–3 min."],
-        "35–45 min"
-      )],
-      ["rabo de toro", R(
-        ["Rabo de toro","Verduras","Vino tinto","Caldo","Aceite","Sal","Harina (ligar)"],
-        ["Dora rabo enharinado.","Sofríe verduras y moja con vino.","Cuece con caldo 2–3 h hasta meloso."],
-        "150–210 min"
-      )],
-      ["merluza en salsa verde", R(
-        ["Merluza","Ajo","Perejil","Vino blanco","Caldo","Aceite","Sal","Almejas (opcional)"],
-        ["Ajo + harina ligera.","Vino+caldo+perejil y merluza 5–7 min.","Almejas hasta abrir."],
-        "20–30 min"
-      )],
-      ["pulpo a la gallega", R(
-        ["Pulpo cocido","Patata cocida","Aceite","Pimentón","Sal en escamas"],
-        ["Corta pulpo y patata.","Aliña con aceite, pimentón y sal."],
-        "10–15 min"
-      )],
-      ["tarta de queso al horno", R(
-        ["Queso crema","Huevos","Azúcar","Nata","Harina (opcional)"],
-        ["Mezcla sin batir de más.","Horno 180 ºC 40–50 min (centro tembloroso).","Enfría y sirve."],
-        "60–90 min con frío"
-      )],
-      ["flan casero", R(
-        ["Leche","Huevos","Azúcar","Vainilla","Azúcar para caramelo"],
-        ["Caramelo al molde.","Mezcla leche/huevo/azúcar.","Horno baño maría 160–170 ºC 40–55 min.","Enfría y desmolda."],
-        "70–120 min con frío"
-      )],
-      ["arroz con leche", R(
-        ["Arroz","Leche entera","Azúcar","Canela","Limón"],
-        ["Cuece arroz en leche aromatizada, removiendo.","Azúcar al final; enfría."],
-        "45–60 min"
-      )],
-      ["brownie sencillo", R(
-        ["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (opcional)"],
-        ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],
-        "35–45 min"
-      )]
+      ["patatas bravas", R(["Patatas","Aceite para freír","Sal","Ajo","Pimentón dulce","Pimentón picante","Tomate triturado","Vinagre"],
+        ["Fríe patatas en dados.","Sofríe ajo; añade pimentón y tomate.","Cocina 10–12 min y vinagre.","Sirve sobre las patatas."],"30–40 min")],
+      ["patatas alioli", R(["Patatas cocidas","Ajo","Huevo o leche","Aceite suave","Limón o vinagre","Sal","Perejil"],
+        ["Cuece y enfría patatas.","Emulsiona ajo con huevo/leche y aceite.","Mezcla con perejil."],"25–35 min")],
+      ["calamares a la romana", R(["Calamares","Harina","Huevo","Aceite para freír","Sal","Limón"],
+        ["Seca y sala aros.","Harina + huevo.","Fríe 1–2 min 175–180 ºC.","Sirve con limón."],"20–30 min")],
+      ["gazpacho andaluz", R(["Tomate","Pepino","Pimiento verde","Ajo","Pan","AOVE","Vinagre","Sal"],
+        ["Tritura con pan hidratado.","Emulsiona con AOVE.","Ajusta sal/vinagre y enfría."],"15–20 min + frío")],
+      ["salmorejo cordobés", R(["Tomate","Pan","Ajo","AOVE","Vinagre","Sal","Jamón","Huevo cocido"],
+        ["Tritura base.","Emulsiona con AOVE/vinagre.","Sirve con jamón y huevo."],"15–20 min + frío")],
+      ["fideuá de pescado", R(["Fideo grueso","Caldo de pescado","Sepia/calamar","Gamba","Ajo","Pimentón","Tomate","AOVE","Sal","Allioli (op)"],
+        ["Sofríe sepia.","Ajo+pimentón+tomate.","Tuesta fideo, moja con caldo.","Añade sepia/gambas al final."],"30–40 min")],
+      ["paella de verduras", R(["Arroz","Caldo vegetal","Judía verde","Garrafo/garbanzo","Pimiento","Tomate","Ajo","AOVE","Sal","Azafrán"],
+        ["Sofríe verduras.","Nacarado de arroz.","Caldo+azafrán 18–20 min.","Reposo 5."],"35–45 min")],
+      ["paella mixta", R(["Arroz","Caldo","Pollo","Conejo","Gamba/Calamar","Pimiento","Tomate","Ajo","AOVE","Sal","Azafrán"],
+        ["Dora carnes y sofrito.","Nacarado+caldo/azafrán.","Mariscos al final + reposo."],"40–55 min")],
+      ["arroz con bogavante", R(["Arroz","Bogavante","Caldo marisco","Ajo","Pimentón","Tomate","AOVE","Sal"],
+        ["Marca bogavante.","Sofrito.","Arroz+caldo 18 min."],"35–45 min")],
+      ["tortilla de patatas", R(["Patatas","Cebolla (op)","Huevos","Aceite","Sal"],
+        ["Fríe patata suave.","Mezcla con huevo.","Cuaja al gusto."],"25–35 min")],
+      ["fabada asturiana", R(["Fabes","Compango","Cebolla","Ajo","Pimentón","Sal"],
+        ["Desala si procede.","Cuece a fuego bajo asustando.","Espuma y rectifica."],"120–180 min")],
+      ["marmitako de bonito", R(["Bonito","Patata","Pimiento","Cebolla","Ajo","Tomate","Caldo","AOVE","Sal"],
+        ["Sofrito + patata.","Cubre con caldo.","Bonito 2–3 min al final."],"35–45 min")],
+      ["rabo de toro", R(["Rabo de toro","Verduras","Vino tinto","Caldo","AOVE","Sal","Harina (ligar)"],
+        ["Dora rabo enharinado.","Sofríe y moja con vino.","Cuece 2–3 h."],"150–210 min")],
+      ["merluza en salsa verde", R(["Merluza","Ajo","Perejil","Vino blanco","Caldo","AOVE","Sal","Almejas (op)"],
+        ["Ajo + harina ligera.","Vino+caldo+perejil.","Merluza 5–7 min; almejas."],"20–30 min")],
+      ["pulpo a la gallega", R(["Pulpo cocido","Patata cocida","AOVE","Pimentón","Sal en escamas"],
+        ["Corta pulpo y patata.","Aliña y sirve."],"10–15 min")],
+      ["tarta de queso al horno", R(["Queso crema","Huevos","Azúcar","Nata","Harina (op)"],
+        ["Mezcla sin batir de más.","Horno 180 ºC 40–50 min.","Enfría."],"60–90 min con frío")],
+      ["flan casero", R(["Leche","Huevos","Azúcar","Vainilla","Azúcar caramelo"],
+        ["Caramelo al molde.","Mezcla base.","Baño maría 160–170 ºC 40–55 min.","Enfría y desmolda."],"70–120 min con frío")],
+      ["arroz con leche", R(["Arroz","Leche entera","Azúcar","Canela","Limón"],
+        ["Cuece removiendo.","Azúcar al final; enfría."],"45–60 min")],
+      ["brownie sencillo", R(["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (op)"],
+        ["Funde choco/mantequilla.","Añade huevos+azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],"35–45 min")]
     ]);
     return { get: (title) => M.get(title.toLowerCase()) || null };
   })();
@@ -482,7 +449,7 @@
   }
 
   function build(cat,list){
-    return list.map(n=>({categoria:cat,titulo:n,imagen:IMG_BY_CAT(cat),
+    return list.map(n=>({categoria:cat,titulo:n,imagen:IMG_URL(n, cat),
       ingredientes:ingredientesPara(cat,n), pasos:pasosPara(cat,n), tiempo:tiempo(cat,n)}));
   }
 
@@ -493,14 +460,15 @@
     ...build("Postre", POSTRES)
   ];
 
-  /* ===== Estado + referencias ===== */
+  /* ===== Estado + UI ===== */
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const state = {
     q:"", cat:"Todas", list:RECETAS, current:null, step:0,
-    dark: true, contrast:false, font:16, listening:false, rate:0.9,
+    dark: matchMedia('(prefers-color-scheme: dark)').matches,
+    contrast:false, font:16, listening:false, rate:0.9,
     autoListen:true
   };
-  const $ = id => document.getElementById(id);
+  function $(id){ return document.getElementById(id); }
   const els = {
     grid: $('recipesGrid'), empty: $('emptyState'), count: $('countLabel'), search: $('search'),
     tabs: () => document.querySelectorAll('[role="tab"]'),
@@ -521,7 +489,7 @@
     caption: $('ttsCaption'), closeDetail: $('closeDetail')
   };
 
-  function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); }
+  function applyTheme(){ document.body.classList.toggle('dark', state.dark); }
   function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); }
   function setFont(px){ state.font = Math.max(14, Math.min(22, px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); }
   applyTheme(); applyContrast(); setFont(state.font);
@@ -545,129 +513,18 @@
   function isFav(r){ return fav.has(r.titulo); }
   function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-  /* ======= IMÁGENES con multi-fallback (Wikipedia/Commons → loremflickr → SVG) ======= */
-
-  function photoFallback(title, categoria){
-    const kwBase = encodeURIComponent((title||'').toLowerCase().replace(/[()]/g,''));
-    const kcat = (categoria||'').toLowerCase()==='postre' ? 'dessert,sweet'
-              : (categoria||'').toLowerCase()==='aperitivo' ? 'tapas'
-              : (categoria||'').toLowerCase()==='primero' ? 'soup,starter,vegetable'
-              : 'spanish,cuisine,meat,fish';
-    let h=0; for(let i=0;i<title.length;i++){ h=((h<<5)-h)+title.charCodeAt(i); h|=0; }
-    const lock = Math.abs(h);
-    return `https://loremflickr.com/800/500/food,${kcat},${kwBase}/all?lock=${lock}`;
-  }
-  function svgPlaceholder(title="Receta"){
-    const t = (title||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    return `data:image/svg+xml;charset=utf-8,` +
-      encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
-          <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs>
-          <rect width="800" height="500" fill="url(#g)"/>
-          <text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text>
-          <text x="50%" y="80%" text-anchor="middle" fill="#9ca3af" font-size="14" font-family="system-ui,Segoe UI,Roboto">sin imagen</text>
-        </svg>`);
-  }
-  async function fetchJSON(url, ms=6000){
-    const c = new AbortController(); const t = setTimeout(()=>c.abort(), ms);
-    try{ const r = await fetch(url, {signal:c.signal}); if(!r.ok) return null; return await r.json(); }
-    catch{ return null; } finally{ clearTimeout(t); }
-  }
-  async function wikiSearchTitle(q, lang="es"){
-    const url = `https://${lang}.wikipedia.org/w/api.php?origin=*&action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&srlimit=1`;
-    const j = await fetchJSON(url); return j?.query?.search?.[0]?.title || null;
-  }
-  async function wikiThumbForTitle(title, lang="es"){
-    const url = `https://${lang}.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=1000&titles=${encodeURIComponent(title)}`;
-    const j = await fetchJSON(url); const pages = j?.query?.pages || {}; const page = Object.values(pages)[0]; return page?.thumbnail?.source || null;
-  }
-  async function commonsThumb(query){
-    const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=1000&format=json`;
-    const j = await fetchJSON(url);
-    const pages = j?.query?.pages; if(!pages) return null;
-    const first = Object.values(pages)[0];
-    return first?.imageinfo?.[0]?.thumburl || first?.imageinfo?.[0]?.url || null;
-  }
-  async function fetchDishImageURL(dish){
-    let t = await wikiSearchTitle(dish,"es") || await wikiSearchTitle(`${dish} (plato)`,"es");
-    let url = t ? await wikiThumbForTitle(t,"es") : null;
-    if(url) return url;
-    t = await wikiSearchTitle(dish,"en") || await wikiSearchTitle(`${dish} (dish)`,"en");
-    url = t ? await wikiThumbForTitle(t,"en") : null;
-    if(url) return url;
-    url = await commonsThumb(dish + " comida plato");
-    if(url) return url;
-    return null;
-  }
-  // IndexedDB caché binaria
-  const DB_NAME='imgstore.v1', STORE='imgs';
-  function idbOpen(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
-    r.onupgradeneeded=()=>{ const db=r.result; if(!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE); };
-    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
-  async function idbGet(key){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readonly'); const st=tx.objectStore(STORE); const rq=st.get(key); rq.onsuccess=()=>res(rq.result||null); rq.onerror=()=>rej(rq.error); }); }
-  async function idbSet(key, val){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readwrite'); const st=tx.objectStore(STORE); const rq=st.put(val,key); rq.onsuccess=()=>res(true); rq.onerror=()=>rej(rq.error); }); }
-  async function ensureDishBlob(title){
-    const key = slug(title);
-    const cached = await idbGet(key);
-    if(cached) return new Blob([cached], {type:'image/jpeg'});
-    const url = await fetchDishImageURL(title);
-    if(!url) return null;
-    for(const opt of [{},{referrerPolicy:'no-referrer'}]){
-      try{
-        const resp = await fetch(url, opt);
-        if(!resp.ok) continue;
-        const blob = await resp.blob();
-        const buf = await blob.arrayBuffer();
-        await idbSet(key, buf);
-        return blob;
-      }catch{}
-    }
-    return null;
-  }
-  async function objectURLFor(title, categoria){
-    try{
-      const b = await ensureDishBlob(title);
-      if(b) return URL.createObjectURL(b);
-    }catch{}
-    return photoFallback(title, categoria);
-  }
-  async function setImg(el, title, categoria){
-    try{
-      const url = await objectURLFor(title, categoria);
-      el.src = url;
-      el.alt = `Foto de ${title}`;
-      el.classList.remove('skeleton');
-      el.onerror = async ()=>{
-        el.onerror = null;
-        const bust = photoFallback(title, categoria) + `&cb=${Date.now()}`;
-        try{
-          const r = await fetch(bust, {cache:'no-store'});
-          if(r.ok){ el.src = bust; return; }
-        }catch{}
-        el.src = svgPlaceholder(title);
-      };
-    }catch{
-      el.src = svgPlaceholder(title);
-    }
-    if(!el.dataset.retryBound){
-      el.dataset.retryBound = "1";
-      el.style.cursor = 'pointer';
-      el.title = 'Clic para reintentar imagen';
-      el.addEventListener('click', ()=> setImg(el, title, categoria), {passive:true});
-    }
-  }
-
   // Tarjetas
   function card(r,i){
     const star = isFav(r) ? '⭐' : '☆';
-    // Imagen empieza con SVG placeholder; luego JS llamará a setImg(...)
-    const ph = svgPlaceholder(r.titulo);
     return `<article class="card" role="article" aria-label="${r.titulo}">
-      <img src="${ph}" data-dish="${r.titulo}" data-cat="${r.categoria}" alt="Foto de ${r.titulo}" class="skeleton">
-      <div class="body">
-        <h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3>
-        <p class="meta">${r.categoria} · ${r.tiempo}</p>
-        <div class="bar">
+      <img src="${r.imagen}" alt="Foto de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover"
+           loading="lazy" decoding="async" width="800" height="500" referrerpolicy="no-referrer"
+           onerror="this.onerror=null; this.src='${PLACE[r.categoria] || PLACE.Primero}'"
+           style="width:100%;height:12rem;object-fit:cover">
+      <div style="padding:.75rem;display:grid;gap:.5rem">
+        <h3 style="font-size:1.1rem;font-weight:700;margin:0">${r.titulo}</h3>
+        <p class="text-muted" style="margin:0;font-size:.9rem">${r.categoria} · ${r.tiempo}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:.5rem;padding-top:.25rem">
           <button class="btn btn-ghost" data-a="leer" data-i="${i}" aria-label="Leer ${r.titulo} en voz alta" title="Leer">🔈 Leer</button>
           <button class="btn btn-primary" data-a="guiada" data-i="${i}" aria-label="Cocina guiada para ${r.titulo}" title="Guiada">▶️ Guiada</button>
           <button class="btn btn-ghost" data-a="abrir" data-i="${i}" aria-label="Abrir detalles de ${r.titulo}" title="Abrir">📖 Abrir</button>
@@ -682,20 +539,14 @@
     state.list = list;
     if(!list.length){
       els.grid.innerHTML = "";
-      els.empty.hidden = false;
+      els.empty.style.display = "block";
       els.count.textContent = "Mostrando 0 recetas.";
       return;
     }
-    els.empty.hidden = true;
+    els.empty.style.display = "none";
     els.grid.innerHTML = list.map((r,i)=>card(r,i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
     try{ injectListLD(list); }catch{}
-    // Cargar imágenes reales
-    requestIdleCallback?.(()=> {
-      document.querySelectorAll('img[data-dish]').forEach(img=>{
-        setImg(img, img.dataset.dish, img.dataset.cat);
-      });
-    }) || document.querySelectorAll('img[data-dish]').forEach(img=>setImg(img, img.dataset.dish, img.dataset.cat));
   }
 
   function filter(){
@@ -718,17 +569,19 @@
   function openDetail(r){
     state.current = r;
     els.detailTitle.textContent = r.titulo;
-    els.detailImg.src = svgPlaceholder(r.titulo);
-    setImg(els.detailImg, r.titulo, r.categoria);
+    els.detailImg.src = r.imagen;
+    els.detailImg.alt = `Foto de ${r.titulo}`;
+    els.detailImg.referrerPolicy = "no-referrer";
+    els.detailImg.onerror = () => { els.detailImg.onerror=null; els.detailImg.src = PLACE[state.current?.categoria || 'Primero']; };
     els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
     els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
     els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
-    els.detailModal.style.display='flex';
+    const m = $('detailModal'); m.style.display="flex";
     injectRecipeLD(r);
-    if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
+    if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(m);
     ensureShareButton();
   }
-  function closeDetail(){ els.detailModal.style.display='none'; if(untrapDetail) untrapDetail(); }
+  function closeDetail(){ const m=$('detailModal'); m.style.display="none"; if(untrapDetail) untrapDetail(); }
   els.closeDetail.onclick = closeDetail;
   document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
 
@@ -802,8 +655,8 @@
     state.current = r; state.step = 0;
     $('guidedRecipeTitle').textContent = r.titulo;
     $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
-    $('guidedModal').style.display='flex';
-    if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
+    const m=$('guidedModal'); m.style.display="flex";
+    if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(m);
     els.status.textContent = "Voz manos libres activa.";
     speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
@@ -812,7 +665,7 @@
   }
   function closeGuided(){
     stopSpeak();
-    $('guidedModal').style.display='none';
+    const m=$('guidedModal'); m.style.display="none";
     els.status.textContent="Cocina guiada cerrada.";
     if(untrapGuided) untrapGuided();
     stopAutoRecognizer();
@@ -856,9 +709,12 @@
     if(n>=0 && n<total){ state.step=n; stopSpeak(); setTimeout(readCurrent,80); saveSession(); }
     else { stopSpeak(); setTimeout(()=>speakSafe("Ese número de paso no existe."),80); }
   }
-  $('nextStep').onclick = nextStep; $('prevStep').onclick = prevStep; $('repeatStep').onclick = repeatStep;
-  $('stopReading').onclick = ()=>{ stopSpeak(); }; $('closeGuided').onclick = closeGuided;
-  $('printRecipe').onclick = ()=>{ window.print(); };
+  $('nextStep')?.addEventListener('click', nextStep);
+  $('prevStep')?.addEventListener('click', prevStep);
+  $('repeatStep')?.addEventListener('click', repeatStep);
+  $('stopReading')?.addEventListener('click', ()=>{ stopSpeak(); });
+  $('closeGuided')?.addEventListener('click', closeGuided);
+  $('printRecipe')?.addEventListener('click', ()=>{ window.print(); });
 
   els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
   els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
@@ -874,7 +730,7 @@
   });
 
   document.addEventListener('keydown',e=>{
-    if($('guidedModal').style.display==='none' || $('guidedModal').style.display==='') return;
+    if($('guidedModal').style.display!=="flex") return;
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
     if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
     if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
@@ -887,17 +743,17 @@
   function uid(){ return Math.random().toString(36).slice(2,9); }
   function renderList(){
     $('shoppingList').innerHTML = shopping.map(i=>`
-      <li class="row" style="align-items:center">
+      <li style="display:flex;align-items:center;gap:.5rem">
         <input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}" aria-label="Marcar ${i.text}" title="Marcar ${i.text}">
-        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" style="flex:1;background:transparent;border:0;border-bottom:1px solid #d1d5db;padding:.25rem .35rem" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}" title="Editar ${i.text}">
+        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" style="flex:1;background:transparent;border:none;border-bottom:1px solid #d6d3d1;padding:.25rem .35rem" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}" title="Editar ${i.text}">
         <button class="btn btn-ghost" data-a="d" data-id="${i.id}" aria-label="Eliminar ${i.text}" title="Eliminar ${i.text}">🗑️</button>
       </li>`).join("");
-    $('shoppingEmpty').hidden = shopping.length>0;
+    $('shoppingEmpty').style.display = shopping.length>0 ? "none" : "block";
   }
   function addItem(text){ text=(text||"").trim(); if(!text) return; shopping.push({id:uid(),text,done:false}); save(); renderList(); }
   function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
-  function openDrawer(){ $('shoppingDrawer').classList.add('open'); $('shoppingDrawer').setAttribute('aria-hidden','false'); }
-  function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); $('shoppingDrawer').setAttribute('aria-hidden','true'); }
+  function openDrawer(){ const d=$('shoppingDrawer'); d.classList.add('open'); d.setAttribute('aria-hidden','false'); }
+  function closeDrawer(){ const d=$('shoppingDrawer'); d.classList.remove('open'); d.setAttribute('aria-hidden','true'); }
   els.openShopping.onclick = openDrawer; els.closeShopping.onclick = closeDrawer;
   els.addItem.onclick = ()=>{ addItem(els.newItem.value); els.newItem.value=""; els.newItem.focus(); };
   els.newItem.onkeydown = e=>{ if(e.key==='Enter'){ e.preventDefault(); els.addItem.click(); } };
@@ -930,8 +786,7 @@
   let currentTimer = null, countdownInt = null;
   function clearTimerUI(){
     if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
-    const old = document.getElementById('guidedTimer');
-    if(old) old.remove();
+    const old = document.getElementById('guidedTimer'); if(old) old.remove();
   }
   function beep(ms=200, freq=880){
     try{
@@ -947,11 +802,10 @@
     if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
     const box = document.createElement('div');
     box.id='guidedTimer';
-    box.className='meta';
-    box.style.marginTop='.5rem';
+    box.className='mt-3 text-sm';
     box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
-      <button class="btn btn-ghost" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador" style="margin-left:.5rem">Cancelar</button>`;
-    document.querySelector('#guidedModal .card > div:last-child').appendChild(box);
+      <button class="btn btn-ghost ml-2" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador">Cancelar</button>`;
+    document.querySelector('#guidedModal .card > div:last-child')?.appendChild(box);
 
     let left = Math.round(minutes*60);
     const $left = document.getElementById('tleft');
@@ -965,43 +819,34 @@
 
   /* ===== JSON-LD (SEO) ===== */
   function injectRecipeLD(r){
-    const ld = {
-      "@context":"https://schema.org",
-      "@type":"Recipe",
-      "name": r.titulo,
-      "recipeCategory": r.categoria,
-      "image": " ",
-      "recipeIngredient": r.ingredientes,
-      "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
-      "totalTime": "PT30M"
-    };
+    const ld = {"@context":"https://schema.org","@type":"Recipe","name": r.titulo,"recipeCategory": r.categoria,"image": r.imagen,"recipeIngredient": r.ingredientes,"recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),"totalTime": "PT30M"};
     let n = document.getElementById("ld-recipe");
     if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-recipe"; document.head.appendChild(n); }
     n.textContent = JSON.stringify(ld);
   }
   function injectListLD(list){
-    const items = (list||[]).slice(0,50).map((r,i)=>({
-      "@type":"ListItem","position":i+1,"name":r.titulo,"url": location.origin + location.pathname + '#receta=' + slug(r.titulo)
-    }));
+    const items = (list||[]).slice(0,50).map((r,i)=>({"@type":"ListItem","position":i+1,"name":r.titulo,"url": location.origin + location.pathname + '#receta=' + slug(r.titulo)}));
     const ld = {"@context":"https://schema.org","@type":"ItemList","itemListElement":items};
     let n = document.getElementById("ld-list");
     if(!n){ n=document.createElement("script"); n.type="application/ld+json"; n.id="ld-list"; document.head.appendChild(n); }
     n.textContent = JSON.stringify(ld);
   }
 
-  /* ===== Focus trap en modales ===== */
+  /* ===== Focus trap ===== */
   function trapFocus(modal){
     const sel = 'a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])';
-    function cycle(e){
+    function get(){ return modal.querySelectorAll(sel); }
+    function first(){ return get()[0]; }
+    function last(){ const f=get(); return f[f.length-1]; }
+    function onKey(e){
       if(e.key!=='Tab') return;
-      const f = modal.querySelectorAll(sel); if(!f.length) return;
-      const first = f[0], last = f[f.length-1];
-      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
-      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+      const a = document.activeElement;
+      if(e.shiftKey && a===first()){ e.preventDefault(); last().focus(); }
+      else if(!e.shiftKey && a===last()){ e.preventDefault(); first().focus(); }
     }
-    modal.addEventListener('keydown', cycle);
-    const f = modal.querySelector(sel); f && f.focus();
-    return ()=> modal.removeEventListener('keydown', cycle);
+    modal.addEventListener('keydown', onKey);
+    setTimeout(()=>first()?.focus(), 0);
+    return ()=> modal.removeEventListener('keydown', onKey);
   }
   let untrapDetail = null, untrapGuided = null;
 
@@ -1021,7 +866,7 @@
   document.addEventListener('DOMContentLoaded', fromHashOpen);
 
   function ensureShareButton(){
-    const bar = document.querySelector('#detailModal .bar');
+    const bar = document.querySelector('#detailModal .mt-3') || document.querySelector('#detailModal .card div:nth-child(2) > div:nth-child(1) div:nth-child(3)');
     if(!bar) return;
     let btn = document.getElementById('btnShare');
     if(!btn){
@@ -1095,8 +940,17 @@
   function setStatus(msg){ els.status.textContent = msg; }
   function norm(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }catch{return (s||"").toLowerCase().trim();} }
 
-  // HUD animación
-  let bar = document.querySelector('#voiceWave > i');
+  // HUD
+  let hud, bar;
+  function ensureHUD(){
+    if(hud) return;
+    hud = document.createElement('div');
+    hud.id='voiceHUD';
+    hud.innerHTML = `<span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span>`;
+    bar = hud.querySelector('#voiceWave > i');
+    els.toggleMic.insertAdjacentElement('afterend', hud);
+  }
+  ensureHUD();
   function drawLevel(w){ if(!bar) return; const px=Math.max(4,Math.min(138,Math.round(w*138))); bar.style.width=px+'px'; }
 
   // Levenshtein light
@@ -1119,8 +973,7 @@
   const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
 
   function parseCommand(raw){
-    const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
-                                (_,w)=>'paso '+NUM[w]);
+    const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,(_,w)=>'paso '+NUM[w]);
     const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
     for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
     let best=99, winner={type:'unknown'};
@@ -1158,10 +1011,7 @@
         const txt=res[0]?.transcript||'';
         if(res.isFinal) finalText += txt + " ";
         els.heard && (els.heard.textContent=(res.isFinal?"✓ ":"… ")+txt);
-        // animación simple del “nivel”
-        const len = Math.min(1, Math.max(0, (txt||'').length/30));
-        drawLevel(len);
-        document.getElementById('voiceHUD')?.classList.toggle('talking', len>0.15);
+        drawTalkingHint(txt);
       }
       if(finalText.trim()){
         const cmd = parseCommand(finalText.trim());
@@ -1174,8 +1024,11 @@
       }
     };
 
-    try{ recAuto.start(); }
-    catch{ setStatus("Voz: permiso requerido. Pulsa “Reconectar voz”."); }
+    try{
+      recAuto.start();
+    }catch(e){
+      setStatus("Voz: permiso requerido. Pulsa “Reconectar voz”.");
+    }
   }
 
   function stopAutoRecognizer(){
@@ -1184,11 +1037,14 @@
     document.getElementById('voiceHUD')?.classList.remove('listening','talking');
     drawLevel(0);
   }
+
   function scheduleRestart(){
     if(!state.autoListen) return;
     if(autoRestartTimer){ clearTimeout(autoRestartTimer); }
     autoRestartTimer = setTimeout(()=>{ try{ recAuto && recAuto.start(); }catch{} }, 600);
   }
+
+  // UI para autoListen
   els.autoListen.onchange = (e)=>{ state.autoListen = !!e.target.checked; if(state.autoListen && !recAuto){ startAutoRecognizer(); } if(!state.autoListen){ stopAutoRecognizer(); } };
   els.toggleMic.onclick = ()=>{ stopAutoRecognizer(); startAutoRecognizer(); };
 
@@ -1197,21 +1053,124 @@
     filter(); renderList();
   });
 
-  /* ===== Reutilidades menores ===== */
-  function renderList(){
-    // llamada inicial de la lista de la compra (ya definida arriba)
+  /* ========= Service Worker embebido (sin sw.js) ========= */
+  (function registerSW(){
+    if(!("serviceWorker" in navigator)) return;
+    const swCode = `
+const APP_VER = "${APP_VERSION}";
+const CORE = "core-" + APP_VER;
+const PAGES = "pages-" + APP_VER;
+const IMGS = "imgs-" + APP_VER;
+const MAX_IMAGES = 150;
+
+const CORE_ASSETS = ["./","./index.html"];
+
+async function putSafe(cacheName, request, response) {
+  try { const cache = await caches.open(cacheName); await cache.put(request, response.clone()); } catch(e) {}
+  return response;
+}
+async function trim(cacheName, max) {
+  const c = await caches.open(cacheName);
+  const keys = await c.keys();
+  if(keys.length <= max) return;
+  await c.delete(keys[0]);
+  return trim(cacheName, max);
+}
+function placeholder(url=""){
+  const title = decodeURIComponent((url.split("/").pop() || "Receta").split("?")[0]).replace(/\\.[a-z0-9]+$/i,"").replace(/[-_]/g," ").slice(0,60);
+  const svg = \`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><text x="50%" y="48%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui">Sin imagen</text><text x="50%" y="60%" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="system-ui">\${title}</text></svg>\`;
+  return new Response(svg, { headers: { "Content-Type": "image/svg+xml" }, status:200 });
+}
+
+self.addEventListener("install",(e)=>{
+  e.waitUntil((async()=>{
+    const c = await caches.open(CORE);
+    await c.addAll(CORE_ASSETS);
+  })().then(()=>self.skipWaiting()));
+});
+
+self.addEventListener("activate",(e)=>{
+  e.waitUntil((async()=>{
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k=>![CORE,PAGES,IMGS].includes(k)).map(k=>caches.delete(k)));
+    await self.clients.claim();
+  })());
+});
+
+self.addEventListener("fetch",(e)=>{
+  const req = e.request;
+  if(req.method !== "GET") return;
+  const url = new URL(req.url);
+  const same = url.origin === self.location.origin;
+
+  if(req.mode === "navigate"){
+    e.respondWith((async()=>{
+      try{
+        const net = await fetch(req);
+        putSafe(PAGES, req, net.clone());
+        return net;
+      }catch{
+        const idx = await caches.match("./index.html");
+        return idx || new Response("",{status:503});
+      }
+    })());
+    return;
   }
 
-  /* ===== Eventos miscelánea ===== */
-  // Cerrar modal al clicar fondo
-  document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
-  document.getElementById('guidedModal').addEventListener('click', e => { if(e.target.id==='guidedModal') closeGuided(); });
+  if(req.destination === "image"){
+    e.respondWith((async()=>{
+      const cache = await caches.open(IMGS);
+      const hit = await cache.match(req);
+      if(hit){
+        e.waitUntil((async()=>{ try{ const fresh = await fetch(req,{mode:"no-cors"}); await cache.put(req, fresh.clone()); await trim(IMGS, MAX_IMAGES);}catch{}})());
+        return hit;
+      }
+      try{
+        const resp = await fetch(req,{mode:"no-cors"});
+        putSafe(IMGS, req, resp.clone()).then(()=>trim(IMGS, MAX_IMAGES));
+        return resp;
+      }catch{
+        return placeholder(req.url);
+      }
+    })());
+    return;
+  }
 
-  function openDrawer(){ $('shoppingDrawer').classList.add('open'); $('shoppingDrawer').setAttribute('aria-hidden','false'); }
-  function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); $('shoppingDrawer').setAttribute('aria-hidden','true'); }
+  if(same && req.headers.get("accept")?.includes("text/html")){
+    e.respondWith((async()=>{
+      try{ const net=await fetch(req); putSafe(PAGES, req, net.clone()); return net; }
+      catch{ const c=await caches.open(PAGES); return (await c.match(req)) || (await caches.match("./index.html")); }
+    })());
+    return;
+  }
 
-  // Profundidad: abrir detalle por hash si existe
-  fromHashOpen();
+  e.respondWith((async()=>{
+    const cache = await caches.open(same?PAGES:CORE);
+    const cached = await cache.match(req);
+    const network = fetch(req).then(res=>{ putSafe(same?PAGES:CORE, req, res.clone()); return res; }).catch(()=>null);
+    return cached || network || new Response("",{status:504});
+  })());
+});
+
+self.addEventListener("message",(e)=>{ if(e.data==="SKIP_WAITING") self.skipWaiting(); });
+`;
+    const blob = new Blob([swCode], {type:"text/javascript"});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).then(reg=>{
+      // aviso de actualización
+      reg.addEventListener('updatefound', ()=>{
+        const nw = reg.installing;
+        nw?.addEventListener('statechange', ()=>{
+          if(nw.state==='installed' && navigator.serviceWorker.controller){
+            if(confirm('Hay una actualización disponible. ¿Actualizar ahora?')){
+              reg.waiting?.postMessage?.("SKIP_WAITING");
+              setTimeout(()=>location.reload(), 300);
+            }
+          }
+        });
+      });
+    }).catch(()=>{});
+  })();
   </script>
 </body>
 </html>
