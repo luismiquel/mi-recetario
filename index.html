@@ -52,9 +52,9 @@
   <script src="recetas.js"></script>
 
   <script>
-  // Generar URL de imagen (si no hay foto, placeholder)
+  // Generar URL de imagen (Wikipedia fallback + placeholder)
   function imgURL(nombre) {
-    return `https://placehold.co/800x500?text=${encodeURIComponent(nombre)}`;
+    return `https://loremflickr.com/800/500/food,spanish,${encodeURIComponent(nombre)}?lock=${nombre.length*123}`;
   }
 
   // Render tarjetas
@@ -67,14 +67,13 @@
       return;
     }
     empty.classList.add("hidden");
-    grid.innerHTML = list.map(r => `
-      <article class="card">
+    grid.innerHTML = list.map((r,i) => `
+      <article class="card p-3">
         <img src="${imgURL(r.titulo)}" alt="Foto de ${r.titulo}">
-        <div class="p-3">
-          <h3 class="text-lg font-bold">${r.titulo}</h3>
-          <p class="text-sm text-stone-500">${r.categoria}</p>
-          <button class="mt-2 px-2 py-1 rounded bg-stone-200 dark:bg-stone-700" onclick="addMany(['${r.titulo}'])">➕ Añadir a la lista</button>
-        </div>
+        <h3 class="text-lg font-bold mt-2">${r.titulo}</h3>
+        <p class="text-sm text-stone-500">${r.categoria} · ${r.tiempo}</p>
+        <button class="mt-2 px-2 py-1 rounded bg-stone-200 dark:bg-stone-700"
+          onclick="openDetail(${i})">📖 Ver receta</button>
       </article>`).join("");
   }
 
@@ -83,6 +82,35 @@
     const q = e.target.value.toLowerCase();
     render(RECETAS.filter(r => r.titulo.toLowerCase().includes(q)));
   };
+
+  // ==================
+  // Modal detalle receta
+  // ==================
+  function openDetail(i){
+    const r = RECETAS[i];
+    const modal = document.createElement("div");
+    modal.className = "fixed inset-0 bg-black/50 flex items-center justify-center p-4";
+    modal.innerHTML = `
+      <div class="bg-white dark:bg-stone-900 rounded-lg max-w-2xl w-full p-4 overflow-y-auto max-h-full">
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-xl font-bold">${r.titulo}</h2>
+          <button onclick="this.closest('.fixed').remove()">✕</button>
+        </div>
+        <img src="${imgURL(r.titulo)}" alt="Foto de ${r.titulo}" class="w-full h-60 object-cover rounded mb-3">
+        <p class="text-sm text-stone-500 mb-3">${r.categoria} · ${r.tiempo}</p>
+        <h3 class="font-semibold">Ingredientes:</h3>
+        <ul class="list-disc pl-5 mb-3">
+          ${r.ingredientes.map(i=>`<li>${i}</li>`).join("")}
+        </ul>
+        <h3 class="font-semibold">Preparación paso a paso:</h3>
+        <ol class="list-decimal pl-5 space-y-1">
+          ${r.pasos.map(p=>`<li>${p}</li>`).join("")}
+        </ol>
+        <button class="mt-4 px-3 py-2 bg-stone-200 dark:bg-stone-700 rounded"
+          onclick="addMany(${JSON.stringify(r.ingredientes)})">🧺 Añadir ingredientes a la lista</button>
+      </div>`;
+    document.body.appendChild(modal);
+  }
 
   // Lista de la compra
   let shopping = [];
