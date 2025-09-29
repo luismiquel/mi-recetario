@@ -1,8 +1,9 @@
 ﻿{
   "version": 2,
-  "name": "mi-recetario",
-  "builds": [{ "src": "index.html", "use": "@vercel/static" }],
-  "routes": [{ "src": "/(.*)", "dest": "/index.html" }],
-  "cleanUrls": true,
-  "trailingSlash": false
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
