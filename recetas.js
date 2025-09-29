@@ -3229,3 +3229,4 @@ const RECETAS = [
     ]
   }
 ];
+export default RECETAS;
