@@ -516,7 +516,7 @@ const RECETAS = [
       "Vierte el escabeche sobre los mejillones y deja reposar unas horas en la nevera.",
       "Sirve fríos acompañados de pan."
     ]
-  }
+  }, // <--- COMA CORREGIDA AQUÍ
   {
     titulo: "Sardinas marinadas",
     categoria: "Aperitivo",
@@ -687,7 +687,7 @@ const RECETAS = [
       "Añade la sidra y cocina a fuego medio hasta que reduzca.",
       "Sirve caliente en cazuelitas de barro."
     ]
-  }
+  },
   {
     titulo: "Sopa de ajo",
     categoria: "Primero",
@@ -905,7 +905,7 @@ const RECETAS = [
       "Escúrrelas y saltéalas todas juntas en una sartén con un poco de aceite.",
       "Sirve caliente con huevo duro picado por encima."
     ]
-  }
+  },
   {
     titulo: "Lentejas estofadas",
     categoria: "Primero",
@@ -1119,7 +1119,7 @@ const RECETAS = [
       "Espolvorea queso rallado y gratina 5 minutos en el horno.",
       "Sirve caliente."
     ]
-  }
+  },
   {
     titulo: "Tallarines al ajillo",
     categoria: "Primero",
@@ -1323,7 +1323,7 @@ const RECETAS = [
       "Añade sal y pimienta al gusto.",
       "Sirve calientes como primer plato ligero."
     ]
-  }
+  },
   {
     titulo: "Acelgas rehogadas",
     categoria: "Primero",
@@ -1546,7 +1546,7 @@ const RECETAS = [
       "Cuela el caldo y úsalo para sopas o cremas.",
       "Sirve caliente o guarda en la nevera."
     ]
-  }
+  },
   {
     titulo: "Pollo al ajillo",
     categoria: "Segundo",
@@ -1778,7 +1778,7 @@ const RECETAS = [
       "Fríe los filetes en una sartén con aceite hasta dorar.",
       "Sirve con patatas fritas o pan recién hecho."
     ]
-  }
+  },
   {
     titulo: "Costillas al horno",
     categoria: "Segundo",
@@ -1980,7 +1980,7 @@ const RECETAS = [
       "Hornea 35 minutos.",
       "Rompe la costra de sal, limpia y sirve con verduras al vapor."
     ]
-  }
+  },
   {
     titulo: "Salmón al papillote",
     categoria: "Segundo",
@@ -2203,7 +2203,7 @@ const RECETAS = [
       "Cuaja la mezcla en una sartén antiadherente, dorando por ambos lados.",
       "Sirve templada o fría."
     ]
-  }
+  },
   {
     titulo: "Revuelto de setas",
     categoria: "Segundo",
@@ -2425,7 +2425,7 @@ const RECETAS = [
       "Dóralas por ambos lados y escurre sobre papel absorbente.",
       "Sirve calientes con ensalada verde."
     ]
-  }
+  },
   {
     titulo: "Flan casero",
     categoria: "Postre",
@@ -2636,7 +2636,7 @@ const RECETAS = [
       "Agrega la harina con levadura tamizada y mezcla suave.",
       "Vierte en un molde engrasado y hornea 40 minutos."
     ]
-  }
+  },
   {
     titulo: "Magdalenas caseras",
     categoria: "Postre",
@@ -2842,7 +2842,7 @@ const RECETAS = [
       "Bátelos con la nata y la miel hasta obtener una crema suave.",
       "Sirve inmediatamente como helado cremoso o congela 1 hora más para mayor consistencia."
     ]
-  }
+  },
   {
     titulo: "Mousse de chocolate",
     categoria: "Postre",
@@ -3039,7 +3039,7 @@ const RECETAS = [
       "Extiende bien y cocina por ambos lados.",
       "Rellena con chocolate, mermelada o nata al gusto."
     ]
-  }
+  },
   {
     titulo: "Flan de café",
     categoria: "Postre",
@@ -3228,3 +3228,4 @@ const RECETAS = [
       "Decora con hojas de menta si deseas."
     ]
   }
+];
