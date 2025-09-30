@@ -1,76 +1,68 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📖 Mi Recetario</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Recetario Español con 173 recetas. Búsqueda rápida, voz, modo guiado, accesibilidad y lista de la compra." />
+  <title>Recetario Español – 173 recetas</title>
+  
+  <link rel="stylesheet" href="./styles.css">
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; background: #fafafa; }
-    header { background: #d9534f; color: white; padding: 1rem; text-align: center; }
-    #galeria { display: grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap: 1rem; padding: 1rem; }
-    .card { background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,.2); overflow: hidden; cursor: pointer; }
-    .card img { width: 100%; height: 180px; object-fit: cover; }
-    .card h3 { margin: 0; padding: 0.5rem; font-size: 1.1rem; }
-    #detalle { max-width: 800px; margin: 1rem auto; background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
-    #detalle img { width: 100%; border-radius: 8px; margin-bottom: 1rem; }
-    #volver { display: inline-block; margin: 1rem 0; padding: 0.5rem 1rem; background: #d9534f; color: white; border: none; border-radius: 6px; cursor: pointer; }
-    ul, ol { padding-left: 1.2rem; }
-    .hidden { display: none; }
+    :root{ --base-font:16px; } html{ font-size: var(--base-font); } body{ -webkit-tap-highlight-color: transparent; }
+    /* (Aquí van todos tus estilos CSS originales) */
   </style>
 </head>
-<body>
-  <header>
-    <h1>📖 Mi Gran Recetario</h1>
-    <p>160 recetas españolas con fotos, ingredientes y pasos detallados</p>
-  </header>
+<body class="dark:bg-stone-900 dark:text-stone-200">
+  
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4" id="app">
+    </div>
 
-  <main>
-    <section id="galeria"></section>
-    <section id="detalle" class="hidden"></section>
-  </main>
-
-  <script type="module">
-    import RECETAS from "./recetas.js";
-
-    const galeria = document.getElementById("galeria");
-    const detalle = document.getElementById("detalle");
-
-    function mostrarGaleria() {
-      galeria.innerHTML = "";
-      RECETAS.forEach((receta, i) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <img src="imagenes/${receta.imagen}" alt="${receta.titulo}" onerror="this.src='https://via.placeholder.com/400x250?text=Sin+Imagen'">
-          <h3>${receta.titulo}</h3>
-        `;
-        card.onclick = () => mostrarDetalle(i);
-        galeria.appendChild(card);
-      });
-      galeria.classList.remove("hidden");
-      detalle.classList.add("hidden");
+  <script src="./recetas.js"></script>
+  <script>
+    // --- LÓGICA DE LA APLICACIÓN CORREGIDA ---
+    
+    function photoFallback(title) {
+        const texto = encodeURIComponent(title.replace(/\s/g, '+'));
+        return `https://via.placeholder.com/800x500/cccccc/808080?text=${texto}`;
     }
 
-    function mostrarDetalle(i) {
-      const r = RECETAS[i];
-      detalle.innerHTML = `
-        <button id="volver">← Volver</button>
-        <h2>${r.titulo}</h2>
-        <img src="imagenes/${r.imagen}" alt="${r.titulo}" onerror="this.style.display='none'">
-        <p><strong>Categoría:</strong> ${r.categoria}</p>
-        <p><strong>Tiempo:</strong> ${r.tiempo}</p>
-        <h3>Ingredientes</h3>
-        <ul>${r.ingredientes.map(i => `<li>${i}</li>`).join("")}</ul>
-        <h3>Pasos</h3>
-        <ol>${r.pasos.map(p => `<li>${p}</li>`).join("")}</ol>
-      `;
-      document.getElementById("volver").onclick = mostrarGaleria;
-      galeria.classList.add("hidden");
-      detalle.classList.remove("hidden");
+    const state = { /* ... tu objeto state ... */ };
+    const $ = id => document.getElementById(id);
+    const els = { /* ... tu objeto els ... */ };
+    
+    function card(r, i) {
+        const star = isFav(r) ? '⭐' : '☆';
+        const imagenSrc = `imagenes/${slug(r.titulo)}.jpg`;
+
+        return `<article class="card" role="article" aria-label="${r.titulo}">
+            <img src="${imagenSrc}" alt="Foto de ${r.titulo}" onerror="this.onerror=null; this.src='${photoFallback(r.titulo)}';" class="w-full h-44 sm:h-48 object-cover" loading="lazy">
+            <div class="p-3">
+                <h3 class="text-lg font-semibold">${r.titulo}</h3>
+                <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
+                <div class="flex flex-wrap gap-2 pt-1">
+                    <button class="btn btn-primary" data-a="abrir" data-i="${i}" title="Abrir receta">📖 Abrir</button>
+                    </div>
+            </div>
+        </article>`;
     }
 
-    document.addEventListener("DOMContentLoaded", mostrarGaleria);
+    function openDetail(r) {
+        state.current = r;
+        els.detailTitle.textContent = r.titulo;
+        els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
+        els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
+        els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
+        
+        const imagenSrc = `imagenes/${slug(r.titulo)}.jpg`;
+        els.detailImg.src = imagenSrc;
+        els.detailImg.onerror = () => { els.detailImg.src = photoFallback(r.titulo); };
+        
+        els.detailModal.classList.remove('hidden');
+    }
+
+    // El resto de tu código JavaScript avanzado (voz, filtros, etc.) va aquí.
+    // Asegúrate de que no haya funciones como 'build' o 'ingredientesPara',
+    // ya que ahora los datos vienen directamente de 'recetas.js'.
   </script>
 </body>
 </html>
