@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
   <title>Recetario Español – 160 recetas</title>
-
-  <meta name="theme-color" content="#78350f" />
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
-
   <link rel="manifest" href="./manifest.json" />
-
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dark">
@@ -19,7 +15,7 @@
 
   <noscript>
     <div style="padding:1rem;margin:1rem;border:1px solid #e5e7eb;border-radius:12px;background:#fff;color:#111">
-      Esta aplicación necesita JavaScript para funcionar (búsqueda, voz, cocina guiada y lista de la compra).
+      Esta aplicación necesita JavaScript para funcionar.
     </div>
   </noscript>
 
@@ -103,7 +99,6 @@
           <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle" title="Cerrar">✕</button>
         </div>
         <div style="padding:1rem; overflow-y:auto; display:grid; gap:1rem; grid-template-columns: 1fr;">
-          @media (min-width: 768px) { & { grid-template-columns: 40% 60%; } }
           <div>
             <img id="detailImg" alt="" width="800" height="500" class="skeleton" style="width:100%;height:220px;object-fit:cover;border-radius:.75rem">
             <p id="detailMeta" class="meta" style="margin-top:0.5rem;"></p>
