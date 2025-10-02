@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
+  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, filtros y modo oscuro." />
   <title>Recetario Español – 160 recetas</title>
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
@@ -23,14 +23,13 @@
     <header>
       <div>
         <h1>Recetario Español – 160 recetas</h1>
-        <p class="muted" style="margin:.25rem 0 0 0">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
+        <p class="muted" style="margin:.25rem 0 0 0">Filtros · Modo Oscuro · Letra Grande</p>
       </div>
       <div class="row">
         <button id="toggleTheme" class="btn btn-ghost" title="Cambiar tema" aria-label="Cambiar tema">🌙/☀️</button>
         <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste" aria-label="Alto contraste">🌓</button>
         <button id="fontMinus" class="btn btn-ghost" title="Reducir letra" aria-label="Reducir letra">A−</button>
         <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra" aria-label="Aumentar letra">A+</button>
-        <button id="openShopping" class="btn btn-ghost" title="Abrir lista de la compra" aria-label="Lista de la compra">🧺</button>
       </div>
     </header>
 
@@ -38,7 +37,7 @@
         <div class="filters">
             <div style="flex:1">
             <label for="search" class="muted" style="font-size:.9rem;font-weight:600">Buscar</label>
-            <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)" class="input" />
+            <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente…" class="input" />
             </div>
             <div class="row" role="tablist" aria-label="Categorías">
             <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
@@ -65,7 +64,6 @@
                     <option value="all">Todas</option>
                     <option value="Fácil">Fácil</option>
                     <option value="Media">Media</option>
-                    <option value="Difícil">Difícil</option>
                 </select>
             </div>
             <div>
@@ -100,9 +98,7 @@
             <img id="detailImg" alt="" width="800" height="500" class="skeleton" style="width:100%;height:220px;object-fit:cover;border-radius:.75rem">
             <p id="detailMeta" class="meta" style="margin-top:0.5rem;"></p>
             <div class="bar">
-              <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
-              <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
-              <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
+              <button id="btnAddAll" class="btn btn-ghost" title="Función no implementada">🧺 Añadir todo</button>
             </div>
           </div>
           <div>
