@@ -1,7 +1,6 @@
-const APP_VERSION = "recetario-3.0.0-static-images";
+const APP_VERSION = "recetario-3.0.1-final";
 
 /* ===== URLs de Imágenes Predefinidas ===== */
-// He buscado manualmente imágenes de alta calidad para las recetas más populares.
 const IMAGENES_RECETAS = {
     "Tortilla de patatas": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tortilla_de_patatas_con_cebolla_2.jpg",
     "Paella mixta": "https://upload.wikimedia.org/wikipedia/commons/0/00/Plato_de_paella_mixta.jpg",
@@ -57,18 +56,38 @@ function saveFav() { try { localStorage.setItem(FKEY, JSON.stringify([...fav]));
 function isFav(r) { return fav.has(r.titulo); }
 function toggleFav(r) { isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-function photoFallback(title, categoria) { const kcat = (categoria || '').toLowerCase().replace(' ', ','); const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(',')); return `https://source.unsplash.com/800x500/?food,dish,${kcat},${kwBase}`; }
+// --- FUNCIONES DE IMAGEN ---
+function photoFallback(title, categoria) {
+    const kcat = (categoria || '').toLowerCase().replace(' ', ',');
+    const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(','));
+    return `https://source.unsplash.com/800x500/?food,dish,${kcat},${kwBase}`;
+}
+
+function svgPlaceholder(title = "Receta") {
+    const t = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text></svg>`);
+}
 
 function setImg(el, r) {
-    if (r.imagen) { // Si la receta tiene una URL de imagen predefinida
-        el.src = r.imagen;
-    } else { // Si no, usa el fallback de Unsplash
-        el.src = photoFallback(r.titulo, r.categoria);
-    }
-    el.alt = `Foto de ${r.titulo}`;
-    el.classList.remove('skeleton');
-    el.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); };
+    el.src = svgPlaceholder(r.titulo); // Mostramos el placeholder gris mientras carga
+    el.classList.add('skeleton');
+
+    const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria);
+    
+    const finalImage = new Image();
+    finalImage.src = imageUrl;
+    finalImage.alt = `Foto de ${r.titulo}`;
+
+    finalImage.onload = () => {
+        el.src = finalImage.src;
+        el.classList.remove('skeleton');
+    };
+    finalImage.onerror = () => {
+        el.src = svgPlaceholder(r.titulo);
+        el.classList.remove('skeleton');
+    };
 }
+// --- FIN FUNCIONES DE IMAGEN ---
 
 function card(r, i) { const star = isFav(r) ? '⭐' : '☆'; return `<article class="card" role="article" aria-label="${r.titulo}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton"><div class="body"><h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p><div class="bar"><button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button><button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button><button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button><button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button></div></div></article>`; }
 
@@ -79,7 +98,7 @@ function render(list) {
     els.empty.hidden = list.length > 0;
     els.grid.innerHTML = list.map((r, i) => card(r, i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
-    
+
     const lazyImages = Array.from(els.grid.querySelectorAll('img.lazy'));
     imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
