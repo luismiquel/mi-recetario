@@ -1,241 +1,605 @@
-<!DOCTYPE html>
-<html lang="es" dir="ltr">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, filtros y modo oscuro." />
-    <title>Recetario Español – 160 recetas</title>
-    <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
-    <link rel="manifest" href="./manifest.json" />
-    <style>
-        :root{ --base-font:16px; --bg:#ffffff; --fg:#1f2937; --muted:#6b7280; --card:#ffffff; --card-b:#e5e7eb; --brand:#92400e; }
-        html{ font-size:var(--base-font); }
-        body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"; color:var(--fg); background:#f5f5f5; -webkit-tap-highlight-color:transparent; }
-        .dark body,.dark{ background:#0b0f19; color:#e5e7eb; }
-        *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
-        .container{ max-width:1100px; margin-inline:auto; padding:1rem 1rem; }
-        header{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:1rem; }
-        h1{ margin:0; font-size: 1.5rem; }
-        .muted{ color:#6b7280; }
-        .dark .muted{ color:#9ca3af; }
-        .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.55rem 1rem;font-weight:600;border:0;cursor:pointer}
-        .btn-primary{background:var(--brand);color:#fff}
-        .btn-ghost{background:transparent;color:inherit}
-        .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700;border:1px solid transparent}
-        .tab[aria-selected="true"]{background:var(--brand);color:#fff}
-        .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:var(--card)}
-        .dark .card{background:#111827;border-color:#374151}
-        .grid{ display:grid; gap:1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-        .card img { width:100%; height:180px; object-fit:cover; display:block; background:#e5e7eb; transition: opacity 0.4s ease-in-out; }
-        .dark .card img { background:#1f2937; }
-        .card img.skeleton { opacity: 0; }
-        .card .body{ padding:.75rem; }
-        .row{ display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
-        .filters{ display:flex; flex-direction:column; gap:.75rem; }
-        @media (min-width:880px){ .filters{ flex-direction:row; align-items:flex-end; } }
-        .input{ width:100%; border:1px solid #d1d5db; background:#fff; color:#111; padding:.5rem .6rem; border-radius:.75rem; }
-        .dark .input{ border-color:#374151; background:#0b0f19; color:#e5e7eb; }
-        #emptyState{ text-align:center; color:#6b7280; margin-top:2rem; }
-    </style>
-</head>
-<body class="dark">
-    <a href="#main" class="skip-link" style="position:absolute;left:-9999px;">Saltar al contenido principal</a>
-    <noscript><div style="padding:1rem;margin:1rem;border-radius:12px;background:#fff;color:#111">Esta aplicación necesita JavaScript.</div></noscript>
+recetas.json
 
-    <div class="container" id="app">
-        <header>
-            <div>
-                <h1>Recetario Español – 160 recetas</h1>
-                <p class="muted" style="margin:.25rem 0 0 0">Filtros · Modo Oscuro · Letra Grande</p>
-            </div>
-            <div class="row">
-                <button id="toggleTheme" class="btn btn-ghost" title="Cambiar tema">🌙/☀️</button>
-                <button id="fontMinus" class="btn btn-ghost" title="Reducir letra">A−</button>
-                <button id="fontPlus" class="btn btn-ghost" title="Aumentar letra">A+</button>
-            </div>
-        </header>
 
-        <section class="card" style="padding:1rem;margin-bottom:1rem" aria-label="Búsqueda y filtros">
-            <div class="filters">
-                <div style="flex:1">
-                    <label for="search" class="muted" style="font-size:.9rem;font-weight:600">Buscar</label>
-                    <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente…" class="input" />
-                </div>
-                <div class="row" role="tablist" aria-label="Categorías">
-                    <button class="tab" role="tab" data-cat="Todas" title="Mostrar todas">Todas</button>
-                    <button class="tab" role="tab" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
-                    <button class="tab" role="tab" data-cat="Primero" title="Mostrar primeros">Primeros</button>
-                    <button class="tab" role="tab" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
-                    <button class="tab" role="tab" data-cat="Postre" title="Mostrar postres">Postres</button>
-                </div>
-            </div>
-            <div class="filters" style="margin-top: 1rem; border-top: 1px solid rgba(120,113,108,.25); padding-top: 1rem;">
-                <div>
-                    <label for="sortOrder" class="muted" style="font-size:.9rem;font-weight:600">Ordenar por</label>
-                    <select id="sortOrder" class="input">
-                        <option value="default">Por defecto</option>
-                        <option value="az">Nombre (A-Z)</option>
-                        <option value="za">Nombre (Z-A)</option>
-                        <option value="time-asc">Tiempo (más corto)</option>
-                        <option value="time-desc">Tiempo (más largo)</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="filterDifficulty" class="muted" style="font-size:.9rem;font-weight:600">Dificultad</label>
-                    <select id="filterDifficulty" class="input">
-                        <option value="all">Todas</option>
-                        <option value="Fácil">Fácil</option>
-                        <option value="Media">Media</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="filterTime" class="muted" style="font-size:.9rem;font-weight:600">Tiempo de cocción</label>
-                    <select id="filterTime" class="input">
-                        <option value="all">Cualquiera</option>
-                        <option value="30">Menos de 30 min</option>
-                        <option value="60">Entre 30 y 60 min</option>
-                        <option value="61">Más de 60 min</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <section class="muted" style="font-size:.9rem;margin-bottom:.5rem">
-            <span id="countLabel">Mostrando 0 recetas.</span>
-        </section>
-
-        <main id="main">
-            <div id="recipesGrid" class="grid"></div>
-            <div id="emptyState" hidden>No hay resultados.</div>
-        </main>
-    </div>
-
-    <script>
-        const IMAGENES_RECETAS = { "Tortilla de patatas": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tortilla_de_patatas_con_cebolla_2.jpg", "Paella mixta": "https://upload.wikimedia.org/wikipedia/commons/0/00/Plato_de_paella_mixta.jpg", "Gazpacho andaluz": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Gazpacho_andaluz.jpg", "Salmorejo cordobés": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Salmorejo.jpg", "Patatas bravas": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Patatas_bravas_madrid.jpg/1280px-Patatas_bravas_madrid.jpg", "Croquetas de jamón": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Croquetas_de_jamon_serrano.jpg/1280px-Croquetas_de_jamon_serrano.jpg", "Pisto manchego": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pisto_manchego_con_huevo_frito.jpg/1024px-Pisto_manchego_con_huevo_frito.jpg", "Fabada asturiana": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Plato_fabada.jpg/1024px-Plato_fabada.jpg", "Pulpo a la gallega": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Pulpo_a_la_gallega_-_Lugo_001.jpg/1024px-Pulpo_a_la_gallega_-_Lugo_001.jpg", "Tarta de Santiago": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Tarta_de_Santiago_al_corte.jpg/1024px-Tarta_de_Santiago_al_corte.jpg", "Crema catalana": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Crema_catalana_quemada.jpg/1024px-Crema_catalana_quemada.jpg", "Arroz con leche": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Arroz_con_leche_de_Asturias.jpg/1024px-Arroz_con_leche_de_Asturias.jpg", "Calamares a la romana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Calamares_a_la_romana_con_limon.jpg/1024px-Calamares_a_la_romana_con_limon.jpg", "Queso manchego con membrillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Queso_Manchego_con_Membrillo_%283578359194%29.jpg/1024px-Queso_Manchego_con_Membrillo_%283578359194%29.jpg", "Pimientos del padrón": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pimientos_de_Padr%C3%B3n_-_Herb%C3%B3n_-_Galicia_-_Espa%C3%B1a_-_01.jpg/1024px-Pimientos_de_Padr%C3%B3n_-_Herb%C3%B3n_-_Galicia_-_Espa%C3%B1a_-_01.jpg", "Boquerones en vinagre": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Boquerones_en_vinagre_de_Madrid.jpg/1024px-Boquerones_en_vinagre_de_Madrid.jpg", "Empanadillas de atún": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Empanadillas_de_bonito_caseras_recien_fritas.jpg/1024px-Empanadillas_de_bonito_caseras_recien_fritas.jpg", "Lentejas estofadas": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Lentejas_con_chorizo_y_verduras.jpg/1024px-Lentejas_con_chorizo_y_verduras.jpg", "Ensaladilla rusa": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Ensaladilla_Rusa_de_cerca.JPG/1024px-Ensaladilla_Rusa_de_cerca.JPG", "Crema de calabaza": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Crema-de-calabaza.jpg/1024px-Crema-de-calabaza.jpg", "Rabo de toro": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Rabo_de_toro_del_Restaurante_Astorga.jpg/1024px-Rabo_de_toro_del_Restaurante_Astorga.jpg", "Merluza en salsa verde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Merluza_en_salsa_verde_con_almejas.jpg/1024px-Merluza_en_salsa_verde_con_almejas.jpg", "Pollo al ajillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Pollo_al_ajillo_-_Chicken_with_garlic.jpg/1024px-Pollo_al_ajillo_-_Chicken_with_garlic.jpg", "Carrilleras al vino tinto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Carrillada_de_cerdo_al_vino_tinto_de_toro.jpg/1024px-Carrillada_de_cerdo_al_vino_tinto_de_toro.jpg", "Flan casero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Flan_casero_%28porci%C3%B3n%29.jpg/1024px-Flan_casero_%28porci%C3%B3n%29.jpg", "Torrijas": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Torrijas_de_leche.jpg/1024px-Torrijas_de_leche.jpg", "Leche frita": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Leche_frita_with_cinnamon_ice_cream.jpg/1024px-Leche_frita_with_cinnamon_ice_cream.jpg" };
-        const APERITIVOS = ["Tostas de tomate y jamón", "Tostas de anchoa y pimiento", "Tostas de escalivada", "Tostas de salmón y queso fresco", "Croquetas de jamón", "Croquetas de pollo", "Croquetas de bacalao", "Croquetas de setas", "Empanadillas de atún", "Empanadillas de carne", "Patatas bravas", "Patatas alioli", "Boquerones en vinagre", "Champiñones al ajillo", "Gildas donostiarras", "Pinchos de tortilla", "Pinchos morunos", "Queso marinado en aceite", "Hummus clásico con crudités", "Hummus de remolacha", "Hummus de aguacate", "Gazpacho en vasitos", "Salmorejo en chupitos", "Ensaladilla rusa", "Tortilla francesa mini", "Banderillas variadas", "Mejillones en escabeche", "Sardinas marinadas", "Pulpo a la gallega (tapa)", "Calamares a la romana", "Torreznos crujientes", "Jamón con picos", "Queso manchego con membrillo", "Pimientos del padrón", "Montadito de lomo", "Montadito de pringá", "Bonito con tomate (tapa)", "Pisto con huevo (tapa)", "Chistorra a la sidra", "Berenjena frita con miel"];
-        const PRIMEROS = ["Sopa de ajo", "Sopa castellana", "Gazpacho andaluz", "Salmorejo cordobés", "Ajoblanco", "Crema de calabaza", "Crema de puerros", "Crema de champiñón", "Pisto manchego", "Menestra de verduras", "Lentejas estofadas", "Garbanzos con espinacas", "Judías blancas con verduras", "Arroz caldoso de verduras", "Arroz a la cubana", "Arroz negro", "Arroz al horno", "Paella de verduras", "Fideuá de pescado", "Macarrones con tomate", "Tallarines al ajillo", "Espaguetis carbonara ligera", "Ensalada mixta", "Ensalada campera", "Ensalada de garbanzos", "Ensalada de pasta fría", "Tomates aliñados", "Papas arrugadas con mojo", "Pimientos asados", "Alcachofas salteadas", "Acelgas rehogadas", "Sopa de pescado", "Caldo gallego", "Cocido andaluz (sopa)", "Sopa minestrone", "Vichyssoise", "Crema de zanhoria", "Porrusalda", "Sopa de marisco", "Caldo de pollo casero"];
-        const SEGUNDOS = ["Pollo al ajillo", "Pollo al horno con patatas", "Pollo en pepitoria", "Pechuga de pollo a la plancha", "Escalope de ternera", "Filete de ternera a la plancha", "Carrilleras al vino tinto", "Rabo de toro", "Albóndigas en salsa", "Lomo adobado", "Costillas al horno", "Chuletillas de cordero", "Cordero asado", "Secreto ibérico a la plancha", "Solomillo al roquefort", "Bacalao a la vizcaína", "Bacalao al pil-pil", "Merluza en salsa verde", "Dorada al horno", "Lubina a la sal", "Salmón al papillote", "Atún encebollado", "Calamares en su tinta", "Pulpo a la gallega", "Paella mixta", "Arroz con pollo", "Arroz con bogavante", "Empanada gallega de atún", "Pisto con huevos", "Tortilla de patatas", "Revuelto de setas", "Conejo al ajillo", "Codornices escabechadas", "Callos a la madrileña", "Fabada asturiana", "Marmitako de bonito", "Chuletón a la plancha", "Escabeche de caballa", "Bonito con tomate", "Trucha a la navarra"];
-        const POSTRES = ["Flan casero", "Natillas caseras", "Arroz con leche", "Leche frita", "Torrijas", "Crema catalana", "Tarta de queso al horno", "Tarta de Santiago", "Bizcocho de yogur", "Bizcocho de naranja", "Magdalenas caseras", "Galletas de mantequilla", "Rosquillas fritas", "Pestiños", "Buñuelos de viento", "Filloas", "Peras al vino", "Compota de manzana", "Macedonia de frutas", "Helado rápido de plátano", "Mousse de chocolate", "Natillas de vainilla", "Tarta de manzana", "Tarta tres leches (versión)", "Brazo de gitano", "Quesada pasiega", "Tocino de cielo", "Pan de Calatrava", "Cuajada con miel", "Crepes dulces", "Flan de café", "Crema pastelera con frutas", "Tarta de almendra", "Tarta de galletas con chocolate", "Bizcocho marmolado", "Helado de yogur", "Brownie sencillo", "Crema de limón", "Naranja con canela", "Fresas con nata"];
-
-        function parseTime(timeString) { const match = timeString.match(/\d+/); return match ? parseInt(match[0], 10) : 0; }
-        const PASOS_BASE = { Aperitivo: ["Prepara y ten a mano todo.", "Corta o dispón los ingredientes."], Primero: ["Lava y prepara verduras.", "Sofríe la base de la receta."], Segundo: ["Prepara la pieza principal.", "Cocina al punto deseado."], Postre: ["Pesa los ingredientes.", "Mezcla y hornea o refrigera."] };
-        function ingredientesPara(cat, t) { /* Lógica simplificada para generar ingredientes */ return ["Ingrediente 1", "Ingrediente 2", "Ingrediente 3"]; }
-        function tiempo(cat, t) { t = t.toLowerCase(); if (cat === "Aperitivo") return "5–15 min"; if (cat === "Primero") return "15–30 min"; if (cat === "Segundo") return "30–60 min"; if (cat === "Postre") return "20–40 min"; return "25 min"; }
-        function pasosPara(cat, t) { return PASOS_BASE[cat] || ["Paso 1", "Paso 2"]; }
-        function build(cat, list) { return list.map(n => ({ categoria: cat, titulo: n, imagen: IMAGENES_RECETAS[n] || null, ingredientes: ingredientesPara(cat, n), pasos: pasosPara(cat, n), tiempo: tiempo(cat, n), dificultad: /paella|fideuá|rabo/i.test(n) ? 'Media' : 'Fácil' })); }
-        const RECETAS = [...build("Aperitivo", APERITIVOS), ...build("Primero", PRIMEROS), ...build("Segundo", SEGUNDOS), ...build("Postre", POSTRES)];
-
-        let state = { q: "", cat: "Todas", list: RECETAS, dark: true, font: 16 };
-        const $ = id => document.getElementById(id);
-        const els = { grid: $('recipesGrid'), empty: $('emptyState'), count: $('countLabel'), search: $('search'), tabs: () => document.querySelectorAll('[role="tab"]'), toggleTheme: $('toggleTheme'), fontPlus: $('fontPlus'), fontMinus: $('fontMinus') };
-
-        function applyTheme() { document.documentElement.classList.toggle('dark', state.dark); }
-        function setFont(px) { state.font = Math.max(12, Math.min(20, px)); document.documentElement.style.fontSize = state.font + 'px'; }
-        
-        function setActiveTab(btn) { 
-            els.tabs().forEach(t => t.setAttribute('aria-selected', 'false'));
-            btn.setAttribute('aria-selected', 'true');
-            state.cat = btn.dataset.cat; 
-            filter(); 
-        }
-
-        function photoFallback(title, categoria) { const kcat = (categoria || '').toLowerCase(); return `https://source.unsplash.com/800x500/?food,dish,${kcat},${encodeURIComponent(title)}`; }
-        function svgPlaceholder(title = "Receta") { const t = (title || "").replace(/</g, "&lt;"); return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="#e5e7eb"/><text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,sans-serif" dy="8">${t}</text></svg>`); }
-        
-        function setImg(el, r) {
-            el.src = svgPlaceholder(r.titulo);
-            el.classList.add('skeleton');
-            const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria);
-            const finalImage = new Image();
-            finalImage.src = imageUrl;
-            finalImage.alt = `Foto de ${r.titulo}`;
-            finalImage.onload = () => { el.src = finalImage.src; el.classList.remove('skeleton'); };
-            finalImage.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); };
-        }
-
-        function card(r, i) { return `<article class="card" role="button" tabindex="0" data-i="${i}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton"><div class="body"><h3>${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p></div></article>`; }
-
-        let imageObserver;
-        function render(list) {
-            state.list = list;
-            if (imageObserver) imageObserver.disconnect();
-            els.empty.hidden = list.length > 0;
-            els.grid.innerHTML = list.map((r, i) => card(r, i)).join("");
-            els.count.textContent = `Mostrando ${list.length} recetas.`;
-            const lazyImages = Array.from(els.grid.querySelectorAll('img.lazy'));
-            imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        const recipe = list[img.dataset.i];
-                        if (recipe) { setImg(img, recipe); }
-                        img.classList.remove('lazy');
-                        observer.unobserve(img);
-                    }
-                });
-            }, { rootMargin: '800px' });
-            lazyImages.forEach(img => imageObserver.observe(img));
-        }
-
-        function filter() {
-            let sourceRecipes = RECETAS;
-            if (state.cat !== "Todas") {
-                sourceRecipes = sourceRecipes.filter(r => r.categoria === state.cat);
-            }
-            const q = els.search.value.toLowerCase().trim();
-            if (q) {
-                sourceRecipes = sourceRecipes.filter(r => r.titulo.toLowerCase().includes(q) || r.ingredientes.join(" ").toLowerCase().includes(q));
-            }
-            const difficultyValue = document.getElementById('filterDifficulty').value;
-            if (difficultyValue !== 'all') {
-                sourceRecipes = sourceRecipes.filter(r => r.dificultad === difficultyValue);
-            }
-            const timeValue = document.getElementById('filterTime').value;
-            if (timeValue !== 'all') {
-                sourceRecipes = sourceRecipes.filter(r => {
-                    const recipeTime = parseTime(r.tiempo);
-                    if (timeValue === '30') return recipeTime <= 30;
-                    if (timeValue === '60') return recipeTime > 30 && recipeTime <= 60;
-                    if (timeValue === '61') return recipeTime > 60;
-                    return true;
-                });
-            }
-            const sortValue = document.getElementById('sortOrder').value;
-            switch (sortValue) {
-                case 'az': sourceRecipes.sort((a, b) => a.titulo.localeCompare(b.titulo)); break;
-                case 'za': sourceRecipes.sort((a, b) => b.titulo.localeCompare(a.titulo)); break;
-                case 'time-asc': sourceRecipes.sort((a, b) => parseTime(a.tiempo) - parseTime(b.tiempo)); break;
-                case 'time-desc': sourceRecipes.sort((a, b) => parseTime(b.tiempo) - parseTime(a.tiempo)); break;
-            }
-            render(sourceRecipes);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            applyTheme();
-            setFont(state.font);
-            setActiveTab(document.querySelector('.tab[data-cat="Todas"]'));
-            
-            els.toggleTheme.onclick = () => { state.dark = !state.dark; applyTheme(); };
-            els.fontPlus.onclick = () => setFont(state.font + 1);
-            els.fontMinus.onclick = () => setFont(state.font - 1);
-            els.search.oninput = filter;
-            document.getElementById('sortOrder').onchange = filter;
-            document.getElementById('filterDifficulty').onchange = filter;
-            document.getElementById('filterTime').onchange = filter;
-            els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
-
-            els.grid.addEventListener('click', e => {
-                const article = e.target.closest('article');
-                if (!article) return;
-                const index = article.dataset.i;
-                const recipe = state.list[index];
-                if (recipe) {
-                    alert(`Has hecho clic en: ${recipe.titulo}`);
-                    // Aquí iría la lógica para abrir el modal de detalle
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+[
+    {
+        "id": 1,
+        "titulo": "Tortilla de Patatas",
+        "descripcion": "Clásico de la gastronomía española, un aperitivo o plato principal que nunca falla.",
+        "ingredientes": "Patatas, huevos, cebolla, aceite de oliva, sal.",
+        "instrucciones": "Freír las patatas y la cebolla, mezclarlas con los huevos batidos, cuajar en una sartén por ambos lados.",
+        "categoria": "Aperitivo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=1"
+    },
+    {
+        "id": 2,
+        "titulo": "Gambas al Ajillo",
+        "descripcion": "Delicioso plato de gambas salteadas con ajo y guindilla en aceite de oliva.",
+        "ingredientes": "Gambas, ajo, aceite de oliva, guindilla, perejil.",
+        "instrucciones": "En una cazuela de barro, freír el ajo y la guindilla. Añadir las gambas, cocinar rápidamente y espolvorear perejil.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=2"
+    },
+    {
+        "id": 3,
+        "titulo": "Patatas Bravas",
+        "descripcion": "Trozos de patata frita bañados en una salsa picante y, a menudo, con alioli.",
+        "ingredientes": "Patatas, aceite para freír, salsa brava, alioli.",
+        "instrucciones": "Freír las patatas en cubos. Cubrir con salsa brava y un toque de alioli.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=3"
+    },
+    {
+        "id": 4,
+        "titulo": "Croquetas de Jamón",
+        "descripcion": "Bechamel cremosa con trozos de jamón, rebozada y frita.",
+        "ingredientes": "Harina, leche, mantequilla, jamón ibérico, pan rallado, huevo, aceite.",
+        "instrucciones": "Preparar la bechamel con jamón, dejar enfriar, formar las croquetas, rebozar y freír.",
+        "categoria": "Aperitivo",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=4"
+    },
+    {
+        "id": 5,
+        "titulo": "Pulpo a la Gallega",
+        "descripcion": "Pulpo cocido, cortado en rodajas y sazonado con pimentón, sal y aceite de oliva.",
+        "ingredientes": "Pulpo, patatas, pimentón dulce, sal gorda, aceite de oliva.",
+        "instrucciones": "Cocer el pulpo, cortar y servir sobre patatas cocidas, aliñar.",
+        "categoria": "Aperitivo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=5"
+    },
+    {
+        "id": 6,
+        "titulo": "Pan con Tomate",
+        "descripcion": "Un simple y delicioso clásico catalán: pan tostado, tomate, aceite y sal.",
+        "ingredientes": "Pan, tomate maduro, aceite de oliva, sal.",
+        "instrucciones": "Tostar el pan, frotar con tomate, añadir aceite y sal.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=6"
+    },
+    {
+        "id": 7,
+        "titulo": "Pimientos de Padrón",
+        "descripcion": "Pequeños pimientos fritos en aceite, unos pican y otros no.",
+        "ingredientes": "Pimientos de Padrón, aceite de oliva, sal gorda.",
+        "instrucciones": "Freír los pimientos hasta que se doren, escurrir y espolvorear sal gorda.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=7"
+    },
+    {
+        "id": 8,
+        "titulo": "Huevos Rotos con Jamón",
+        "descripcion": "Patatas fritas con huevos fritos encima y trozos de jamón.",
+        "ingredientes": "Patatas, huevos, jamón serrano, aceite de oliva, sal.",
+        "instrucciones": "Freír las patatas en tiras, freír los huevos, romperlos sobre las patatas y añadir el jamón.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=8"
+    },
+    {
+        "id": 9,
+        "titulo": "Ensaladilla Rusa",
+        "descripcion": "Ensalada fría de patatas, atún, zanahoria, guisantes, huevo duro y mayonesa.",
+        "ingredientes": "Patatas, zanahoria, guisantes, atún, huevo, mayonesa, aceitunas.",
+        "instrucciones": "Cocer las patatas, zanahoria y huevos. Picar todo y mezclar con atún y mayonesa.",
+        "categoria": "Aperitivo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=9"
+    },
+    {
+        "id": 10,
+        "titulo": "Chorizo a la Sidra",
+        "descripcion": "Chorizo cocinado en sidra natural hasta que esté tierno y sabroso.",
+        "ingredientes": "Chorizo, sidra natural.",
+        "instrucciones": "Cortar el chorizo en rodajas, cocer en sidra a fuego lento hasta que se reduzca.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=10"
+    },
+    {
+        "id": 11,
+        "titulo": "Boquerones en Vinagre",
+        "descripcion": "Filetes de boquerón marinados en vinagre, ajo y perejil.",
+        "ingredientes": "Boquerones, vinagre de vino blanco, aceite de oliva, ajo, perejil, sal.",
+        "instrucciones": "Limpiar los boquerones, marinarlos en vinagre, luego aliñar con ajo, perejil y aceite.",
+        "categoria": "Aperitivo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=11"
+    },
+    {
+        "id": 12,
+        "titulo": "Calamares a la Romana",
+        "descripcion": "Anillas de calamar rebozadas y fritas, crujientes por fuera y tiernas por dentro.",
+        "ingredientes": "Anillas de calamar, harina, huevo, aceite para freír, limón.",
+        "instrucciones": "Rebozar las anillas de calamar en harina y huevo, freír en aceite caliente y servir con limón.",
+        "categoria": "Aperitivo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=12"
+    },
+    {
+        "id": 13,
+        "titulo": "Sepia a la Plancha",
+        "descripcion": "Trozos de sepia cocinados en la plancha con ajo y perejil.",
+        "ingredientes": "Sepia, ajo, perejil, aceite de oliva, sal.",
+        "instrucciones": "Limpiar la sepia, cortarla y cocinarla en la plancha con ajo y perejil picados.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=13"
+    },
+    {
+        "id": 14,
+        "titulo": "Queso Manchego con Membrillo",
+        "descripcion": "Una combinación dulce y salada, muy popular en la región de La Mancha.",
+        "ingredientes": "Queso manchego curado, dulce de membrillo.",
+        "instrucciones": "Cortar el queso y el membrillo en lonchas o cubos, y servir juntos.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=14"
+    },
+    {
+        "id": 15,
+        "titulo": "Aceitunas Aliñadas",
+        "descripcion": "Aceitunas maceradas en una mezcla de ajo, pimentón, orégano y aceite de oliva.",
+        "ingredientes": "Aceitunas, ajo, orégano, pimentón, aceite de oliva.",
+        "instrucciones": "Mezclar las aceitunas con el ajo picado, orégano, pimentón y un chorro de aceite. Dejar macerar.",
+        "categoria": "Aperitivo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=15"
+    },
+    {
+        "id": 16,
+        "titulo": "Gazpacho Andaluz",
+        "descripcion": "Sopa fría de tomate, pimiento, pepino y ajo, ideal para el verano.",
+        "ingredientes": "Tomates maduros, pimiento verde, pepino, cebolla, ajo, aceite de oliva, vinagre de jerez, sal, pan duro.",
+        "instrucciones": "Triturar todos los ingredientes. Colar y servir muy frío.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=16"
+    },
+    {
+        "id": 17,
+        "titulo": "Salmorejo Cordobés",
+        "descripcion": "Crema espesa de tomate, pan, aceite de oliva y ajo, servida con jamón y huevo duro.",
+        "ingredientes": "Tomates, pan, ajo, aceite de oliva virgen extra, vinagre, sal, jamón serrano, huevo duro.",
+        "instrucciones": "Triturar los tomates con el pan remojado, ajo, aceite y sal. Servir frío con guarnición.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=17"
+    },
+    {
+        "id": 18,
+        "titulo": "Cocido Madrileño",
+        "descripcion": "Potaje de garbanzos con verduras, carne de ternera, cerdo y embutidos.",
+        "ingredientes": "Garbanzos, carne (morcillo, pollo, tocino), embutidos (chorizo, morcilla), verduras (patata, zanahoria, repollo).",
+        "instrucciones": "Cocer los garbanzos y las carnes en una olla grande. Servir en tres vuelcos: sopa, garbanzos y carnes.",
+        "categoria": "Primero",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=18"
+    },
+    {
+        "id": 19,
+        "titulo": "Fabada Asturiana",
+        "descripcion": "Potaje tradicional con fabes (judías blancas), chorizo, morcilla y panceta.",
+        "ingredientes": "Fabes asturianas, chorizo, morcilla, panceta, lacón, azafrán, ajo, cebolla.",
+        "instrucciones": "Cocer las fabes con las carnes a fuego lento hasta que estén tiernas. Servir caliente.",
+        "categoria": "Primero",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=19"
+    },
+    {
+        "id": 20,
+        "titulo": "Lentejas con Chorizo",
+        "descripcion": "Un guiso tradicional y reconfortante de lentejas, chorizo y verduras.",
+        "ingredientes": "Lentejas, chorizo, cebolla, zanahoria, ajo, pimiento, tomate, laurel.",
+        "instrucciones": "Sofreír las verduras, añadir las lentejas, el chorizo y agua. Cocinar a fuego lento.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=20"
+    },
+    {
+        "id": 21,
+        "titulo": "Sopa de Ajo",
+        "descripcion": "Sopa humilde pero sabrosa a base de ajo, pan duro, pimentón y jamón, con un huevo escalfado.",
+        "ingredientes": "Pan duro, ajo, aceite de oliva, pimentón, jamón serrano, huevos, agua.",
+        "instrucciones": "Dorar el ajo y el pan, añadir pimentón, agua y jamón. Cocer y añadir un huevo al final.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=21"
+    },
+    {
+        "id": 22,
+        "titulo": "Migas Manchegas",
+        "descripcion": "Pan duro troceado, frito con ajo, panceta y chorizo. Un plato de pastores.",
+        "ingredientes": "Pan duro, panceta, chorizo, ajo, aceite de oliva, pimentón.",
+        "instrucciones": "Remojar el pan, freír el ajo, panceta y chorizo. Añadir el pan y remover hasta que estén doradas.",
+        "categoria": "Primero",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=22"
+    },
+    {
+        "id": 23,
+        "titulo": "Sopa de Pescado y Marisco",
+        "descripcion": "Sopa reconfortante con una variedad de pescados y mariscos en un caldo sabroso.",
+        "ingredientes": "Pescado (merluza), marisco (gambas, almejas), caldo de pescado, ajo, cebolla, pimiento, tomate.",
+        "instrucciones": "Sofreír las verduras, añadir el caldo y el pescado/marisco. Cocinar unos minutos.",
+        "categoria": "Primero",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=23"
+    },
+    {
+        "id": 24,
+        "titulo": "Crema de Verduras",
+        "descripcion": "Una crema casera y saludable, ideal para cualquier época del año.",
+        "ingredientes": "Verduras variadas (calabacín, puerro, patata), caldo, aceite de oliva, sal.",
+        "instrucciones": "Cocer las verduras en el caldo, triturar y aliñar al gusto.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=24"
+    },
+    {
+        "id": 25,
+        "titulo": "Espinacas con Garbanzos",
+        "descripcion": "Plato andaluz de espinacas y garbanzos guisados con especias y un toque de comino.",
+        "ingredientes": "Garbanzos cocidos, espinacas, ajo, pan, comino, pimentón, aceite de oliva.",
+        "instrucciones": "Sofreír el ajo, añadir las espinacas y garbanzos. Condimentar con especias.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=25"
+    },
+    {
+        "id": 26,
+        "titulo": "Judías Verdes con Patatas y Jamón",
+        "descripcion": "Un plato sencillo y nutritivo con judías verdes, patatas cocidas y un sofrito de ajo y jamón.",
+        "ingredientes": "Judías verdes, patatas, jamón serrano, ajo, aceite de oliva.",
+        "instrucciones": "Cocer las judías y patatas. En una sartén, freír ajo y jamón. Mezclar todo.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=26"
+    },
+    {
+        "id": 27,
+        "titulo": "Porrusalda",
+        "descripcion": "Sopa de puerros y patatas típica del País Vasco, a menudo con bacalao.",
+        "ingredientes": "Puerros, patatas, bacalao (opcional), ajo, aceite de oliva, caldo de pescado.",
+        "instrucciones": "Sofreír el ajo y los puerros. Añadir las patatas y el caldo. Cocinar hasta que estén tiernas.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=27"
+    },
+    {
+        "id": 28,
+        "titulo": "Pisto Manchego",
+        "descripcion": "Clásico plato de verduras salteadas: tomate, pimiento, cebolla, calabacín.",
+        "ingredientes": "Tomate, pimiento, calabacín, cebolla, aceite de oliva, sal.",
+        "instrucciones": "Cortar las verduras en dados y pocharlas lentamente en aceite de oliva hasta que estén tiernas.",
+        "categoria": "Primero",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=28"
+    },
+    {
+        "id": 29,
+        "titulo": "Arroz a la Cubana",
+        "descripcion": "Plato de arroz blanco con tomate frito, un huevo frito y plátano frito.",
+        "ingredientes": "Arroz, tomate frito, huevos, plátano macho, aceite.",
+        "instrucciones": "Cocer el arroz, freír el huevo y el plátano. Servir todo junto con el tomate.",
+        "categoria": "Primero",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=29"
+    },
+    {
+        "id": 30,
+        "titulo": "Marmitako",
+        "descripcion": "Guiso de bonito del norte con patatas, cebolla, pimiento y tomate, típico del País Vasco.",
+        "ingredientes": "Bonito, patatas, cebolla, pimiento, tomate, aceite de oliva, caldo de pescado.",
+        "instrucciones": "Hacer un sofrito con las verduras, añadir las patatas, el caldo y el bonito al final.",
+        "categoria": "Primero",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=30"
+    },
+    {
+        "id": 31,
+        "titulo": "Paella Valenciana",
+        "descripcion": "Arroz con pollo, conejo, judía verde y garrofón, cocinado en una paellera.",
+        "ingredientes": "Arroz redondo, pollo, conejo, judía verde, garrofón, azafrán, tomate, aceite de oliva, agua.",
+        "instrucciones": "Sofreír la carne y las verduras, añadir el arroz y el agua con azafrán. Cocinar hasta que el arroz esté en su punto.",
+        "categoria": "Segundo",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=31"
+    },
+    {
+        "id": 32,
+        "titulo": "Cochinillo Asado",
+        "descripcion": "Elaborado cochinillo tierno asado al horno, crujiente por fuera y jugoso por dentro.",
+        "ingredientes": "Cochinillo de Segovia, manteca de cerdo, agua, sal.",
+        "instrucciones": "Asar el cochinillo al horno a temperatura baja por un lado y luego alta para dorar la piel.",
+        "categoria": "Segundo",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=32"
+    },
+    {
+        "id": 33,
+        "titulo": "Fideuá",
+        "descripcion": "Plato similar a la paella, pero hecho con fideos en lugar de arroz, y mariscos.",
+        "ingredientes": "Fideos, gambas, calamares, mejillones, pimiento, tomate, caldo de pescado, azafrán.",
+        "instrucciones": "Sofreír el marisco y las verduras. Añadir los fideos y el caldo. Hornear o cocinar hasta que los fideos estén dorados.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=33"
+    },
+    {
+        "id": 34,
+        "titulo": "Lomo de Cerdo en Salsa Española",
+        "descripcion": "Filetes de lomo de cerdo cocinados en una salsa rica a base de vino tinto y verduras.",
+        "ingredientes": "Lomo de cerdo, cebolla, zanahoria, ajo, vino tinto, caldo de carne, harina, aceite de oliva.",
+        "instrucciones": "Dorar el lomo, sofreír las verduras, añadir vino, caldo y el lomo. Cocinar a fuego lento hasta espesar.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=34"
+    },
+    {
+        "id": 35,
+        "titulo": "Cachopo Asturiano",
+        "descripcion": "Dos filetes de ternera grandes rellenos de jamón serrano y queso, rebozados y fritos.",
+        "ingredientes": "Filetes de ternera, jamón serrano, queso, harina, huevo, pan rallado.",
+        "instrucciones": "Montar el cachopo, rebozar en harina, huevo y pan rallado, freír en abundante aceite.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=35"
+    },
+    {
+        "id": 36,
+        "titulo": "Falda de Cordero con Patatas al Ajillo",
+        "descripcion": "Guiso tradicional de cordero y patatas con un sabor intenso a ajo y hierbas.",
+        "ingredientes": "Falda de cordero, patatas, ajo, vino blanco, romero, tomillo, caldo de carne.",
+        "instrucciones": "Dorar el cordero y las patatas. Guisar con ajo, vino y especias a fuego lento hasta que esté tierno.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=36"
+    },
+    {
+        "id": 37,
+        "titulo": "Albóndigas con Salsa de Almendras",
+        "descripcion": "Jugosas albóndigas de carne en una salsa cremosa y delicada de almendras.",
+        "ingredientes": "Carne picada, pan, leche, huevo, ajo, almendras, cebolla, caldo de carne, vino blanco.",
+        "instrucciones": "Preparar las albóndigas, freírlas. Hacer la salsa con las almendras, cebolla y vino. Guisar las albóndigas en la salsa.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=37"
+    },
+    {
+        "id": 38,
+        "titulo": "Carrilleras de Cerdo al Vino Tinto",
+        "descripcion": "Tiernas carrilleras estofadas en vino tinto, un plato meloso y con mucho sabor.",
+        "ingredientes": "Carrilleras de cerdo, vino tinto, cebolla, zanahoria, puerro, caldo de carne, laurel.",
+        "instrucciones": "Dorar las carrilleras, sofreír las verduras y estofarlo todo con vino tinto y caldo hasta que se deshaga la carne.",
+        "categoria": "Segundo",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=38"
+    },
+    {
+        "id": 39,
+        "titulo": "Calamares Encebollados",
+        "descripcion": "Calamares cocinados lentamente con mucha cebolla hasta conseguir una salsa suave y dulce.",
+        "ingredientes": "Calamares, cebolla, pimiento verde, tomate, vino blanco, aceite de oliva, sal.",
+        "instrucciones": "Sofreír la cebolla y el pimiento. Añadir los calamares y cocinarlos en su jugo con el vino y el tomate.",
+        "categoria": "Segundo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=39"
+    },
+    {
+        "id": 40,
+        "titulo": "Bacalao a la Vizcaína",
+        "descripcion": "Bacalao confitado con una salsa de pimientos choriceros, cebolla y ajo.",
+        "ingredientes": "Lomos de bacalao desalado, pimientos choriceros, cebolla, ajo, aceite de oliva.",
+        "instrucciones": "Confitar el bacalao en aceite. Elaborar la salsa vizcaína con los pimientos choriceros y la cebolla.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=40"
+    },
+    {
+        "id": 41,
+        "titulo": "Cordero a la Caldereta",
+        "descripcion": "Estofado de cordero popular en Extremadura y otras zonas, con especias y vino blanco.",
+        "ingredientes": "Cordero, cebolla, pimiento, tomate, ajo, vino blanco, laurel, guindilla.",
+        "instrucciones": "Sofreír las verduras y la carne. Guisar con vino blanco y especias hasta que el cordero esté tierno.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=41"
+    },
+    {
+        "id": 42,
+        "titulo": "Callos a la Madrileña",
+        "descripcion": "Guiso tradicional de callos de ternera con chorizo, morcilla y un toque picante.",
+        "ingredientes": "Callos de ternera, chorizo, morcilla, pata de ternera, pimentón, cebolla, ajo, laurel.",
+        "instrucciones": "Cocer los callos con las carnes. Hacer un sofrito con las verduras y pimentón. Guisar todo junto.",
+        "categoria": "Segundo",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=42"
+    },
+    {
+        "id": 43,
+        "titulo": "Escalivada Catalana",
+        "descripcion": "Verduras asadas (pimiento, berenjena, cebolla) aliñadas con aceite de oliva, perfecta para acompañar carnes.",
+        "ingredientes": "Pimientos rojos, berenjenas, cebollas, aceite de oliva, sal.",
+        "instrucciones": "Asar las verduras al horno, pelarlas y cortarlas en tiras. Aliñar.",
+        "categoria": "Segundo",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=43"
+    },
+    {
+        "id": 44,
+        "titulo": "Merluza en Salsa Verde",
+        "descripcion": "Merluza cocinada en una salsa de ajo, perejil, vino blanco y caldo de pescado, con almejas y guisantes.",
+        "ingredientes": "Lomos de merluza, almejas, guisantes, ajo, perejil, vino blanco, harina.",
+        "instrucciones": "Sofreír el ajo y añadir harina. Incorporar el vino, el caldo, las almejas y la merluza. Espolvorear perejil.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=44"
+    },
+    {
+        "id": 45,
+        "titulo": "Conejo al Ajillo",
+        "descripcion": "Trozos de conejo dorados y cocinados con ajo, vino blanco y hierbas aromáticas.",
+        "ingredientes": "Conejo troceado, ajo, vino blanco, romero, tomillo, laurel, aceite de oliva.",
+        "instrucciones": "Dorar el conejo. Freír los ajos y añadir el conejo, el vino y las hierbas. Cocinar a fuego lento.",
+        "categoria": "Segundo",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=45"
+    },
+    {
+        "id": 46,
+        "titulo": "Arroz con Leche",
+        "descripcion": "Postre tradicional de arroz cocido lentamente en leche con canela y limón.",
+        "ingredientes": "Arroz, leche, azúcar, canela en rama, cáscara de limón.",
+        "instrucciones": "Cocer el arroz con la leche y los aromatizantes a fuego muy lento, removiendo constantemente.",
+        "categoria": "Postre",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=46"
+    },
+    {
+        "id": 47,
+        "titulo": "Leche Frita",
+        "descripcion": "Un postre de origen castellano, con una masa frita y azucarada, suave por dentro y crujiente por fuera.",
+        "ingredientes": "Harina, leche, azúcar, huevo, canela, cáscara de limón.",
+        "instrucciones": "Hacer una masa con la leche, harina, azúcar y huevo. Enfriar, cortar, rebozar y freír.",
+        "categoria": "Postre",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=47"
+    },
+    {
+        "id": 48,
+        "titulo": "Crema Catalana",
+        "descripcion": "Crema pastelera con una capa de azúcar caramelizado por encima.",
+        "ingredientes": "Yemas de huevo, azúcar, leche, maicena, canela, cáscara de limón.",
+        "instrucciones": "Calentar la leche con la canela y limón. Hacer la crema y dejar enfriar. Quemar azúcar justo antes de servir.",
+        "categoria": "Postre",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=48"
+    },
+    {
+        "id": 49,
+        "titulo": "Torrijas",
+        "descripcion": "Rebanadas de pan empapadas en leche o vino, rebozadas en huevo, fritas y endulzadas.",
+        "ingredientes": "Pan, leche, huevo, azúcar, canela, aceite de oliva.",
+        "instrucciones": "Empapar el pan, rebozar en huevo, freír y espolvorear con azúcar y canela.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=49"
+    },
+    {
+        "id": 50,
+        "titulo": "Sobaos Pasiegos",
+        "descripcion": "Un bizcocho mantecoso y esponjoso de Cantabria, perfecto para el desayuno o la merienda.",
+        "ingredientes": "Mantequilla, azúcar, huevos, harina, ralladura de limón, ron, levadura.",
+        "instrucciones": "Batir la mantequilla con el azúcar. Añadir huevos y harina. Hornear en moldes rectangulares.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=50"
+    },
+    {
+        "id": 51,
+        "titulo": "Flan de Huevo",
+        "descripcion": "Delicioso postre de huevo y leche, cocinado al baño maría, con caramelo líquido.",
+        "ingredientes": "Huevos, leche, azúcar, caramelo líquido.",
+        "instrucciones": "Batir los huevos con azúcar y leche. Verter en moldes con caramelo y cocer al baño maría.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=51"
+    },
+    {
+        "id": 52,
+        "titulo": "Tarta de Santiago",
+        "descripcion": "Bizcocho tradicional gallego a base de almendras, con la cruz de Santiago en la superficie.",
+        "ingredientes": "Almendras molidas, azúcar, huevos, canela, ralladura de limón, azúcar glas.",
+        "instrucciones": "Mezclar los ingredientes y hornear. Una vez fría, espolvorear azúcar glas con la cruz de Santiago.",
+        "categoria": "Postre",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=52"
+    },
+    {
+        "id": 53,
+        "titulo": "Natillas",
+        "descripcion": "Crema de leche, yemas de huevo y azúcar, aromatizada con canela y limón.",
+        "ingredientes": "Leche, yemas de huevo, azúcar, canela en rama, cáscara de limón, galletas.",
+        "instrucciones": "Calentar la leche con la canela y el limón. Batir las yemas con azúcar. Unir y cocer sin que hierva. Servir con galletas.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=53"
+    },
+    {
+        "id": 54,
+        "titulo": "Quesada Pasiega",
+        "descripcion": "Tarta tradicional cántabra, a base de queso fresco y huevos.",
+        "ingredientes": "Queso fresco, huevos, azúcar, mantequilla, harina, limón.",
+        "instrucciones": "Mezclar todos los ingredientes y hornear hasta que cuaje y se dore.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=54"
+    },
+    {
+        "id": 55,
+        "titulo": "Filloas Gallegas",
+        "descripcion": "Similares a los crepes, pero más finas, tradicionalmente rellenas de dulces.",
+        "ingredientes": "Harina, huevos, leche, agua, azúcar, sal.",
+        "instrucciones": "Mezclar los ingredientes para la masa, dejar reposar. Cocinar en una sartén fina.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=55"
+    },
+    {
+        "id": 56,
+        "titulo": "Melocotones en Vino",
+        "descripcion": "Melocotones frescos macerados en vino tinto con azúcar y canela.",
+        "ingredientes": "Melocotones maduros, vino tinto, azúcar, canela en rama.",
+        "instrucciones": "Pelar y cortar los melocotones, cocer en vino con azúcar y canela a fuego lento.",
+        "categoria": "Postre",
+        "dificultad": "Baja",
+        "imagen": "https://picsum.photos/400/250?random=56"
+    },
+    {
+        "id": 57,
+        "titulo": "Pestiños",
+        "descripcion": "Dulce frito andaluz con masa de harina, ajonjolí y vino, bañado en miel.",
+        "ingredientes": "Harina, ajonjolí, aceite de oliva, vino blanco, anís, miel.",
+        "instrucciones": "Amasar los ingredientes, freír los pestiños y bañarlos en miel caliente.",
+        "categoria": "Postre",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=57"
+    },
+    {
+        "id": 58,
+        "titulo": "Buñuelos de Viento",
+        "descripcion": "Pequeñas bolitas de masa frita, muy ligeras, que se suelen rellenar con crema.",
+        "ingredientes": "Agua, mantequilla, harina, huevos, azúcar glas, crema pastelera.",
+        "instrucciones": "Hacer la masa 'choux', freír los buñuelos y, una vez fríos, rellenar con crema.",
+        "categoria": "Postre",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=58"
+    },
+    {
+        "id": 59,
+        "titulo": "Ensaimada de Mallorca",
+        "descripcion": "Postre en forma de espiral, con una masa dulce y esponjosa, típica de las Islas Baleares.",
+        "ingredientes": "Harina de fuerza, agua, azúcar, huevos, masa madre, manteca de cerdo.",
+        "instrucciones": "Amasar la masa y dejarla fermentar. Estirarla, untar con manteca y enrollarla en forma de espiral. Hornear.",
+        "categoria": "Postre",
+        "dificultad": "Alta",
+        "imagen": "https://picsum.photos/400/250?random=59"
+    },
+    {
+        "id": 60,
+        "titulo": "Pantxineta",
+        "descripcion": "Pastel vasco de hojaldre relleno de crema y cubierto de almendras.",
+        "ingredientes": "Hojaldre, yemas de huevo, leche, azúcar, almendras, mantequilla.",
+        "instrucciones": "Hacer la crema pastelera. Montar el pastel con el hojaldre, la crema y las almendras. Hornear.",
+        "categoria": "Postre",
+        "dificultad": "Media",
+        "imagen": "https://picsum.photos/400/250?random=60"
+    }
+]
