@@ -78,9 +78,6 @@
                 </select>
             </div>
         </div>
-        <div id="readerStatus" class="muted" style="font-size:.8rem;margin-top:1rem" aria-live="polite"></div>
-        <div id="heard" class="muted" style="font-size:.8rem;margin-top:.25rem">🎧 Oído: <span id="heardText">—</span></div>
-        <div id="voiceHUD"><span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span></div>
     </section>
 
     <section class="muted" style="font-size:.9rem;margin-bottom:.5rem">
@@ -117,55 +114,7 @@
         </div>
       </div>
     </div>
-
-    <div id="guidedModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
-      <div class="card" style="max-width:760px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="guidedTitle" style="margin:0;font-size:1.2rem">Cocina guiada</h3>
-          <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
-        </div>
-        <div style="padding:1rem; display:flex; flex-direction:column; gap:1rem">
-          <p class="meta"><strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
-          <div style="background:#f5f5f5;border-radius:.75rem;padding:1rem" class="dark" id="guidedBox">
-            <h4 id="guidedRecipeTitle" style="margin:0 0 .5rem 0;font-size:1.05rem"></h4>
-            <ol id="guidedSteps" style="display:flex;flex-direction:column;gap:.5rem"></ol>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
-            <div class="meta" id="guidedProgress" aria-live="polite"></div>
-            <div class="row">
-              <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior" title="Anterior">← Anterior</button>
-              <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso" title="Repetir">⟲ Repetir</button>
-              <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente" title="Siguiente">Siguiente →</button>
-              <button id="stopReading" class="btn btn-ghost" aria-label="Parar lectura" title="Parar">■ Parar</button>
-              <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta" title="Imprimir">🖨️ Imprimir</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true">
-      <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-        <h3 style="margin:0;font-size:1.05rem">Lista de la compra</h3>
-        <div class="row">
-          <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista" title="Exportar lista">⬇️ Exportar</button>
-          <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista" title="Imprimir lista">🖨️</button>
-          <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
-          <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
-        </div>
-      </div>
-      <div style="padding:1rem">
-        <div class="row" style="gap:.5rem;margin-bottom:.75rem">
-          <label for="newItem" class="skip-link">Nuevo artículo</label>
-          <input id="newItem" class="input" style="flex:1" placeholder="Añadir artículo (ej. 1 kg tomates)" />
-          <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo" title="Añadir artículo">Añadir</button>
-        </div>
-        <ul id="shoppingList" style="display:flex;flex-direction:column;gap:.5rem;list-style:none;padding-left:0;margin:0"></ul>
-        <p id="shoppingEmpty" class="muted" style="margin-top:.5rem" hidden>Tu lista está vacía.</p>
-      </div>
-    </aside>
-
-    <div id="ttsCaption" role="status" aria-live="polite"></div>
+    
     <script src="scripts.js" defer></script>
 </body>
 </html>
