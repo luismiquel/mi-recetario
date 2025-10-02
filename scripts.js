@@ -1,4 +1,4 @@
-const APP_VERSION = "recetario-2.1.0-lazyload";
+const APP_VERSION = "recetario-2.2.0-staggered";
 
 /* ===== Datos (160 recetas) ===== */
 const APERITIVOS = ["Tostas de tomate y jamón", "Tostas de anchoa y pimiento", "Tostas de escalivada", "Tostas de salmón y queso fresco", "Croquetas de jamón", "Croquetas de pollo", "Croquetas de bacalao", "Croquetas de setas", "Empanadillas de atún", "Empanadillas de carne", "Patatas bravas", "Patatas alioli", "Boquerones en vinagre", "Champiñones al ajillo", "Gildas donostiarras", "Pinchos de tortilla", "Pinchos morunos", "Queso marinado en aceite", "Hummus clásico con crudités", "Hummus de remolacha", "Hummus de aguacate", "Gazpacho en vasitos", "Salmorejo en chupitos", "Ensaladilla rusa", "Tortilla francesa mini", "Banderillas variadas", "Mejillones en escabeche", "Sardinas marinadas", "Pulpo a la gallega (tapa)", "Calamares a la romana", "Torreznos crujientes", "Jamón con picos", "Queso manchego con membrillo", "Pimientos del padrón", "Montadito de lomo", "Montadito de pringá", "Bonito con tomate (tapa)", "Pisto con huevo (tapa)", "Chistorra a la sidra", "Berenjena frita con miel"];
@@ -7,6 +7,7 @@ const SEGUNDOS = ["Pollo al ajillo", "Pollo al horno con patatas", "Pollo en pep
 const POSTRES = ["Flan casero", "Natillas caseras", "Arroz con leche", "Leche frita", "Torrijas", "Crema catalana", "Tarta de queso al horno", "Tarta de Santiago", "Bizcocho de yogur", "Bizcocho de naranja", "Magdalenas caseras", "Galletas de mantequilla", "Rosquillas fritas", "Pestiños", "Buñuelos de viento", "Filloas", "Peras al vino", "Compota de manzana", "Macedonia de frutas", "Helado rápido de plátano", "Mousse de chocolate", "Natillas de vainilla", "Tarta de manzana", "Tarta tres leches (versión)", "Brazo de gitano", "Quesada pasiega", "Tocino de cielo", "Pan de Calatrava", "Cuajada con miel", "Crepes dulces", "Flan de café", "Crema pastelera con frutas", "Tarta de almendra", "Tarta de galletas con chocolate", "Bizcocho marmolado", "Helado de yogur", "Brownie sencillo", "Crema de limón", "Naranja con canela", "Fresas con nata"];
 
 function parseTime(timeString) { const match = timeString.match(/\d+/); return match ? parseInt(match[0], 10) : 0; }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 const PASOS_BASE = { Aperitivo: ["Prepara y ten a mano todo.", "Corta o dispón los ingredientes.", "Sofríe o mezcla hasta aromatizar.", "Monta y ajusta sal/aliño.", "Reposa 1–2 min o sirve caliente.", "Emplata y sirve."], Primero: ["Lava y prepara verduras.", "Sofríe ajo/cebolla suave.", "Añade ingrediente principal y rehoga.", "Cubre con caldo/agua y cocina.", "Ajusta textura (tritura/reposa).", "Sirve caliente o frío."], Segundo: ["Seca la pieza y sala.", "Añade adobo/especias.", "Dora/hornea/sella bien.", "Agrega guarnición/salsa y cocina al punto.", "Reposa unos minutos.", "Sirve con su jugo."], Postre: ["Pesa y mide todo.", "Mezcla secos y húmedos aparte.", "Aromatiza (cítricos/vainilla/canela).", "Hornea/refrigera hasta cuajar.", "Enfría o reposa.", "Decora y sirve."] };
 function stripDiacritics(s) { try { return (s || "").normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch { return s || ""; } }
 const slug = s => stripDiacritics((s || "").toLowerCase()).replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -77,47 +78,34 @@ async function setImg(el, r) {
     el.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); };
 }
 
-function card(r, i) {
-    const star = isFav(r) ? '⭐' : '☆';
-    // Para lazy loading, no ponemos 'src', sino 'data-src'. La clase 'lazy' nos sirve para identificarla.
-    return `<article class="card" role="article" aria-label="${r.titulo}">
-        <img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton">
-        <div class="body">
-            <h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3>
-            <p class="meta">${r.categoria} · ${r.tiempo}</p>
-            <div class="bar">
-                <button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button>
-                <button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button>
-                <button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button>
-                <button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button>
-            </div>
-        </div>
-    </article>`;
-}
+function card(r, i) { const star = isFav(r) ? '⭐' : '☆'; return `<article class="card" role="article" aria-label="${r.titulo}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton"><div class="body"><h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p><div class="bar"><button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button><button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button><button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button><button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button></div></div></article>`; }
 
 let imageObserver;
 function render(list) {
     state.list = list;
-    if (imageObserver) imageObserver.disconnect(); // Desconectar el observador anterior
+    if (imageObserver) imageObserver.disconnect();
     els.empty.hidden = list.length > 0;
     els.grid.innerHTML = list.map((r, i) => card(r, i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
-
-    // Configurar el nuevo observador para las imágenes de la lista actual
-    const lazyImages = els.grid.querySelectorAll('img.lazy');
-    imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
+    
+    const lazyImages = Array.from(els.grid.querySelectorAll('img.lazy'));
+    
+    // El IntersectionObserver ahora tiene la lógica escalonada
+    imageObserver = new IntersectionObserver(async (entries, observer) => {
+        for (const entry of entries) {
             if (entry.isIntersecting) {
                 const img = entry.target;
                 const recipe = list[img.dataset.i];
                 if (recipe) {
-                    setImg(img, recipe);
+                    await setImg(img, recipe);
+                    await sleep(150); // Pequeña pausa de 150ms entre cada petición
                 }
                 img.classList.remove('lazy');
                 observer.unobserve(img);
             }
-        });
-    });
+        }
+    }, { rootMargin: '200px' }); // Empieza a cargar imágenes 200px antes de que entren en pantalla
+
     lazyImages.forEach(img => imageObserver.observe(img));
 }
 
