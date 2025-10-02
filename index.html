@@ -39,34 +39,54 @@
     </header>
 
     <section class="card" style="padding:1rem;margin-bottom:1rem" aria-label="Búsqueda y filtros">
-      <div class="filters">
-        <div style="flex:1">
-          <label for="search" class="muted" style="font-size:.9rem;font-weight:600">Buscar</label>
-          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)" class="input" />
+        <div class="filters">
+            <div style="flex:1">
+            <label for="search" class="muted" style="font-size:.9rem;font-weight:600">Buscar</label>
+            <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)" class="input" />
+            </div>
+            <div class="row" role="tablist" aria-label="Categorías">
+            <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
+            <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
+            <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
+            <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
+            <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
+            </div>
         </div>
-        <div class="row" role="tablist" aria-label="Categorías">
-          <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
-          <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
-          <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
-          <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
-          <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
+
+        <div class="filters" style="margin-top: 1rem; border-top: 1px solid rgba(120,113,108,.25); padding-top: 1rem;">
+            <div>
+                <label for="sortOrder" class="muted" style="font-size:.9rem;font-weight:600">Ordenar por</label>
+                <select id="sortOrder" class="input">
+                    <option value="default">Por defecto</option>
+                    <option value="az">Nombre (A-Z)</option>
+                    <option value="za">Nombre (Z-A)</option>
+                    <option value="time-asc">Tiempo (más corto)</option>
+                    <option value="time-desc">Tiempo (más largo)</option>
+                </select>
+            </div>
+            <div>
+                <label for="filterDifficulty" class="muted" style="font-size:.9rem;font-weight:600">Dificultad</label>
+                <select id="filterDifficulty" class="input">
+                    <option value="all">Todas</option>
+                    <option value="Fácil">Fácil</option>
+                    <option value="Media">Media</option>
+                    <option value="Difícil">Difícil</option>
+                </select>
+            </div>
+            <div>
+                <label for="filterTime" class="muted" style="font-size:.9rem;font-weight:600">Tiempo de cocción</label>
+                <select id="filterTime" class="input">
+                    <option value="all">Cualquiera</option>
+                    <option value="30">Menos de 30 min</option>
+                    <option value="60">Entre 30 y 60 min</option>
+                    <option value="61">Más de 60 min</option>
+                </select>
+            </div>
         </div>
-        <div class="row" style="align-items:end">
-          <label class="muted" for="voiceRate" style="font-size:.9rem">Voz:</label>
-          <select id="voiceRate" class="input" style="width:auto" aria-label="Velocidad de lectura en voz alta">
-            <option value="0.8">Lenta</option>
-            <option value="0.9" selected>Clara</option>
-            <option value="1.0">Normal</option>
-          </select>
-          <label for="autoListen" class="muted" title="Escuchar sin pulsar" style="user-select:none">
-            <input id="autoListen" type="checkbox" class="align-middle" checked> Auto
-          </label>
-          <button id="toggleMic" class="btn btn-primary" title="Reconectar reconocimiento de voz" aria-label="Reconectar reconocimiento de voz">🎤 Reconectar voz</button>
-        </div>
-      </div>
-      <div id="readerStatus" class="muted" style="font-size:.8rem;margin-top:.25rem" aria-live="polite"></div>
-      <div id="heard" class="muted" style="font-size:.8rem;margin-top:.25rem">🎧 Oído: <span id="heardText">—</span></div>
-      <div id="voiceHUD"><span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span></div>
+        
+        <div id="readerStatus" class="muted" style="font-size:.8rem;margin-top:1rem" aria-live="polite"></div>
+        <div id="heard" class="muted" style="font-size:.8rem;margin-top:.25rem">🎧 Oído: <span id="heardText">—</span></div>
+        <div id="voiceHUD"><span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span></div>
     </section>
 
     <section class="muted" style="font-size:.9rem;margin-bottom:.5rem">
@@ -78,82 +98,11 @@
       <div id="emptyState" hidden>No hay resultados.</div>
     </main>
 
-    <div id="detailModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <div class="card" style="max-width:960px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="detailTitle" style="margin:0;font-size:1.2rem">Detalle</h3>
-          <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle" title="Cerrar">✕</button>
-        </div>
-        <div style="padding:1rem; display:grid; gap:1rem; grid-template-columns: 1fr;">
-          <div style="display:grid; gap:.5rem; grid-template-columns: 1fr;">
-            <img id="detailImg" alt="" width="800" height="500" class="skeleton" style="width:100%;height:220px;object-fit:cover;border-radius:.75rem">
-            <p id="detailMeta" class="meta"></p>
-            <div class="bar">
-              <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
-              <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
-              <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
-            </div>
-          </div>
-          <div>
-            <h4 style="margin:.25rem 0;font-size:1.05rem">Ingredientes</h4>
-            <ul id="detailIngredients"></ul>
-            <h4 style="margin:.75rem 0 .25rem 0;font-size:1.05rem">Pasos</h4>
-            <ol id="detailSteps"></ol>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="detailModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="detailTitle"></div>
+    <div id="guidedModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="guidedTitle"></div>
+    <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true"></aside>
 
-    <div id="guidedModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
-      <div class="card" style="max-width:760px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="guidedTitle" style="margin:0;font-size:1.2rem">Cocina guiada</h3>
-          <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
-        </div>
-        <div style="padding:1rem; display:flex; flex-direction:column; gap:1rem">
-          <p class="meta"><strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
-          <div style="background:#f5f5f5;border-radius:.75rem;padding:1rem" class="dark" id="guidedBox">
-            <h4 id="guidedRecipeTitle" style="margin:0 0 .5rem 0;font-size:1.05rem"></h4>
-            <ol id="guidedSteps" style="display:flex;flex-direction:column;gap:.5rem"></ol>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
-            <div class="meta" id="guidedProgress" aria-live="polite"></div>
-            <div class="row">
-              <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior" title="Anterior">← Anterior</button>
-              <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso" title="Repetir">⟲ Repetir</button>
-              <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente" title="Siguiente">Siguiente →</button>
-              <button id="stopReading" class="btn btn-ghost" aria-label="Parar lectura" title="Parar">■ Parar</button>
-              <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta" title="Imprimir">🖨️ Imprimir</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true">
-      <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-        <h3 style="margin:0;font-size:1.05rem">Lista de la compra</h3>
-        <div class="row">
-          <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista" title="Exportar lista">⬇️ Exportar</button>
-          <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista" title="Imprimir lista">🖨️</button>
-          <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
-          <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
-        </div>
-      </div>
-      <div style="padding:1rem">
-        <div class="row" style="gap:.5rem;margin-bottom:.75rem">
-          <label for="newItem" class="skip">Nuevo artículo</label>
-          <input id="newItem" class="input" style="flex:1" placeholder="Añadir artículo (ej. 1 kg tomates)" />
-          <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo" title="Añadir artículo">Añadir</button>
-        </div>
-        <ul id="shoppingList" style="display:flex;flex-direction:column;gap:.5rem;list-style:none;padding-left:0;margin:0"></ul>
-        <p id="shoppingEmpty" class="muted" style="margin-top:.5rem" hidden>Tu lista está vacía.</p>
-      </div>
-    </aside>
-  </div>
-
-  <div id="ttsCaption" role="status" aria-live="polite"></div>
-  
-  <script src="scripts.js" defer></script>
+    <div id="ttsCaption" role="status" aria-live="polite"></div>
+    <script src="scripts.js" defer></script>
 </body>
 </html>
