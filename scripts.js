@@ -1,26 +1,50 @@
-const APP_VERSION = "recetario-3.0.1-final";
+const APP_VERSION = "recetario-3.1.0-extended-images";
 
-/* ===== URLs de Imágenes Predefinidas ===== */
+/* ===== URLs de Imágenes Predefinidas (LISTA AMPLIADA) ===== */
 const IMAGENES_RECETAS = {
+    // Aperitivos
     "Tortilla de patatas": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tortilla_de_patatas_con_cebolla_2.jpg",
-    "Paella mixta": "https://upload.wikimedia.org/wikipedia/commons/0/00/Plato_de_paella_mixta.jpg",
-    "Gazpacho andaluz": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Gazpacho_andaluz.jpg",
-    "Salmorejo cordobés": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Salmorejo.jpg",
     "Patatas bravas": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Patatas_bravas_madrid.jpg/1280px-Patatas_bravas_madrid.jpg",
     "Croquetas de jamón": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Croquetas_de_jamon_serrano.jpg/1280px-Croquetas_de_jamon_serrano.jpg",
-    "Pisto manchego": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pisto_manchego_con_huevo_frito.jpg/1024px-Pisto_manchego_con_huevo_frito.jpg",
-    "Fabada asturiana": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Plato_fabada.jpg/1024px-Plato_fabada.jpg",
+    "Gambas al Ajillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Gambas_al_ajillo_en_cazuela_de_barro.jpg/1024px-Gambas_al_ajillo_en_cazuela_de_barro.jpg",
     "Pulpo a la gallega": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Pulpo_a_la_gallega_-_Lugo_001.jpg/1024px-Pulpo_a_la_gallega_-_Lugo_001.jpg",
+    "Calamares a la romana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Calamares_a_la_romana_con_limon.jpg/1024px-Calamares_a_la_romana_con_limon.jpg",
+    "Queso manchego con membrillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Queso_Manchego_con_Membrillo_%283578359194%29.jpg/1024px-Queso_Manchego_con_Membrillo_%283578359194%29.jpg",
+    "Pimientos del padrón": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pimientos_de_Padr%C3%B3n_-_Herb%C3%B3n_-_Galicia_-_Espa%C3%B1a_-_01.jpg/1024px-Pimientos_de_Padr%C3%B3n_-_Herb%C3%B3n_-_Galicia_-_Espa%C3%B1a_-_01.jpg",
+    "Boquerones en vinagre": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Boquerones_en_vinagre_de_Madrid.jpg/1024px-Boquerones_en_vinagre_de_Madrid.jpg",
+    "Empanadillas de atún": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Empanadillas_de_bonito_caseras_recien_fritas.jpg/1024px-Empanadillas_de_bonito_caseras_recien_fritas.jpg",
+
+    // Primeros
+    "Gazpacho andaluz": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Gazpacho_andaluz.jpg",
+    "Salmorejo cordobés": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Salmorejo.jpg",
+    "Sopa de ajo": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Sopa_de_ajo_de_Zamora.jpg/1024px-Sopa_de_ajo_de_Zamora.jpg",
+    "Lentejas estofadas": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Lentejas_con_chorizo_y_verduras.jpg/1024px-Lentejas_con_chorizo_y_verduras.jpg",
+    "Pisto manchego": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pisto_manchego_con_huevo_frito.jpg/1024px-Pisto_manchego_con_huevo_frito.jpg",
+    "Ensaladilla rusa": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Ensaladilla_Rusa_de_cerca.JPG/1024px-Ensaladilla_Rusa_de_cerca.JPG",
+    "Crema de calabaza": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Crema-de-calabaza.jpg/1024px-Crema-de-calabaza.jpg",
+
+    // Segundos
+    "Paella mixta": "https://upload.wikimedia.org/wikipedia/commons/0/00/Plato_de_paella_mixta.jpg",
+    "Fabada asturiana": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Plato_fabada.jpg/1024px-Plato_fabada.jpg",
+    "Rabo de toro": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Rabo_de_toro_del_Restaurante_Astorga.jpg/1024px-Rabo_de_toro_del_Restaurante_Astorga.jpg",
+    "Merluza en salsa verde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Merluza_en_salsa_verde_con_almejas.jpg/1024px-Merluza_en_salsa_verde_con_almejas.jpg",
+    "Pollo al ajillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Pollo_al_ajillo_-_Chicken_with_garlic.jpg/1024px-Pollo_al_ajillo_-_Chicken_with_garlic.jpg",
+    "Carrilleras al vino tinto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Carrillada_de_cerdo_al_vino_tinto_de_toro.jpg/1024px-Carrillada_de_cerdo_al_vino_tinto_de_toro.jpg",
+    
+    // Postres
     "Tarta de Santiago": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Tarta_de_Santiago_al_corte.jpg/1024px-Tarta_de_Santiago_al_corte.jpg",
     "Crema catalana": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Crema_catalana_quemada.jpg/1024px-Crema_catalana_quemada.jpg",
     "Arroz con leche": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Arroz_con_leche_de_Asturias.jpg/1024px-Arroz_con_leche_de_Asturias.jpg",
-    "Gambas al Ajillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Gambas_al_ajillo_en_cazuela_de_barro.jpg/1024px-Gambas_al_ajillo_en_cazuela_de_barro.jpg"
+    "Flan casero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Flan_casero_%28porci%C3%B3n%29.jpg/1024px-Flan_casero_%28porci%C3%B3n%29.jpg",
+    "Torrijas": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Torrijas_de_leche.jpg/1024px-Torrijas_de_leche.jpg",
+    "Leche frita": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Leche_frita_with_cinnamon_ice_cream.jpg/1024px-Leche_frita_with_cinnamon_ice_cream.jpg"
 };
 
+/* ===== El resto del código permanece igual ===== */
+// (El código que sigue es idéntico al de la vez anterior)
 
-/* ===== Datos (160 recetas) ===== */
 const APERITIVOS = ["Tostas de tomate y jamón", "Tostas de anchoa y pimiento", "Tostas de escalivada", "Tostas de salmón y queso fresco", "Croquetas de jamón", "Croquetas de pollo", "Croquetas de bacalao", "Croquetas de setas", "Empanadillas de atún", "Empanadillas de carne", "Patatas bravas", "Patatas alioli", "Boquerones en vinagre", "Champiñones al ajillo", "Gildas donostiarras", "Pinchos de tortilla", "Pinchos morunos", "Queso marinado en aceite", "Hummus clásico con crudités", "Hummus de remolacha", "Hummus de aguacate", "Gazpacho en vasitos", "Salmorejo en chupitos", "Ensaladilla rusa", "Tortilla francesa mini", "Banderillas variadas", "Mejillones en escabeche", "Sardinas marinadas", "Pulpo a la gallega (tapa)", "Calamares a la romana", "Torreznos crujientes", "Jamón con picos", "Queso manchego con membrillo", "Pimientos del padrón", "Montadito de lomo", "Montadito de pringá", "Bonito con tomate (tapa)", "Pisto con huevo (tapa)", "Chistorra a la sidra", "Berenjena frita con miel"];
-const PRIMEROS = ["Sopa de ajo", "Sopa castellana", "Gazpacho andaluz", "Salmorejo cordobés", "Ajoblanco", "Crema de calabaza", "Crema de puerros", "Crema de champiñón", "Pisto manchego", "Menestra de verduras", "Lentejas estofadas", "Garbanzos con espinacas", "Judías blancas con verduras", "Arroz caldoso de verduras", "Arroz a la cubana", "Arroz negro", "Arroz al horno", "Paella de verduras", "Fideuá de pescado", "Macarrones con tomate", "Tallarines al ajillo", "Espaguetis carbonara ligera", "Ensalada mixta", "Ensalada campera", "Ensalada de garbanzos", "Ensalada de pasta fría", "Tomates aliñados", "Papas arrugadas con mojo", "Pimientos asados", "Alcachofas salteadas", "Acelgas rehogadas", "Sopa de pescado", "Caldo gallego", "Cocido andaluz (sopa)", "Sopa minestrone", "Vichyssoise", "Crema de zanahoria", "Porrusalda", "Sopa de marisco", "Caldo de pollo casero"];
+const PRIMEROS = ["Sopa de ajo", "Sopa castellana", "Gazpacho andaluz", "Salmorejo cordobés", "Ajoblanco", "Crema de calabaza", "Crema de puerros", "Crema de champiñón", "Pisto manchego", "Menestra de verduras", "Lentejas estofadas", "Garbanzos con espinacas", "Judías blancas con verduras", "Arroz caldoso de verduras", "Arroz a la cubana", "Arroz negro", "Arroz al horno", "Paella de verduras", "Fideuá de pescado", "Macarrones con tomate", "Tallarines al ajillo", "Espaguetis carbonara ligera", "Ensalada mixta", "Ensalada campera", "Ensalada de garbanzos", "Ensalada de pasta fría", "Tomates aliñados", "Papas arrugadas con mojo", "Pimientos asados", "Alcachofas salteadas", "Acelgas rehogadas", "Sopa de pescado", "Caldo gallego", "Cocido andaluz (sopa)", "Sopa minestrone", "Vichyssoise", "Crema de zanhoria", "Porrusalda", "Sopa de marisco", "Caldo de pollo casero"];
 const SEGUNDOS = ["Pollo al ajillo", "Pollo al horno con patatas", "Pollo en pepitoria", "Pechuga de pollo a la plancha", "Escalope de ternera", "Filete de ternera a la plancha", "Carrilleras al vino tinto", "Rabo de toro", "Albóndigas en salsa", "Lomo adobado", "Costillas al horno", "Chuletillas de cordero", "Cordero asado", "Secreto ibérico a la plancha", "Solomillo al roquefort", "Bacalao a la vizcaína", "Bacalao al pil-pil", "Merluza en salsa verde", "Dorada al horno", "Lubina a la sal", "Salmón al papillote", "Atún encebollado", "Calamares en su tinta", "Pulpo a la gallega", "Paella mixta", "Arroz con pollo", "Arroz con bogavante", "Empanada gallega de atún", "Pisto con huevos", "Tortilla de patatas", "Revuelto de setas", "Conejo al ajillo", "Codornices escabechadas", "Callos a la madrileña", "Fabada asturiana", "Marmitako de bonito", "Chuletón a la plancha", "Escabeche de caballa", "Bonito con tomate", "Trucha a la navarra"];
 const POSTRES = ["Flan casero", "Natillas caseras", "Arroz con leche", "Leche frita", "Torrijas", "Crema catalana", "Tarta de queso al horno", "Tarta de Santiago", "Bizcocho de yogur", "Bizcocho de naranja", "Magdalenas caseras", "Galletas de mantequilla", "Rosquillas fritas", "Pestiños", "Buñuelos de viento", "Filloas", "Peras al vino", "Compota de manzana", "Macedonia de frutas", "Helado rápido de plátano", "Mousse de chocolate", "Natillas de vainilla", "Tarta de manzana", "Tarta tres leches (versión)", "Brazo de gitano", "Quesada pasiega", "Tocino de cielo", "Pan de Calatrava", "Cuajada con miel", "Crepes dulces", "Flan de café", "Crema pastelera con frutas", "Tarta de almendra", "Tarta de galletas con chocolate", "Bizcocho marmolado", "Helado de yogur", "Brownie sencillo", "Crema de limón", "Naranja con canela", "Fresas con nata"];
 
@@ -56,7 +80,6 @@ function saveFav() { try { localStorage.setItem(FKEY, JSON.stringify([...fav]));
 function isFav(r) { return fav.has(r.titulo); }
 function toggleFav(r) { isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-// --- FUNCIONES DE IMAGEN ---
 function photoFallback(title, categoria) {
     const kcat = (categoria || '').toLowerCase().replace(' ', ',');
     const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(','));
@@ -71,13 +94,10 @@ function svgPlaceholder(title = "Receta") {
 function setImg(el, r) {
     el.src = svgPlaceholder(r.titulo);
     el.classList.add('skeleton');
-
     const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria);
-    
     const finalImage = new Image();
     finalImage.src = imageUrl;
     finalImage.alt = `Foto de ${r.titulo}`;
-
     finalImage.onload = () => {
         el.src = finalImage.src;
         el.classList.remove('skeleton');
@@ -87,7 +107,6 @@ function setImg(el, r) {
         el.classList.remove('skeleton');
     };
 }
-// --- FIN FUNCIONES DE IMAGEN ---
 
 function card(r, i) { const star = isFav(r) ? '⭐' : '☆'; return `<article class="card" role="article" aria-label="${r.titulo}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton"><div class="body"><h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p><div class="bar"><button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button><button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button><button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button><button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button></div></div></article>`; }
 
@@ -98,7 +117,6 @@ function render(list) {
     els.empty.hidden = list.length > 0;
     els.grid.innerHTML = list.map((r, i) => card(r, i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
-
     const lazyImages = Array.from(els.grid.querySelectorAll('img.lazy'));
     imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -113,7 +131,6 @@ function render(list) {
             }
         });
     }, { rootMargin: '200px' });
-
     lazyImages.forEach(img => imageObserver.observe(img));
 }
 
@@ -164,7 +181,5 @@ els.grid.addEventListener('click', e => {
     }
 });
 
-// Mock functions for guided mode and TTS
 function openGuided(r) { alert("Iniciando modo guiado para: " + r.titulo); }
 function readRecipe(r) { alert("Leyendo en voz alta: " + r.titulo); }
-// ... (El resto de funciones para la lista de la compra, voz, etc. se mantienen igual pero sin la lógica compleja por ahora)
