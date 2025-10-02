@@ -29,22 +29,35 @@ h1{ margin:0; }
 #ttsCaption.show{display:block}
 @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
 
-/* Grid simple sin Tailwind */
 .grid{ display:grid; gap:1rem; grid-template-columns: repeat(2, minmax(0,1fr)); }
 @media (min-width: 880px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
 
-/* Tarjetas */
-.card img{ width:100%; height:200px; object-fit:cover; display:block; background:#e5e7eb }
-.dark .card img{ background:#111827 }
+/* --- MEJORA VISUAL PARA LAS IMÁGENES --- */
+.card img {
+    width:100%;
+    height:200px;
+    object-fit:cover;
+    display:block;
+    background:#e5e7eb;
+    /* Transición suave para la opacidad */
+    transition: opacity 0.4s ease-in-out;
+}
+.dark .card img {
+    background:#1f2937;
+}
+/* La imagen es invisible mientras es un esqueleto */
+.card img.skeleton {
+    opacity: 0;
+}
+/* --- FIN DE LA MEJORA --- */
+
 .card .body{ padding:.75rem; }
 .row{ display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
 
-/* Scrollbar */
 *::-webkit-scrollbar{ width:12px; height:12px }
 *::-webkit-scrollbar-thumb{ background-color: rgba(120,113,108,.5); border-radius: 8px }
 *::-webkit-scrollbar-track{ background: transparent }
 
-/* HUD del asistente de voz */
 #voiceHUD{display:flex;align-items:center;gap:.5rem;margin-top:.25rem;font-size:.85rem;color:#6b7280}
 #voiceDot{width:10px;height:10px;border-radius:9999px;background:#9ca3af;box-shadow:0 0 0 0 rgba(16,185,129,.0);transition:.12s}
 #voiceWave{position:relative;display:block;width:140px;height:10px;border-radius:9999px;background:rgba(120,113,108,.25);overflow:hidden}
@@ -53,23 +66,17 @@ h1{ margin:0; }
 .listening #voiceDot{background:#f59e0b}
 .disabled #voiceDot{background:#9ca3af}
 
-/* Listas */
 ul,ol{ padding-left:1.25rem; }
 .meta{ font-size:.9rem; color:#6b7280 }
 .dark .meta{ color:#9ca3af }
 
-/* Bloque de filtros */
 .filters{ display:flex; flex-direction:column; gap:.75rem; }
 @media (min-width:880px){ .filters{ flex-direction:row; align-items:flex-end; } }
 .input{ width:100%; border:1px solid #d1d5db; background:#fff; color:#111; padding:.5rem .6rem; border-radius:.75rem; }
 .dark .input{ border-color:#374151; background:#0b0f19; color:#e5e7eb; }
 
-/* Estado vacío */
 #emptyState{ text-align:center; color:#6b7280; margin-top:2rem; }
-
-/* Botonera modal */
 .bar{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
 
-/* Skeleton opcional al cargar */
 @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 .skeleton{ background:linear-gradient(90deg,#eee,#f5f5f5,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; }
