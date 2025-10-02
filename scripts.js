@@ -92,7 +92,6 @@ function render(list) {
     els.count.textContent = `Mostrando ${list.length} recetas.`;
     const lazyImages = Array.from(els.grid.querySelectorAll('img.lazy'));
     
-    // Configuración del IntersectionObserver con margen aumentado
     imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
