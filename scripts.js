@@ -1,16 +1,12 @@
-const APP_VERSION = "recetario-2.0.1-final";
+const APP_VERSION = "recetario-2.1.0-lazyload";
 
 /* ===== Datos (160 recetas) ===== */
 const APERITIVOS = ["Tostas de tomate y jamón", "Tostas de anchoa y pimiento", "Tostas de escalivada", "Tostas de salmón y queso fresco", "Croquetas de jamón", "Croquetas de pollo", "Croquetas de bacalao", "Croquetas de setas", "Empanadillas de atún", "Empanadillas de carne", "Patatas bravas", "Patatas alioli", "Boquerones en vinagre", "Champiñones al ajillo", "Gildas donostiarras", "Pinchos de tortilla", "Pinchos morunos", "Queso marinado en aceite", "Hummus clásico con crudités", "Hummus de remolacha", "Hummus de aguacate", "Gazpacho en vasitos", "Salmorejo en chupitos", "Ensaladilla rusa", "Tortilla francesa mini", "Banderillas variadas", "Mejillones en escabeche", "Sardinas marinadas", "Pulpo a la gallega (tapa)", "Calamares a la romana", "Torreznos crujientes", "Jamón con picos", "Queso manchego con membrillo", "Pimientos del padrón", "Montadito de lomo", "Montadito de pringá", "Bonito con tomate (tapa)", "Pisto con huevo (tapa)", "Chistorra a la sidra", "Berenjena frita con miel"];
-const PRIMEROS = ["Sopa de ajo", "Sopa castellana", "Gazpacho andaluz", "Salmorejo cordobés", "Ajoblanco", "Crema de calabaza", "Crema de puerros", "Crema de champiñón", "Pisto manchego", "Menestra de verduras", "Lentejas estofadas", "Garbanzos con espinacas", "Judías blancas con verduras", "Arroz caldoso de verduras", "Arroz a la cubana", "Arroz negro", "Arroz al horno", "Paella de verduras", "Fideuá de pescado", "Macarrones con tomate", "Tallarines al ajillo", "Espaguetis carbonara ligera", "Ensalada mixta", "Ensalada campera", "Ensalada de garbanzos", "Ensalada de pasta fría", "Tomates aliñados", "Papas arrugadas con mojo", "Pimientos asados", "Alcachofas salteadas", "Acelgas rehogadas", "Sopa de pescado", "Caldo gallego", "Cocido andaluz (sopa)", "Sopa minestrone", "Vichyssoise", "Crema de zanhoria", "Porrusalda", "Sopa de marisco", "Caldo de pollo casero"];
+const PRIMEROS = ["Sopa de ajo", "Sopa castellana", "Gazpacho andaluz", "Salmorejo cordobés", "Ajoblanco", "Crema de calabaza", "Crema de puerros", "Crema de champiñón", "Pisto manchego", "Menestra de verduras", "Lentejas estofadas", "Garbanzos con espinacas", "Judías blancas con verduras", "Arroz caldoso de verduras", "Arroz a la cubana", "Arroz negro", "Arroz al horno", "Paella de verduras", "Fideuá de pescado", "Macarrones con tomate", "Tallarines al ajillo", "Espaguetis carbonara ligera", "Ensalada mixta", "Ensalada campera", "Ensalada de garbanzos", "Ensalada de pasta fría", "Tomates aliñados", "Papas arrugadas con mojo", "Pimientos asados", "Alcachofas salteadas", "Acelgas rehogadas", "Sopa de pescado", "Caldo gallego", "Cocido andaluz (sopa)", "Sopa minestrone", "Vichyssoise", "Crema de zanahoria", "Porrusalda", "Sopa de marisco", "Caldo de pollo casero"];
 const SEGUNDOS = ["Pollo al ajillo", "Pollo al horno con patatas", "Pollo en pepitoria", "Pechuga de pollo a la plancha", "Escalope de ternera", "Filete de ternera a la plancha", "Carrilleras al vino tinto", "Rabo de toro", "Albóndigas en salsa", "Lomo adobado", "Costillas al horno", "Chuletillas de cordero", "Cordero asado", "Secreto ibérico a la plancha", "Solomillo al roquefort", "Bacalao a la vizcaína", "Bacalao al pil-pil", "Merluza en salsa verde", "Dorada al horno", "Lubina a la sal", "Salmón al papillote", "Atún encebollado", "Calamares en su tinta", "Pulpo a la gallega", "Paella mixta", "Arroz con pollo", "Arroz con bogavante", "Empanada gallega de atún", "Pisto con huevos", "Tortilla de patatas", "Revuelto de setas", "Conejo al ajillo", "Codornices escabechadas", "Callos a la madrileña", "Fabada asturiana", "Marmitako de bonito", "Chuletón a la plancha", "Escabeche de caballa", "Bonito con tomate", "Trucha a la navarra"];
 const POSTRES = ["Flan casero", "Natillas caseras", "Arroz con leche", "Leche frita", "Torrijas", "Crema catalana", "Tarta de queso al horno", "Tarta de Santiago", "Bizcocho de yogur", "Bizcocho de naranja", "Magdalenas caseras", "Galletas de mantequilla", "Rosquillas fritas", "Pestiños", "Buñuelos de viento", "Filloas", "Peras al vino", "Compota de manzana", "Macedonia de frutas", "Helado rápido de plátano", "Mousse de chocolate", "Natillas de vainilla", "Tarta de manzana", "Tarta tres leches (versión)", "Brazo de gitano", "Quesada pasiega", "Tocino de cielo", "Pan de Calatrava", "Cuajada con miel", "Crepes dulces", "Flan de café", "Crema pastelera con frutas", "Tarta de almendra", "Tarta de galletas con chocolate", "Bizcocho marmolado", "Helado de yogur", "Brownie sencillo", "Crema de limón", "Naranja con canela", "Fresas con nata"];
 
-function parseTime(timeString) {
-  const match = timeString.match(/\d+/);
-  return match ? parseInt(match[0], 10) : 0;
-}
-
+function parseTime(timeString) { const match = timeString.match(/\d+/); return match ? parseInt(match[0], 10) : 0; }
 const PASOS_BASE = { Aperitivo: ["Prepara y ten a mano todo.", "Corta o dispón los ingredientes.", "Sofríe o mezcla hasta aromatizar.", "Monta y ajusta sal/aliño.", "Reposa 1–2 min o sirve caliente.", "Emplata y sirve."], Primero: ["Lava y prepara verduras.", "Sofríe ajo/cebolla suave.", "Añade ingrediente principal y rehoga.", "Cubre con caldo/agua y cocina.", "Ajusta textura (tritura/reposa).", "Sirve caliente o frío."], Segundo: ["Seca la pieza y sala.", "Añade adobo/especias.", "Dora/hornea/sella bien.", "Agrega guarnición/salsa y cocina al punto.", "Reposa unos minutos.", "Sirve con su jugo."], Postre: ["Pesa y mide todo.", "Mezcla secos y húmedos aparte.", "Aromatiza (cítricos/vainilla/canela).", "Hornea/refrigera hasta cuajar.", "Enfría o reposa.", "Decora y sirve."] };
 function stripDiacritics(s) { try { return (s || "").normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch { return s || ""; } }
 const slug = s => stripDiacritics((s || "").toLowerCase()).replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -42,7 +38,7 @@ function saveFav() { try { localStorage.setItem(FKEY, JSON.stringify([...fav]));
 function isFav(r) { return fav.has(r.titulo); }
 function toggleFav(r) { isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-function photoFallback(title) { let h = 0; for (let i = 0; i < (title || '').length; i++) { h = ((h << 5) - h) + title.charCodeAt(i); h |= 0; } const lock = Math.abs(h); return `https://picsum.photos/seed/${lock}/800/500`; }
+function photoFallback(title, categoria) { const kcat = (categoria || '').toLowerCase().replace(' ', ','); const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(',')); return `https://source.unsplash.com/800x500/?food,dish,${kcat},${kwBase}`; }
 function svgPlaceholder(title = "Receta") { const t = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"); return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text></svg>`); }
 async function fetchJSON(url, options = {}, ms = 5000) { const controller = new AbortController(); const timeoutId = setTimeout(() => controller.abort(), ms); try { const response = await fetch(url, { ...options, signal: controller.signal }); if (!response.ok) return null; return await response.json(); } catch { return null; } finally { clearTimeout(timeoutId); } }
 async function fetchDishImageURL(dish) { const searchTerm = encodeURIComponent(dish); const wikiUrl = `https://es.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=800&titles=${searchTerm}`; const commonsUrl = `https://api.wikimedia.org/core/v1/commons/search/page?q=${searchTerm}&limit=1`; try { let data = await fetchJSON(wikiUrl); let pages = data?.query?.pages; if (pages && !pages[-1]) { const page = Object.values(pages)[0]; if (page?.thumbnail?.source) return page.thumbnail.source; } data = await fetchJSON(commonsUrl, { headers: { 'Accept': 'application/json' } }); if (data?.pages?.[0]?.thumbnail?.url) return data.pages[0].thumbnail.url; } catch (e) { console.error("Error buscando imagen:", e); } return null; }
@@ -50,10 +46,80 @@ const DB_NAME = 'imgcache.v1', STORE = 'images';
 function idbOpen() { return new Promise((res, rej) => { const r = indexedDB.open(DB_NAME, 1); r.onupgradeneeded = () => { const db = r.result; if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE); }; r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
 async function idbGet(key) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(STORE, 'readonly').objectStore(STORE).get(key); tx.onsuccess = () => res(tx.result || null); tx.onerror = () => rej(tx.error); }); }
 async function idbSet(key, val) { const db = await idbOpen(); return new Promise((res, rej) => { const tx = db.transaction(STORE, 'readwrite').objectStore(STORE).put(val, key); tx.onsuccess = () => res(true); tx.onerror = () => rej(tx.error); }); }
-async function setImg(el, r) { el.src = svgPlaceholder(r.titulo); el.alt = `Foto de ${r.titulo}`; el.classList.add('skeleton'); const key = slug(r.titulo); try { const imgBlob = await idbGet(key); if (imgBlob) { el.src = URL.createObjectURL(imgBlob); el.classList.remove('skeleton'); return; } } catch (e) { console.error("Error en IndexedDB:", e); } const imageUrl = await fetchDishImageURL(r.titulo); if (imageUrl) { try { const response = await fetch(imageUrl); const blob = await response.blob(); await idbSet(key, blob); el.src = URL.createObjectURL(blob); } catch { el.src = photoFallback(r.titulo); } } else { el.src = photoFallback(r.titulo); } el.onload = () => el.classList.remove('skeleton'); el.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); }; }
 
-function card(r, i) { const star = isFav(r) ? '⭐' : '☆'; return `<article class="card" role="article" aria-label="${r.titulo}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="skeleton"><div class="body"><h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p><div class="bar"><button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button><button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button><button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button><button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button></div></div></article>`; }
-function render(list) { state.list = list; els.empty.hidden = list.length > 0; els.grid.innerHTML = list.map((r, i) => card(r, i)).join(""); els.count.textContent = `Mostrando ${list.length} recetas.`; els.grid.querySelectorAll('img[data-i]').forEach(img => { const recipe = list[img.dataset.i]; if (recipe) { setImg(img, recipe); } }); }
+async function setImg(el, r) {
+    el.src = svgPlaceholder(r.titulo);
+    el.alt = `Foto de ${r.titulo}`;
+    el.classList.add('skeleton');
+    const key = slug(r.titulo);
+    try {
+        const imgBlob = await idbGet(key);
+        if (imgBlob) {
+            el.src = URL.createObjectURL(imgBlob);
+            el.classList.remove('skeleton');
+            return;
+        }
+    } catch (e) { console.error("Error en IndexedDB:", e); }
+    const imageUrl = await fetchDishImageURL(r.titulo);
+    if (imageUrl) {
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            await idbSet(key, blob);
+            el.src = URL.createObjectURL(blob);
+        } catch {
+            el.src = photoFallback(r.titulo, r.categoria);
+        }
+    } else {
+        el.src = photoFallback(r.titulo, r.categoria);
+    }
+    el.onload = () => el.classList.remove('skeleton');
+    el.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); };
+}
+
+function card(r, i) {
+    const star = isFav(r) ? '⭐' : '☆';
+    // Para lazy loading, no ponemos 'src', sino 'data-src'. La clase 'lazy' nos sirve para identificarla.
+    return `<article class="card" role="article" aria-label="${r.titulo}">
+        <img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton">
+        <div class="body">
+            <h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3>
+            <p class="meta">${r.categoria} · ${r.tiempo}</p>
+            <div class="bar">
+                <button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button>
+                <button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button>
+                <button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button>
+                <button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button>
+            </div>
+        </div>
+    </article>`;
+}
+
+let imageObserver;
+function render(list) {
+    state.list = list;
+    if (imageObserver) imageObserver.disconnect(); // Desconectar el observador anterior
+    els.empty.hidden = list.length > 0;
+    els.grid.innerHTML = list.map((r, i) => card(r, i)).join("");
+    els.count.textContent = `Mostrando ${list.length} recetas.`;
+
+    // Configurar el nuevo observador para las imágenes de la lista actual
+    const lazyImages = els.grid.querySelectorAll('img.lazy');
+    imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const recipe = list[img.dataset.i];
+                if (recipe) {
+                    setImg(img, recipe);
+                }
+                img.classList.remove('lazy');
+                observer.unobserve(img);
+            }
+        });
+    });
+    lazyImages.forEach(img => imageObserver.observe(img));
+}
 
 function filter() {
   const q = els.search.value.toLowerCase().trim();
@@ -67,10 +133,7 @@ function filter() {
     case 'time-asc': filteredRecipes.sort((a, b) => parseTime(a.tiempo) - parseTime(b.tiempo)); break;
     case 'time-desc': filteredRecipes.sort((a, b) => parseTime(b.tiempo) - parseTime(a.tiempo)); break;
   }
-  
-  // LÍNEA CORREGIDA:
   const finalRecipes = state.cat === "Favoritas" ? filteredRecipes.filter(r => fav.has(r.titulo)) : filteredRecipes;
-  
   render(finalRecipes);
 }
 
@@ -107,4 +170,5 @@ els.grid.addEventListener('click', e => {
 
 function openGuided(r) { alert("Iniciando modo guiado para: " + r.titulo); }
 function readRecipe(r) { alert("Leyendo en voz alta: " + r.titulo); }
-// ... (El resto de funciones para la lista de la compra, voz, etc. se pueden añadir aquí)
+
+// (El resto de funciones para la lista de la compra, voz, etc. se pueden añadir aquí)
