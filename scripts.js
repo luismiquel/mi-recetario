@@ -69,7 +69,7 @@ function svgPlaceholder(title = "Receta") {
 }
 
 function setImg(el, r) {
-    el.src = svgPlaceholder(r.titulo); // Mostramos el placeholder gris mientras carga
+    el.src = svgPlaceholder(r.titulo);
     el.classList.add('skeleton');
 
     const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria);
@@ -164,7 +164,7 @@ els.grid.addEventListener('click', e => {
     }
 });
 
+// Mock functions for guided mode and TTS
 function openGuided(r) { alert("Iniciando modo guiado para: " + r.titulo); }
 function readRecipe(r) { alert("Leyendo en voz alta: " + r.titulo); }
-
-// (El resto de funciones para la lista de la compra, voz, etc. se pueden añadir aquí)
+// ... (El resto de funciones para la lista de la compra, voz, etc. se mantienen igual pero sin la lógica compleja por ahora)
