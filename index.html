@@ -1,41 +1,39 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
+  <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz clara manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
   <title>Recetario Español – 160 recetas</title>
 
-  <!-- Colores del navegador -->
+  <!-- theme-color (Firefox puede avisar que hay varias, es intencionado para light/dark) -->
   <meta name="theme-color" content="#78350f" />
   <meta name="theme-color" content="#78350f" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
 
-  <!-- PWA opcional (puedes quitarlo si no usas manifest) -->
   <link rel="manifest" href="./manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- Estilos (todo inline, sin Tailwind) -->
+  <!-- ✅ Tailwind compilado (local) -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- Estilos propios -->
   <style>
-    :root{ --base-font:16px; --bg:#ffffff; --fg:#1f2937; --muted:#6b7280; --card:#ffffff; --card-b:#e5e7eb; --brand:#92400e; }
-    html{ font-size:var(--base-font); }
-    body{ margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji"; color:var(--fg); background:#f5f5f5; -webkit-tap-highlight-color:transparent; }
-    .dark body,.dark{ background:#0b0f19; color:#e5e7eb; }
+    :root{ --base-font:16px; }
+    html{ font-size: var(--base-font); }
+    body{ -webkit-tap-highlight-color: transparent; }
+    /* Foco visible */
     *:focus { outline: 3px solid #4f46e5; outline-offset: 2px; }
-    .container{ max-width:1100px; margin-inline:auto; padding:1rem 1rem; }
-    header{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-bottom:1rem; }
-    h1{ margin:0; }
-    .muted{ color:#6b7280; }
-    .dark .muted{ color:#9ca3af; }
 
-    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.55rem 1rem;font-weight:600;border:0;cursor:pointer}
-    .btn-primary{background:var(--brand);color:#fff}
-    .btn-primary:active{transform:scale(.98)}
-    .btn-ghost{background:transparent;color:inherit}
-    .btn-ghost:active{transform:scale(.98)}
-    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700;border:1px solid transparent}
-    .tab[aria-selected="true"]{background:var(--brand);color:#fff}
-    .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:var(--card)}
-    .dark .card{background:#111827;border-color:#374151}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.6rem 1rem;font-weight:600}
+    .btn-primary{background:#92400e;color:#fff}.btn-primary:active{transform:scale(.98)}
+    .btn-ghost{background:transparent}.btn-ghost:active{transform:scale(.98)}
+    .tab{padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;font-weight:700}
+    .tab[aria-selected="true"]{background:#92400e;color:#fff}
+    .card{border-radius:1rem;border:1px solid rgba(120,113,108,.25);overflow:hidden;background:#fff}
+    .dark .card{background:#1f2937;border-color:#374151}
     .hc *{ color:#000 !important; background:#fff !important; }
     .hc .tab[aria-selected="true"]{ background:#000 !important; color:#fff !important; }
     .drawer{position:fixed;top:env(safe-area-inset-top,0);right:0;bottom:0;width:380px;max-width:100%;background:#fff;color:#111;box-shadow:-4px 0 20px rgba(0,0,0,.2);transform:translateX(100%);transition:.25s;z-index:60}
@@ -47,17 +45,7 @@
     #ttsCaption.show{display:block}
     @media print{header,.no-print,#shoppingDrawer,#ttsCaption{display:none!important}}
 
-    /* Grid simple sin Tailwind */
-    .grid{ display:grid; gap:1rem; grid-template-columns: repeat(2, minmax(0,1fr)); }
-    @media (min-width: 880px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-
-    /* Tarjetas */
-    .card img{ width:100%; height:200px; object-fit:cover; display:block; background:#e5e7eb }
-    .dark .card img{ background:#111827 }
-    .card .body{ padding:.75rem; }
-    .row{ display:flex; gap:.5rem; flex-wrap:wrap; align-items:center }
-
-    /* Scrollbar */
+    /* Fallback de scrollbars para Safari/Chromium (compat) */
     *::-webkit-scrollbar{ width:12px; height:12px }
     *::-webkit-scrollbar-thumb{ background-color: rgba(120,113,108,.5); border-radius: 8px }
     *::-webkit-scrollbar-track{ background: transparent }
@@ -70,30 +58,9 @@
     .talking #voiceDot{background:#10b981;box-shadow:0 0 12px 3px rgba(16,185,129,.45)}
     .listening #voiceDot{background:#f59e0b}
     .disabled #voiceDot{background:#9ca3af}
-
-    /* Listas */
-    ul,ol{ padding-left:1.25rem; }
-    .meta{ font-size:.9rem; color:#6b7280 }
-    .dark .meta{ color:#9ca3af }
-
-    /* Bloque de filtros */
-    .filters{ display:flex; flex-direction:column; gap:.75rem; }
-    @media (min-width:880px){ .filters{ flex-direction:row; align-items:flex-end; } }
-    .input{ width:100%; border:1px solid #d1d5db; background:#fff; color:#111; padding:.5rem .6rem; border-radius:.75rem; }
-    .dark .input{ border-color:#374151; background:#0b0f19; color:#e5e7eb; }
-
-    /* Estado vacío */
-    #emptyState{ text-align:center; color:#6b7280; margin-top:2rem; }
-
-    /* Botonera modal */
-    .bar{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.5rem; }
-
-    /* Skeleton opcional al cargar (cuando cargamos un gif/base64) */
-    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-    .skeleton{ background:linear-gradient(90deg,#eee,#f5f5f5,#eee); background-size:200% 100%; animation:shimmer 1.2s infinite; }
   </style>
 </head>
-<body class="dark">
+<body class="dark:bg-stone-900 dark:text-stone-200">
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
   <noscript>
@@ -102,13 +69,13 @@
     </div>
   </noscript>
 
-  <div class="container" id="app">
-    <header>
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4" id="app">
+    <header class="flex items-center justify-between gap-3 mb-4">
       <div>
-        <h1 class="text-2xl">Recetario Español – 160 recetas</h1>
-        <p class="muted" style="margin:.25rem 0 0 0">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
+        <h1 class="text-2xl sm:text-3xl font-extrabold">Recetario Español – 160 recetas</h1>
+        <p class="text-sm text-stone-600 dark:text-stone-400">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
       </div>
-      <div class="row">
+      <div class="flex items-center gap-2">
         <button id="toggleTheme" class="btn btn-ghost" title="Cambiar tema" aria-label="Cambiar tema">🌙/☀️</button>
         <button id="toggleContrast" class="btn btn-ghost" title="Alto contraste" aria-label="Alto contraste">🌓</button>
         <button id="fontMinus" class="btn btn-ghost" title="Reducir letra" aria-label="Reducir letra">A−</button>
@@ -117,13 +84,15 @@
       </div>
     </header>
 
-    <section class="card" style="padding:1rem;margin-bottom:1rem" aria-label="Búsqueda y filtros">
-      <div class="filters">
-        <div style="flex:1">
-          <label for="search" class="muted" style="font-size:.9rem;font-weight:600">Buscar</label>
-          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)" class="input" />
+    <section class="card p-4 mb-4" aria-label="Búsqueda y filtros">
+      <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
+        <div class="flex-1">
+          <label for="search" class="block text-sm font-medium mb-1">Buscar</label>
+          <input id="search" type="search" inputmode="search" placeholder="Nombre, ingrediente… (Ctrl+/)"
+                 class="w-full rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" />
         </div>
-        <div class="row" role="tablist" aria-label="Categorías">
+        <!-- Tabs accesibles -->
+        <div class="flex items-center gap-2" role="tablist" aria-label="Categorías">
           <button class="tab" role="tab" id="tab-todas" aria-selected="true" data-cat="Todas" title="Mostrar todas">Todas</button>
           <button class="tab" role="tab" id="tab-aperitivo" aria-selected="false" data-cat="Aperitivo" title="Mostrar aperitivos">Aperitivos</button>
           <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
@@ -131,79 +100,83 @@
           <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
           <!-- Favoritas se añade por JS -->
         </div>
-        <div class="row" style="align-items:end">
-          <label class="muted" for="voiceRate" style="font-size:.9rem">Voz:</label>
-          <select id="voiceRate" class="input" style="width:auto" aria-label="Velocidad de lectura en voz alta">
+        <div class="flex items-end gap-2">
+          <label class="text-sm" for="voiceRate">Voz:</label>
+          <select id="voiceRate" class="rounded-lg border px-2 py-1 dark:bg-stone-900 dark:border-stone-700" aria-label="Velocidad de lectura en voz alta">
             <option value="0.8">Lenta</option>
             <option value="0.9" selected>Clara</option>
             <option value="1.0">Normal</option>
           </select>
-          <label for="autoListen" class="muted" title="Escuchar sin pulsar" style="user-select:none">
-            <input id="autoListen" type="checkbox" class="align-middle" checked> Auto
+
+          <!-- Auto escuchar (ACTIVADO por defecto) -->
+          <label for="autoListen" class="text-sm select-none" title="Escuchar sin pulsar">
+            <input id="autoListen" type="checkbox" class="align-middle mr-1" checked> Auto
           </label>
+
+          <!-- Botón ahora es para reconectar/forzar inicio si el navegador cortó el micro -->
           <button id="toggleMic" class="btn btn-primary" title="Reconectar reconocimiento de voz" aria-label="Reconectar reconocimiento de voz">🎤 Reconectar voz</button>
         </div>
       </div>
-      <div id="readerStatus" class="muted" style="font-size:.8rem;margin-top:.25rem" aria-live="polite"></div>
-      <div id="heard" class="muted" style="font-size:.8rem;margin-top:.25rem">🎧 Oído: <span id="heardText">—</span></div>
-      <div id="voiceHUD"><span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span></div>
+      <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
+      <div id="heard" class="text-xs mt-1 text-stone-500">🎧 Oído: <span id="heardText">—</span></div>
+      <!-- HUD voz se inyecta aquí por JS -->
     </section>
 
-    <section class="muted" style="font-size:.9rem;margin-bottom:.5rem">
+    <section class="mb-2 text-sm text-stone-600 dark:text-stone-400">
       <span id="countLabel">Mostrando 0 recetas.</span>
     </section>
 
     <main id="main" aria-labelledby="countLabel">
-      <div id="recipesGrid" class="grid" role="region" aria-label="Listado de recetas"></div>
-      <div id="emptyState" hidden>No hay resultados.</div>
+      <div id="recipesGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4" role="region" aria-label="Listado de recetas"></div>
+      <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
 
     <!-- Modal Detalle -->
-    <div id="detailModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
-      <div class="card" style="max-width:960px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="detailTitle" style="margin:0;font-size:1.2rem">Detalle</h3>
+    <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <div class="card max-w-3xl w-full">
+        <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+          <h3 id="detailTitle" class="text-xl font-semibold">Detalle</h3>
           <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle" title="Cerrar">✕</button>
         </div>
-        <div style="padding:1rem; display:grid; gap:1rem; grid-template-columns: 1fr; }
-        ">
-          <div style="display:grid; gap:.5rem; grid-template-columns: 1fr; }
-          ">
-            <img id="detailImg" alt="" width="800" height="500" class="skeleton" style="width:100%;height:220px;object-fit:cover;border-radius:.75rem">
-            <p id="detailMeta" class="meta"></p>
-            <div class="bar">
+        <div class="p-4 grid gap-4 md:grid-cols-2">
+          <div>
+            <img id="detailImg" src="https://placehold.co/800x500?text=Receta" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
+            <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
+            <div class="mt-3 flex flex-wrap gap-2">
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
               <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
               <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
-              <!-- Compartir se inyecta por JS -->
+              <!-- El botón Compartir se añade por JS -->
             </div>
           </div>
           <div>
-            <h4 style="margin:.25rem 0;font-size:1.05rem">Ingredientes</h4>
-            <ul id="detailIngredients"></ul>
-            <h4 style="margin:.75rem 0 .25rem 0;font-size:1.05rem">Pasos</h4>
-            <ol id="detailSteps"></ol>
+            <h4 class="text-lg font-semibold">Ingredientes</h4>
+            <ul id="detailIngredients" class="list-disc pl-6 mt-2"></ul>
+            <h4 class="text-lg font-semibold mt-4">Pasos</h4>
+            <ol id="detailSteps" class="list-decimal pl-6 mt-2"></ol>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Modal Guiada -->
-    <div id="guidedModal" class="no-print" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:1rem" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
-      <div class="card" style="max-width:760px;width:100%">
-        <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-          <h3 id="guidedTitle" style="margin:0;font-size:1.2rem">Cocina guiada</h3>
+    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
+      <div class="card max-w-2xl w-full">
+        <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+          <h3 id="guidedTitle" class="text-xl font-semibold">Cocina guiada</h3>
           <button id="closeGuided" class="btn btn-ghost" aria-label="Cerrar cocina guiada" title="Cerrar">✕</button>
         </div>
-        <div style="padding:1rem; display:flex; flex-direction:column; gap:1rem">
-          <p class="meta"><strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.</p>
-          <div style="background:#f5f5f5;border-radius:.75rem;padding:1rem" class="dark" id="guidedBox">
-            <h4 id="guidedRecipeTitle" style="margin:0 0 .5rem 0;font-size:1.05rem"></h4>
-            <ol id="guidedSteps" style="display:flex;flex-direction:column;gap:.5rem"></ol>
+        <div class="p-4 space-y-4">
+          <p class="text-sm text-stone-600 dark:text-stone-400">
+            <strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.
+          </p>
+          <div class="bg-stone-50 dark:bg-stone-900 rounded-xl p-4">
+            <h4 id="guidedRecipeTitle" class="text-lg font-semibold mb-2"></h4>
+            <ol id="guidedSteps" class="list-decimal pl-5 space-y-2"></ol>
           </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
-            <div class="meta" id="guidedProgress" aria-live="polite"></div>
-            <div class="row">
+          <div class="flex items-center justify-between">
+            <div class="text-xs text-stone-500" id="guidedProgress" aria-live="polite"></div>
+            <div class="flex gap-2">
               <button id="prevStep" class="btn btn-ghost" aria-label="Paso anterior" title="Anterior">← Anterior</button>
               <button id="repeatStep" class="btn btn-ghost" aria-label="Repetir paso" title="Repetir">⟲ Repetir</button>
               <button id="nextStep" class="btn btn-primary" aria-label="Paso siguiente" title="Siguiente">Siguiente →</button>
@@ -211,30 +184,29 @@
               <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta" title="Imprimir">🖨️ Imprimir</button>
             </div>
           </div>
-          <!-- Aquí se inyecta el temporizador -->
         </div>
       </div>
     </div>
 
     <!-- Drawer Lista compra -->
     <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true">
-      <div style="padding:.6rem;border-bottom:1px solid rgba(120,113,108,.25);display:flex;align-items:center;justify-content:space-between">
-        <h3 style="margin:0;font-size:1.05rem">Lista de la compra</h3>
-        <div class="row">
+      <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
+        <h3 class="text-lg font-semibold">Lista de la compra</h3>
+        <div class="flex items-center gap-2">
           <button id="exportList" class="btn btn-ghost" aria-label="Exportar lista" title="Exportar lista">⬇️ Exportar</button>
           <button id="printList" class="btn btn-ghost" aria-label="Imprimir lista" title="Imprimir lista">🖨️</button>
           <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
           <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
         </div>
       </div>
-      <div style="padding:1rem">
-        <div class="row" style="gap:.5rem;margin-bottom:.75rem">
-          <label for="newItem" class="skip">Nuevo artículo</label>
-          <input id="newItem" class="input" style="flex:1" placeholder="Añadir artículo (ej. 1 kg tomates)" />
+      <div class="p-3">
+        <div class="flex gap-2 mb-3">
+          <label for="newItem" class="sr-only">Nuevo artículo</label>
+          <input id="newItem" class="flex-1 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 px-3 py-2" placeholder="Añadir artículo (ej. 1 kg tomates)" />
           <button id="addItem" class="btn btn-primary" aria-label="Añadir artículo" title="Añadir artículo">Añadir</button>
         </div>
-        <ul id="shoppingList" style="display:flex;flex-direction:column;gap:.5rem;list-style:none;padding-left:0;margin:0"></ul>
-        <p id="shoppingEmpty" class="muted" style="margin-top:.5rem" hidden>Tu lista está vacía.</p>
+        <ul id="shoppingList" class="space-y-2"></ul>
+        <p id="shoppingEmpty" class="text-sm text-stone-500 mt-3 hidden">Tu lista está vacía.</p>
       </div>
     </aside>
   </div>
@@ -243,12 +215,15 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-  const APP_VERSION = "recetario-1.7.0-singlefile";
+  const APP_VERSION = "recetario-1.6.0";
 
   /* ===== Datos (160 recetas) ===== */
-  const IMG_BY_CAT = c => ({
-    Aperitivo:"Aperitivo", Primero:"Primero", Segundo:"Segundo", Postre:"Postre"
-  }[c] || "Receta");
+  const IMG = c => ({
+    Aperitivo:"https://placehold.co/800x500?text=Aperitivo",
+    Primero:"https://placehold.co/800x500?text=Primero",
+    Segundo:"https://placehold.co/800x500?text=Segundo",
+    Postre:"https://placehold.co/800x500?text=Postre"
+  }[c]);
 
   const APERITIVOS = [
     "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco",
@@ -482,7 +457,7 @@
   }
 
   function build(cat,list){
-    return list.map(n=>({categoria:cat,titulo:n,imagen:IMG_BY_CAT(cat),
+    return list.map(n=>({categoria:cat,titulo:n,imagen:IMG(cat),
       ingredientes:ingredientesPara(cat,n), pasos:pasosPara(cat,n), tiempo:tiempo(cat,n)}));
   }
 
@@ -493,13 +468,16 @@
     ...build("Postre", POSTRES)
   ];
 
-  /* ===== Estado + referencias ===== */
+  /* ===== Estado + UI ===== */
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const state = {
     q:"", cat:"Todas", list:RECETAS, current:null, step:0,
-    dark: true, contrast:false, font:16, listening:false, rate:0.9,
-    autoListen:true
+    dark: matchMedia('(prefers-color-scheme: dark)').matches,
+    contrast:false, font:16, listening:false, rate:0.9,
+    autoListen:true  // manos libres por defecto
   };
+  window.state = state;
+
   const $ = id => document.getElementById(id);
   const els = {
     grid: $('recipesGrid'), empty: $('emptyState'), count: $('countLabel'), search: $('search'),
@@ -545,129 +523,15 @@
   function isFav(r){ return fav.has(r.titulo); }
   function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-  /* ======= IMÁGENES con multi-fallback (Wikipedia/Commons → loremflickr → SVG) ======= */
-
-  function photoFallback(title, categoria){
-    const kwBase = encodeURIComponent((title||'').toLowerCase().replace(/[()]/g,''));
-    const kcat = (categoria||'').toLowerCase()==='postre' ? 'dessert,sweet'
-              : (categoria||'').toLowerCase()==='aperitivo' ? 'tapas'
-              : (categoria||'').toLowerCase()==='primero' ? 'soup,starter,vegetable'
-              : 'spanish,cuisine,meat,fish';
-    let h=0; for(let i=0;i<title.length;i++){ h=((h<<5)-h)+title.charCodeAt(i); h|=0; }
-    const lock = Math.abs(h);
-    return `https://loremflickr.com/800/500/food,${kcat},${kwBase}/all?lock=${lock}`;
-  }
-  function svgPlaceholder(title="Receta"){
-    const t = (title||"").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    return `data:image/svg+xml;charset=utf-8,` +
-      encodeURIComponent(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
-          <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs>
-          <rect width="800" height="500" fill="url(#g)"/>
-          <text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text>
-          <text x="50%" y="80%" text-anchor="middle" fill="#9ca3af" font-size="14" font-family="system-ui,Segoe UI,Roboto">sin imagen</text>
-        </svg>`);
-  }
-  async function fetchJSON(url, ms=6000){
-    const c = new AbortController(); const t = setTimeout(()=>c.abort(), ms);
-    try{ const r = await fetch(url, {signal:c.signal}); if(!r.ok) return null; return await r.json(); }
-    catch{ return null; } finally{ clearTimeout(t); }
-  }
-  async function wikiSearchTitle(q, lang="es"){
-    const url = `https://${lang}.wikipedia.org/w/api.php?origin=*&action=query&list=search&srsearch=${encodeURIComponent(q)}&format=json&srlimit=1`;
-    const j = await fetchJSON(url); return j?.query?.search?.[0]?.title || null;
-  }
-  async function wikiThumbForTitle(title, lang="es"){
-    const url = `https://${lang}.wikipedia.org/w/api.php?origin=*&action=query&format=json&prop=pageimages&piprop=thumbnail&pithumbsize=1000&titles=${encodeURIComponent(title)}`;
-    const j = await fetchJSON(url); const pages = j?.query?.pages || {}; const page = Object.values(pages)[0]; return page?.thumbnail?.source || null;
-  }
-  async function commonsThumb(query){
-    const url = `https://commons.wikimedia.org/w/api.php?origin=*&action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=1000&format=json`;
-    const j = await fetchJSON(url);
-    const pages = j?.query?.pages; if(!pages) return null;
-    const first = Object.values(pages)[0];
-    return first?.imageinfo?.[0]?.thumburl || first?.imageinfo?.[0]?.url || null;
-  }
-  async function fetchDishImageURL(dish){
-    let t = await wikiSearchTitle(dish,"es") || await wikiSearchTitle(`${dish} (plato)`,"es");
-    let url = t ? await wikiThumbForTitle(t,"es") : null;
-    if(url) return url;
-    t = await wikiSearchTitle(dish,"en") || await wikiSearchTitle(`${dish} (dish)`,"en");
-    url = t ? await wikiThumbForTitle(t,"en") : null;
-    if(url) return url;
-    url = await commonsThumb(dish + " comida plato");
-    if(url) return url;
-    return null;
-  }
-  // IndexedDB caché binaria
-  const DB_NAME='imgstore.v1', STORE='imgs';
-  function idbOpen(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB_NAME,1);
-    r.onupgradeneeded=()=>{ const db=r.result; if(!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE); };
-    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
-  async function idbGet(key){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readonly'); const st=tx.objectStore(STORE); const rq=st.get(key); rq.onsuccess=()=>res(rq.result||null); rq.onerror=()=>rej(rq.error); }); }
-  async function idbSet(key, val){ const db=await idbOpen(); return new Promise((res,rej)=>{ const tx=db.transaction(STORE,'readwrite'); const st=tx.objectStore(STORE); const rq=st.put(val,key); rq.onsuccess=()=>res(true); rq.onerror=()=>rej(rq.error); }); }
-  async function ensureDishBlob(title){
-    const key = slug(title);
-    const cached = await idbGet(key);
-    if(cached) return new Blob([cached], {type:'image/jpeg'});
-    const url = await fetchDishImageURL(title);
-    if(!url) return null;
-    for(const opt of [{},{referrerPolicy:'no-referrer'}]){
-      try{
-        const resp = await fetch(url, opt);
-        if(!resp.ok) continue;
-        const blob = await resp.blob();
-        const buf = await blob.arrayBuffer();
-        await idbSet(key, buf);
-        return blob;
-      }catch{}
-    }
-    return null;
-  }
-  async function objectURLFor(title, categoria){
-    try{
-      const b = await ensureDishBlob(title);
-      if(b) return URL.createObjectURL(b);
-    }catch{}
-    return photoFallback(title, categoria);
-  }
-  async function setImg(el, title, categoria){
-    try{
-      const url = await objectURLFor(title, categoria);
-      el.src = url;
-      el.alt = `Foto de ${title}`;
-      el.classList.remove('skeleton');
-      el.onerror = async ()=>{
-        el.onerror = null;
-        const bust = photoFallback(title, categoria) + `&cb=${Date.now()}`;
-        try{
-          const r = await fetch(bust, {cache:'no-store'});
-          if(r.ok){ el.src = bust; return; }
-        }catch{}
-        el.src = svgPlaceholder(title);
-      };
-    }catch{
-      el.src = svgPlaceholder(title);
-    }
-    if(!el.dataset.retryBound){
-      el.dataset.retryBound = "1";
-      el.style.cursor = 'pointer';
-      el.title = 'Clic para reintentar imagen';
-      el.addEventListener('click', ()=> setImg(el, title, categoria), {passive:true});
-    }
-  }
-
   // Tarjetas
   function card(r,i){
     const star = isFav(r) ? '⭐' : '☆';
-    // Imagen empieza con SVG placeholder; luego JS llamará a setImg(...)
-    const ph = svgPlaceholder(r.titulo);
     return `<article class="card" role="article" aria-label="${r.titulo}">
-      <img src="${ph}" data-dish="${r.titulo}" data-cat="${r.categoria}" alt="Foto de ${r.titulo}" class="skeleton">
-      <div class="body">
-        <h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3>
-        <p class="meta">${r.categoria} · ${r.tiempo}</p>
-        <div class="bar">
+      <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy" decoding="async" width="800" height="500">
+      <div class="p-3 space-y-2">
+        <h3 class="text-lg font-semibold">${r.titulo}</h3>
+        <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
+        <div class="flex flex-wrap gap-2 pt-1">
           <button class="btn btn-ghost" data-a="leer" data-i="${i}" aria-label="Leer ${r.titulo} en voz alta" title="Leer">🔈 Leer</button>
           <button class="btn btn-primary" data-a="guiada" data-i="${i}" aria-label="Cocina guiada para ${r.titulo}" title="Guiada">▶️ Guiada</button>
           <button class="btn btn-ghost" data-a="abrir" data-i="${i}" aria-label="Abrir detalles de ${r.titulo}" title="Abrir">📖 Abrir</button>
@@ -682,20 +546,14 @@
     state.list = list;
     if(!list.length){
       els.grid.innerHTML = "";
-      els.empty.hidden = false;
+      els.empty.classList.remove('hidden');
       els.count.textContent = "Mostrando 0 recetas.";
       return;
     }
-    els.empty.hidden = true;
+    els.empty.classList.add('hidden');
     els.grid.innerHTML = list.map((r,i)=>card(r,i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
     try{ injectListLD(list); }catch{}
-    // Cargar imágenes reales
-    requestIdleCallback?.(()=> {
-      document.querySelectorAll('img[data-dish]').forEach(img=>{
-        setImg(img, img.dataset.dish, img.dataset.cat);
-      });
-    }) || document.querySelectorAll('img[data-dish]').forEach(img=>setImg(img, img.dataset.dish, img.dataset.cat));
   }
 
   function filter(){
@@ -718,17 +576,17 @@
   function openDetail(r){
     state.current = r;
     els.detailTitle.textContent = r.titulo;
-    els.detailImg.src = svgPlaceholder(r.titulo);
-    setImg(els.detailImg, r.titulo, r.categoria);
+    els.detailImg.src = r.imagen;
+    els.detailImg.alt = `Foto de ${r.titulo}`;
     els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
     els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
     els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
-    els.detailModal.style.display='flex';
+    els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex');
     injectRecipeLD(r);
     if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
     ensureShareButton();
   }
-  function closeDetail(){ els.detailModal.style.display='none'; if(untrapDetail) untrapDetail(); }
+  function closeDetail(){ els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex'); if(untrapDetail) untrapDetail(); }
   els.closeDetail.onclick = closeDetail;
   document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
 
@@ -802,17 +660,18 @@
     state.current = r; state.step = 0;
     $('guidedRecipeTitle').textContent = r.titulo;
     $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
-    $('guidedModal').style.display='flex';
+    $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
     if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
     els.status.textContent = "Voz manos libres activa.";
     speakSafe(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
     readCurrent();
     saveSession();
+    // 🔊 Arrancar reconocimiento automático si está activado
     if(state.autoListen) startAutoRecognizer();
   }
   function closeGuided(){
     stopSpeak();
-    $('guidedModal').style.display='none';
+    $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex');
     els.status.textContent="Cocina guiada cerrada.";
     if(untrapGuided) untrapGuided();
     stopAutoRecognizer();
@@ -824,8 +683,9 @@
     if(state.step<0) state.step=0; if(state.step>=pasos.length) state.step=pasos.length-1;
     speakSafe(`Paso ${state.step+1}. ${pasos[state.step]}`);
     const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
-    [...$('guidedSteps').children].forEach((li,i)=>li.style.fontWeight = (i===state.step?'700':'400'));
+    [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
 
+    // Temporizador por paso (si detecta “X min”)
     clearTimerUI();
     try{
       const p = state.current?.pasos?.[state.step] || "";
@@ -874,7 +734,7 @@
   });
 
   document.addEventListener('keydown',e=>{
-    if($('guidedModal').style.display==='none' || $('guidedModal').style.display==='') return;
+    if($('guidedModal').classList.contains('hidden')) return;
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
     if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
     if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
@@ -887,12 +747,12 @@
   function uid(){ return Math.random().toString(36).slice(2,9); }
   function renderList(){
     $('shoppingList').innerHTML = shopping.map(i=>`
-      <li class="row" style="align-items:center">
+      <li class="flex items-center gap-2">
         <input type="checkbox" ${i.done?'checked':''} data-a="t" data-id="${i.id}" aria-label="Marcar ${i.text}" title="Marcar ${i.text}">
-        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" style="flex:1;background:transparent;border:0;border-bottom:1px solid #d1d5db;padding:.25rem .35rem" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}" title="Editar ${i.text}">
+        <input type="text" value="${i.text.replace(/"/g,'&quot;')}" class="flex-1 bg-transparent border-b border-stone-300 dark:border-stone-700" data-a="e" data-id="${i.id}" aria-label="Editar ${i.text}" title="Editar ${i.text}">
         <button class="btn btn-ghost" data-a="d" data-id="${i.id}" aria-label="Eliminar ${i.text}" title="Eliminar ${i.text}">🗑️</button>
       </li>`).join("");
-    $('shoppingEmpty').hidden = shopping.length>0;
+    $('shoppingEmpty').classList.toggle('hidden', shopping.length>0);
   }
   function addItem(text){ text=(text||"").trim(); if(!text) return; shopping.push({id:uid(),text,done:false}); save(); renderList(); }
   function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
@@ -947,11 +807,10 @@
     if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
     const box = document.createElement('div');
     box.id='guidedTimer';
-    box.className='meta';
-    box.style.marginTop='.5rem';
+    box.className='mt-3 text-sm';
     box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
-      <button class="btn btn-ghost" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador" style="margin-left:.5rem">Cancelar</button>`;
-    document.querySelector('#guidedModal .card > div:last-child').appendChild(box);
+      <button class="btn btn-ghost ml-2" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador">Cancelar</button>`;
+    document.querySelector('#guidedModal .p-4').appendChild(box);
 
     let left = Math.round(minutes*60);
     const $left = document.getElementById('tleft');
@@ -970,7 +829,7 @@
       "@type":"Recipe",
       "name": r.titulo,
       "recipeCategory": r.categoria,
-      "image": " ",
+      "image": r.imagen,
       "recipeIngredient": r.ingredientes,
       "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
       "totalTime": "PT30M"
@@ -992,16 +851,16 @@
   /* ===== Focus trap en modales ===== */
   function trapFocus(modal){
     const sel = 'a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])';
-    function cycle(e){
+    const f = modal.querySelectorAll(sel); if(!f.length) return ()=>{};
+    const first = f[0], last = f[f.length-1];
+    function onKey(e){
       if(e.key!=='Tab') return;
-      const f = modal.querySelectorAll(sel); if(!f.length) return;
-      const first = f[0], last = f[f.length-1];
       if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
       else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
     }
-    modal.addEventListener('keydown', cycle);
-    const f = modal.querySelector(sel); f && f.focus();
-    return ()=> modal.removeEventListener('keydown', cycle);
+    modal.addEventListener('keydown', onKey);
+    first.focus();
+    return ()=> modal.removeEventListener('keydown', onKey);
   }
   let untrapDetail = null, untrapGuided = null;
 
@@ -1021,7 +880,7 @@
   document.addEventListener('DOMContentLoaded', fromHashOpen);
 
   function ensureShareButton(){
-    const bar = document.querySelector('#detailModal .bar');
+    const bar = document.querySelector('#detailModal .mt-3.flex');
     if(!bar) return;
     let btn = document.getElementById('btnShare');
     if(!btn){
@@ -1055,6 +914,20 @@
     tablist.appendChild(btn);
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
+
+  /* ===== SW: aviso de actualización si existe sw.js ===== */
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").then(reg=>{
+      reg.addEventListener('updatefound', ()=>{
+        const nw = reg.installing;
+        nw.addEventListener('statechange', ()=>{
+          if(nw.state==='installed' && navigator.serviceWorker.controller){
+            if(confirm('Hay una actualización disponible. ¿Actualizar ahora?')) location.reload();
+          }
+        });
+      });
+    }).catch(()=>{});
+  }
 
   /* ===== Reanudar sesión ===== */
   const SKEY_SESSION = "session.v1"; // {slug, step}
@@ -1095,8 +968,17 @@
   function setStatus(msg){ els.status.textContent = msg; }
   function norm(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(); }catch{return (s||"").toLowerCase().trim();} }
 
-  // HUD animación
-  let bar = document.querySelector('#voiceWave > i');
+  // HUD
+  let hud, bar;
+  function ensureHUD(){
+    if(hud) return;
+    hud = document.createElement('div');
+    hud.id='voiceHUD';
+    hud.innerHTML = `<span id="voiceDot" aria-hidden="true"></span><span id="voiceWave" aria-hidden="true"><i></i></span><span id="voiceTip">Voz manos libres</span>`;
+    bar = hud.querySelector('#voiceWave > i');
+    els.toggleMic.insertAdjacentElement('afterend', hud);
+  }
+  ensureHUD();
   function drawLevel(w){ if(!bar) return; const px=Math.max(4,Math.min(138,Math.round(w*138))); bar.style.width=px+'px'; }
 
   // Levenshtein light
@@ -1128,18 +1010,26 @@
     return best<=2 ? winner : {type:'unknown', raw:raw};
   }
 
+  // Mic level (aprox con interim confidence/length)
+  function drawTalkingHint(text){
+    const len = Math.min(1, Math.max(0, (text||'').length/30));
+    drawLevel(len);
+    const hudEl=document.getElementById('voiceHUD');
+    hudEl?.classList.toggle('talking', len>0.15);
+  }
+
   function makeRecognizer(){
     if(!SRClass) return null;
     const r=new SRClass();
     r.lang='es-ES';
-    r.continuous=true;
+    r.continuous=true;       // manos libres
     r.interimResults=true;
     r.maxAlternatives=4;
     return r;
   }
 
   function startAutoRecognizer(){
-    if(!SRClass){
+    if(!SRClass){ 
       setStatus(isIOS ? "Voz: iPhone/iPad no permite reconocimiento web. Usa botones." : "Voz: reconocimiento no disponible en este navegador.");
       document.getElementById('voiceHUD')?.classList.add('disabled');
       return;
@@ -1158,10 +1048,7 @@
         const txt=res[0]?.transcript||'';
         if(res.isFinal) finalText += txt + " ";
         els.heard && (els.heard.textContent=(res.isFinal?"✓ ":"… ")+txt);
-        // animación simple del “nivel”
-        const len = Math.min(1, Math.max(0, (txt||'').length/30));
-        drawLevel(len);
-        document.getElementById('voiceHUD')?.classList.toggle('talking', len>0.15);
+        drawTalkingHint(txt);
       }
       if(finalText.trim()){
         const cmd = parseCommand(finalText.trim());
@@ -1171,11 +1058,16 @@
         if(cmd.type==='prev') return prevStep();
         if(cmd.type==='ingredients') return readIngredients();
         if(cmd.type==='goto') return goToStep(Math.max(0,(cmd.n||1)-1));
+        // Si no es comando claro, no hacemos nada (evitamos falsos positivos)
       }
     };
 
-    try{ recAuto.start(); }
-    catch{ setStatus("Voz: permiso requerido. Pulsa “Reconectar voz”."); }
+    try{
+      recAuto.start();
+    }catch(e){
+      // Algunos navegadores exigen gesto de usuario reciente; el botón Reconectar sirve para esto.
+      setStatus("Voz: permiso requerido. Pulsa “Reconectar voz”.");
+    }
   }
 
   function stopAutoRecognizer(){
@@ -1184,34 +1076,24 @@
     document.getElementById('voiceHUD')?.classList.remove('listening','talking');
     drawLevel(0);
   }
+
   function scheduleRestart(){
     if(!state.autoListen) return;
     if(autoRestartTimer){ clearTimeout(autoRestartTimer); }
     autoRestartTimer = setTimeout(()=>{ try{ recAuto && recAuto.start(); }catch{} }, 600);
   }
+
+  // UI para autoListen
   els.autoListen.onchange = (e)=>{ state.autoListen = !!e.target.checked; if(state.autoListen && !recAuto){ startAutoRecognizer(); } if(!state.autoListen){ stopAutoRecognizer(); } };
-  els.toggleMic.onclick = ()=>{ stopAutoRecognizer(); startAutoRecognizer(); };
+  els.toggleMic.onclick = ()=>{ // Reconectar manual
+    stopAutoRecognizer();
+    startAutoRecognizer();
+  };
 
   /* ===== Inicial ===== */
   document.addEventListener('DOMContentLoaded', ()=>{
     filter(); renderList();
   });
-
-  /* ===== Reutilidades menores ===== */
-  function renderList(){
-    // llamada inicial de la lista de la compra (ya definida arriba)
-  }
-
-  /* ===== Eventos miscelánea ===== */
-  // Cerrar modal al clicar fondo
-  document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
-  document.getElementById('guidedModal').addEventListener('click', e => { if(e.target.id==='guidedModal') closeGuided(); });
-
-  function openDrawer(){ $('shoppingDrawer').classList.add('open'); $('shoppingDrawer').setAttribute('aria-hidden','false'); }
-  function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); $('shoppingDrawer').setAttribute('aria-hidden','true'); }
-
-  // Profundidad: abrir detalle por hash si existe
-  fromHashOpen();
   </script>
 </body>
 </html>
