@@ -1,4 +1,4 @@
-const APP_VERSION = "recetario-4.0.0-stable";
+const APP_VERSION = "recetario-4.2.0-filter-fix";
 
 const IMAGENES_RECETAS = { "Tortilla de patatas": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tortilla_de_patatas_con_cebolla_2.jpg", "Paella mixta": "https://upload.wikimedia.org/wikipedia/commons/0/00/Plato_de_paella_mixta.jpg", "Gazpacho andaluz": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Gazpacho_andaluz.jpg", "Salmorejo cordobés": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Salmorejo.jpg", "Patatas bravas": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Patatas_bravas_madrid.jpg/1280px-Patatas_bravas_madrid.jpg", "Croquetas de jamón": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Croquetas_de_jamon_serrano.jpg/1280px-Croquetas_de_jamon_serrano.jpg", "Pisto manchego": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Pisto_manchego_con_huevo_frito.jpg/1024px-Pisto_manchego_con_huevo_frito.jpg", "Fabada asturiana": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Plato_fabada.jpg/1024px-Plato_fabada.jpg", "Pulpo a la gallega": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Pulpo_a_la_gallega_-_Lugo_001.jpg/1024px-Pulpo_a_la_gallega_-_Lugo_001.jpg", "Tarta de Santiago": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Tarta_de_Santiago_al_corte.jpg/1024px-Tarta_de_Santiago_al_corte.jpg", "Crema catalana": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Crema_catalana_quemada.jpg/1024px-Crema_catalana_quemada.jpg", "Arroz con leche": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Arroz_con_leche_de_Asturias.jpg/1024px-Arroz_con_leche_de_Asturias.jpg", "Calamares a la romana": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Calamares_a_la_romana_con_limon.jpg/1024px-Calamares_a_la_romana_con_limon.jpg", "Queso manchego con membrillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Queso_Manchego_con_Membrillo_%283578359194%29.jpg/1024px-Queso_Manchego_con_Membrillo_%283578359194%29.jpg", "Pimientos del padrón": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Pimientos_de_Padr%C3%B3n_-_Herb%C3%B3n_-_Galicia_-_Espa%C3%B1a_-_01.jpg/1024px-Pimientos_de_Padr%C3%B3n_-_Herb%C3%B3n_-_Galicia_-_Espa%C3%B1a_-_01.jpg", "Boquerones en vinagre": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Boquerones_en_vinagre_de_Madrid.jpg/1024px-Boquerones_en_vinagre_de_Madrid.jpg", "Empanadillas de atún": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Empanadillas_de_bonito_caseras_recien_fritas.jpg/1024px-Empanadillas_de_bonito_caseras_recien_fritas.jpg", "Lentejas estofadas": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Lentejas_con_chorizo_y_verduras.jpg/1024px-Lentejas_con_chorizo_y_verduras.jpg", "Ensaladilla rusa": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Ensaladilla_Rusa_de_cerca.JPG/1024px-Ensaladilla_Rusa_de_cerca.JPG", "Crema de calabaza": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Crema-de-calabaza.jpg/1024px-Crema-de-calabaza.jpg", "Rabo de toro": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Rabo_de_toro_del_Restaurante_Astorga.jpg/1024px-Rabo_de_toro_del_Restaurante_Astorga.jpg", "Merluza en salsa verde": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Merluza_en_salsa_verde_con_almejas.jpg/1024px-Merluza_en_salsa_verde_con_almejas.jpg", "Pollo al ajillo": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Pollo_al_ajillo_-_Chicken_with_garlic.jpg/1024px-Pollo_al_ajillo_-_Chicken_with_garlic.jpg", "Carrilleras al vino tinto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Carrillada_de_cerdo_al_vino_tinto_de_toro.jpg/1024px-Carrillada_de_cerdo_al_vino_tinto_de_toro.jpg", "Flan casero": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Flan_casero_%28porci%C3%B3n%29.jpg/1024px-Flan_casero_%28porci%C3%B3n%29.jpg", "Torrijas": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Torrijas_de_leche.jpg/1024px-Torrijas_de_leche.jpg", "Leche frita": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Leche_frita_with_cinnamon_ice_cream.jpg/1024px-Leche_frita_with_cinnamon_ice_cream.jpg" };
 const APERITIVOS = ["Tostas de tomate y jamón", "Tostas de anchoa y pimiento", "Tostas de escalivada", "Tostas de salmón y queso fresco", "Croquetas de jamón", "Croquetas de pollo", "Croquetas de bacalao", "Croquetas de setas", "Empanadillas de atún", "Empanadillas de carne", "Patatas bravas", "Patatas alioli", "Boquerones en vinagre", "Champiñones al ajillo", "Gildas donostiarras", "Pinchos de tortilla", "Pinchos morunos", "Queso marinado en aceite", "Hummus clásico con crudités", "Hummus de remolacha", "Hummus de aguacate", "Gazpacho en vasitos", "Salmorejo en chupitos", "Ensaladilla rusa", "Tortilla francesa mini", "Banderillas variadas", "Mejillones en escabeche", "Sardinas marinadas", "Pulpo a la gallega (tapa)", "Calamares a la romana", "Torreznos crujientes", "Jamón con picos", "Queso manchego con membrillo", "Pimientos del padrón", "Montadito de lomo", "Montadito de pringá", "Bonito con tomate (tapa)", "Pisto con huevo (tapa)", "Chistorra a la sidra", "Berenjena frita con miel"];
@@ -36,17 +36,7 @@ function toggleFav(r) { isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); sav
 
 function photoFallback(title, categoria) { const kcat = (categoria || '').toLowerCase().replace(' ', ','); const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(',')); return `https://source.unsplash.com/800x500/?food,dish,${kcat},${kwBase}`; }
 function svgPlaceholder(title = "Receta") { const t = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"); return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text></svg>`); }
-
-function setImg(el, r) {
-    el.src = svgPlaceholder(r.titulo);
-    el.classList.add('skeleton');
-    const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria);
-    const finalImage = new Image();
-    finalImage.src = imageUrl;
-    finalImage.alt = `Foto de ${r.titulo}`;
-    finalImage.onload = () => { el.src = finalImage.src; el.classList.remove('skeleton'); };
-    finalImage.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); };
-}
+function setImg(el, r) { el.src = svgPlaceholder(r.titulo); el.classList.add('skeleton'); const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria); const finalImage = new Image(); finalImage.src = imageUrl; finalImage.alt = `Foto de ${r.titulo}`; finalImage.onload = () => { el.src = finalImage.src; el.classList.remove('skeleton'); }; finalImage.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); }; }
 
 function card(r, i) { const star = isFav(r) ? '⭐' : '☆'; return `<article class="card" role="article" aria-label="${r.titulo}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton"><div class="body"><h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p><div class="bar"><button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button></div></div></article>`; }
 
@@ -73,20 +63,54 @@ function render(list) {
 }
 
 function filter() {
-  const q = els.search.value.toLowerCase().trim();
-  const sortValue = document.getElementById('sortOrder').value;
-  const difficultyValue = document.getElementById('filterDifficulty').value;
-  const timeValue = document.getElementById('filterTime').value;
-  let filteredRecipes = RECETAS.filter(r => (state.cat === "Todas" || r.categoria === state.cat) && (!q || [r.titulo, ...r.ingredientes].join(" ").toLowerCase().includes(q)) && (difficultyValue === 'all' || r.dificultad === difficultyValue)).filter(r => { const recipeTime = parseTime(r.tiempo); if (timeValue === 'all') return true; if (timeValue === '30') return recipeTime <= 30; if (timeValue === '60') return recipeTime > 30 && recipeTime <= 60; if (timeValue === '61') return recipeTime > 60; return true; });
-  switch (sortValue) {
-    case 'az': filteredRecipes.sort((a, b) => a.titulo.localeCompare(b.titulo)); break;
-    case 'za': filteredRecipes.sort((a, b) => b.titulo.localeCompare(a.titulo)); break;
-    case 'time-asc': filteredRecipes.sort((a, b) => parseTime(a.tiempo) - parseTime(b.tiempo)); break;
-    case 'time-desc': filteredRecipes.sort((a, b) => parseTime(b.tiempo) - parseTime(a.tiempo)); break;
-  }
-  const finalRecipes = state.cat === "Favoritas" ? filteredRecipes.filter(r => fav.has(r.titulo)) : filteredRecipes;
-  render(finalRecipes);
+    let sourceRecipes = RECETAS;
+    
+    // 1. Filtro por categoría (si no es "Todas" o "Favoritas")
+    if (state.cat !== "Todas" && state.cat !== "Favoritas") {
+        sourceRecipes = sourceRecipes.filter(r => r.categoria === state.cat);
+    }
+
+    // 2. Filtro por texto de búsqueda
+    const q = els.search.value.toLowerCase().trim();
+    if (q) {
+        sourceRecipes = sourceRecipes.filter(r => [r.titulo, ...r.ingredientes].join(" ").toLowerCase().includes(q));
+    }
+
+    // 3. Filtros adicionales (dificultad y tiempo)
+    const difficultyValue = document.getElementById('filterDifficulty').value;
+    if (difficultyValue !== 'all') {
+        sourceRecipes = sourceRecipes.filter(r => r.dificultad === difficultyValue);
+    }
+
+    const timeValue = document.getElementById('filterTime').value;
+    if (timeValue !== 'all') {
+        sourceRecipes = sourceRecipes.filter(r => {
+            const recipeTime = parseTime(r.tiempo);
+            if (timeValue === '30') return recipeTime <= 30;
+            if (timeValue === '60') return recipeTime > 30 && recipeTime <= 60;
+            if (timeValue === '61') return recipeTime > 60;
+            return true;
+        });
+    }
+
+    // 4. Filtro especial para Favoritas (se aplica sobre el resultado de los filtros anteriores)
+    if (state.cat === "Favoritas") {
+        sourceRecipes = sourceRecipes.filter(r => fav.has(r.titulo));
+    }
+
+    // 5. Ordenación
+    const sortValue = document.getElementById('sortOrder').value;
+    switch (sortValue) {
+        case 'az': sourceRecipes.sort((a, b) => a.titulo.localeCompare(b.titulo)); break;
+        case 'za': sourceRecipes.sort((a, b) => b.titulo.localeCompare(a.titulo)); break;
+        case 'time-asc': sourceRecipes.sort((a, b) => parseTime(a.tiempo) - parseTime(b.tiempo)); break;
+        case 'time-desc': sourceRecipes.sort((a, b) => parseTime(b.tiempo) - parseTime(a.tiempo)); break;
+    }
+
+    // 6. Renderizar el resultado final
+    render(sourceRecipes);
 }
+
 
 document.addEventListener('DOMContentLoaded', () => { filter(); });
 els.search.oninput = filter;
@@ -107,7 +131,7 @@ els.grid.addEventListener('click', e => {
     if(!img) return;
 
     const index = img.dataset.i;
-    const recipe = state.list[index];
+    const recipe = state.list[index]; // Usa la lista actual renderizada (state.list)
     if (!recipe) return;
 
     const button = e.target.closest('button[data-a]');
