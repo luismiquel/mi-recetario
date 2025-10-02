@@ -26,7 +26,7 @@
   <div class="container" id="app">
     <header>
       <div>
-        <h1 class="text-2xl">Recetario Español – 160 recetas</h1>
+        <h1>Recetario Español – 160 recetas</h1>
         <p class="muted" style="margin:.25rem 0 0 0">Voz manos libres · Contraste · Letra grande · Lista de la compra.</p>
       </div>
       <div class="row">
@@ -50,7 +50,7 @@
           <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
           <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
           <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
-          </div>
+        </div>
         <div class="row" style="align-items:end">
           <label class="muted" for="voiceRate" style="font-size:.9rem">Voz:</label>
           <select id="voiceRate" class="input" style="width:auto" aria-label="Velocidad de lectura en voz alta">
@@ -84,17 +84,15 @@
           <h3 id="detailTitle" style="margin:0;font-size:1.2rem">Detalle</h3>
           <button id="closeDetail" class="btn btn-ghost" aria-label="Cerrar detalle" title="Cerrar">✕</button>
         </div>
-        <div style="padding:1rem; display:grid; gap:1rem; grid-template-columns: 1fr; }
-        ">
-          <div style="display:grid; gap:.5rem; grid-template-columns: 1fr; }
-          ">
+        <div style="padding:1rem; display:grid; gap:1rem; grid-template-columns: 1fr;">
+          <div style="display:grid; gap:.5rem; grid-template-columns: 1fr;">
             <img id="detailImg" alt="" width="800" height="500" class="skeleton" style="width:100%;height:220px;object-fit:cover;border-radius:.75rem">
             <p id="detailMeta" class="meta"></p>
             <div class="bar">
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
               <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
               <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
-              </div>
+            </div>
           </div>
           <div>
             <h4 style="margin:.25rem 0;font-size:1.05rem">Ingredientes</h4>
@@ -128,7 +126,7 @@
               <button id="printRecipe" class="btn btn-ghost" aria-label="Imprimir receta" title="Imprimir">🖨️ Imprimir</button>
             </div>
           </div>
-          </div>
+        </div>
       </div>
     </div>
 
@@ -155,7 +153,7 @@
   </div>
 
   <div id="ttsCaption" role="status" aria-live="polite"></div>
-
+  
   <script src="scripts.js" defer></script>
 </body>
 </html>
