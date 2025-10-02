@@ -1,4 +1,4 @@
-const APP_VERSION = "recetario-3.1.0-extended-images";
+const APP_VERSION = "recetario-3.1.1-eager-load";
 
 /* ===== URLs de Imágenes Predefinidas (LISTA AMPLIADA) ===== */
 const IMAGENES_RECETAS = {
@@ -40,9 +40,6 @@ const IMAGENES_RECETAS = {
     "Leche frita": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Leche_frita_with_cinnamon_ice_cream.jpg/1024px-Leche_frita_with_cinnamon_ice_cream.jpg"
 };
 
-/* ===== El resto del código permanece igual ===== */
-// (El código que sigue es idéntico al de la vez anterior)
-
 const APERITIVOS = ["Tostas de tomate y jamón", "Tostas de anchoa y pimiento", "Tostas de escalivada", "Tostas de salmón y queso fresco", "Croquetas de jamón", "Croquetas de pollo", "Croquetas de bacalao", "Croquetas de setas", "Empanadillas de atún", "Empanadillas de carne", "Patatas bravas", "Patatas alioli", "Boquerones en vinagre", "Champiñones al ajillo", "Gildas donostiarras", "Pinchos de tortilla", "Pinchos morunos", "Queso marinado en aceite", "Hummus clásico con crudités", "Hummus de remolacha", "Hummus de aguacate", "Gazpacho en vasitos", "Salmorejo en chupitos", "Ensaladilla rusa", "Tortilla francesa mini", "Banderillas variadas", "Mejillones en escabeche", "Sardinas marinadas", "Pulpo a la gallega (tapa)", "Calamares a la romana", "Torreznos crujientes", "Jamón con picos", "Queso manchego con membrillo", "Pimientos del padrón", "Montadito de lomo", "Montadito de pringá", "Bonito con tomate (tapa)", "Pisto con huevo (tapa)", "Chistorra a la sidra", "Berenjena frita con miel"];
 const PRIMEROS = ["Sopa de ajo", "Sopa castellana", "Gazpacho andaluz", "Salmorejo cordobés", "Ajoblanco", "Crema de calabaza", "Crema de puerros", "Crema de champiñón", "Pisto manchego", "Menestra de verduras", "Lentejas estofadas", "Garbanzos con espinacas", "Judías blancas con verduras", "Arroz caldoso de verduras", "Arroz a la cubana", "Arroz negro", "Arroz al horno", "Paella de verduras", "Fideuá de pescado", "Macarrones con tomate", "Tallarines al ajillo", "Espaguetis carbonara ligera", "Ensalada mixta", "Ensalada campera", "Ensalada de garbanzos", "Ensalada de pasta fría", "Tomates aliñados", "Papas arrugadas con mojo", "Pimientos asados", "Alcachofas salteadas", "Acelgas rehogadas", "Sopa de pescado", "Caldo gallego", "Cocido andaluz (sopa)", "Sopa minestrone", "Vichyssoise", "Crema de zanhoria", "Porrusalda", "Sopa de marisco", "Caldo de pollo casero"];
 const SEGUNDOS = ["Pollo al ajillo", "Pollo al horno con patatas", "Pollo en pepitoria", "Pechuga de pollo a la plancha", "Escalope de ternera", "Filete de ternera a la plancha", "Carrilleras al vino tinto", "Rabo de toro", "Albóndigas en salsa", "Lomo adobado", "Costillas al horno", "Chuletillas de cordero", "Cordero asado", "Secreto ibérico a la plancha", "Solomillo al roquefort", "Bacalao a la vizcaína", "Bacalao al pil-pil", "Merluza en salsa verde", "Dorada al horno", "Lubina a la sal", "Salmón al papillote", "Atún encebollado", "Calamares en su tinta", "Pulpo a la gallega", "Paella mixta", "Arroz con pollo", "Arroz con bogavante", "Empanada gallega de atún", "Pisto con huevos", "Tortilla de patatas", "Revuelto de setas", "Conejo al ajillo", "Codornices escabechadas", "Callos a la madrileña", "Fabada asturiana", "Marmitako de bonito", "Chuletón a la plancha", "Escabeche de caballa", "Bonito con tomate", "Trucha a la navarra"];
@@ -80,33 +77,9 @@ function saveFav() { try { localStorage.setItem(FKEY, JSON.stringify([...fav]));
 function isFav(r) { return fav.has(r.titulo); }
 function toggleFav(r) { isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-function photoFallback(title, categoria) {
-    const kcat = (categoria || '').toLowerCase().replace(' ', ',');
-    const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(','));
-    return `https://source.unsplash.com/800x500/?food,dish,${kcat},${kwBase}`;
-}
-
-function svgPlaceholder(title = "Receta") {
-    const t = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text></svg>`);
-}
-
-function setImg(el, r) {
-    el.src = svgPlaceholder(r.titulo);
-    el.classList.add('skeleton');
-    const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria);
-    const finalImage = new Image();
-    finalImage.src = imageUrl;
-    finalImage.alt = `Foto de ${r.titulo}`;
-    finalImage.onload = () => {
-        el.src = finalImage.src;
-        el.classList.remove('skeleton');
-    };
-    finalImage.onerror = () => {
-        el.src = svgPlaceholder(r.titulo);
-        el.classList.remove('skeleton');
-    };
-}
+function photoFallback(title, categoria) { const kcat = (categoria || '').toLowerCase().replace(' ', ','); const kwBase = encodeURIComponent((title || '').toLowerCase().split(' ').slice(0, 2).join(',')); return `https://source.unsplash.com/800x500/?food,dish,${kcat},${kwBase}`; }
+function svgPlaceholder(title = "Receta") { const t = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"); return `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#e5e7eb"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs><rect width="800" height="500" fill="url(#g)"/><text x="50%" y="50%" text-anchor="middle" fill="#6b7280" font-size="28" font-family="system-ui,Segoe UI,Roboto" dy="8">${t}</text></svg>`); }
+function setImg(el, r) { el.src = svgPlaceholder(r.titulo); el.classList.add('skeleton'); const imageUrl = r.imagen ? r.imagen : photoFallback(r.titulo, r.categoria); const finalImage = new Image(); finalImage.src = imageUrl; finalImage.alt = `Foto de ${r.titulo}`; finalImage.onload = () => { el.src = finalImage.src; el.classList.remove('skeleton'); }; finalImage.onerror = () => { el.src = svgPlaceholder(r.titulo); el.classList.remove('skeleton'); }; }
 
 function card(r, i) { const star = isFav(r) ? '⭐' : '☆'; return `<article class="card" role="article" aria-label="${r.titulo}"><img data-i="${i}" alt="Foto de ${r.titulo}" class="lazy skeleton"><div class="body"><h3 style="margin:.25rem 0;font-size:1.05rem">${r.titulo}</h3><p class="meta">${r.categoria} · ${r.tiempo}</p><div class="bar"><button class="btn btn-ghost" data-a="leer" data-i="${i}">🔈 Leer</button><button class="btn btn-primary" data-a="guiada" data-i="${i}">▶️ Guiada</button><button class="btn btn-ghost" data-a="abrir" data-i="${i}">📖 Abrir</button><button class="btn btn-ghost" data-a="fav" data-i="${i}">${star}</button></div></div></article>`; }
 
@@ -118,6 +91,8 @@ function render(list) {
     els.grid.innerHTML = list.map((r, i) => card(r, i)).join("");
     els.count.textContent = `Mostrando ${list.length} recetas.`;
     const lazyImages = Array.from(els.grid.querySelectorAll('img.lazy'));
+    
+    // Configuración del IntersectionObserver con margen aumentado
     imageObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -130,7 +105,8 @@ function render(list) {
                 observer.unobserve(img);
             }
         });
-    }, { rootMargin: '200px' });
+    }, { rootMargin: '800px' }); // AUMENTAMOS EL MARGEN PARA CARGAR CON MÁS ANTELACIÓN
+
     lazyImages.forEach(img => imageObserver.observe(img));
 }
 
