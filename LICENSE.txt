@@ -1,0 +1,20 @@
+© 2025 Luis Miguel García de las Morenas  
+Todos los derechos reservados.
+
+Título del proyecto: Recetario Español – 160 recetas  
+Versión: 1.6.0  
+Autor: Luis Miguel García de las Morenas  
+
+Este software, su diseño, estructura, código fuente, textos, imágenes y recursos asociados son propiedad intelectual de Luis Miguel García de las Morenas y están protegidos por la legislación española y los tratados internacionales sobre derechos de autor.
+
+Queda expresamente prohibida la reproducción, distribución, comunicación pública o modificación total o parcial del software, sin la autorización previa y por escrito del autor.
+
+El usuario podrá utilizar esta aplicación únicamente para fines personales y no comerciales.  
+No se autoriza su uso en proyectos con fines lucrativos, su redistribución o su integración en otros productos sin el consentimiento expreso del autor.
+
+El autor no se hace responsable de daños o perjuicios derivados del uso indebido de esta aplicación.
+
+Para consultas, colaboraciones o solicitudes de licencia comercial, puede contactarse al autor a través de sus canales oficiales.
+
+Luis Miguel García de las Morenas  
+© 2025 – Todos los derechos reservados.
