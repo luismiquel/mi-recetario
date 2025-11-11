@@ -14,6 +14,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  
+  <link rel="icon" type="image/png" href="./favicon.png" /> 
 
   <link rel="stylesheet" href="./styles.css">
 
@@ -384,6 +386,12 @@ const OV = (()=> {
       ["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (opcional)"],
       ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],
       "35–45 min"
+    )],
+    // ** Override detallado para Bonito con Tomate (Añadido) **
+    ["bonito con tomate", R(
+      ["Bonito/Atún fresco","Tomate triturado","Cebolla","Pimiento verde","Ajo","Aceite de oliva","Azúcar","Sal"],
+      ["Corta el bonito en tacos y sella 1 min por cada lado. Resérvalo en un plato.","Sofríe la cebolla, el pimiento y el ajo picados a fuego bajo durante 10 min.","Incorpora el tomate triturado, sal y una pizca de azúcar. Cocina la salsa 20 min a fuego lento.","Reincorpora el bonito a la salsa de tomate y cocina solo 2–3 min para que quede jugoso por dentro.","Sirve inmediatamente con perejil fresco y pan."],
+      "35–45 min"
     )]
   ]);
   return { get: (title) => M.get(title.toLowerCase()) || null };
@@ -471,7 +479,7 @@ const RECETAS = [
    ========================== */
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const $ = id => document.getElementById(id);
-const SKEY_CFG = 'config.v2'; // Clave para configuración persistente (versión incrementada)
+const SKEY_CFG = 'config.v2'; // Clave para configuración persistente
 
 // Carga de configuración desde localStorage
 function loadConfig() {
@@ -607,8 +615,12 @@ function openDetail(r){
   if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
   ensureShareButton();
 }
+
+// **Función clave de corrección:** Detener la voz al cerrar el modal de detalle
 function closeDetail(){
-  els.detailModal.classList.add('hidden'); els.detailModal.classList.remove('flex');
+  els.detailModal.classList.add('hidden'); 
+  els.detailModal.classList.remove('flex');
+  VoiceService.stopSpeak(); 
   if(untrapDetail) untrapDetail();
 }
 
@@ -839,13 +851,19 @@ function openGuided(r){
   if(state.autoListen) VoiceService.startASR();
 }
 
+// **Función clave de corrección:** Asegura que ambos modales se cierran.
 function closeGuided(){
   VoiceService.stopSpeak();
-  $('guidedModal').classList.add('hidden'); $('guidedModal').classList.remove('flex');
+  $('guidedModal').classList.add('hidden'); 
+  $('guidedModal').classList.remove('flex');
+  
   els.status.textContent="Cocina guiada cerrada.";
   if(untrapGuided) untrapGuided();
   VoiceService.stopASR();
   saveSession();
+  
+  // Llama a closeDetail() para cerrar también el modal de detalle que está detrás
+  closeDetail(); 
 }
 
 function readCurrent(){
