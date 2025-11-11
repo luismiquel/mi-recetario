@@ -216,17 +216,19 @@
 /* ==========================
    ===== Datos (160 recetas) =====
    ========================== */
-const APP_VERSION = "recetario-1.7.0"; // Versión actualizada
+const APP_VERSION = "recetario-1.7.1"; 
 
-// Utils para datos (incluye stripDiacritics y slug)
+// FUNCIONES BÁSICAS
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+// FIX CRÍTICO: Función sleep redefinida para evitar ReferenceError
+const sleep = ms => new Promise(r=>setTimeout(r,ms)); 
 
 // Función para obtener imágenes (Mejorada para buscar por slug)
 const IMG = (cat, title) => {
   const titleSlug = slug(title);
   if (titleSlug) {
-    // SUPOSICIÓN: Las imágenes están en una carpeta './img/' y se llaman 'titulo-slug.jpg'
+    // Si la imagen no existe en ./img/ (ej. /img/tortilla-de-patatas.jpg), el navegador mostrará el alt/placeholder
     return `./img/${titleSlug}.jpg`; 
   }
   
@@ -475,7 +477,7 @@ function build(cat,list){
   return list.map(n=>({
     categoria:cat,
     titulo:n,
-    imagen:IMG(cat, n), // <-- IMAGEN AHORA USA EL TÍTULO
+    imagen:IMG(cat, n), 
     ingredientes:ingredientesPara(cat,n), 
     pasos:pasosPara(cat,n), 
     tiempo:tiempo(cat,n)
@@ -645,8 +647,7 @@ const VoiceService = (() => {
   let autoRestartTimer = null;
   let hud, bar;
   const SRClass = (!isIOS) && (window.SpeechRecognition||window.webkitSpeechRecognition) ? (window.SpeechRecognition||window.webkitSpeechRecognition) : null;
-  const sleep = ms => new Promise(r=>setTimeout(r,ms));
-
+  
   function pickVoice(){
     const vs = speechSynthesis.getVoices();
     voicesReady = vs && vs.length>0;
@@ -892,7 +893,7 @@ function closeGuided(){
   VoiceService.stopASR();
   saveSession();
   
-  // Llama a closeDetail() para cerrar también el modal de detalle que está detrás
+  // Cierra el modal de detalle que está detrás, resolviendo el error de superposición.
   closeDetail(); 
 }
 
