@@ -216,14 +216,28 @@
 /* ==========================
    ===== Datos (160 recetas) =====
    ========================== */
-const APP_VERSION = "recetario-1.6.0";
+const APP_VERSION = "recetario-1.7.0"; // Versión actualizada
 
-const IMG = c => ({
-  Aperitivo:"https://placehold.co/800x500?text=Aperitivo",
-  Primero:"https://placehold.co/800x500?text=Primero",
-  Segundo:"https://placehold.co/800x500?text=Segundo",
-  Postre:"https://placehold.co/800x500?text=Postre"
-}[c]);
+// Utils para datos (incluye stripDiacritics y slug)
+function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
+const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+// Función para obtener imágenes (Mejorada para buscar por slug)
+const IMG = (cat, title) => {
+  const titleSlug = slug(title);
+  if (titleSlug) {
+    // SUPOSICIÓN: Las imágenes están en una carpeta './img/' y se llaman 'titulo-slug.jpg'
+    return `./img/${titleSlug}.jpg`; 
+  }
+  
+  // Placeholder si no hay imagen específica
+  return {
+    Aperitivo:"https://placehold.co/800x500?text=Aperitivo",
+    Primero:"https://placehold.co/800x500?text=Primero",
+    Segundo:"https://placehold.co/800x500?text=Segundo",
+    Postre:"https://placehold.co/800x500?text=Postre"
+  }[cat];
+};
 
 const APERITIVOS = [
   "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco",
@@ -387,7 +401,6 @@ const OV = (()=> {
       ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],
       "35–45 min"
     )],
-    // ** Override detallado para Bonito con Tomate (Añadido) **
     ["bonito con tomate", R(
       ["Bonito/Atún fresco","Tomate triturado","Cebolla","Pimiento verde","Ajo","Aceite de oliva","Azúcar","Sal"],
       ["Corta el bonito en tacos y sella 1 min por cada lado. Resérvalo en un plato.","Sofríe la cebolla, el pimiento y el ajo picados a fuego bajo durante 10 min.","Incorpora el tomate triturado, sal y una pizca de azúcar. Cocina la salsa 20 min a fuego lento.","Reincorpora el bonito a la salsa de tomate y cocina solo 2–3 min para que quede jugoso por dentro.","Sirve inmediatamente con perejil fresco y pan."],
@@ -403,10 +416,6 @@ const PASOS_BASE = {
   Segundo:["Seca la pieza y sala.","Añade adobo/especias.","Dora/hornea/sella bien.","Agrega guarnición/salsa y cocina al punto.","Reposa unos minutos.","Sirve con su jugo."],
   Postre:["Pesa y mide todo.","Mezcla secos y húmedos aparte.","Aromatiza (cítricos/vainilla/canela).","Hornea/refrigera hasta cuajar.","Enfría o reposa.","Decora y sirve."]
 };
-
-// Utils para datos
-function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
-const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 
 function ingredientesPara(cat,t){
   t=t.toLowerCase(); let ing=[];
@@ -463,8 +472,14 @@ function pasosPara(cat,t){
 }
 
 function build(cat,list){
-  return list.map(n=>({categoria:cat,titulo:n,imagen:IMG(cat),
-    ingredientes:ingredientesPara(cat,n), pasos:pasosPara(cat,n), tiempo:tiempo(cat,n)}));
+  return list.map(n=>({
+    categoria:cat,
+    titulo:n,
+    imagen:IMG(cat, n), // <-- IMAGEN AHORA USA EL TÍTULO
+    ingredientes:ingredientesPara(cat,n), 
+    pasos:pasosPara(cat,n), 
+    tiempo:tiempo(cat,n)
+  }));
 }
 
 const RECETAS = [
@@ -479,9 +494,8 @@ const RECETAS = [
    ========================== */
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const $ = id => document.getElementById(id);
-const SKEY_CFG = 'config.v2'; // Clave para configuración persistente
+const SKEY_CFG = 'config.v2';
 
-// Carga de configuración desde localStorage
 function loadConfig() {
   const defaults = {
     dark: matchMedia('(prefers-color-scheme: dark)').matches,
@@ -498,7 +512,6 @@ function loadConfig() {
   }
 }
 
-// Guarda la configuración
 function saveConfig() {
   try {
     const { dark, contrast, font, rate, autoListen } = state;
@@ -506,13 +519,12 @@ function saveConfig() {
   } catch {}
 }
 
-// Estado de la aplicación (UI en tiempo real)
 const state = {
   q: "", cat: "Todas", list: RECETAS, current: null, step: 0,
-  ...loadConfig(), // Carga la configuración persistente
+  ...loadConfig(), 
   listening: false
 };
-window.state = state; // Para debug
+window.state = state; 
 
 const els = {
   grid: $('recipesGrid'), empty: $('emptyState'), count: $('countLabel'), search: $('search'),
@@ -592,7 +604,6 @@ function render(list){
 }
 
 function filter(){
-  // Usa stripDiacritics en la query y el contenido para búsquedas sin acentos
   const q = stripDiacritics(state.q).toLowerCase().trim();
   const lAll = RECETAS.filter(r =>
     (state.cat==="Todas" || r.categoria===state.cat) &&
@@ -616,7 +627,6 @@ function openDetail(r){
   ensureShareButton();
 }
 
-// **Función clave de corrección:** Detener la voz al cerrar el modal de detalle
 function closeDetail(){
   els.detailModal.classList.add('hidden'); 
   els.detailModal.classList.remove('flex');
@@ -708,20 +718,34 @@ const VoiceService = (() => {
     }}
     return dp[n];
   }
+  
+  // Lista de Comandos MEJORADA
   const CMD_LIST = [
     {type:'next', variants:['siguiente','proximo','avanza','adelante','continuar']},
     {type:'prev', variants:['anterior','atras','retroceder']},
     {type:'repeat', variants:['repetir','otra vez','de nuevo','repite']},
-    {type:'ingredients', variants:['leer ingredientes','ingredientes','leer lista']},
-    {type:'stop', variants:['salir','parar','detener','cerrar']}
+    {type:'ingredients', variants:['leer ingredientes','ingredientes','leer lista','que necesito']},
+    {type:'stop', variants:['salir','parar','detener','cerrar']},
+    {type:'time', variants:['cuanto tiempo', 'tiempo', 'cuanto falta']},
+    {type:'current_step', variants:['que estoy haciendo', 'paso actual', 'dime el paso']}
   ];
   const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
 
   function parseCommand(raw){
     const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
                               (_,w)=>'paso '+NUM[w]);
+    
+    // Nuevo: Ingredientes de este paso (ej: "ingredientes paso 3")
+    const m_ing_step = t.match(/(?:ingredientes|que necesito)\s+(?:para|del)\s+paso\s+(\d{1,2})/);
+    if(m_ing_step) return {type:'ingredients_step', n:+m_ing_step[1]};
+    
+    // Comando: Ir al paso X
     const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
+    
+    // Comandos fijos
     for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
+    
+    // Fuzzy match
     let best=99, winner={type:'unknown'};
     for(const c of CMD_LIST){ for(const v of c.variants){ const d=lev(t,v); if(d<best){ best=d; winner={type:c.type}; } } }
     return best<=2 ? winner : {type:'unknown', raw:raw};
@@ -767,6 +791,13 @@ const VoiceService = (() => {
 
       if(finalText.trim()){
         const cmd = parseCommand(finalText.trim());
+        
+        // Lógica MEJORADA de Asistente (Preguntas)
+        if(executeGuidedAction(cmd)) {
+          return;
+        }
+
+        // Lógica de navegación existente (solo se ejecuta si no es una pregunta)
         if(cmd.type==='stop') return closeGuided();
         if(cmd.type==='repeat') return repeatStep();
         if(cmd.type==='next') return nextStep();
@@ -806,7 +837,6 @@ const VoiceService = (() => {
     }, 600);
   }
 
-  // Export
   return {
     speak: speakSafe,
     stopSpeak: () => { try{ speechSynthesis.cancel(); }catch{} speakLock = false; },
@@ -845,13 +875,13 @@ function openGuided(r){
   $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
   if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
   els.status.textContent = "Voz manos libres activa.";
-  VoiceService.speak(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes o salir.`);
+  VoiceService.speak(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes, o haz preguntas como: cuanto tiempo, o que estoy haciendo. Para terminar di: salir.`);
   readCurrent();
   saveSession();
   if(state.autoListen) VoiceService.startASR();
 }
 
-// **Función clave de corrección:** Asegura que ambos modales se cierran.
+// ** CORRECCIÓN CLAVE: Permite cerrar el modo guiado y el detalle **
 function closeGuided(){
   VoiceService.stopSpeak();
   $('guidedModal').classList.add('hidden'); 
@@ -865,6 +895,36 @@ function closeGuided(){
   // Llama a closeDetail() para cerrar también el modal de detalle que está detrás
   closeDetail(); 
 }
+
+// Nueva función para el asistente de voz mejorado (respuestas contextuales)
+function executeGuidedAction(cmd){
+  if(!ensureCurrent()) return false;
+  const currentStepText = state.current.pasos[state.step];
+  
+  switch(cmd.type){
+    case 'time':
+      const timeMatch = /(\d{1,3})\s*(?:min|mins|minutos)\b/i.exec(currentStepText);
+      if(timeMatch){
+        VoiceService.speak(`Para el paso actual, el tiempo de cocción o espera es de ${timeMatch[1]} minutos.`);
+      } else {
+        VoiceService.speak("Este paso no menciona un tiempo de cocción específico. Consulta el texto para más detalles.");
+      }
+      return true;
+      
+    case 'current_step':
+      VoiceService.speak(`El paso actual, número ${state.step+1}, consiste en: ${currentStepText}`);
+      return true;
+      
+    case 'ingredients_step':
+      const ing = state.current?.ingredientes || [];
+      VoiceService.speak(`Toda la receta necesita: ${ing.join(", ")}. Por favor, confirma si todos están listados para el paso ${cmd.n}.`);
+      return true;
+      
+    default:
+      return false; 
+  }
+}
+
 
 function readCurrent(){
   if(!ensureCurrent()) return;
