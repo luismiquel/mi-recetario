@@ -216,7 +216,7 @@
 /* ==========================
    ===== Datos (160 recetas) =====
    ========================== */
-const APP_VERSION = "recetario-1.7.1"; 
+const APP_VERSION = "recetario-1.7.2"; 
 
 // FUNCIONES BÁSICAS
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
@@ -224,20 +224,32 @@ const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'
 // FIX CRÍTICO: Función sleep redefinida para evitar ReferenceError
 const sleep = ms => new Promise(r=>setTimeout(r,ms)); 
 
-// Función para obtener imágenes (Mejorada para buscar por slug)
+// --- BASE DE DATOS DE IMÁGENES WEB (Para evitar 404 locales) ---
+const IMG_WEB_URLS = new Map([
+    // Ejemplos de URLs web externas (usa tus propias URLs aquí si las tienes):
+    ["tortilla-de-patatas", "https://picsum.photos/800/500?random=1"],
+    ["paella-mixta", "https://picsum.photos/800/500?random=2"],
+    ["gazpacho-andaluz", "https://picsum.photos/800/500?random=3"],
+    ["flan-casero", "https://picsum.photos/800/500?random=4"],
+    ["croquetas-de-jamon", "https://picsum.photos/800/500?random=5"],
+]);
+
+// Función para obtener imágenes (Modificada: Prioriza web, luego placeholder)
 const IMG = (cat, title) => {
   const titleSlug = slug(title);
-  if (titleSlug) {
-    // Si la imagen no existe en ./img/ (ej. /img/tortilla-de-patatas.jpg), el navegador mostrará el alt/placeholder
-    return `./img/${titleSlug}.jpg`; 
+  
+  // 1. Intentar cargar desde el listado de URLs web (si existe)
+  const webUrl = IMG_WEB_URLS.get(titleSlug);
+  if (webUrl) {
+    return webUrl;
   }
   
-  // Placeholder si no hay imagen específica
+  // 2. Placeholder de categoría si no hay URL específica
   return {
-    Aperitivo:"https://placehold.co/800x500?text=Aperitivo",
-    Primero:"https://placehold.co/800x500?text=Primero",
-    Segundo:"https://placehold.co/800x500?text=Segundo",
-    Postre:"https://placehold.co/800x500?text=Postre"
+    Aperitivo:"https://placehold.co/800x500/d62828/ffffff?text=Aperitivo",
+    Primero:"https://placehold.co/800x500/f4a261/ffffff?text=Primer+Plato",
+    Segundo:"https://placehold.co/800x500/0077b6/ffffff?text=Segundo+Plato",
+    Postre:"https://placehold.co/800x500/ef476f/ffffff?text=Postre"
   }[cat];
 };
 
