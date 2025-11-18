@@ -216,7 +216,7 @@
 /* ==========================
    ===== Datos (160 recetas) =====
    ========================== */
-const APP_VERSION = "recetario-1.7.2"; 
+const APP_VERSION = "recetario-1.7.3"; 
 
 // FUNCIONES BÁSICAS
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
@@ -560,10 +560,18 @@ const els = {
   caption: $('ttsCaption'), closeDetail: $('closeDetail')
 };
 
+// para debounce de búsqueda
+let searchTimer = null;
+
 // 🎨 Manejo de estilos y configuración de la UI
 function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); saveConfig(); }
 function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); saveConfig(); }
-function setFont(px){ state.font = Math.max(14, Math.min(22, px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); saveConfig(); }
+function setFont(px){
+  // Mejora: mínimo 16, máximo 24 para mayor legibilidad
+  state.font = Math.max(16, Math.min(24, px));
+  document.documentElement.style.setProperty('--base-font', state.font+'px');
+  saveConfig();
+}
 function applyAllConfig(){
   applyTheme(); applyContrast(); setFont(state.font);
   els.autoListen.checked = state.autoListen;
@@ -587,7 +595,7 @@ function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); save
 // Tarjetas
 function card(r,i){
   const star = isFav(r) ? '⭐' : '☆';
-  return `<article class="card" role="article" aria-label="${r.titulo}">
+  return `<article class="card recipe-card" data-i="${i}" tabindex="0" role="article" aria-label="${r.titulo}">
     <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy" decoding="async" width="800" height="500">
     <div class="p-3 space-y-2">
       <h3 class="text-lg font-semibold">${r.titulo}</h3>
@@ -609,6 +617,10 @@ function render(list){
     els.grid.innerHTML = "";
     els.empty.classList.remove('hidden');
     els.count.textContent = "Mostrando 0 recetas.";
+    // Aviso por voz si no hay resultados
+    if (typeof VoiceService !== 'undefined' && VoiceService && VoiceService.speak) {
+      VoiceService.speak("No se han encontrado recetas con ese filtro.");
+    }
     return;
   }
   els.empty.classList.add('hidden');
@@ -888,7 +900,7 @@ function openGuided(r){
   $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
   if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
   els.status.textContent = "Voz manos libres activa.";
-  VoiceService.speak(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes, o haz preguntas como: cuanto tiempo, o que estoy haciendo. Para terminar di: salir.`);
+  VoiceService.speak(`Iniciamos la cocina guiada de ${r.titulo}. Puedes decir: siguiente, anterior, repetir, leer ingredientes, preguntar cuánto tiempo, o qué estás haciendo. Para terminar di: salir.`);
   readCurrent();
   saveSession();
   if(state.autoListen) VoiceService.startASR();
@@ -1159,9 +1171,16 @@ function init(){
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
 
-  // 3. Búsqueda y Filtro
+  // 3. Búsqueda y Filtro (con debounce)
   filter(); // Render inicial
-  els.search.oninput = e => { state.q = e.target.value; filter(); };
+  els.search.oninput = e => {
+    clearTimeout(searchTimer);
+    const value = e.target.value;
+    searchTimer = setTimeout(() => {
+      state.q = value;
+      filter();
+    }, 200);
+  };
   document.addEventListener('keydown', e => {
     if(e.ctrlKey && e.key === '/'){ e.preventDefault(); els.search.focus(); }
   });
@@ -1171,14 +1190,32 @@ function init(){
   els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
   els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
 
+  // Tarjeta clicable (no pisa los botones)
   els.grid.addEventListener('click',e=>{
-    const b = e.target.closest('button[data-a]'); if(!b) return;
+    const article = e.target.closest('.recipe-card');
+    if(article && !e.target.closest('button[data-a]')){
+      const r = state.list[Number(article.dataset.i)];
+      if(r) openDetailWithHash(r);
+      return;
+    }
+
+    const b = e.target.closest('button[data-a]'); 
+    if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
     if(b.dataset.a==='leer')  { openDetailWithHash(r); readRecipe(r); }
     if(b.dataset.a==='guiada'){ openDetailWithHash(r); openGuided(r); }
     if(b.dataset.a==='abrir') { openDetailWithHash(r); }
     if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
     if(b.dataset.a==='fav')  toggleFav(r);
+  });
+
+  // Navegación con teclado en tarjetas
+  els.grid.addEventListener('keydown', e => {
+    if((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('recipe-card')){
+      e.preventDefault();
+      const r = state.list[Number(e.target.dataset.i)];
+      if(r) openDetailWithHash(r);
+    }
   });
 
   els.closeDetail.onclick = closeDetail;
