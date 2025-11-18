@@ -15,7 +15,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- Favicon sin 404 -->
+  <!-- Favicon en data URL para evitar 404 -->
   <link rel="icon" type="image/png"
         href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" />
 
@@ -60,6 +60,14 @@
     .talking #voiceDot{background:#10b981;box-shadow:0 0 12px 3px rgba(16,185,129,.45)}
     .listening #voiceDot{background:#f59e0b}
     .disabled #voiceDot{background:#9ca3af}
+
+    /* Forzar que las imágenes se vean */
+    .recipe-image{
+      display:block !important;
+      width:100% !important;
+      height:100% !important;
+      object-fit:cover !important;
+    }
   </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -139,7 +147,7 @@
             <img id="detailImg"
                  src=""
                  alt=""
-                 class="w-full h-48 object-cover rounded-lg"
+                 class="recipe-image w-full h-48 object-cover rounded-lg"
                  width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
@@ -212,31 +220,67 @@
 
   <script>
 /* ===== Datos y utilidades base ===== */
-const APP_VERSION = "recetario-1.7.7";
+const APP_VERSION = "recetario-1.7.8";
 
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
-/* ===== Imágenes: SVG incrustado por categoría ===== */
+/* ===== Imágenes: foto real + fallback SVG ===== */
+
+// Color según categoría
 function imgBg(cat){
   if(cat==="Aperitivo") return "#d62828";
-  if(cat==="Primero") return "#f4a261";
-  if(cat==="Segundo") return "#0077b6";
-  if(cat==="Postre") return "#ef476f";
+  if(cat==="Primero")   return "#f4a261";
+  if(cat==="Segundo")   return "#0077b6";
+  if(cat==="Postre")    return "#ef476f";
   return "#78350f";
 }
-const IMG = (cat, title) => {
+
+// Fallback: SVG incrustado con el nombre del plato
+function fallbackImg(cat, title){
   const bg = imgBg(cat);
-  const label = (title || "Receta").replace(/"/g,"'");
+  const label = (title || "Receta").replace(/"/g, "'");
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">`+
       `<rect width="800" height="500" fill="${bg}"/>`+
       `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" `+
       `font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" `+
-      `font-size="38" fill="#ffffff">${label}</text>`+
+      `font-size="34" fill="#ffffff">${label}</text>`+
     `</svg>`;
   return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+// Construye la búsqueda de imagen según el plato
+function baseImgQuery(cat, title){
+  const t = stripDiacritics((title||"").toLowerCase());
+
+  if(t.includes("tortilla de patatas")) return "spanish omelette,tortilla de patatas";
+  if(t.includes("paella"))              return "paella,spanish rice";
+  if(t.includes("gazpacho"))            return "gazpacho,spanish soup";
+  if(t.includes("salmorejo"))           return "salmorejo,spanish cold soup";
+  if(t.includes("croquetas"))           return "croquetas,spanish tapas";
+  if(t.includes("fabada"))              return "fabada asturiana,spanish stew";
+  if(t.includes("pulpo a la gallega"))  return "pulpo a la gallega,octopus,spanish dish";
+  if(t.includes("flan casero"))         return "flan,caramel custard,dessert";
+  if(t.includes("tarta de queso"))      return "cheesecake,dessert";
+  if(t.includes("arroz con leche"))     return "rice pudding,arroz con leche";
+  if(t.includes("brownie"))             return "brownie,chocolate dessert";
+  if(t.includes("marmitako"))           return "marmitako,fish stew,spanish";
+  if(t.includes("rabo de toro"))        return "oxtail stew,rabo de toro,spanish";
+
+  if(cat === "Aperitivo") return `${title},tapas,spanish appetizer`;
+  if(cat === "Primero")   return `${title},soup,starter,spanish`;
+  if(cat === "Segundo")   return `${title},main dish,spanish food`;
+  if(cat === "Postre")    return `${title},dessert,sweet,spanish`;
+
+  return `${title},spanish food`;
+}
+
+// Imagen principal: foto de Unsplash
+const IMG = (cat, title) => {
+  const q = baseImgQuery(cat, title);
+  return `https://source.unsplash.com/featured/800x500/?${encodeURIComponent(q)}`;
 };
 
 /* ===== Listas de recetas ===== */
@@ -574,7 +618,12 @@ function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); save
 function card(r,i){
   const star = isFav(r) ? '⭐' : '☆';
   return `<article class="card recipe-card" data-i="${i}" tabindex="0" role="article" aria-label="${r.titulo}">
-    <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" width="800" height="500">
+    <img
+      src="${r.imagen}"
+      alt="Foto ilustrativa de ${r.titulo}"
+      class="recipe-image w-full h-44 sm:h-48 object-cover"
+      width="800" height="500"
+      onerror="this.onerror=null;this.src='${fallbackImg(r.categoria, r.titulo)}'">
     <div class="p-3 space-y-2">
       <h3 class="text-lg font-semibold">${r.titulo}</h3>
       <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
@@ -618,6 +667,10 @@ function openDetail(r){
   els.detailTitle.textContent = r.titulo;
   els.detailImg.src = r.imagen;
   els.detailImg.alt = `Foto de ${r.titulo}`;
+  els.detailImg.onerror = () => {
+    els.detailImg.onerror = null;
+    els.detailImg.src = fallbackImg(r.categoria, r.titulo);
+  };
   els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
   els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
   els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
@@ -849,7 +902,7 @@ function openGuided(r){
   $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
   if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
   els.status.textContent = "Voz manos libres activa.";
-  VoiceService.speak(`Iniciamos la cocina guiada de ${r.titulo}. Puedes decir: siguiente, anterior, repetir, leer ingredientes, añadir ingredientes, leer receta completa, preguntar cuánto tiempo, o qué estás haciendo. Para ayuda di: ayuda. Para terminar di: salir.`);
+  VoiceService.speak(`Iniciamos la cocina guiada de ${r.titulo}. Puedes decir: siguiente, anterior, repetir, leer ingredientes, añadir ingredientes, leer receta completa, preguntar cuánto tiempo, qué estás haciendo, pedir ayuda o decir salir.`);
   readCurrent();
   saveSession();
   if(state.autoListen) VoiceService.startASR();
@@ -864,6 +917,41 @@ function closeGuided(){
   VoiceService.stopASR();
   saveSession();
   closeDetail();
+}
+
+let currentTimer = null, countdownInt = null;
+function clearTimerUI(){
+  if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
+  const old = document.getElementById('guidedTimer');
+  if(old) old.remove();
+}
+function beep(ms=200, freq=880){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = freq; osc.start();
+    setTimeout(()=>{ osc.stop(); ctx.close(); }, ms);
+  }catch{}
+}
+function startStepTimer(minutes){
+  clearTimerUI();
+  if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
+  const box = document.createElement('div');
+  box.id='guidedTimer';
+  box.className='mt-3 text-sm';
+  box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
+    <button class="btn btn-ghost ml-2" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador">Cancelar</button>`;
+  document.querySelector('#guidedModal .p-4').appendChild(box);
+
+  let left = Math.round(minutes*60);
+  const $left = document.getElementById('tleft');
+  const fmt = s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  $left.textContent = fmt(left);
+
+  countdownInt = setInterval(()=>{ left--; $left.textContent = fmt(Math.max(0,left)); }, 1000);
+  currentTimer = setTimeout(()=>{ clearTimerUI(); beep(300); VoiceService.speak("¡Tiempo!"); }, minutes*60*1000);
+  document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
 }
 
 function executeGuidedAction(cmd){
@@ -919,41 +1007,6 @@ function executeGuidedAction(cmd){
     default:
       return false;
   }
-}
-
-let currentTimer = null, countdownInt = null;
-function clearTimerUI(){
-  if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
-  const old = document.getElementById('guidedTimer');
-  if(old) old.remove();
-}
-function beep(ms=200, freq=880){
-  try{
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = freq; osc.start();
-    setTimeout(()=>{ osc.stop(); ctx.close(); }, ms);
-  }catch{}
-}
-function startStepTimer(minutes){
-  clearTimerUI();
-  if(currentTimer) { clearTimeout(currentTimer); currentTimer = null; }
-  const box = document.createElement('div');
-  box.id='guidedTimer';
-  box.className='mt-3 text-sm';
-  box.innerHTML = `<span>⏱️ Temporizador: <strong id="tleft"></strong></span>
-    <button class="btn btn-ghost ml-2" id="cancelTimer" aria-label="Cancelar temporizador" title="Cancelar temporizador">Cancelar</button>`;
-  document.querySelector('#guidedModal .p-4').appendChild(box);
-
-  let left = Math.round(minutes*60);
-  const $left = document.getElementById('tleft');
-  const fmt = s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
-  $left.textContent = fmt(left);
-
-  countdownInt = setInterval(()=>{ left--; $left.textContent = fmt(Math.max(0,left)); }, 1000);
-  currentTimer = setTimeout(()=>{ clearTimerUI(); beep(300); VoiceService.speak("¡Tiempo!"); }, minutes*60*1000);
-  document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
 }
 
 function readCurrent(){
