@@ -220,7 +220,7 @@
 
   <script>
 /* ===== Datos y utilidades base ===== */
-const APP_VERSION = "recetario-1.7.8";
+const APP_VERSION = "recetario-1.7.9";
 
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
@@ -240,12 +240,13 @@ function imgBg(cat){
 // Fallback: SVG incrustado con el nombre del plato
 function fallbackImg(cat, title){
   const bg = imgBg(cat);
-  const label = (title || "Receta").replace(/"/g, "'");
+  // Quitamos comillas para no romper atributos HTML/JS
+  const label = (title || "Receta").replace(/["']/g, "");
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">`+
       `<rect width="800" height="500" fill="${bg}"/>`+
       `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" `+
-      `font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" `+
+      `font-family="system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" `+
       `font-size="34" fill="#ffffff">${label}</text>`+
     `</svg>`;
   return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
