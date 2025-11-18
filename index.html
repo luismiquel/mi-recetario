@@ -15,7 +15,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   
-  <link rel="icon" type="image/png" href="./favicon.png" /> 
+  <!-- Favicon sin 404 -->
+  <link rel="icon" type="image/png"
+        href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=" />
 
   <link rel="stylesheet" href="./styles.css">
 
@@ -105,7 +107,7 @@
           <button class="tab" role="tab" id="tab-primero" aria-selected="false" data-cat="Primero" title="Mostrar primeros">Primeros</button>
           <button class="tab" role="tab" id="tab-segundo" aria-selected="false" data-cat="Segundo" title="Mostrar segundos">Segundos</button>
           <button class="tab" role="tab" id="tab-postre" aria-selected="false" data-cat="Postre" title="Mostrar postres">Postres</button>
-          </div>
+        </div>
         <div class="flex items-end gap-2">
           <label class="text-sm" for="voiceRate">Voz:</label>
           <select id="voiceRate" class="rounded-lg border px-2 py-1 dark:bg-stone-900 dark:border-stone-700" aria-label="Velocidad de lectura en voz alta">
@@ -123,7 +125,7 @@
       </div>
       <div id="readerStatus" class="text-xs text-stone-500 mt-2" aria-live="polite"></div>
       <div id="heard" class="text-xs mt-1 text-stone-500">🎧 Oído: <span id="heardText">—</span></div>
-      </section>
+    </section>
 
     <section class="mb-2 text-sm text-stone-600 dark:text-stone-400">
       <span id="countLabel">Mostrando 0 recetas.</span>
@@ -142,13 +144,13 @@
         </div>
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
-            <img id="detailImg" src="https://placehold.co/800x500?text=Receta" alt="" class="w-full h-48 object-cover rounded-lg" loading="lazy" width="800" height="500">
+            <img id="detailImg" src="https://placehold.co/800x500?text=Receta" alt="" class="w-full h-48 object-cover rounded-lg" width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
               <button id="btnGuided" class="btn btn-primary" aria-label="Iniciar cocina guiada" title="Cocina guiada">▶️ Guiada</button>
               <button id="btnAddAll" class="btn btn-ghost" aria-label="Añadir todos los ingredientes a la lista" title="Añadir ingredientes">🧺 Añadir todo</button>
-              </div>
+            </div>
           </div>
           <div>
             <h4 class="text-lg font-semibold">Ingredientes</h4>
@@ -168,7 +170,7 @@
         </div>
         <div class="p-4 space-y-4">
           <p class="text-sm text-stone-600 dark:text-stone-400">
-            <strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “paso 2”, “salir”.
+            <strong>Voz manos libres activa.</strong> Di: “siguiente”, “anterior”, “repetir”, “leer ingredientes”, “añadir ingredientes”, “leer receta completa”, “paso 2”, “cuánto tiempo”, “qué estoy haciendo”, “ayuda”, “salir”.
           </p>
           <div class="bg-stone-50 dark:bg-stone-900 rounded-xl p-4">
             <h4 id="guidedRecipeTitle" class="text-lg font-semibold mb-2"></h4>
@@ -216,41 +218,17 @@
 /* ==========================
    ===== Datos (160 recetas) =====
    ========================== */
-const APP_VERSION = "recetario-1.7.3"; 
+const APP_VERSION = "recetario-1.7.4"; 
 
 // FUNCIONES BÁSICAS
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-// FIX CRÍTICO: Función sleep redefinida para evitar ReferenceError
 const sleep = ms => new Promise(r=>setTimeout(r,ms)); 
 
-// --- BASE DE DATOS DE IMÁGENES WEB (Para evitar 404 locales) ---
-const IMG_WEB_URLS = new Map([
-    // Ejemplos de URLs web externas (usa tus propias URLs aquí si las tienes):
-    ["tortilla-de-patatas", "https://picsum.photos/800/500?random=1"],
-    ["paella-mixta", "https://picsum.photos/800/500?random=2"],
-    ["gazpacho-andaluz", "https://picsum.photos/800/500?random=3"],
-    ["flan-casero", "https://picsum.photos/800/500?random=4"],
-    ["croquetas-de-jamon", "https://picsum.photos/800/500?random=5"],
-]);
-
-// Función para obtener imágenes (Modificada: Prioriza web, luego placeholder)
+// Imágenes: usar Unsplash según el nombre del plato (sin 404 y temática correcta)
 const IMG = (cat, title) => {
-  const titleSlug = slug(title);
-  
-  // 1. Intentar cargar desde el listado de URLs web (si existe)
-  const webUrl = IMG_WEB_URLS.get(titleSlug);
-  if (webUrl) {
-    return webUrl;
-  }
-  
-  // 2. Placeholder de categoría si no hay URL específica
-  return {
-    Aperitivo:"https://placehold.co/800x500/d62828/ffffff?text=Aperitivo",
-    Primero:"https://placehold.co/800x500/f4a261/ffffff?text=Primer+Plato",
-    Segundo:"https://placehold.co/800x500/0077b6/ffffff?text=Segundo+Plato",
-    Postre:"https://placehold.co/800x500/ef476f/ffffff?text=Postre"
-  }[cat];
+  const query = encodeURIComponent(`${title} plato español comida`);
+  return `https://source.unsplash.com/800x500/?${query}`;
 };
 
 const APERITIVOS = [
@@ -560,14 +538,12 @@ const els = {
   caption: $('ttsCaption'), closeDetail: $('closeDetail')
 };
 
-// para debounce de búsqueda
 let searchTimer = null;
 
-// 🎨 Manejo de estilos y configuración de la UI
+// 🎨 Configuración UI
 function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); saveConfig(); }
 function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); saveConfig(); }
 function setFont(px){
-  // Mejora: mínimo 16, máximo 24 para mayor legibilidad
   state.font = Math.max(16, Math.min(24, px));
   document.documentElement.style.setProperty('--base-font', state.font+'px');
   saveConfig();
@@ -578,7 +554,6 @@ function applyAllConfig(){
   els.voiceRate.value = state.rate;
 }
 
-// Tabs
 function setActiveTab(btn){
   els.tabs().forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
   state.cat = btn.dataset.cat;
@@ -596,7 +571,7 @@ function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); save
 function card(r,i){
   const star = isFav(r) ? '⭐' : '☆';
   return `<article class="card recipe-card" data-i="${i}" tabindex="0" role="article" aria-label="${r.titulo}">
-    <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" loading="lazy" decoding="async" width="800" height="500">
+    <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" width="800" height="500">
     <div class="p-3 space-y-2">
       <h3 class="text-lg font-semibold">${r.titulo}</h3>
       <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
@@ -617,7 +592,6 @@ function render(list){
     els.grid.innerHTML = "";
     els.empty.classList.remove('hidden');
     els.count.textContent = "Mostrando 0 recetas.";
-    // Aviso por voz si no hay resultados
     if (typeof VoiceService !== 'undefined' && VoiceService && VoiceService.speak) {
       VoiceService.speak("No se han encontrado recetas con ese filtro.");
     }
@@ -660,7 +634,6 @@ function closeDetail(){
   if(untrapDetail) untrapDetail();
 }
 
-
 /* ==========================
    ===== Servicio de Voz (TTS & ASR) =====
    ========================== */
@@ -693,7 +666,6 @@ const VoiceService = (() => {
     document.removeEventListener('click', unlockTTSOnce);
   }
 
-  // TTS (Text-to-Speech)
   async function speakSafe(text){
     if(!('speechSynthesis' in window)) return;
     while(speakLock) await sleep(20);
@@ -712,7 +684,6 @@ const VoiceService = (() => {
     await done;
   }
 
-  // ASR (Automatic Speech Recognition) Utils
   function ensureHUD(){
     if(hud) return;
     hud = document.createElement('div');
@@ -733,7 +704,6 @@ const VoiceService = (() => {
     if(!isListening) drawLevel(0);
   }
 
-  // Comandos de Voz
   const norm = s => stripDiacritics(s).toLowerCase().trim();
   function lev(a,b){
     const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
@@ -744,7 +714,6 @@ const VoiceService = (() => {
     return dp[n];
   }
   
-  // Lista de Comandos MEJORADA
   const CMD_LIST = [
     {type:'next', variants:['siguiente','proximo','avanza','adelante','continuar']},
     {type:'prev', variants:['anterior','atras','retroceder']},
@@ -752,25 +721,20 @@ const VoiceService = (() => {
     {type:'ingredients', variants:['leer ingredientes','ingredientes','leer lista','que necesito']},
     {type:'stop', variants:['salir','parar','detener','cerrar']},
     {type:'time', variants:['cuanto tiempo', 'tiempo', 'cuanto falta']},
-    {type:'current_step', variants:['que estoy haciendo', 'paso actual', 'dime el paso']}
+    {type:'current_step', variants:['que estoy haciendo', 'paso actual', 'dime el paso']},
+    {type:'add_ingredients', variants:['añadir ingredientes','añadir a la lista','mandar a la lista','enviar a la lista']},
+    {type:'full_recipe', variants:['leer receta completa','leer receta entera','leer todo']},
+    {type:'help', variants:['ayuda','que puedo decir','ayuda de voz']}
   ];
   const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
 
   function parseCommand(raw){
     const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
                               (_,w)=>'paso '+NUM[w]);
-    
-    // Nuevo: Ingredientes de este paso (ej: "ingredientes paso 3")
     const m_ing_step = t.match(/(?:ingredientes|que necesito)\s+(?:para|del)\s+paso\s+(\d{1,2})/);
     if(m_ing_step) return {type:'ingredients_step', n:+m_ing_step[1]};
-    
-    // Comando: Ir al paso X
     const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
-    
-    // Comandos fijos
     for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
-    
-    // Fuzzy match
     let best=99, winner={type:'unknown'};
     for(const c of CMD_LIST){ for(const v of c.variants){ const d=lev(t,v); if(d<best){ best=d; winner={type:c.type}; } } }
     return best<=2 ? winner : {type:'unknown', raw:raw};
@@ -786,7 +750,6 @@ const VoiceService = (() => {
     return r;
   }
 
-  // ASR Start/Stop
   function startAutoRecognizer(){
     if(!SRClass){
       els.status.textContent = isIOS ? "Voz: iPhone/iPad no permite reconocimiento web. Usa botones." : "Voz: reconocimiento no disponible en este navegador.";
@@ -816,13 +779,7 @@ const VoiceService = (() => {
 
       if(finalText.trim()){
         const cmd = parseCommand(finalText.trim());
-        
-        // Lógica MEJORADA de Asistente (Preguntas)
-        if(executeGuidedAction(cmd)) {
-          return;
-        }
-
-        // Lógica de navegación existente (solo se ejecuta si no es una pregunta)
+        if(executeGuidedAction(cmd)) return;
         if(cmd.type==='stop') return closeGuided();
         if(cmd.type==='repeat') return repeatStep();
         if(cmd.type==='next') return nextStep();
@@ -883,7 +840,6 @@ function readRecipe(r){
   els.status.textContent = `Leyendo ${r.titulo}.`;
 }
 
-// Guiado
 function ensureCurrent(){
   if(!state.current){
     const primera = (state.list && state.list[0]) || null;
@@ -900,56 +856,78 @@ function openGuided(r){
   $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
   if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
   els.status.textContent = "Voz manos libres activa.";
-  VoiceService.speak(`Iniciamos la cocina guiada de ${r.titulo}. Puedes decir: siguiente, anterior, repetir, leer ingredientes, preguntar cuánto tiempo, o qué estás haciendo. Para terminar di: salir.`);
+  VoiceService.speak(`Iniciamos la cocina guiada de ${r.titulo}. Puedes decir: siguiente, anterior, repetir, leer ingredientes, añadir ingredientes, leer receta completa, preguntar cuánto tiempo, o qué estás haciendo. Para ayuda di: ayuda. Para terminar di: salir.`);
   readCurrent();
   saveSession();
   if(state.autoListen) VoiceService.startASR();
 }
 
-// ** CORRECCIÓN CLAVE: Permite cerrar el modo guiado y el detalle **
 function closeGuided(){
   VoiceService.stopSpeak();
   $('guidedModal').classList.add('hidden'); 
   $('guidedModal').classList.remove('flex');
-  
   els.status.textContent="Cocina guiada cerrada.";
   if(untrapGuided) untrapGuided();
   VoiceService.stopASR();
   saveSession();
-  
-  // Cierra el modal de detalle que está detrás, resolviendo el error de superposición.
   closeDetail(); 
 }
 
-// Nueva función para el asistente de voz mejorado (respuestas contextuales)
+// Asistente de voz mejorado en modo guiado
 function executeGuidedAction(cmd){
   if(!ensureCurrent()) return false;
   const currentStepText = state.current.pasos[state.step];
-  
+
   switch(cmd.type){
-    case 'time':
+    case 'time': {
       const timeMatch = /(\d{1,3})\s*(?:min|mins|minutos)\b/i.exec(currentStepText);
       if(timeMatch){
         VoiceService.speak(`Para el paso actual, el tiempo de cocción o espera es de ${timeMatch[1]} minutos.`);
       } else {
-        VoiceService.speak("Este paso no menciona un tiempo de cocción específico. Consulta el texto para más detalles.");
+        VoiceService.speak("Este paso no menciona un tiempo de cocción específico. Mira el texto por si hay detalles adicionales.");
       }
       return true;
-      
+    }
     case 'current_step':
-      VoiceService.speak(`El paso actual, número ${state.step+1}, consiste en: ${currentStepText}`);
+      VoiceService.speak(`El paso actual, número ${state.step+1}, es: ${currentStepText}`);
       return true;
-      
-    case 'ingredients_step':
+
+    case 'ingredients_step': {
+      const ingPaso = state.current?.ingredientes || [];
+      VoiceService.speak(`Para toda la receta necesitas: ${ingPaso.join(", ")}. Revisa los que corresponden al paso ${cmd.n}.`);
+      return true;
+    }
+
+    case 'add_ingredients': {
       const ing = state.current?.ingredientes || [];
-      VoiceService.speak(`Toda la receta necesita: ${ing.join(", ")}. Por favor, confirma si todos están listados para el paso ${cmd.n}.`);
+      if(ing.length){
+        addMany(ing);
+        VoiceService.speak("He añadido todos los ingredientes de esta receta a la lista de la compra.");
+      } else {
+        VoiceService.speak("Esta receta no tiene ingredientes listados para añadir a la lista.");
+      }
       return true;
-      
+    }
+
+    case 'full_recipe': {
+      const r = state.current;
+      if(!r) return true;
+      const intro = `${r.titulo}. ${r.categoria}. Tiempo estimado ${r.tiempo}.`;
+      const ing = r.ingredientes?.length ? `Ingredientes: ${r.ingredientes.join(", ")}.` : "";
+      const pasos = r.pasos?.length ? `Pasos: ${r.pasos.map((p,i)=>`Paso ${i+1}: ${p}.`).join(" ")}` : "";
+      VoiceService.speak([intro, ing, pasos].filter(Boolean).join(" "));
+      return true;
+    }
+
+    case 'help': {
+      VoiceService.speak("Puedes decir: siguiente, anterior, repetir, leer ingredientes, añadir ingredientes, leer receta completa, paso 3, cuánto tiempo, qué estoy haciendo o salir.");
+      return true;
+    }
+
     default:
       return false; 
   }
 }
-
 
 function readCurrent(){
   if(!ensureCurrent()) return;
@@ -958,8 +936,6 @@ function readCurrent(){
   VoiceService.speak(`Paso ${state.step+1}. ${pasos[state.step]}`);
   const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
   [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
-
-  // Temporizador por paso
   clearTimerUI();
   try{
     const p = state.current?.pasos?.[state.step] || "";
@@ -992,7 +968,7 @@ function goToStep(n){
   else { VoiceService.stopSpeak(); setTimeout(()=>VoiceService.speak("Ese número de paso no existe."),80); }
 }
 
-/* ===== Temporizadores por paso (reubicado) ===== */
+/* ===== Temporizadores por paso ===== */
 let currentTimer = null, countdownInt = null;
 function clearTimerUI(){
   if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
@@ -1028,7 +1004,7 @@ function startStepTimer(minutes){
   document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
 }
 
-/* ===== Lista de la compra (reubicado) ===== */
+/* ===== Lista de la compra ===== */
 const SKEY_SHOPPING='shopping.v1'; let shopping=JSON.parse(localStorage.getItem(SKEY_SHOPPING)||'[]');
 function saveShopping(){ localStorage.setItem(SKEY_SHOPPING, JSON.stringify(shopping)); }
 function uid(){ return Math.random().toString(36).slice(2,9); }
@@ -1046,8 +1022,8 @@ function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
 function openDrawer(){ $('shoppingDrawer').classList.add('open'); $('shoppingDrawer').setAttribute('aria-hidden','false'); }
 function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); $('shoppingDrawer').setAttribute('aria-hidden','true'); }
 
-/* ===== Sesión (reubicado) ===== */
-const SKEY_SESSION = "session.v1"; // {slug, step}
+/* ===== Sesión ===== */
+const SKEY_SESSION = "session.v1";
 function saveSession(){
   try{
     if(!state.current) return;
@@ -1064,7 +1040,7 @@ function loadSession(){
   }catch{ return null; }
 }
 
-/* ===== Utilidades misceláneas (reubicado) ===== */
+/* ===== Utilidades varias ===== */
 function openDetailWithHash(r){
   openDetail(r);
   const h = '#receta=' + slug(r.titulo);
@@ -1077,7 +1053,6 @@ function fromHashOpen(){
   if(r) openDetail(r);
 }
 
-// ... JSON-LD y Focus Trap sin cambios
 function injectRecipeLD(r){
   const ld = {
     "@context":"https://schema.org",
@@ -1142,12 +1117,10 @@ function ensureShareButton(){
   };
 }
 
-
-/* ===== Inicialización (DOM Loaded) ===== */
+/* ===== Inicialización ===== */
 function init(){
   applyAllConfig();
 
-  // 1. Listeners de Configuración
   els.toggleTheme.onclick = () => { state.dark = !state.dark; applyTheme(); };
   els.toggleContrast.onclick = () => { state.contrast = !state.contrast; applyContrast(); };
   els.fontPlus.onclick = () => setFont(state.font+1);
@@ -1159,7 +1132,6 @@ function init(){
     if(!state.autoListen) VoiceService.stopASR();
   };
 
-  // 2. Tabs
   els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
   (function addFavTab(){
     const tablist = document.querySelector('[role="tablist"]');
@@ -1171,8 +1143,7 @@ function init(){
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
 
-  // 3. Búsqueda y Filtro (con debounce)
-  filter(); // Render inicial
+  filter();
   els.search.oninput = e => {
     clearTimeout(searchTimer);
     const value = e.target.value;
@@ -1185,12 +1156,10 @@ function init(){
     if(e.ctrlKey && e.key === '/'){ e.preventDefault(); els.search.focus(); }
   });
 
-  // 4. Listeners de Recetas y Modales
   els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
   els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
   els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
 
-  // Tarjeta clicable (no pisa los botones)
   els.grid.addEventListener('click',e=>{
     const article = e.target.closest('.recipe-card');
     if(article && !e.target.closest('button[data-a]')){
@@ -1198,7 +1167,6 @@ function init(){
       if(r) openDetailWithHash(r);
       return;
     }
-
     const b = e.target.closest('button[data-a]'); 
     if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
@@ -1209,7 +1177,6 @@ function init(){
     if(b.dataset.a==='fav')  toggleFav(r);
   });
 
-  // Navegación con teclado en tarjetas
   els.grid.addEventListener('keydown', e => {
     if((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('recipe-card')){
       e.preventDefault();
@@ -1220,27 +1187,25 @@ function init(){
 
   els.closeDetail.onclick = closeDetail;
   document.getElementById('detailModal').addEventListener('click', e => { if(e.target.id==='detailModal') closeDetail(); });
-  document.addEventListener('keydown',e=>{ // Cerrar con Escape
+  document.addEventListener('keydown',e=>{ 
     if(e.key==='Escape'){
       if(!els.guidedModal.classList.contains('hidden')){ e.preventDefault(); closeGuided(); }
       else if(!els.detailModal.classList.contains('hidden')){ e.preventDefault(); closeDetail(); }
     }
   });
 
-  // 5. Controles de Guiado
   $('nextStep').onclick = nextStep; $('prevStep').onclick = prevStep; $('repeatStep').onclick = repeatStep;
   $('stopReading').onclick = VoiceService.stopSpeak; $('closeGuided').onclick = closeGuided;
   $('printRecipe').onclick = ()=>{ window.print(); };
-  els.toggleMic.onclick = VoiceService.startASR; // Reconectar manual
+  els.toggleMic.onclick = VoiceService.startASR;
 
-  document.addEventListener('keydown',e=>{ // Controles de teclado en Guiado
+  document.addEventListener('keydown',e=>{ 
     if($('guidedModal').classList.contains('hidden')) return;
     if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); nextStep(); }
     if(e.key==='ArrowLeft'){ e.preventDefault(); prevStep(); }
     if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
   });
 
-  // 6. Lista de la Compra
   renderList();
   els.openShopping.onclick = openDrawer; els.closeShopping.onclick = closeDrawer;
   els.addItem.onclick = ()=>{ addItem(els.newItem.value); els.newItem.value=""; els.newItem.focus(); };
@@ -1270,11 +1235,9 @@ function init(){
     w.document.close(); w.print(); setTimeout(()=>w.close(),300);
   };
 
-  // 7. Navegación e Historial
   window.addEventListener('popstate', fromHashOpen);
-  fromHashOpen(); // Cargar receta desde el hash al inicio
+  fromHashOpen();
 
-  // 8. Reanudar Sesión
   const last = loadSession();
   if(last && confirm(`¿Reanudar "${last.recipe.titulo}" en el paso ${last.step+1}?`)){
     openDetailWithHash(last.recipe);
@@ -1283,7 +1246,6 @@ function init(){
     readCurrent();
   }
 
-  // 9. Desbloqueo TTS (para iOS y otros)
   document.addEventListener('touchend', VoiceService.unlockTTS, {passive:true});
   document.addEventListener('click', VoiceService.unlockTTS, {once:true});
 }
