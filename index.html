@@ -137,12 +137,10 @@
         <div class="p-4 grid gap-4 md:grid-cols-2">
           <div>
             <img id="detailImg"
-                 src="https://placehold.co/800x500/78350f/ffffff?text=Receta"
+                 src=""
                  alt=""
                  class="w-full h-48 object-cover rounded-lg"
-                 loading="lazy"
-                 width="800" height="500"
-                 onerror="this.onerror=null;this.src='https://placehold.co/800x500/78350f/ffffff?text=Receta';">
+                 width="800" height="500">
             <p id="detailMeta" class="mt-2 text-sm text-stone-600 dark:text-stone-400"></p>
             <div class="mt-3 flex flex-wrap gap-2">
               <button id="btnReadAll" class="btn btn-ghost" aria-label="Leer receta en voz alta" title="Leer receta">🔈 Leer</button>
@@ -213,25 +211,35 @@
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
   <script>
-/* ===== Datos ===== */
-const APP_VERSION = "recetario-1.7.6";
+/* ===== Datos y utilidades base ===== */
+const APP_VERSION = "recetario-1.7.7";
 
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
-// Imágenes: placeholder con nombre del plato
+/* ===== Imágenes: SVG incrustado por categoría ===== */
+function imgBg(cat){
+  if(cat==="Aperitivo") return "#d62828";
+  if(cat==="Primero") return "#f4a261";
+  if(cat==="Segundo") return "#0077b6";
+  if(cat==="Postre") return "#ef476f";
+  return "#78350f";
+}
 const IMG = (cat, title) => {
-  const text = encodeURIComponent(title);
-  const baseByCat = {
-    Aperitivo: "d62828/ffffff",
-    Primero:   "f4a261/ffffff",
-    Segundo:   "0077b6/ffffff",
-    Postre:    "ef476f/ffffff"
-  }[cat] || "78350f/ffffff";
-  return `https://placehold.co/800x500/${baseByCat}?text=${text}`;
+  const bg = imgBg(cat);
+  const label = (title || "Receta").replace(/"/g,"'");
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">`+
+      `<rect width="800" height="500" fill="${bg}"/>`+
+      `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" `+
+      `font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" `+
+      `font-size="38" fill="#ffffff">${label}</text>`+
+    `</svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 };
 
+/* ===== Listas de recetas ===== */
 const APERITIVOS = [
   "Tostas de tomate y jamón","Tostas de anchoa y pimiento","Tostas de escalivada","Tostas de salmón y queso fresco",
   "Croquetas de jamón","Croquetas de pollo","Croquetas de bacalao","Croquetas de setas",
@@ -279,7 +287,7 @@ const POSTRES = [
   "Crema de limón","Naranja con canela","Fresas con nata"
 ];
 
-/* Overrides realistas */
+/* ===== Overrides detallados (OV) ===== */
 const OV = (()=> {
   function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
   const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -376,7 +384,7 @@ const OV = (()=> {
     )],
     ["tarta de queso al horno", R(
       ["Queso crema","Huevos","Azúcar","Nata","Harina (opcional)"],
-      ["Mezcla sin batir de más.","Horno 180 ºC 40–50 min (centro tembloroso).","Enfría y sirve."],
+      ["Mezcla sin batir de más.","Horno 180 ºC 40–50 min.","Enfría y sirve."],
       "60–90 min con frío"
     )],
     ["flan casero", R(
@@ -391,12 +399,12 @@ const OV = (()=> {
     )],
     ["brownie sencillo", R(
       ["Chocolate","Mantequilla","Azúcar","Huevos","Harina","Nueces (opcional)"],
-      ["Funde choco/mantequilla.","Añade huevos y azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],
+      ["Funde chocolate y mantequilla.","Añade huevos y azúcar, luego harina.","Horno 170–180 ºC 20–25 min."],
       "35–45 min"
     )],
     ["bonito con tomate", R(
       ["Bonito/Atún fresco","Tomate triturado","Cebolla","Pimiento verde","Ajo","Aceite de oliva","Azúcar","Sal"],
-      ["Corta el bonito en tacos y sella 1 min por cada lado. Resérvalo.","Sofríe cebolla, pimiento y ajo 10 min.","Añade tomate, sal y azúcar; cocina 20 min.","Reincorpora el bonito 2–3 min.","Sirve con perejil y pan."],
+      ["Sella el bonito 1 min por lado y reserva.","Sofríe cebolla, pimiento y ajo 10 min.","Añade tomate, sal y azúcar; cocina 20 min.","Reincorpora el bonito 2–3 min.","Sirve con perejil y pan."],
       "35–45 min"
     )]
   ]);
@@ -482,7 +490,7 @@ const RECETAS = [
   ...build("Postre", POSTRES)
 ];
 
-/* ===== Estado/UI ===== */
+/* ===== Estado / UI ===== */
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const $ = id => document.getElementById(id);
 const SKEY_CFG = 'config.v2';
@@ -502,7 +510,6 @@ function loadConfig() {
     return defaults;
   }
 }
-
 function saveConfig() {
   try {
     const { dark, contrast, font, rate, autoListen } = state;
@@ -556,20 +563,18 @@ function setActiveTab(btn){
   filter();
 }
 
-// Favoritos
+/* ===== Favoritos ===== */
 const FKEY='fav.v1';
 let fav = new Set(JSON.parse(localStorage.getItem(FKEY)||'[]'));
 function saveFav(){ try{ localStorage.setItem(FKEY, JSON.stringify([...fav])); }catch{} }
 function isFav(r){ return fav.has(r.titulo); }
 function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-// Tarjeta
+/* ===== Render de tarjetas ===== */
 function card(r,i){
   const star = isFav(r) ? '⭐' : '☆';
   return `<article class="card recipe-card" data-i="${i}" tabindex="0" role="article" aria-label="${r.titulo}">
-    <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" width="800" height="500"
-         loading="lazy" decoding="async"
-         onerror="this.onerror=null;this.src='https://placehold.co/800x500/78350f/ffffff?text=Receta';">
+    <img src="${r.imagen}" alt="Foto ilustrativa de ${r.titulo}" class="w-full h-44 sm:h-48 object-cover" width="800" height="500">
     <div class="p-3 space-y-2">
       <h3 class="text-lg font-semibold">${r.titulo}</h3>
       <p class="text-sm text-stone-600 dark:text-stone-400">${r.categoria} · ${r.tiempo}</p>
@@ -621,7 +626,6 @@ function openDetail(r){
   if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
   ensureShareButton();
 }
-
 function closeDetail(){
   els.detailModal.classList.add('hidden');
   els.detailModal.classList.remove('flex');
@@ -820,7 +824,7 @@ const VoiceService = (() => {
   };
 })();
 
-/* ===== Recetas / guiado ===== */
+/* ===== Lógica de recetas y guiado ===== */
 function readRecipe(r){
   const intro = `${r.titulo}. ${r.categoria}. Tiempo ${r.tiempo}.`;
   const ing = r.ingredientes?.length ? `Ingredientes: ${r.ingredientes.join(", ")}.` : "";
@@ -862,7 +866,6 @@ function closeGuided(){
   closeDetail();
 }
 
-// Asistente de voz contextual
 function executeGuidedAction(cmd){
   if(!ensureCurrent()) return false;
   const currentStepText = state.current.pasos[state.step];
@@ -1028,7 +1031,7 @@ function loadSession(){
   }catch{ return null; }
 }
 
-/* ===== Utilidades ===== */
+/* ===== JSON-LD / accesibilidad ===== */
 function openDetailWithHash(r){
   openDetail(r);
   const h = '#receta=' + slug(r.titulo);
@@ -1040,7 +1043,6 @@ function fromHashOpen(){
   const r = RECETAS.find(x=>slug(x.titulo)===m[1]);
   if(r) openDetail(r);
 }
-
 function injectRecipeLD(r){
   const ld = {
     "@context":"https://schema.org",
