@@ -196,7 +196,7 @@
           <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
           <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
         </div>
-      </div>
+        </div>
       <div class="p-3">
         <div class="flex gap-2 mb-3">
           <label for="newItem" class="sr-only">Nuevo artículo</label>
@@ -510,7 +510,7 @@ const RECETAS = [
 ];
 
 /* ==========================
-   ===== Resto de la Lógica (Sin cambios significativos) =====
+   ===== Resto de la Lógica (Integración del Scroll) =====
    ========================== */
 
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -634,7 +634,10 @@ function filter(){
   render(l);
 }
 
-function openDetail(r){
+// === FUNCIONES MODIFICADAS PARA EL SCROLL SUAVE ===
+
+// 1. openDetail: Acepta el elemento de la tarjeta (cardEl) para centrarlo.
+function openDetail(r, cardEl = null){
   state.current = r;
   els.detailTitle.textContent = r.titulo;
   els.detailImg.src = r.imagen; 
@@ -646,7 +649,22 @@ function openDetail(r){
   injectRecipeLD(r);
   if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
   ensureShareButton();
+  
+  // NUEVA LÓGICA DE SCROLL: Si recibimos la tarjeta, hacemos scroll suave.
+  if (cardEl) {
+      cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
 }
+
+// 2. openDetailWithHash: Pasa el elemento de la tarjeta (obtenido del botón) a openDetail.
+function openDetailWithHash(r, clickedButton = null){
+  // Determinamos el elemento de la tarjeta raíz a partir del botón clicado
+  const cardEl = clickedButton ? clickedButton.closest('article.card') : null;
+  openDetail(r, cardEl); 
+  const h = '#receta=' + slug(r.titulo);
+  if(location.hash !== h){ history.pushState({}, "", h); }
+}
+
 
 function closeDetail(){
   els.detailModal.classList.add('hidden'); 
@@ -1059,12 +1077,15 @@ function loadSession(){
   }catch{ return null; }
 }
 
-/* ===== Utilidades misceláneas (reubicado) ===== */
-function openDetailWithHash(r){
-  openDetail(r);
+/* ===== Utilidades misceláneas (Scroll Suave Integrado) ===== */
+function openDetailWithHash(r, clickedButton = null){
+  // Determinamos el elemento de la tarjeta raíz a partir del botón clicado
+  const cardEl = clickedButton ? clickedButton.closest('article.card') : null;
+  openDetail(r, cardEl); 
   const h = '#receta=' + slug(r.titulo);
   if(location.hash !== h){ history.pushState({}, "", h); }
 }
+
 function fromHashOpen(){
   const m = location.hash.match(/#receta=([a-z0-9\-]+)/i);
   if(!m) return;
@@ -1173,7 +1194,7 @@ function init(){
     if(e.ctrlKey && e.key === '/'){ e.preventDefault(); els.search.focus(); }
   });
 
-  // 4. Listeners de Recetas y Modales
+  // 4. Listeners de Recetas y Modales (MODIFICADO para pasar el elemento clicado)
   els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
   els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
   els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
@@ -1181,9 +1202,11 @@ function init(){
   els.grid.addEventListener('click',e=>{
     const b = e.target.closest('button[data-a]'); if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
-    if(b.dataset.a==='leer')  { openDetailWithHash(r); readRecipe(r); }
-    if(b.dataset.a==='guiada'){ openDetailWithHash(r); openGuided(r); }
-    if(b.dataset.a==='abrir') { openDetailWithHash(r); }
+    
+    // Usamos 'b' (el botón clicado) para referenciar la tarjeta y hacer scroll
+    if(b.dataset.a==='leer')  { openDetailWithHash(r, b); readRecipe(r); }
+    if(b.dataset.a==='guiada'){ openDetailWithHash(r, b); openGuided(r); }
+    if(b.dataset.a==='abrir') { openDetailWithHash(r, b); }
     if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
     if(b.dataset.a==='fav')  toggleFav(r);
   });
