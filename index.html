@@ -211,11 +211,11 @@
 
   <div id="ttsCaption" role="status" aria-live="polite"></div>
 
-  <footer class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 text-center text-xs text-stone-500 dark:text-stone-600 border-t border-stone-200 dark:border-stone-800 mt-8">
-    <p>
-      &copy; 2025 Recetario Español. Todos los derechos reservados.
-    </p>
-  </footer>
+  <footer class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 text-center text-xs text-stone-500 dark:text-stone-600 border-t border-stone-200 dark:border-stone-800 mt-8">
+    <p>
+      &copy; 2025 Recetario Español. Todos los derechos reservados.
+    </p>
+  </footer>
 
   <script>
 /* ==========================
@@ -237,7 +237,7 @@ const IMG_WEB_URLS = new Map([
     ["gazpacho-andaluz", "https://picsum.photos/800/500?random=13"],
     ["flan-casero", "https://picsum.photos/800/500?random=14"],
     ["croquetas-de-jamon", "https://picsum.photos/800/500?random=15"],
-    // Resto de Placeholders genéricos
+    // Resto de Placeholders genéricos
 ]);
 
 // Función para obtener imágenes
@@ -637,8 +637,8 @@ function filter(){
 function openDetail(r){
   state.current = r;
   els.detailTitle.textContent = r.titulo;
-  els.detailImg.src = r.imagen; 
-  els.detailImg.alt = `Foto de ${r.titulo}`; 
+  els.detailImg.src = r.imagen; 
+  els.detailImg.alt = `Foto de ${r.titulo}`; 
   els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
   els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
   els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
@@ -1079,7 +1079,7 @@ function injectRecipeLD(r){
     "@type":"Recipe",
     "name": r.titulo,
     "recipeCategory": r.categoria,
-    "image": r.imagen, 
+    "image": r.imagen, 
     "recipeIngredient": r.ingredientes,
     "recipeInstructions": (r.pasos||[]).map(p=>({"@type":"HowToStep","text":p})),
     "totalTime": "PT30M"
