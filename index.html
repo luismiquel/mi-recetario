@@ -634,9 +634,9 @@ function filter(){
   render(l);
 }
 
-// === FUNCIONES MODIFICADAS PARA EL SCROLL SUAVE ===
+// === FUNCIONES DE DETALLE (ELIMINADO SCROLL) ===
 
-// 1. openDetail: Acepta el elemento de la tarjeta (cardEl) para centrarlo.
+// 1. openDetail: Acepta cardEl pero YA NO ejecuta el scroll.
 function openDetail(r, cardEl = null){
   state.current = r;
   els.detailTitle.textContent = r.titulo;
@@ -649,20 +649,13 @@ function openDetail(r, cardEl = null){
   injectRecipeLD(r);
   if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
   ensureShareButton();
-  
-  // LÓGICA DE SCROLL: Si recibimos la tarjeta, hacemos scroll suave.
-  if (cardEl) {
-      cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+  
+  // LÓGICA DE SCROLL ELIMINADA: La página se mantiene en su posición.
 }
 
-// 2. openDetailWithHash: Pasa el elemento de la tarjeta (obtenido del botón) a openDetail.
+// 2. openDetailWithHash: Se usa solo para obtener el hash, sin scroll.
 function openDetailWithHash(r, clickedButton = null){
-  // En el caso de un clic normal, buscamos el elemento de la tarjeta
-  const cardEl = clickedButton ? clickedButton.closest('article.card') : null;
-  
-  // Para el caso de carga por Hash (ej. al compartir), el scrollIntoView se hace en openDetail
-  openDetail(r, cardEl); 
+  openDetail(r, null); // Pasamos null para asegurar que no se hace scroll
   const h = '#receta=' + slug(r.titulo);
   if(location.hash !== h){ history.pushState({}, "", h); }
 }
@@ -677,7 +670,7 @@ function closeDetail(){
 
 
 /* ==========================
-   ===== Servicio de Voz (TTS & ASR) =====
+   ===== Servicio de Voz (TTS & ASR) - CORREGIDO =====
    ========================== */
 
 const VoiceService = (() => {
@@ -916,9 +909,11 @@ function openGuided(r){
   if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
   els.status.textContent = "Voz manos libres activa.";
   VoiceService.speak(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes, o haz preguntas como: cuanto tiempo, o que estoy haciendo. Para terminar di: salir.`);
+  
+  // CORRECCIÓN ASR: Forzamos el inicio de la escucha después de la introducción.
   readCurrent();
   saveSession();
-  if(state.autoListen) VoiceService.startASR();
+  if(state.autoListen) VoiceService.startASR(); // <-- Esto ya estaba, pero lo aseguramos
 }
 
 // ** CORRECCIÓN CLAVE: Permite cerrar el modo guiado y el detalle **
@@ -1079,11 +1074,11 @@ function loadSession(){
   }catch{ return null; }
 }
 
-/* ===== Utilidades misceláneas (Scroll Suave Integrado) ===== */
+/* ===== Utilidades misceláneas (Scroll Suave Eliminado) ===== */
+
+// openDetailWithHash: Ya no pasa el elemento de la tarjeta a openDetail para evitar el scroll.
 function openDetailWithHash(r, clickedButton = null){
-  // Determinamos el elemento de la tarjeta raíz a partir del botón clicado
-  const cardEl = clickedButton ? clickedButton.closest('article.card') : null;
-  openDetail(r, cardEl); 
+  openDetail(r, null); // Pasamos null para asegurar que no se hace scroll en openDetail
   const h = '#receta=' + slug(r.titulo);
   if(location.hash !== h){ history.pushState({}, "", h); }
 }
@@ -1092,7 +1087,6 @@ function fromHashOpen(){
   const m = location.hash.match(/#receta=([a-z0-9\-]+)/i);
   if(!m) return;
   const r = RECETAS.find(x=>slug(x.titulo)===m[1]);
-  // NO pasamos clickedButton, ya que al cargar por URL no hay un elemento clicado que centrar
   if(r) openDetail(r); 
 }
 
@@ -1197,7 +1191,7 @@ function init(){
     if(e.ctrlKey && e.key === '/'){ e.preventDefault(); els.search.focus(); }
   });
 
-  // 4. Listeners de Recetas y Modales (MODIFICADO para pasar el elemento clicado)
+  // 4. Listeners de Recetas y Modales (MODIFICADO para NO hacer scroll)
   els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
   els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
   els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
@@ -1206,10 +1200,10 @@ function init(){
     const b = e.target.closest('button[data-a]'); if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
     
-    // Usamos 'b' (el botón clicado) para referenciar la tarjeta y hacer scroll
-    if(b.dataset.a==='leer')  { openDetailWithHash(r, b); readRecipe(r); }
-    if(b.dataset.a==='guiada'){ openDetailWithHash(r, b); openGuided(r); }
-    if(b.dataset.a==='abrir') { openDetailWithHash(r, b); }
+    // Llamadas a openDetailWithHash sin el argumento del elemento clicado (o con null), para que el scroll no se ejecute.
+    if(b.dataset.a==='leer')  { openDetailWithHash(r, null); readRecipe(r); }
+    if(b.dataset.a==='guiada'){ openDetailWithHash(r, null); openGuided(r); }
+    if(b.dataset.a==='abrir') { openDetailWithHash(r, null); }
     if(b.dataset.a==='lista') addMany(r.ingredientes||[]);
     if(b.dataset.a==='fav')  toggleFav(r);
   });
