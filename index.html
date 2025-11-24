@@ -634,9 +634,9 @@ function filter(){
   render(l);
 }
 
-// === FUNCIONES DE DETALLE (ELIMINADO SCROLL) ===
+// === FUNCIONES DE DETALLE Y SCROLL CORREGIDAS ===
 
-// 1. openDetail: Acepta cardEl pero YA NO ejecuta el scroll.
+// 1. openDetail: AHORA CONTROLA EL SCROLL DEL BODY
 function openDetail(r, cardEl = null){
   state.current = r;
   els.detailTitle.textContent = r.titulo;
@@ -649,11 +649,12 @@ function openDetail(r, cardEl = null){
   injectRecipeLD(r);
   if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
   ensureShareButton();
-  
-  // LÓGICA DE SCROLL ELIMINADA: La página se mantiene en su posición.
+  
+  // CORRECCIÓN SCROLL: Detenemos el scroll del body
+  document.body.style.overflow = 'hidden'; 
 }
 
-// 2. openDetailWithHash: Se usa solo para obtener el hash, sin scroll.
+// 2. openDetailWithHash: No se toca.
 function openDetailWithHash(r, clickedButton = null){
   openDetail(r, null); // Pasamos null para asegurar que no se hace scroll
   const h = '#receta=' + slug(r.titulo);
@@ -666,6 +667,9 @@ function closeDetail(){
   els.detailModal.classList.remove('flex');
   VoiceService.stopSpeak(); 
   if(untrapDetail) untrapDetail();
+  
+  // CORRECCIÓN SCROLL: Restauramos el scroll del body
+  document.body.style.overflow = '';
 }
 
 
@@ -860,6 +864,7 @@ const VoiceService = (() => {
     setHudStatus(false);
   }
 
+  // CORRECCIÓN ASR: Aumento el tiempo de espera a 2 segundos para estabilizar reinicios
   function scheduleRestart(){
     if(!state.autoListen) return;
     if(autoRestartTimer){ clearTimeout(autoRestartTimer); }
@@ -867,7 +872,7 @@ const VoiceService = (() => {
       try{
         if(els.guidedModal.classList.contains('flex') && recAuto) recAuto.start();
       }catch{}
-    }, 600);
+    }, 2000); // <-- Aumentado a 2000ms (2 segundos)
   }
 
   return {
@@ -910,25 +915,37 @@ function openGuided(r){
   els.status.textContent = "Voz manos libres activa.";
   VoiceService.speak(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes, o haz preguntas como: cuanto tiempo, o que estoy haciendo. Para terminar di: salir.`);
   
-  // CORRECCIÓN ASR: Forzamos el inicio de la escucha después de la introducción.
   readCurrent();
   saveSession();
-  if(state.autoListen) VoiceService.startASR(); // <-- Esto ya estaba, pero lo aseguramos
+  if(state.autoListen) VoiceService.startASR(); // Mantenemos el inicio ASR
 }
 
-// ** CORRECCIÓN CLAVE: Permite cerrar el modo guiado y el detalle **
-function closeGuided(){
-  VoiceService.stopSpeak();
-  $('guidedModal').classList.add('hidden'); 
-  $('guidedModal').classList.remove('flex');
-  
-  els.status.textContent="Cocina guiada cerrada.";
-  if(untrapGuided) untrapGuided();
-  VoiceService.stopASR();
-  saveSession();
-  
-  // Cierra el modal de detalle que está detrás, resolviendo el error de superposición.
-  closeDetail(); 
+// ** CORRECCIÓN SCROLL/MODAL: Aseguramos la fijeza del cuerpo **
+function openDetail(r, cardEl = null){
+  state.current = r;
+  els.detailTitle.textContent = r.titulo;
+  els.detailImg.src = r.imagen; 
+  els.detailImg.alt = `Foto de ${r.titulo}`; 
+  els.detailMeta.textContent = `${r.categoria} · ${r.tiempo}`;
+  els.detailIngredients.innerHTML = r.ingredientes.map(i=>`<li>${i}</li>`).join("");
+  els.detailSteps.innerHTML = r.pasos.map(p=>`<li>${p}</li>`).join("");
+  els.detailModal.classList.remove('hidden'); els.detailModal.classList.add('flex');
+  injectRecipeLD(r);
+  if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
+  ensureShareButton();
+  
+  // CORRECCIÓN SCROLL: Detenemos el scroll del body principal
+  document.body.style.overflow = 'hidden'; 
+}
+
+function closeDetail(){
+  els.detailModal.classList.add('hidden'); 
+  els.detailModal.classList.remove('flex');
+  VoiceService.stopSpeak(); 
+  if(untrapDetail) untrapDetail();
+  
+  // CORRECCIÓN SCROLL: Restauramos el scroll del body
+  document.body.style.overflow = '';
 }
 
 // Nueva función para el asistente de voz mejorado (respuestas contextuales)
@@ -1076,9 +1093,8 @@ function loadSession(){
 
 /* ===== Utilidades misceláneas (Scroll Suave Eliminado) ===== */
 
-// openDetailWithHash: Ya no pasa el elemento de la tarjeta a openDetail para evitar el scroll.
 function openDetailWithHash(r, clickedButton = null){
-  openDetail(r, null); // Pasamos null para asegurar que no se hace scroll en openDetail
+  openDetail(r, null); // Pasamos null para asegurar que no se hace scroll
   const h = '#receta=' + slug(r.titulo);
   if(location.hash !== h){ history.pushState({}, "", h); }
 }
@@ -1200,7 +1216,7 @@ function init(){
     const b = e.target.closest('button[data-a]'); if(!b) return;
     const r = state.list[Number(b.dataset.i)]; if(!r) return;
     
-    // Llamadas a openDetailWithHash sin el argumento del elemento clicado (o con null), para que el scroll no se ejecute.
+    // Llamadas a openDetailWithHash sin el argumento del elemento clicado, para mantener la posición
     if(b.dataset.a==='leer')  { openDetailWithHash(r, null); readRecipe(r); }
     if(b.dataset.a==='guiada'){ openDetailWithHash(r, null); openGuided(r); }
     if(b.dataset.a==='abrir') { openDetailWithHash(r, null); }
