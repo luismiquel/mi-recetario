@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Recetario Español con 160 recetas. Búsqueda rápida, voz clara manos libres, modo guiado, alto contraste, letra grande y lista de la compra." />
 
-  <!-- COPYRIGHT AÑADIDO -->
+  <!-- COPYRIGHT -->
   <meta name="copyright" content="© 2025 Recetario Español. Todos los derechos reservados. Uso personal y doméstico. Prohibida la reproducción sin autorización expresa." />
 
   <title>Recetario Español – 160 recetas</title>
@@ -70,6 +70,9 @@
     .talking #voiceDot{background:#10b981;box-shadow:0 0 12px 3px rgba(16,185,129,.45)}
     .listening #voiceDot{background:#f59e0b}
     .disabled #voiceDot{background:#9ca3af}
+
+    /* Modal guiado arriba (opción B) */
+    #guidedModal{align-items:flex-start;justify-content:center;padding-top:1.5rem;}
   </style>
 </head>
 <body class="dark:bg-stone-900 dark:text-stone-200">
@@ -138,6 +141,7 @@
       <div id="emptyState" class="hidden text-center text-stone-600 dark:text-stone-400 mt-10">No hay resultados.</div>
     </main>
 
+    <!-- Modal Detalle -->
     <div id="detailModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
       <div class="card max-w-3xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
@@ -164,7 +168,8 @@
       </div>
     </div>
 
-    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
+    <!-- Modal Cocina guiada (arriba) -->
+    <div id="guidedModal" class="fixed inset-0 bg-black/50 hidden items-start justify-center p-4 no-print" role="dialog" aria-modal="true" aria-labelledby="guidedTitle">
       <div class="card max-w-2xl w-full">
         <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
           <h3 id="guidedTitle" class="text-xl font-semibold">Cocina guiada</h3>
@@ -192,6 +197,7 @@
       </div>
     </div>
 
+    <!-- Lista de la compra -->
     <aside id="shoppingDrawer" class="drawer" aria-label="Lista de la compra" aria-hidden="true">
       <div class="p-3 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
         <h3 class="text-lg font-semibold">Lista de la compra</h3>
@@ -228,7 +234,6 @@
    ========================== */
 const APP_VERSION = "recetario-1.7.3-espanol"; 
 
-// FUNCIONES BÁSICAS
 function stripDiacritics(s){ try{ return (s||"").normalize('NFD').replace(/[\u0300-\u036f]/g,''); }catch{ return s||""; } }
 const slug = s => stripDiacritics((s||"").toLowerCase()).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 const sleep = ms => new Promise(r=>setTimeout(r,ms)); 
@@ -301,7 +306,7 @@ const POSTRES = [
   "Crema de limón","Naranja con canela","Fresas con nata"
 ];
 
-/* Overrides realistas para platos clave */
+/* Overrides para platos clave */
 const OV = (()=> {
   function R(ing, pasos, tiempo){ return {ing, pasos, tiempo}; }
   const CROQ_BASE = ["Leche entera","Harina de trigo","Mantequilla","Aceite de oliva","Cebolla","Nuez moscada","Sal","Pimienta","Huevos","Pan rallado"];
@@ -418,7 +423,7 @@ const OV = (()=> {
     )],
     ["bonito con tomate", R(
       ["Bonito/Atún fresco","Tomate triturado","Cebolla","Pimiento verde","Ajo","Aceite de oliva","Azúcar","Sal"],
-      ["Corta el bonito en tacos y sella 1 min por cada lado. Resérvalo.","Sofríe la cebolla, el pimiento y el ajo 10 min a fuego bajo.","Añade tomate, sal y azúcar y cocina 20 min.","Incorpora el bonito 2–3 min para que quede jugoso.","Sirve con perejil y pan."],
+      ["Corta el bonito en tacos y sella 1 min por cada lado. Resérvalo.","Sofríe la cebolla, el pimiento y el ajo 10 min a fuego bajo.","Incorpora el tomate, sal y pizca de azúcar. Cocina 20 min.","Añade el bonito 2–3 min para que quede jugoso.","Sirve con perejil y pan."],
       "35–45 min"
     )]
   ]);
@@ -505,9 +510,8 @@ const RECETAS = [
 ];
 
 /* ==========================
-   ===== Estado & UI
+   ===== Estado y UI
    ========================== */
-
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 const $ = id => document.getElementById(id);
 const SKEY_CFG = 'config.v2';
@@ -562,11 +566,7 @@ const els = {
   caption: $('ttsCaption'), closeDetail: $('closeDetail')
 };
 
-// guardamos scroll para que Cocina guiada no mueva la página
-let lastScrollY = 0;
-window.addEventListener('scroll', () => { lastScrollY = window.scrollY; });
-
-// Tema y accesibilidad
+/* Estilos y config */
 function applyTheme(){ document.documentElement.classList.toggle('dark', state.dark); saveConfig(); }
 function applyContrast(){ document.documentElement.classList.toggle('hc', state.contrast); saveConfig(); }
 function setFont(px){ state.font = Math.max(14, Math.min(22, px)); document.documentElement.style.setProperty('--base-font', state.font+'px'); saveConfig(); }
@@ -576,21 +576,21 @@ function applyAllConfig(){
   els.voiceRate.value = state.rate;
 }
 
-// Tabs
+/* Tabs */
 function setActiveTab(btn){
   els.tabs().forEach(t => t.setAttribute('aria-selected', t === btn ? 'true' : 'false'));
   state.cat = btn.dataset.cat;
   filter();
 }
 
-// Favoritos
+/* Favoritos */
 const FKEY='fav.v1';
 let fav = new Set(JSON.parse(localStorage.getItem(FKEY)||'[]'));
 function saveFav(){ try{ localStorage.setItem(FKEY, JSON.stringify([...fav])); }catch{} }
 function isFav(r){ return fav.has(r.titulo); }
 function toggleFav(r){ isFav(r) ? fav.delete(r.titulo) : fav.add(r.titulo); saveFav(); filter(); }
 
-// Tarjetas
+/* Tarjetas */
 function card(r,i){
   const star = isFav(r) ? '⭐' : '☆';
   return `<article class="card" role="article" aria-label="${r.titulo}">
@@ -633,6 +633,9 @@ function filter(){
   render(l);
 }
 
+/* Detalle */
+let untrapDetail = null, untrapGuided = null;
+
 function openDetail(r){
   state.current = r;
   els.detailTitle.textContent = r.titulo;
@@ -655,9 +658,8 @@ function closeDetail(){
 }
 
 /* ==========================
-   ===== Servicio de Voz
+   ===== Servicio de Voz (TTS & ASR)
    ========================== */
-
 const VoiceService = (() => {
   let ttsVoice = null, voicesReady = false, speakLock = false;
   let recAuto = null;
@@ -726,14 +728,23 @@ const VoiceService = (() => {
     if(!isListening) drawLevel(0);
   }
 
-  // Comandos de Voz
+  // Comandos voz
   const norm = s => stripDiacritics(s).toLowerCase().trim();
   function lev(a,b){
     const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
     const dp=new Array(n+1).fill(0); for(let j=0;j<=n;j++) dp[j]=j;
-    for(let i=1;i<=m;i++){ let prev=dp[0], tmp; dp[0]=i; for(let j=1;j<=n;j++){
-      tmp=dp[j]; dp[j]=Math.min(dp[j]+1, dp[j-1]+1, prev + (a[i-1]===b[j-1]?0:1)); prev=tmp;
-    }}
+    for(let i=1;i<=m;i++){
+      let prev=dp[0], tmp; dp[0]=i;
+      for(let j=1;j<=n;j++){
+        tmp=dp[j];
+        dp[j]=Math.min(
+          dp[j]+1,
+          dp[j-1]+1,
+          prev + (a[i-1]===b[j-1]?0:1)
+        );
+        prev=tmp;
+      }
+    }
     return dp[n];
   }
   
@@ -749,17 +760,26 @@ const VoiceService = (() => {
   const NUM = {uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20};
 
   function parseCommand(raw){
-    const t = norm(raw).replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
-                              (_,w)=>'paso '+NUM[w]);
+    let t = norm(raw);
+    t = t.replace(/\bpaso\s+(uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|dieciseis|diecisiete|dieciocho|diecinueve|veinte)\b/g,
+                  (_,w)=>'paso '+NUM[w]);
     
-    const m_ing_step = t.match(/(?:ingredientes|que necesito)\s+(?:para|del)\s+paso\s+(\d{1,2})/);
+    // Ingredientes paso X
+    const m_ing_step = t.match(/(?:ingredientes|que necesito)\s+(?:para|del)?\s*paso\s+(\d{1,2})/);
     if(m_ing_step) return {type:'ingredients_step', n:+m_ing_step[1]};
     
-    const m = t.match(/\bpaso\s+(\d{1,2})\b/); if(m) return {type:'goto', n:+m[1]};
+    // Ir al paso X
+    const m = t.match(/\bpaso\s+(\d{1,2})\b/); 
+    if(m) return {type:'goto', n:+m[1]};
     
-    for(const c of CMD_LIST) for(const v of c.variants) if(t===v) return {type:c.type};
+    // Coincidencia directa / incluida
+    for(const c of CMD_LIST){
+      for(const v of c.variants){
+        if(t===v || t.includes(v)) return {type:c.type};
+      }
+    }
     
-    // fuzzy más estricto para evitar que se quede "enganchado"
+    // Fuzzy sobre toda la frase
     let best=99, winner={type:'unknown'};
     for(const c of CMD_LIST){
       for(const v of c.variants){
@@ -767,7 +787,7 @@ const VoiceService = (() => {
         if(d<best){ best=d; winner={type:c.type}; }
       }
     }
-    return best<=1 ? winner : {type:'unknown', raw:raw};
+    return best<=4 ? winner : {type:'unknown', raw:raw};
   }
 
   function makeRecognizer(){
@@ -780,6 +800,7 @@ const VoiceService = (() => {
     return r;
   }
 
+  // ASR
   function startAutoRecognizer(){
     if(!SRClass){
       els.status.textContent = isIOS ? "Voz: iPhone/iPad no permite reconocimiento web. Usa botones." : "Voz: reconocimiento no disponible en este navegador.";
@@ -809,13 +830,13 @@ const VoiceService = (() => {
 
       if(finalText.trim()){
         const cmd = parseCommand(finalText.trim());
-
-        // primero comandos tipo “asistente”
+        
+        // Respuestas tipo asistente
         if(executeGuidedAction(cmd)) {
           return;
         }
 
-        // después navegación
+        // Navegación
         if(cmd.type==='stop') return closeGuided();
         if(cmd.type==='repeat') return repeatStep();
         if(cmd.type==='next') return nextStep();
@@ -826,10 +847,7 @@ const VoiceService = (() => {
     };
 
     try{
-      // sólo arranco si el modal guiado está abierto
-      if(els.guidedModal && els.guidedModal.classList.contains('flex')){
-        recAuto.start();
-      }
+      recAuto.start();
     }catch(e){
       els.status.textContent = "Voz: permiso requerido. Pulsa “Reconectar voz”.";
       setHudStatus(false);
@@ -868,9 +886,8 @@ const VoiceService = (() => {
 })();
 
 /* ==========================
-   ===== Funcionalidades de Recetas
+   ===== Recetas / Guiado
    ========================== */
-
 function readRecipe(r){
   const intro = `${r.titulo}. ${r.categoria}. Tiempo ${r.tiempo}.`;
   const ing = r.ingredientes?.length ? `Ingredientes: ${r.ingredientes.join(", ")}.` : "";
@@ -879,7 +896,6 @@ function readRecipe(r){
   els.status.textContent = `Leyendo ${r.titulo}.`;
 }
 
-// Guiado
 function ensureCurrent(){
   if(!state.current){
     const primera = (state.list && state.list[0]) || null;
@@ -894,10 +910,6 @@ function openGuided(r){
   $('guidedRecipeTitle').textContent = r.titulo;
   $('guidedSteps').innerHTML = r.pasos.map((p,i)=>`<li data-step="${i}">${p}</li>`).join("");
   $('guidedModal').classList.remove('hidden'); $('guidedModal').classList.add('flex');
-
-  // mantener scroll original al abrir cocina guiada
-  window.scrollTo(0, lastScrollY);
-
   if(untrapGuided) untrapGuided(); untrapGuided = trapFocus(els.guidedModal);
   els.status.textContent = "Voz manos libres activa.";
   VoiceService.speak(`Iniciamos ${r.titulo}. Di: siguiente, anterior, repetir, leer ingredientes, o haz preguntas como: cuanto tiempo, o que estoy haciendo. Para terminar di: salir.`);
@@ -906,20 +918,19 @@ function openGuided(r){
   if(state.autoListen) VoiceService.startASR();
 }
 
+// Cierra guiado (y detalle detrás) sin mover scroll de la página
 function closeGuided(){
   VoiceService.stopSpeak();
   $('guidedModal').classList.add('hidden'); 
   $('guidedModal').classList.remove('flex');
-  
   els.status.textContent="Cocina guiada cerrada.";
   if(untrapGuided) untrapGuided();
   VoiceService.stopASR();
   saveSession();
-  
   closeDetail(); 
 }
 
-// Lógica de respuestas contextuales (preguntas)
+// Asistente contextual
 function executeGuidedAction(cmd){
   if(!ensureCurrent()) return false;
   const currentStepText = state.current.pasos[state.step];
@@ -930,17 +941,16 @@ function executeGuidedAction(cmd){
       if(timeMatch){
         VoiceService.speak(`Para el paso actual, el tiempo de cocción o espera es de ${timeMatch[1]} minutos.`);
       } else {
-        VoiceService.speak("Este paso no menciona un tiempo de cocción específico.");
+        VoiceService.speak("Este paso no menciona un tiempo de cocción específico. Mira el texto del paso por si hay detalles.");
       }
       return true;
     }
     case 'current_step':
       VoiceService.speak(`El paso actual, número ${state.step+1}, consiste en: ${currentStepText}`);
       return true;
-      
     case 'ingredients_step': {
       const ing = state.current?.ingredientes || [];
-      VoiceService.speak(`Toda la receta necesita: ${ing.join(", ")}. Revisa si esos ingredientes aplican al paso ${cmd.n}.`);
+      VoiceService.speak(`Toda la receta necesita: ${ing.join(", ")}. Revisa si esos ingredientes coinciden con lo que haces en el paso ${cmd.n}.`);
       return true;
     }
     default:
@@ -950,22 +960,24 @@ function executeGuidedAction(cmd){
 
 function readCurrent(){
   if(!ensureCurrent()) return;
-  const pasos = state.current.pasos || []; if(!pasos.length) return;
-  if(state.step<0) state.step=0; if(state.step>=pasos.length) state.step=pasos.length-1;
+  const pasos = state.current.pasos || []; 
+  if(!pasos.length) return;
+  if(state.step<0) state.step=0; 
+  if(state.step>=pasos.length) state.step=pasos.length-1;
+
   VoiceService.speak(`Paso ${state.step+1}. ${pasos[state.step]}`);
   const t = pasos.length; $('guidedProgress').textContent = `Paso ${state.step+1} de ${t}`;
   [...$('guidedSteps').children].forEach((li,i)=>li.classList.toggle('font-semibold', i===state.step));
 
-  // Temporizador por paso
+  // Temporizador por paso (si hay minutos escritos)
   clearTimerUI();
   try{
     const p = state.current?.pasos?.[state.step] || "";
     const m = /(\d{1,2})\s*(?:min|mins|minutos)\b/i.exec(p);
-    if(m){
-      const mins = Number(m[1]);
-      if(mins>0){
-        VoiceService.speak(`Inicio temporizador de ${mins} minutos.`);
-        startStepTimer(mins);
+    if(m){ 
+      const mins = Number(m[1]); 
+      if(mins>0){ 
+        startStepTimer(mins); 
       }
     }
   }catch{}
@@ -977,28 +989,28 @@ async function nextStep(){
   if(state.step < t-1){
     state.step++; 
     VoiceService.stopSpeak(); 
-    await sleep(80); 
+    await sleep(60); 
     readCurrent(); 
     saveSession();
-  } else {
+  } else { 
     VoiceService.stopSpeak(); 
-    await sleep(80); 
-    VoiceService.speak("Receta terminada. ¡Buen provecho!");
-    saveSession();
+    await sleep(60); 
+    VoiceService.speak("Receta terminada. ¡Buen provecho!"); 
+    saveSession(); 
   }
 }
 async function prevStep(){
   if(!ensureCurrent()) return;
-  if(state.step>0){
+  if(state.step>0){ 
     state.step--; 
     VoiceService.stopSpeak(); 
-    await sleep(80); 
+    await sleep(60); 
     readCurrent(); 
     saveSession();
-  } else {
+  } else { 
     VoiceService.stopSpeak(); 
-    await sleep(80); 
-    VoiceService.speak("Ya estás en el primer paso.");
+    await sleep(60); 
+    VoiceService.speak("Ya estás en el primer paso."); 
   }
 }
 function repeatStep(){ VoiceService.stopSpeak(); setTimeout(readCurrent,80); }
@@ -1010,18 +1022,19 @@ function readIngredients(){
 }
 function goToStep(n){
   const total = state?.current?.pasos?.length || 0;
-  if(n>=0 && n<total){
+  if(n>=0 && n<total){ 
     state.step=n; 
     VoiceService.stopSpeak(); 
     setTimeout(readCurrent,80); 
-    saveSession();
-  } else {
+    saveSession(); 
+  }
+  else { 
     VoiceService.stopSpeak(); 
-    setTimeout(()=>VoiceService.speak("Ese número de paso no existe."),80);
+    setTimeout(()=>VoiceService.speak("Ese número de paso no existe."),80); 
   }
 }
 
-/* ===== Temporizadores por paso ===== */
+/* Temporizadores por paso */
 let currentTimer = null, countdownInt = null;
 function clearTimerUI(){
   if(countdownInt) { clearInterval(countdownInt); countdownInt = null; }
@@ -1053,12 +1066,21 @@ function startStepTimer(minutes){
   $left.textContent = fmt(left);
 
   countdownInt = setInterval(()=>{ left--; $left.textContent = fmt(Math.max(0,left)); }, 1000);
-  currentTimer = setTimeout(()=>{ clearTimerUI(); beep(300); VoiceService.speak("¡Tiempo!"); }, minutes*60*1000);
-  document.getElementById('cancelTimer').onclick = ()=>{ clearTimerUI(); if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } };
+  currentTimer = setTimeout(()=>{
+    clearTimerUI(); 
+    beep(300); 
+    VoiceService.speak("¡Tiempo!");
+  }, minutes*60*1000);
+
+  document.getElementById('cancelTimer').onclick = ()=>{
+    clearTimerUI(); 
+    if(currentTimer){ clearTimeout(currentTimer); currentTimer=null; } 
+  };
 }
 
-/* ===== Lista de la compra ===== */
-const SKEY_SHOPPING='shopping.v1'; let shopping=JSON.parse(localStorage.getItem(SKEY_SHOPPING)||'[]');
+/* Lista de la compra */
+const SKEY_SHOPPING='shopping.v1'; 
+let shopping=JSON.parse(localStorage.getItem(SKEY_SHOPPING)||'[]');
 function saveShopping(){ localStorage.setItem(SKEY_SHOPPING, JSON.stringify(shopping)); }
 function uid(){ return Math.random().toString(36).slice(2,9); }
 function renderList(){
@@ -1075,7 +1097,7 @@ function addMany(arr){ (arr||[]).forEach(addItem); openDrawer(); }
 function openDrawer(){ $('shoppingDrawer').classList.add('open'); $('shoppingDrawer').setAttribute('aria-hidden','false'); }
 function closeDrawer(){ $('shoppingDrawer').classList.remove('open'); $('shoppingDrawer').setAttribute('aria-hidden','true'); }
 
-/* ===== Sesión ===== */
+/* Sesión */
 const SKEY_SESSION = "session.v1"; // {slug, step}
 function saveSession(){
   try{
@@ -1093,7 +1115,7 @@ function loadSession(){
   }catch{ return null; }
 }
 
-/* ===== Utilidades varias ===== */
+/* Utilidades navegación */
 function openDetailWithHash(r){
   openDetail(r);
   const h = '#receta=' + slug(r.titulo);
@@ -1106,6 +1128,7 @@ function fromHashOpen(){
   if(r) openDetail(r);
 }
 
+/* JSON-LD y Focus */
 function injectRecipeLD(r){
   const ld = {
     "@context":"https://schema.org",
@@ -1143,8 +1166,6 @@ function trapFocus(modal){
   first.focus();
   return ()=> modal.removeEventListener('keydown', onKey);
 }
-let untrapDetail = null, untrapGuided = null;
-
 function ensureShareButton(){
   const bar = document.querySelector('#detailModal .mt-3.flex');
   if(!bar) return;
@@ -1170,11 +1191,10 @@ function ensureShareButton(){
   };
 }
 
-/* ===== Inicialización ===== */
+/* Init */
 function init(){
   applyAllConfig();
 
-  // Config
   els.toggleTheme.onclick = () => { state.dark = !state.dark; applyTheme(); };
   els.toggleContrast.onclick = () => { state.contrast = !state.contrast; applyContrast(); };
   els.fontPlus.onclick = () => setFont(state.font+1);
@@ -1186,7 +1206,6 @@ function init(){
     if(!state.autoListen) VoiceService.stopASR();
   };
 
-  // Tabs
   els.tabs().forEach(b => b.addEventListener('click', () => setActiveTab(b)));
   (function addFavTab(){
     const tablist = document.querySelector('[role="tablist"]');
@@ -1198,14 +1217,12 @@ function init(){
     btn.addEventListener('click', ()=>setActiveTab(btn));
   })();
 
-  // Búsqueda
   filter();
   els.search.oninput = e => { state.q = e.target.value; filter(); };
   document.addEventListener('keydown', e => {
     if(e.ctrlKey && e.key === '/'){ e.preventDefault(); els.search.focus(); }
   });
 
-  // Modales & recetas
   els.btnReadAll.onclick = ()=>{ if(state.current) readRecipe(state.current); };
   els.btnGuided.onclick = ()=>{ if(state.current) openGuided(state.current); };
   els.btnAddAll.onclick = ()=>{ if(state.current) addMany(state.current.ingredientes||[]); };
@@ -1229,7 +1246,6 @@ function init(){
     }
   });
 
-  // Guiado
   $('nextStep').onclick = nextStep; $('prevStep').onclick = prevStep; $('repeatStep').onclick = repeatStep;
   $('stopReading').onclick = VoiceService.stopSpeak; $('closeGuided').onclick = closeGuided;
   $('printRecipe').onclick = ()=>{ window.print(); };
@@ -1242,7 +1258,6 @@ function init(){
     if(e.key==='r'||e.key==='R'){ e.preventDefault(); repeatStep(); }
   });
 
-  // Lista de la compra
   renderList();
   els.openShopping.onclick = openDrawer; els.closeShopping.onclick = closeDrawer;
   els.addItem.onclick = ()=>{ addItem(els.newItem.value); els.newItem.value=""; els.newItem.focus(); };
@@ -1272,20 +1287,17 @@ function init(){
     w.document.close(); w.print(); setTimeout(()=>w.close(),300);
   };
 
-  // Navegación / hash
   window.addEventListener('popstate', fromHashOpen);
   fromHashOpen();
 
-  // Reanudar sesión
   const last = loadSession();
   if(last && confirm(`¿Reanudar "${last.recipe.titulo}" en el paso ${last.step+1}?`)){
     openDetailWithHash(last.recipe);
-    state.step = last.step;
     openGuided(last.recipe);
+    state.step = last.step;
     readCurrent();
   }
 
-  // Desbloqueo TTS
   document.addEventListener('touchend', VoiceService.unlockTTS, {passive:true});
   document.addEventListener('click', VoiceService.unlockTTS, {once:true});
 }
