@@ -196,7 +196,7 @@
           <button id="clearChecked" class="btn btn-ghost" aria-label="Borrar elementos marcados" title="Borrar marcados">🗑️ Marcados</button>
           <button id="closeShopping" class="btn btn-ghost" aria-label="Cerrar lista" title="Cerrar">✕</button>
         </div>
-        </div>
+      </div>
       <div class="p-3">
         <div class="flex gap-2 mb-3">
           <label for="newItem" class="sr-only">Nuevo artículo</label>
@@ -650,7 +650,7 @@ function openDetail(r, cardEl = null){
   if(untrapDetail) untrapDetail(); untrapDetail = trapFocus(els.detailModal);
   ensureShareButton();
   
-  // NUEVA LÓGICA DE SCROLL: Si recibimos la tarjeta, hacemos scroll suave.
+  // LÓGICA DE SCROLL: Si recibimos la tarjeta, hacemos scroll suave.
   if (cardEl) {
       cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -658,8 +658,10 @@ function openDetail(r, cardEl = null){
 
 // 2. openDetailWithHash: Pasa el elemento de la tarjeta (obtenido del botón) a openDetail.
 function openDetailWithHash(r, clickedButton = null){
-  // Determinamos el elemento de la tarjeta raíz a partir del botón clicado
+  // En el caso de un clic normal, buscamos el elemento de la tarjeta
   const cardEl = clickedButton ? clickedButton.closest('article.card') : null;
+  
+  // Para el caso de carga por Hash (ej. al compartir), el scrollIntoView se hace en openDetail
   openDetail(r, cardEl); 
   const h = '#receta=' + slug(r.titulo);
   if(location.hash !== h){ history.pushState({}, "", h); }
@@ -1090,7 +1092,8 @@ function fromHashOpen(){
   const m = location.hash.match(/#receta=([a-z0-9\-]+)/i);
   if(!m) return;
   const r = RECETAS.find(x=>slug(x.titulo)===m[1]);
-  if(r) openDetail(r);
+  // NO pasamos clickedButton, ya que al cargar por URL no hay un elemento clicado que centrar
+  if(r) openDetail(r); 
 }
 
 // ... JSON-LD y Focus Trap sin cambios
